@@ -87,3 +87,5 @@ function cheb2_asmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
 
     return A, S
 end
+
+export cheb2_asmat

@@ -53,7 +53,7 @@ function cheb1_grid(
     x_grid = cheb1_grid(TR, n)
 
     a = (x_max + x_min) / 2
-    b = (x_min - x_max) / 2
+    b = (x_max - x_min) / 2
     @.. x_grid = a + b * x_grid
 
     return x_grid
@@ -115,7 +115,7 @@ function cheb2_grid(
     x_grid = cheb2_grid(TR, n)
 
     a = (x_max + x_min) / 2
-    b = (x_min - x_max) / 2
+    b = (x_max - x_min) / 2
     @.. x_grid = a + b * x_grid
 
     return x_grid
