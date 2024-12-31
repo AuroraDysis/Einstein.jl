@@ -98,6 +98,7 @@ y = cheb2_interp(w, x, f, x0)
 # Reference
 
 - [salzer1972lagrangian](@citet*)
+- [doi:10.1137/1.9781611975949](@citet*)
 - [chebfun/@chebtech2/bary.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/bary.m)
 
 See also: [`cheb2_interp_wts`](@ref), [`cheb2_grid`](@ref)
