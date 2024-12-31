@@ -84,15 +84,20 @@ x = cheb2_grid(5, 0.0, π)  # Same as above
 See also: [`cheb2_angle`](@ref), [`cheb1_grid`](@ref)
 """
 function cheb2_grid(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    if n == 0
+        return TR[]
+    elseif n == 1
+        return [one(TR)]
+    end
+
     x_grid = zeros(TR, n)
 
-    pi_over_nm1 = convert(TR, pi) / (n - 1)
-    @inbounds begin
-        x_grid[1] = -1
-        x_grid[n] = 1
-        for k in 1:(n - 2)
-            x_grid[k + 1] = -cos(k * pi_over_nm1)
-        end
+    nm1 = n - 1
+    pi_over_2nm1 = convert(TR, π) / (2 * nm1)
+
+    @inbounds for i in 0:nm1
+        k = -nm1 + 2i  # Creates range -m:2:m
+        x_grid[i + 1] = sin(k * pi_over_2nm1)
     end
 
     return x_grid

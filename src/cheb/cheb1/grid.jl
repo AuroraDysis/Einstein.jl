@@ -1,3 +1,6 @@
+using ArgCheck
+using FastBroadcast
+
 """
     cheb1_angle([TR=Float64], n::Integer)
 
@@ -74,10 +77,12 @@ See also: [`cheb1_angle`](@ref), [`cheb2_grid`](@ref)
 function cheb1_grid(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     x_grid = zeros(TR, n)
 
-    pi_over_2n = convert(TR, pi) / (2 * n)
+    # Use symmetric indexing for better numerical properties
+    pi_over_2n = convert(TR, π) / (2 * n)
     @inbounds begin
-        for k in 0:(n - 1)
-            x_grid[k + 1] = -cos((2 * k + 1) * pi_over_2n)
+        for i in 1:n
+            k = n - 2i + 1
+            x_grid[i] = sin(k * pi_over_2n)
         end
     end
 
