@@ -8,7 +8,7 @@ makedocs(;
     authors="Zhen Zhong <auroradysis@gmail.com> and contributors",
     sitename="GRSuite.jl",
     format=Documenter.HTML(;
-        canonical="https://AuroraDysis.github.io/GRSuite.jl",
+        canonical="https://auroradysis.github.io/GRSuite.jl",
         edit_link="main",
         assets=String[],
     ),
