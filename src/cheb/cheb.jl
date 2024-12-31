@@ -1,6 +1,9 @@
 module ChebyshevSuite
 
+include("utils.jl")
+
 include("cheb1/grid.jl")
+include("cheb1/bary.jl")
 
 include("cheb2/grid.jl")
 include("cheb2/bary.jl")

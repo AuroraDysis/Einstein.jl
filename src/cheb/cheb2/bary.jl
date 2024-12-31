@@ -1,5 +1,5 @@
 """
-    cheb2_interp_wts([TR=Float64], n::Integer)
+    cheb2_bary_wts([TR=Float64], n::Integer)
 
 Compute the barycentric weights for Chebyshev points of the second kind.
 
@@ -26,14 +26,16 @@ where ``\\delta_j`` is defined as:
 These weights are optimized for numerical stability and efficiency in the barycentric
 interpolation formula.
 
-See also: [`cheb2_interp`](@ref), [`cheb2_grid`](@ref)
+See also: [`bary`](@ref), [`cheb2_grid`](@ref)
 """
-function cheb2_interp_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
-    w = ones(TR, n)
-
-    if n == 1
-        return w
+function cheb2_bary_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    if n == 0
+        return TR[]
+    elseif n == 1
+        return [one(TR)]
     end
+
+    w = ones(TR, n)
 
     @inbounds begin
         w[(end - 1):-2:1] .= -1
@@ -44,87 +46,8 @@ function cheb2_interp_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Intege
     return w
 end
 
-function cheb2_interp_wts(n::TI) where {TI<:Integer}
-    return cheb2_interp_wts(Float64, n)
+function cheb2_bary_wts(n::TI) where {TI<:Integer}
+    return cheb2_bary_wts(Float64, n)
 end
 
-"""
-    cheb2_interp(w::VT1, x::VT2, f::VT3, x0::TR) where {
-        TR<:AbstractFloat,
-        VT1<:AbstractVector{TR},
-        VT2<:AbstractVector{TR},
-        VT3<:AbstractVector{TR},
-    }
-
-Evaluate a polynomial interpolant using the barycentric interpolation formula.
-
-# Arguments
-- `w`: Vector of barycentric weights
-- `x`: Vector of interpolation points (typically Chebyshev points)
-- `f`: Vector of function values at interpolation points
-- `x0`: Point at which to evaluate the interpolant
-
-# Returns
-- Interpolated value at x0
-
-# Mathematical Details
-The barycentric interpolation formula is:
-```math
-p(x) = \\begin{cases}
-f_j & \\text{if } x = x_j \\text{ for some } j \\\\
-\\frac{\\sum_{j=0}^{n-1} \\frac{w_j}{x-x_j}f_j}{\\sum_{j=0}^{n-1} \\frac{w_j}{x-x_j}} & \\text{otherwise}
-\\end{cases}
-```
-
-This formula provides a numerically stable way to evaluate the Lagrange interpolation
-polynomial. When used with Chebyshev points and their corresponding barycentric weights,
-it gives optimal interpolation properties.
-
-# Examples
-```julia
-# Set up interpolation points and weights
-n = 10
-x = cheb2_grid(Float64, n)
-w = cheb2_interp_wts(Float64, n)
-
-# Function to interpolate
-f = sin.(π .* x)
-
-# Evaluate interpolant at a point
-x0 = 0.5
-y = cheb2_interp(w, x, f, x0)
-```
-
-# Reference
-
-- [salzer1972lagrangian](@citet*)
-- [doi:10.1137/1.9781611975949](@citet*)
-- [chebfun/@chebtech2/bary.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/bary.m)
-
-See also: [`cheb2_interp_wts`](@ref), [`cheb2_grid`](@ref)
-"""
-function cheb2_interp(
-    w::VT1, x::VT2, f::VT3, x0::TR
-) where {
-    TR<:AbstractFloat,
-    VT1<:AbstractVector{TR},
-    VT2<:AbstractVector{TR},
-    VT3<:AbstractVector{TR},
-}
-    p = zero(TR)
-    q = zero(TR)
-
-    @inbounds for i in eachindex(x)
-        if x0 == x[i]
-            return f[i]
-        end
-
-        wi = w[i] / (x0 - x[i])
-        p += wi * f[i]
-        q += wi
-    end
-
-    return p / q
-end
-
-export cheb2_interp_wts, cheb2_interp
+export cheb2_bary_wts
