@@ -7,3 +7,6 @@ Modules = [GRSuite.ChebyshevSuite]
 ```@autodocs
 Modules = [GRSuite.ChebyshevSuite]
 ```
+
+```@bibliography
+```

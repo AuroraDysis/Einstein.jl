@@ -1,5 +1,6 @@
 using GRSuite
 using Documenter
+using DocumenterCitations
 
 DocMeta.setdocmeta!(GRSuite, :DocTestSetup, :(using GRSuite); recursive=true)
 
@@ -14,7 +15,7 @@ makedocs(;
         edit_link="main",
         assets=String[],
     ),
-    pages=["Home" => "index.md"],
+    pages=["Home" => "index.md", "Chebyshev Suite" => "cheb.md"],
     plugins=[bib],
 )
 

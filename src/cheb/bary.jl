@@ -52,7 +52,7 @@ end
         VT3<:AbstractVector{TR},
     }
 
-Evaluate a polynomial interpolant using the barycentric interpolation formula.
+Evaluate a polynomial interpolant using the barycentric interpolation formula [salzer1972lagrangian](@cite).
 
 # Arguments
 - `w`: Vector of barycentric weights
@@ -91,9 +91,9 @@ x0 = 0.5
 y = cheb2_interp(w, x, f, x0)
 ```
 
-# References
-1. [salzer1972lagrangian](@cite)
-2. [chebfun/@chebtech2/bary.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/bary.m)
+# `chebfun` Reference
+
+[chebfun/@chebtech2/bary.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/bary.m)
 
 See also: [`cheb2_interp_wts`](@ref), [`cheb2_grid`](@ref)
 """
