@@ -38,14 +38,14 @@ where:
 A, S = cheb2_asmat(Float64, 8)
 
 # Transform function values to spectral coefficients
-f_values = [sin(x) for x in cheb_grid(Float64, 8)]
+f_values = [sin(x) for x in cheb2_grid(Float64, 8)]
 f_coeffs = A * f_values
 
 # Transform back to physical space
 f_recovered = S * f_coeffs
 ```
 
-See also: [`cheb_grid`](@ref)
+See also: [`cheb2_grid`](@ref)
 """
 function cheb2_asmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     nm1 = n - 1
