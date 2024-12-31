@@ -1,4 +1,5 @@
 using GRSuite
+using SafeTestsets
 using Test
 using Aqua
 using JET
@@ -7,8 +8,10 @@ using JET
     @testset "Code quality (Aqua.jl)" begin
         Aqua.test_all(GRSuite)
     end
+
     @testset "Code linting (JET.jl)" begin
-        JET.test_package(GRSuite; target_defined_modules = true)
+        JET.test_package(GRSuite; target_defined_modules=true)
     end
-    # Write your tests here.
+
+    @time @safetestset "Chebyshev pseudospectral method" include("cheb_test.jl")
 end

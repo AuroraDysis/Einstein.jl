@@ -1,5 +1,5 @@
 module GRSuite
 
-# Write your package code here.
+include("cheb/cheb.jl")
 
 end
