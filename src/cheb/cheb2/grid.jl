@@ -22,6 +22,8 @@ For n > 1:
 These angles generate second-kind Chebyshev points via: x_k = -cos(θ_k)
 """
 function cheb2_angle(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    @argcheck n >= 0 "n must be nonnegative"
+
     if n == 0
         return TR[]
     elseif n == 1
@@ -84,10 +86,12 @@ x = cheb2_grid(5, 0.0, π)  # Same as above
 See also: [`cheb2_angle`](@ref), [`cheb1_grid`](@ref)
 """
 function cheb2_grid(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    @argcheck n >= 0 "n must be nonnegative"
+
     if n == 0
         return TR[]
     elseif n == 1
-        return [one(TR)]
+        return [zero(TR)]
     end
 
     x_grid = zeros(TR, n)

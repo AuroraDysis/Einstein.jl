@@ -19,6 +19,14 @@ Compute angles for Chebyshev points of the first kind.
 These angles generate first-kind Chebyshev points via: x_k = -cos(θ_k)
 """
 function cheb1_angle(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    @argcheck n >= 0 "n must be nonnegative"
+
+    if n == 0
+        return TR[]
+    elseif n == 1
+        return TR[convert(TR, π) / 2]
+    end
+
     θ = zeros(TR, n)
 
     pi_over_2n = convert(TR, pi) / (2 * n)
@@ -75,6 +83,14 @@ x = cheb1_grid(5, 0.0, 1.0)  # Same as above
 See also: [`cheb1_angle`](@ref), [`cheb2_grid`](@ref)
 """
 function cheb1_grid(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    @argcheck n >= 0 "n must be nonnegative"
+
+    if n == 0
+        return TR[]
+    elseif n == 1
+        return [zero(TR)]
+    end
+
     x_grid = zeros(TR, n)
 
     # Use symmetric indexing for better numerical properties
