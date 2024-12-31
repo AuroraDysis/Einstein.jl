@@ -35,8 +35,6 @@ x = fdm_grid(Float64, 0.0, 1.0, 0.1)
 dx = 2.0/99  # To get exactly 100 points
 x = fdm_grid(Float64, -1.0, 1.0, dx)
 ```
-
-See also: [`cheb1_grid`](@ref), [`cheb2_grid`](@ref)
 """
 function fdm_grid(::Type{TR}, x_min::TR, x_max::TR, dx::TR) where {TR<:AbstractFloat}
     n = round(Int, (x_max - x_min) / dx) + 1

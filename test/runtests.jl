@@ -14,4 +14,5 @@ using JET
     end
 
     @time @safetestset "Chebyshev pseudospectral method" include("cheb_test.jl")
+    @time @safetestset "Finite difference method" include("fdm_test.jl")
 end

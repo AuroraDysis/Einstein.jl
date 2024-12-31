@@ -4,7 +4,7 @@ using DocumenterCitations
 
 DocMeta.setdocmeta!(GRSuite, :DocTestSetup, :(using GRSuite); recursive=true)
 
-bib = CitationBibliography(joinpath(@__DIR__, "src/refs.bib"))
+bib = CitationBibliography(joinpath(@__DIR__, "src/refs.bib"); style=:alpha)
 
 makedocs(;
     modules=[GRSuite],
