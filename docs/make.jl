@@ -3,6 +3,8 @@ using Documenter
 
 DocMeta.setdocmeta!(GRSuite, :DocTestSetup, :(using GRSuite); recursive=true)
 
+bib = CitationBibliography(joinpath(@__DIR__, "src/refs.bib"))
+
 makedocs(;
     modules=[GRSuite],
     authors="Zhen Zhong <auroradysis@gmail.com> and contributors",
@@ -12,12 +14,8 @@ makedocs(;
         edit_link="main",
         assets=String[],
     ),
-    pages=[
-        "Home" => "index.md",
-    ],
+    pages=["Home" => "index.md"],
+    plugins=[bib],
 )
 
-deploydocs(;
-    repo="github.com/AuroraDysis/GRSuite.jl",
-    devbranch="main",
-)
+deploydocs(; repo="github.com/AuroraDysis/GRSuite.jl", devbranch="main")

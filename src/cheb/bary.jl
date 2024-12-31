@@ -1,4 +1,3 @@
-# [@chebtech2/barywts.m](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/barywts.m)
 """
     cheb2_interp_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
 
@@ -45,8 +44,6 @@ function cheb2_interp_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Intege
     return w
 end
 
-# Barycentric Lagrange Interpolation
-# [@chebtech2/bary.m](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/bary.m)
 """
     cheb2_interp(w::VT1, x::VT2, f::VT3, x0::TR) where {
         TR<:AbstractFloat,
@@ -95,10 +92,8 @@ y = cheb2_interp(w, x, f, x0)
 ```
 
 # References
-1. Berrut, J.-P. and Trefethen, L.N. "Barycentric Lagrange Interpolation"
-   SIAM Review, Vol. 46, No. 3, pp. 501-517 (2004)
-2. Trefethen, L.N. "Approximation Theory and Approximation Practice"
-   SIAM, Chapter 5 (2013)
+1. [salzer1972lagrangian](@cite)
+2. [chebfun/@chebtech2/bary.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/bary.m)
 
 See also: [`cheb2_interp_wts`](@ref), [`cheb2_grid`](@ref)
 """
