@@ -59,6 +59,7 @@ w_f, w_d = fornberg_calculate_weights(3, 0.0, x, dfdx=true)
 
 - [fornberg1988generation](@citet*)
 - [fornberg2021algorithm](@citet*)
+- [doi:10.1137/S0036144596322507](@citet*)
 - [MethodOfLines.jl/src/discretization/schemes/fornberg_calculate_weights.jl at master · SciML/MethodOfLines.jl](https://github.com/SciML/MethodOfLines.jl/blob/master/src/discretization/schemes/fornberg_calculate_weights.jl)
 - [precision - Numerical derivative and finite difference coefficients: any update of the Fornberg method? - Computational Science Stack Exchange](https://scicomp.stackexchange.com/questions/11249/numerical-derivative-and-finite-difference-coefficients-any-update-of-the-fornb)
 
