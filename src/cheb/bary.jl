@@ -1,5 +1,5 @@
 """
-    cheb2_interp_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    cheb2_interp_wts([TR=Float64], n::Integer)
 
 Compute the barycentric weights for Chebyshev points of the second kind.
 
@@ -42,6 +42,10 @@ function cheb2_interp_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Intege
     end
 
     return w
+end
+
+function cheb2_interp_wts(n::TI) where {TI<:Integer}
+    return cheb2_interp_wts(Float64, n)
 end
 
 """

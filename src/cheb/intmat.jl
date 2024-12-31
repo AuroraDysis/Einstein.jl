@@ -1,6 +1,6 @@
 """
-    cheb2_coeffs_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
-    cheb2_coeffs_intmat(::Type{TR}, n::TI, x_min::TR, x_max::TR) where {TR<:AbstractFloat,TI<:Integer}
+    cheb2_coeffs_intmat([TR=Float64], n::Integer)
+    cheb2_coeffs_intmat([TR=Float64], n::Integer, x_min::TR, x_max::TR)
 
 Generate the Chebyshev coefficient integration matrix for spectral integration.
 
@@ -86,6 +86,10 @@ function cheb2_coeffs_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Int
     return B
 end
 
+function cheb2_coeffs_intmat(n::TI) where {TI<:Integer}
+    return cheb2_coeffs_intmat(Float64, n)
+end
+
 # Second method documentation is inherited from the main docstring
 function cheb2_coeffs_intmat(
     ::Type{TR}, n::TI, x_min::TR, x_max::TR
@@ -95,9 +99,13 @@ function cheb2_coeffs_intmat(
     return B
 end
 
+function cheb2_coeffs_intmat(n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
+    return cheb2_coeffs_intmat(Float64, n, x_min, x_max)
+end
+
 """
-    cheb2_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
-    cheb2_intmat(::Type{TR}, n::TI, x_min::TR, x_max::TR) where {TR<:AbstractFloat,TI<:Integer}
+    cheb2_intmat([TR=Float64], n::Integer)
+    cheb2_intmat([TR=Float64], n::Integer, x_min::TR, x_max::TR)
 
 Generate the Chebyshev integration matrix that operates directly on function values.
 
@@ -152,6 +160,10 @@ function cheb2_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     return S * B * A
 end
 
+function cheb2_intmat(n::TI) where {TI<:Integer}
+    return cheb2_intmat(Float64, n)
+end
+
 # Second method documentation is inherited from the main docstring
 function cheb2_intmat(
     ::Type{TR}, n::TI, x_min::TR, x_max::TR
@@ -159,6 +171,10 @@ function cheb2_intmat(
     A, S = cheb2_asmat(TR, n)
     B = cheb2_coeffs_intmat(TR, n, x_min, x_max)
     return S * B * A
+end
+
+function cheb2_intmat(n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
+    return cheb2_intmat(Float64, n, x_min, x_max)
 end
 
 export cheb2_coeffs_intmat, cheb2_intmat

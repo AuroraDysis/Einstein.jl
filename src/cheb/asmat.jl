@@ -1,5 +1,5 @@
 """
-    cheb2_asmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    cheb2_asmat([TR=Float64], n::Integer)
 
 Generate the analysis and synthesis matrices for Chebyshev spectral methods.
 
@@ -86,6 +86,10 @@ function cheb2_asmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     end
 
     return A, S
+end
+
+function cheb2_asmat(n::TI) where {TI<:Integer}
+    return cheb2_asmat(Float64, n)
 end
 
 export cheb2_asmat
