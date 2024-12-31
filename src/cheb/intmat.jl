@@ -1,6 +1,6 @@
 """
-    cheb_coeffs_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
-    cheb_coeffs_intmat(::Type{TR}, n::TI, x_min::TR, x_max::TR) where {TR<:AbstractFloat,TI<:Integer}
+    cheb2_coeffs_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    cheb2_coeffs_intmat(::Type{TR}, n::TI, x_min::TR, x_max::TR) where {TR<:AbstractFloat,TI<:Integer}
 
 Generate the Chebyshev coefficient integration matrix for spectral integration.
 
@@ -40,10 +40,10 @@ When `x_min` and `x_max` are provided, the matrix is scaled for integration over
 # Examples
 ```julia
 # Generate 8×8 integration matrix for [-1,1]
-B = cheb_coeffs_intmat(Float64, 8)
+B = cheb2_coeffs_intmat(Float64, 8)
 
-# Get Chebyshev coefficients of sin(x) using cheb_asmat
-A, _ = cheb_asmat(Float64, 8)
+# Get Chebyshev coefficients of sin(x) using cheb2_asmat
+A, _ = cheb2_asmat(Float64, 8)
 x = cheb_grid(Float64, 8)
 f = sin.(x)
 a = A * f  # Chebyshev coefficients of sin(x)
@@ -52,9 +52,9 @@ a = A * f  # Chebyshev coefficients of sin(x)
 b = B * a  # Chebyshev coefficients of -cos(x) + C
 ```
 
-See also: [`cheb_grid`](@ref), [`cheb_asmat`](@ref)
+See also: [`cheb_grid`](@ref), [`cheb2_asmat`](@ref)
 """
-function cheb_coeffs_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+function cheb2_coeffs_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     nm1 = n - 1
 
     B = zeros(TR, n, n)
@@ -87,12 +87,78 @@ function cheb_coeffs_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Inte
 end
 
 # Second method documentation is inherited from the main docstring
-function cheb_coeffs_intmat(
+function cheb2_coeffs_intmat(
     ::Type{TR}, n::TI, x_min::TR, x_max::TR
 ) where {TR<:AbstractFloat,TI<:Integer}
-    B = cheb_coeffs_intmat(TR, n)
+    B = cheb2_coeffs_intmat(TR, n)
     B .*= (x_max - x_min) / 2
     return B
 end
 
-export cheb_coeffs_intmat
+"""
+    cheb2_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    cheb2_intmat(::Type{TR}, n::TI, x_min::TR, x_max::TR) where {TR<:AbstractFloat,TI<:Integer}
+
+Generate the Chebyshev integration matrix that operates directly on function values.
+
+# Arguments
+- `TR`: Type parameter for the matrix elements (e.g., Float64)
+- `n`: Size of the matrix (n×n)
+- `x_min`: (Optional) Lower bound of the integration interval
+- `x_max`: (Optional) Upper bound of the integration interval
+
+# Returns
+- `Matrix{TR}`: The integration matrix that operates on function values
+
+# Mathematical Background
+This matrix directly computes the indefinite integral of a function from its values
+at Chebyshev points. For a function ``f(x)``, the integral is computed as:
+
+```math
+\\int f(x)\\,dx = \\mathbf{I}f
+```
+
+where ``\\mathbf{I} = S B A`` is the integration matrix composed of:
+- ``A``: Analysis matrix (transform to spectral coefficients)
+- ``B``: Coefficient integration matrix
+- ``S``: Synthesis matrix (transform back to physical space)
+
+This composition allows integration in physical space through:
+1. Transform to spectral space (A)
+2. Integrate coefficients (B)
+3. Transform back to physical space (S)
+
+# Examples
+```julia
+# Generate 8×8 integration matrix for [-1,1]
+I = cheb2_intmat(Float64, 8)
+
+# Get function values at Chebyshev points
+x = cheb_grid(Float64, 8)
+f = sin.(x)
+
+# Compute indefinite integral (-cos(x) + C)
+F = I * f
+
+# Integration matrix for [0,π]
+I_scaled = cheb2_intmat(Float64, 8, 0.0, π)
+```
+
+See also: [`cheb2_coeffs_intmat`](@ref), [`cheb2_asmat`](@ref), [`cheb_grid`](@ref)
+"""
+function cheb2_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    A, S = cheb2_asmat(TR, n)
+    B = cheb2_coeffs_intmat(TR, n)
+    return S * B * A
+end
+
+# Second method documentation is inherited from the main docstring
+function cheb2_intmat(
+    ::Type{TR}, n::TI, x_min::TR, x_max::TR
+) where {TR<:AbstractFloat,TI<:Integer}
+    A, S = cheb2_asmat(TR, n)
+    B = cheb2_coeffs_intmat(TR, n, x_min, x_max)
+    return S * B * A
+end
+
+export cheb2_coeffs_intmat, cheb2_intmat

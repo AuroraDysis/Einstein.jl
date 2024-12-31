@@ -1,5 +1,5 @@
 """
-    cheb_asmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    cheb2_asmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
 
 Generate the analysis and synthesis matrices for Chebyshev spectral methods.
 
@@ -35,7 +35,7 @@ where:
 # Examples
 ```julia
 # Generate 8×8 analysis and synthesis matrices with Float64 precision
-A, S = cheb_asmat(Float64, 8)
+A, S = cheb2_asmat(Float64, 8)
 
 # Transform function values to spectral coefficients
 f_values = [sin(x) for x in cheb_grid(Float64, 8)]
@@ -47,7 +47,7 @@ f_recovered = S * f_coeffs
 
 See also: [`cheb_grid`](@ref)
 """
-function cheb_asmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+function cheb2_asmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     nm1 = n - 1
 
     # analysis matrix
