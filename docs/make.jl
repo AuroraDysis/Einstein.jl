@@ -15,7 +15,11 @@ makedocs(;
         edit_link="main",
         assets=String[],
     ),
-    pages=["Home" => "index.md", "Chebyshev Suite" => "cheb.md"],
+    pages=[
+        "Home" => "index.md",
+        "Chebyshev Suite" => "cheb.md",
+        "Finite Difference Suite" => "fdm.md",
+    ],
     plugins=[bib],
 )
 

@@ -4,10 +4,12 @@ authors = ["Zhen Zhong <auroradysis@gmail.com> and contributors"]
 version = "1.0.0-DEV"
 
 [deps]
+ArgCheck = "dce04be8-c92d-5529-be00-80e4d2c0e197"
 FastBroadcast = "7034ab61-46d4-4ed7-9d0f-46aef9175898"
 
 [compat]
 Aqua = "0.8.9"
+ArgCheck = "2.4.0"
 FastBroadcast = "0.3.5"
 JET = "0.9.12"
 SafeTestsets = "0.1.0"

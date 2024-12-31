@@ -1,4 +1,4 @@
-# Chebyshev pseudospectral method
+# Chebyshev Suite
 
 ```@index
 Modules = [GRSuite.ChebyshevSuite]
