@@ -69,18 +69,34 @@ function cheb2_quad_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
         return TR[2]
     end
 
-    # Exact integrals of T_k (even k)
-    c = [TR(2) / (1 - k^2) for k in [0; 2:2:(n - 1)]]
+    nm1 = n - 1
 
-    # Mirror for DCT via FFT
-    append!(c, c[floor(Int, n / 2):-1:2])
+    # Pre-allocate the full array for FFT
+    c = zeros(Complex{TR}, nm1)
 
-    # Compute weights via inverse FFT
-    w = real.(ifft(c))
+    # Fill exact integrals of T_k (even k)
+    @inbounds c[1] = TR(2)  # k = 0 case
+    nm2 = n - 2
+    @inbounds for k in 2:2:nm2
+        c[k ÷ 2 + 1] = 2 / (one(TR) - k^2)
+    end
 
-    # Adjust boundary weights
-    w[1] /= 2
-    append!(w, w[1])
+    # Mirror for DCT via FFT (in-place)
+    half_idx = floor(Int, n / 2)
+    @inbounds for i in 2:half_idx
+        c[n - i + 1] = c[i]
+    end
+
+    # Compute weights via inverse FFT (in-place)
+    ifft!(c)
+
+    # Adjust boundary weights (in-place)
+    w = zeros(TR, n)
+    @inbounds begin
+        w[1] = real(c[1]) / 2
+        w[n] = real(c[1]) / 2
+    end
+    w[2:(n - 1)] .= real.(@view(c[2:nm1]))
 
     return w
 end
