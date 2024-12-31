@@ -5,13 +5,17 @@ version = "1.0.0-DEV"
 
 [deps]
 ArgCheck = "dce04be8-c92d-5529-be00-80e4d2c0e197"
+FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
 FastBroadcast = "7034ab61-46d4-4ed7-9d0f-46aef9175898"
+FastTransforms = "057dd010-8810-581a-b7be-e3fc3b93f78c"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [compat]
 Aqua = "0.8.9"
 ArgCheck = "2.4.0"
+FFTW = "1.8.0"
 FastBroadcast = "0.3.5"
+FastTransforms = "0.16.8"
 JET = "0.9.12"
 LinearAlgebra = "1.11.0"
 SafeTestsets = "0.1.0"
