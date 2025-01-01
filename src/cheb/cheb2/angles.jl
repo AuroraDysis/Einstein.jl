@@ -44,7 +44,7 @@ end
 
 export cheb2_angles
 
-@testset "cheb2_pts" begin
+@testset "cheb2_angles" begin
     @testset "n = 5" begin
         n = 5
         θ = cheb2_angles(n)
