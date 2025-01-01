@@ -161,7 +161,7 @@ end
 
 export cheb1_vals2coeffs, cheb1_vals2coeffs!, Cheb1Vals2CoeffsCache
 
-@testset "Cheb1 vals2coeffs tests" begin
+@testset "cheb1_vals2coeffs" begin
     tol = 100 * eps()
 
     @testset "Single value conversion" begin

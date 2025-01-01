@@ -81,6 +81,8 @@ function cheb1_pts(n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
     return cheb1_pts(Float64, n, x_min, x_max)
 end
 
+export cheb1_pts
+
 @testset "cheb1_pts" begin
     @testset "n = 5" begin
         n = 5

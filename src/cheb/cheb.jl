@@ -7,8 +7,11 @@ using FFTW
 using FastTransforms
 using ArgCheck: @argcheck
 using FastBroadcast: @..
+using LinearAlgebra
 
-include("utils.jl")
+include("utils/bary.jl")
+include("utils/fft.jl")
+include("utils/cumsum.jl")
 
 include("cheb1/angles.jl")
 include("cheb1/pts.jl")
