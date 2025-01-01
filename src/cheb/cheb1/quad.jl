@@ -69,24 +69,32 @@ function cheb1_quad_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
 
     # Preallocate the array m for the moments
     evens = 2:2:(n - 1)
-    m = zeros(TR, length(evens) + 1)
-    @inbounds m[1] = 2 / one(TR)  # Corresponds to k=0
-    @inbounds for (i, k) in enumerate(evens)
-        # m[i+1] = 1 - k^2
-        m[i + 1] = 2 / (one(TR) - k^2)
+    nm = length(evens) + 1
+    m = Vector{TR}(undef, nm)
+    @inbounds begin
+        m[1] = 2 / one(TR)  # Corresponds to k=0
+        for (i, k) in enumerate(evens)
+            # m[i+1] = 1 - k^2
+            m[i + 1] = 2 / (one(TR) - k^2)
+        end
     end
 
     # Preallocate the coefficient array for FFT
-    c = zeros(Complex{TR}, n)
-    c[1:length(m)] .= m
+    c = Vector{Complex{TR}}(undef, n)
+    copy!(@view(c[1:nm]), m)
 
-    # Fill the coefficient array based on parity of n
+    # Fill remaining coefficients based on parity of n
     if isodd(n)
-        # For odd n: c = [m..., -reverse(m[(n+1)/2 : 2])]
-        c[(length(m) + 1):end] .= -@view(m[div(n + 1, 2):-1:2])
+        start_idx = div(n + 1, 2)
+        @inbounds for i in (nm + 1):n
+            c[i] = -m[start_idx - i + nm + 1]
+        end
     else
-        # For even n: c = [m..., 0, -reverse(m[n/2 : 2])]
-        c[(length(m) + 2):end] .= -@view(m[div(n, 2):-1:2])
+        start_idx = div(n, 2)
+        c[nm + 1] = 0
+        @inbounds for i in (nm + 2):n
+            c[i] = -m[start_idx - i + nm + 2]
+        end
     end
 
     # Multiply by rotation factors exp(1im*(0:n-1)*π/n)
