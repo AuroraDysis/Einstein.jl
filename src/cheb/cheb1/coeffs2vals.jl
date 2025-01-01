@@ -1,17 +1,17 @@
-using FFTW: fft, ifft
-using FastTransforms: fft, ifft
-
 """
     cheb1_coeffs2vals(coeffs::AbstractVector{<:AbstractFloat}) -> Vector
+    cheb1_coeffs2vals!(coeffs, cache::Cheb1Coeffs2ValsCache) -> Vector
 
-Convert Chebyshev coefficients of the first kind to values at Chebyshev nodes using a DCT-III equivalent
-transform.
+Convert Chebyshev coefficients of the first kind to values at Chebyshev nodes.
+
+# Performance Guide
+For best performance, especially in loops or repeated calls:
+1. Create a cache: `cache = Cheb1Coeffs2ValsCache{Float64}(n)`
+2. Use the in-place version: `cheb1_coeffs2vals!(coeffs, cache)`
 
 # Arguments
-- `coeffs::AbstractVector{<:AbstractFloat}`: Vector of Chebyshev coefficients in descending order
-
-# Returns
-- Vector of values at Chebyshev nodes of the first kind: cos((2j+1)π/(2n)), j = 0,1,...,n-1
+- `coeffs::AbstractVector{<:AbstractFloat}`: Chebyshev coefficients in descending order
+- `cache::Cheb1Coeffs2ValsCache`: Pre-allocated workspace (for in-place version)
 
 # Mathematical Background
 The function implements the transform from coefficient space to physical space for Chebyshev
@@ -59,53 +59,102 @@ See also: [`cheb2_coeffs2vals`](@ref)
 """
 function cheb1_coeffs2vals(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
     n = length(coeffs)
-
-    # Trivial case (constant polynomial)
     if n <= 1
         return deepcopy(coeffs)
     end
 
-    # Check for symmetry:
-    # Columns where all even-indexed coeffs are zero => function is even
+    cache = Cheb1Coeffs2ValsCache{TR}(n)
+    cheb1_coeffs2vals!(coeffs, cache)
+
+    return cache.vals
+end
+
+struct Cheb1Coeffs2ValsCache{TR}
+    w::Vector{Complex{TR}}    # Weight vector
+    tmp::Vector{Complex{TR}}  # Temporary storage
+    vals::Vector{TR}         # Result storage
+
+    function Cheb1Coeffs2ValsCache{TR}(n::Integer) where {TR<:AbstractFloat}
+        # Precompute weights
+        w = Vector{Complex{TR}}(undef, 2n)
+        @inbounds begin
+            m_im_pi_over_2n = -im * convert(TR, π) / (2n)
+            for k in 0:(n - 1)
+                w[k + 1] = exp(k * m_im_pi_over_2n) / 2
+            end
+            w[1] *= 2
+            w[n + 1] = 0
+            for k in (n + 1):(2n - 1)
+                w[k + 1] = -exp(k * m_im_pi_over_2n) / 2
+            end
+        end
+        return new(w, zeros(Complex{TR}, 2n), zeros(TR, n))
+    end
+end
+
+function cheb1_coeffs2vals!(
+    coeffs::VT, cache::Cheb1Coeffs2ValsCache{TR}
+) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+    n = length(coeffs)
+    if n <= 1
+        return coeffs
+    end
+
+    w = cache.w
+    tmp = cache.tmp
+    vals = cache.vals
+
+    # Check for symmetry
     isEven = all(x -> x ≈ 0, @view(coeffs[2:2:end]))
-    # Columns where all odd-indexed coeffs are zero => function is odd
     isOdd = all(x -> x ≈ 0, @view(coeffs[1:2:end]))
 
-    w = [exp(-im * (k) * pi / (2n)) / 2 for k in 0:(2n - 1)]
-    w[1] = 2 * w[1]
-    w[n + 1] = 0
-    for k in (n + 2):(2n)
-        w[k] = -w[k]
+    # Copy coefficients and mirror
+    @inbounds begin
+        # First half: original coefficients
+        for i in 1:n
+            tmp[i] = coeffs[i]
+        end
+        # Second half: mirrored coefficients
+        tmp[n + 1] = 1
+        for i in (n + 2):(2n)
+            tmp[i] = coeffs[2n - i + 2]
+        end
     end
 
-    # Mirror the coeffs for FFT:
-    # c_mirror = [ coeffs; ones(1,m); flipud(coeffs[2:end, :]) ]
-    # In Julia, vcat is used to stack arrays vertically:
-    c_mirror = vcat(coeffs, ones(1), reverse(@view(coeffs[2:end])))
+    # Apply weights and FFT
+    @inbounds begin
+        # Apply weights
+        for i in eachindex(tmp)
+            tmp[i] *= w[i]
+        end
 
-    # Apply the weight vector:
-    # c_weight = bsxfun(@times, c_mirror, w)
-    # We can broadcast directly in Julia:
-    c_weight = c_mirror .* w
-
-    # Perform FFT:
-    values = fft(c_weight)  # 1 indicates along the first dimension
-
-    # Truncate and flip the order (n:-1:1 in MATLAB):
-    # In Julia, we can reverse the array along dimension 1 and then take the first n rows.
-    values = reverse(@view(values[1:n]))
-
-    # Post-process to handle real and imaginary inputs:
-    values = real.(values)
-
-    # Enforce symmetry
-    if isEven
-        values = (values + reverse(values)) ./ 2
-    elseif isOdd
-        values = (values .- reverse(values)) ./ 2
+        # FFT
+        fft!(tmp)
     end
 
-    return values
+    # Extract real values
+    @inbounds for i in 1:n
+        vals[i] = real(tmp[n - i + 1])
+    end
+
+    # Enforce symmetry if needed
+    if isEven || isOdd
+        half = one(TR) / 2
+        @inbounds for i in 1:div(n, 2)
+            j = n - i + 1
+            if isEven
+                s = vals[i] + vals[j]
+                vals[i] = half * s
+                vals[j] = half * s
+            else
+                d = vals[i] - vals[j]
+                vals[i] = half * d
+                vals[j] = -half * d
+            end
+        end
+    end
+
+    return vals
 end
 
 export cheb1_coeffs2vals
