@@ -105,17 +105,6 @@ function cheb1_quad_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     return w
 end
 
-"""
-    cheb1_quad_wts(n::TI) where {TI<:Integer}
-
-Compute the quadrature weights for Chebyshev points of the first kind using Float64 precision.
-
-# Arguments
-- `n::Integer`: The number of Chebyshev points.
-
-# Returns
-- `Vector{Float64}`: A vector of quadrature weights.
-"""
 function cheb1_quad_wts(n::TI) where {TI<:Integer}
     return cheb1_quad_wts(Float64, n)
 end
