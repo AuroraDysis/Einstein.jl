@@ -72,16 +72,6 @@ end
 
 # Add callable interface
 function (op::ChebCumsumOp{TR})(f::Vector{TR}) where {TR<:AbstractFloat}
-    return cumsum!(f, op)
-end
-
-function cumsum(f::Vector{TR}) where {TR<:AbstractFloat}
-    n = length(f)
-    op = ChebCumsumOp{TR}(n)
-    return op(f)
-end
-
-function cumsum!(f::Vector{TR}, op::ChebCumsumOp{TR}) where {TR<:AbstractFloat}
     n = length(f)
     tmp = op.tmp
     result = op.result
@@ -114,6 +104,12 @@ function cumsum!(f::Vector{TR}, op::ChebCumsumOp{TR}) where {TR<:AbstractFloat}
     end
 
     return result
+end
+
+function cumsum(f::Vector{TR}) where {TR<:AbstractFloat}
+    n = length(f)
+    op = ChebCumsumOp{TR}(n)
+    return op(f)
 end
 
 export cumsum, ChebCumsumOp
