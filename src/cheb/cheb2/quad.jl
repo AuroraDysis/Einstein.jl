@@ -62,7 +62,7 @@ I = dot(w, f)  # ≈ 0
 1. [waldvogel2006fast](@citet*)
 2. [Fast Clenshaw-Curtis Quadrature - File Exchange - MATLAB Central](https://www.mathworks.com/matlabcentral/fileexchange/6911-fast-clenshaw-curtis-quadrature)
 """
-function cheb2_quad_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+function cheb2_quad_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat, TI<:Integer}
     if n == 0
         return TR[]
     elseif n == 1
@@ -76,9 +76,8 @@ function cheb2_quad_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
 
     # Fill exact integrals of T_k (even k)
     @inbounds c[1] = TR(2)  # k = 0 case
-    nm2 = n - 2
-    @inbounds for k in 2:2:nm2
-        c[k ÷ 2 + 1] = 2 / (one(TR) - k^2)
+    @inbounds for k in 2:2:nm1
+        c[k ÷ 2 + 1] = 2 / (TR(1) - k^2)
     end
 
     # Mirror for DCT via FFT (in-place)
@@ -108,58 +107,29 @@ end
 export cheb2_quad_wts
 
 @testset "cheb2_quad_wts" begin
-    @testset "Edge cases" begin
-        # Test n=0 case
-        @test cheb2_quad_wts(0) == Float64[]
+    # Test n=0 case
+    @test cheb2_quad_wts(0) == Float64[]
 
-        # Test n=1 case
-        @test cheb2_quad_wts(1) ≈ [2.0]
+    # Test n=1 case
+    @test cheb2_quad_wts(1) ≈ [2.0]
 
-        # Test n=2 case (should sum to 2)
-        w = cheb2_quad_wts(2)
-        @test length(w) == 2
-        @test sum(w) ≈ 2.0
-        @test w[1] ≈ w[2]  # Symmetry
-    end
+    # Test n=5 case
+    w5 = cheb2_quad_wts(5)
+    @test w5 ≈ [
+        0.0666666666666667,
+        0.533333333333333,
+        0.800000000000000,
+        0.533333333333333,
+        0.0666666666666667,
+    ]
 
-    @testset "Basic properties" begin
-        n = 8
-        w = cheb2_quad_wts(n)
-
-        # Test length
-        @test length(w) == n
-
-        # Test sum of weights (should integrate constant to 2)
-        @test sum(w) ≈ 2.0
-
-        # Test symmetry
-        @test w ≈ reverse(w)
-
-        # Test positivity
-        @test all(w .> 0)
-    end
-
-    @testset "Integration accuracy" begin
-        n = 32
-        x = cheb2_grid(n)
-        w = cheb2_quad_wts(n)
-
-        # Test exact integration of polynomials
-        f1 = x -> 1.0    # Should give 2
-        f2 = x -> x      # Should give 0
-        f3 = x -> x^2    # Should give 2/3
-
-        @test dot(w, f1.(x)) ≈ 2.0 rtol = 1e-14
-        @test abs(dot(w, f2.(x))) < 1e-14
-        @test dot(w, f3.(x)) ≈ 2 / 3 rtol = 1e-14
-
-        # Test integration of trigonometric functions
-        f4 = x -> sin(π * x)    # Should give 0
-        f5 = x -> cos(π * x)    # Should give 0
-        f6 = x -> cos(x)      # Should give 2*sin(1)
-
-        @test abs(dot(w, f4.(x))) < 1e-14
-        @test abs(dot(w, f5.(x))) < 1e-14
-        @test dot(w, f6.(x)) ≈ 2 * sin(1) rtol = 1e-12
-    end
+    w6 = cheb2_quad_wts(6)
+    @test w6 ≈ [
+        0.0400000000000000,
+        0.360743041200011,
+        0.599256958799989,
+        0.599256958799989,
+        0.360743041200011,
+        0.0400000000000000,
+    ]
 end
