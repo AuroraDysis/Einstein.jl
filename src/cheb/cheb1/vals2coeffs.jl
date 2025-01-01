@@ -6,14 +6,9 @@ Convert values sampled at Chebyshev points of the first kind into their correspo
 Chebyshev coefficients.
 
 # Performance Guide
-For best performance, especially in loops or repeated calls:
-```julia
-# Create operator
-op = Cheb1Vals2CoeffsOp{Float64}(n)
-
-# Operator-style
-coeffs = op(vals)
-```
+For optimal performance when performing multiple transformations:
+1. Create a reusable operator outside your computation loop
+2. Use the operator-style call syntax inside the loop
 
 # Description
 Given an input vector `vals` of length `n` representing function values at Chebyshev points

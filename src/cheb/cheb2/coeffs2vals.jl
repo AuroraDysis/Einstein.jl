@@ -1,59 +1,24 @@
 """
-    cheb2_coeffs2vals(coeffs::AbstractVector{<:AbstractFloat}) -> Vector
-    cheb2_coeffs2vals!(coeffs, cache::Cheb2Coeffs2ValsCache) -> Vector
+    cheb2_coeffs2vals(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
 
-Convert Chebyshev coefficients of the second kind to values at Chebyshev nodes using a DCT-I equivalent
-transform.
-
-# Performance Guide
-For best performance, especially in loops or repeated calls:
-1. Create a cache: `cache = Cheb2Coeffs2ValsCache{Float64}(n)`
-2. Use the in-place version: `cheb2_coeffs2vals!(coeffs, cache)`
-
-This avoids repeated memory allocations and can be significantly faster.
-
-# Examples
-```julia
-# Single transform (allocating version)
-julia> v = cheb2_coeffs2vals([1.0, 2.0])
-
-# Multiple transforms (cached version for better performance)
-julia> cache = Cheb2Coeffs2ValsCache{Float64}(2)
-julia> for coeffs in coefficient_arrays
-           v = cheb2_coeffs2vals!(coeffs, cache)
-           # ... use v ...
-       end
-```
+Convert Chebyshev coefficients of the second kind to values at Chebyshev points.
 
 # Arguments
-- `coeffs::AbstractVector{<:AbstractFloat}`: Vector of Chebyshev coefficients in descending order
-- `cache::Cheb2Coeffs2ValsCache`: Pre-allocated workspace (for in-place version)
+- `coeffs::AbstractVector{<:AbstractFloat}`: Vector of Chebyshev coefficients
 
 # Returns
-- Vector of values at Chebyshev nodes of the second kind: [`cheb2_pts`](@ref)
+- Vector of values at Chebyshev points of the second kind
 
-# Cache Creation
+# Description
+This function transforms Chebyshev coefficients to values at Chebyshev points using an FFT-based
+algorithm. For a polynomial of degree n-1, the transformation maps n coefficients to n values
+at the Chebyshev points of the second kind: cos(jπ/(n-1)) for j = 0:n-1.
+
+# Example
 ```julia
-# Create a cache for size n transforms
-cache = Cheb2Coeffs2ValsCache{Float64}(n)
+coeffs = [1.0, 2.0, 3.0]  # Chebyshev coefficients
+vals = cheb2_coeffs2vals(coeffs)  # Values at Chebyshev points
 ```
-
-# Mathematical Background
-The function implements the transform from coefficient space to physical space for Chebyshev
-polynomials of the second kind \$U_n(x)\$. The transformation preserves symmetries:
-- Even coefficients map to even functions
-- Odd coefficients map to odd functions
-
-# Implementation Details
-1. Scales interior coefficients by 1/2
-2. Mirrors coefficients and applies FFT
-3. Enforces even/odd symmetries in the result
-
-# References
-1. Trefethen, L. N. (2000). Spectral Methods in MATLAB. SIAM.
-2. Boyd, J. P. (2001). Chebyshev and Fourier Spectral Methods. Dover.
-
-See also: [`cheb1_coeffs2vals`](@ref), [`Cheb2Coeffs2ValsCache`](@ref)
 """
 function cheb2_coeffs2vals(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
     n = length(coeffs)
@@ -68,26 +33,17 @@ function cheb2_coeffs2vals(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVect
 end
 
 """
-    Cheb2Coeffs2ValsOp{T}
+    Cheb2Coeffs2ValsOp{TR<:AbstractFloat,TP<:Plan}
 
-Pre-allocated workspace for Chebyshev coefficient to values transformation.
-Using this cache can significantly improve performance when performing multiple transforms
-of the same size.
+A pre-planned operator for efficient conversion from Chebyshev coefficients to values.
 
 # Fields
-- `tmp::Vector{Complex{T}}`: Temporary storage for FFT computation
-- `vals::Vector{T}`: Storage for the final result
+- `tmp::Vector{Complex{TR}}`: Temporary storage for FFT computation
+- `vals::Vector{TR}`: Storage for the resulting values
+- `fft_plan::TP`: Pre-computed FFT plan for efficient transformation
 
-# Example
-```julia
-# Create cache for size 100 transforms
-cache = Cheb2Coeffs2ValsOp{Float64}(100)
-
-# Use cache repeatedly
-for i in 1:1000
-    vals = cheb2_coeffs2vals!(coeffs, cache)
-end
-```
+This struct provides a reusable transformation operator that avoids repeated memory allocation
+and FFT plan creation when performing multiple transformations of the same size.
 """
 struct Cheb2Coeffs2ValsOp{TR<:AbstractFloat,TP<:Plan}
     tmp::Vector{Complex{TR}}
@@ -106,9 +62,27 @@ struct Cheb2Coeffs2ValsOp{TR<:AbstractFloat,TP<:Plan}
     end
 end
 
-function (op::Cheb2Coeffs2ValsOp{TR,TP})(
-    coeffs::VT
-) where {TR<:AbstractFloat,VT<:AbstractVector{TR},TP<:Plan}
+"""
+    (op::Cheb2Coeffs2ValsOp{TR,TP})(coeffs::VT)
+
+Apply the Chebyshev coefficient to values transformation using a pre-planned operator.
+
+# Arguments
+- `coeffs::AbstractVector{<:AbstractFloat}`: Vector of Chebyshev coefficients
+
+# Returns
+- Vector of values at Chebyshev points
+
+# Implementation Details
+1. For n coefficients, creates a padded array of length 2n-2
+2. Applies symmetry to create the correct even/odd extension
+3. Performs FFT transformation
+4. Extracts and scales the real parts to obtain final values
+5. Enforces symmetry properties based on coefficient pattern:
+   - Even symmetry if even-indexed coefficients are zero
+   - Odd symmetry if odd-indexed coefficients are zero
+"""
+function (op::Cheb2Coeffs2ValsOp{TR,TP})(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR},TP<:Plan}
     n = length(coeffs)
     if n <= 1
         op.vals .= coeffs

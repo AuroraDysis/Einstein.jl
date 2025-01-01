@@ -1,55 +1,33 @@
 """
-    cheb2_vals2coeffs(vals::Vector{TR}) where {TR<:AbstractFloat}
-    op::Cheb2Vals2CoeffsOp{TR}(vals::Vector{TR}) -> Vector{TR}
+This module provides functionality to convert values at Chebyshev points of the second kind
+to Chebyshev coefficients using FFT-based methods. The implementation is optimized for 
+both performance and accuracy.
 
-Convert values sampled at Chebyshev points of the second kind into their corresponding
+The main functions are:
+- `cheb2_vals2coeffs`: Convert values to coefficients (functional style)
+- `Cheb2Vals2CoeffsOp`: Operator version for repeated conversions
+
+The transformation preserves symmetries in the input data and handles both even and odd
+symmetric functions appropriately.
+"""
+
+"""
+    Cheb2Vals2CoeffsOp{TR<:AbstractFloat,TP<:Plan}
+
+An operator type for converting values at Chebyshev points of the second kind to
 Chebyshev coefficients.
 
-# Performance Guide
-For best performance, especially in loops or repeated calls:
-```julia
-# Create operator
-op = Cheb2Vals2CoeffsOp{Float64}(n)
+# Fields
+- `tmp::Vector{Complex{TR}}`: Temporary storage for FFT computations
+- `coeffs::Vector{TR}`: Storage for the resulting coefficients
+- `ifft_plan::TP`: Pre-computed IFFT plan for efficient transforms
 
-# Operator-style
+# Example
+```julia
+n = 100
+vals = rand(n)
+op = Cheb2Vals2CoeffsOp(Float64, n)
 coeffs = op(vals)
-```
-
-# Description
-Given an input vector `vals` of length `n` representing function values at Chebyshev points
-of the second kind, this computes the Chebyshev coefficients `c` such that:
-
-    f(x) = c[1]*T₀(x) + c[2]*T₁(x) + ... + c[n]*Tₙ₋₁(x)
-    
-where Tₖ(x) are the Chebyshev polynomials of the first kind. Internally, this function:
-
-1. Detects trivial cases (e.g. `n <= 1`).
-2. Constructs a mirror of the input values to emulate an inverse DCT using FFT.
-3. Performs an inverse FFT and rescales the interior coefficients by 2.
-4. Enforces exact symmetries (even/odd) where detected.
-
-# Arguments
-- `vals::Vector{TR}`: Values at Chebyshev points of the second kind
-- `op::Cheb2Vals2CoeffsOp{TR}`: Pre-allocated operator for transformation
-
-# Returns
-- Vector of Chebyshev coefficients
-
-# Examples
-```julia
-# Single transformation
-vals = [0.0, 1.0, 2.0, 1.0, 0.0]
-coeffs = cheb2_vals2coeffs(vals)
-
-# Multiple transformations (recommended for performance)
-n = length(vals)
-op = Cheb2Vals2CoeffsOp{Float64}(n)
-
-# Operator-style usage for best performance
-for i in 1:100
-    coeffs = op(vals)
-    # ... use coeffs ...
-end
 ```
 """
 struct Cheb2Vals2CoeffsOp{TR<:AbstractFloat,TP<:Plan}
@@ -57,6 +35,19 @@ struct Cheb2Vals2CoeffsOp{TR<:AbstractFloat,TP<:Plan}
     coeffs::Vector{TR}
     ifft_plan::TP
 
+    """
+        Cheb2Vals2CoeffsOp(::Type{TR}, n::Integer) where {TR<:AbstractFloat}
+        Cheb2Vals2CoeffsOp(n::Integer)
+
+    Construct a values-to-coefficients operator for n points.
+
+    # Arguments
+    - `TR`: Element type for computations (defaults to Float64)
+    - `n`: Number of points/coefficients
+
+    # Returns
+    - A new `Cheb2Vals2CoeffsOp` instance
+    """
     function Cheb2Vals2CoeffsOp(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
         tmp = zeros(Complex{TR}, 2n - 2)
         coeffs = zeros(TR, n)
@@ -69,6 +60,27 @@ struct Cheb2Vals2CoeffsOp{TR<:AbstractFloat,TP<:Plan}
     end
 end
 
+"""
+    (op::Cheb2Vals2CoeffsOp)(vals::AbstractVector)
+
+Convert values at Chebyshev points to coefficients using a pre-allocated operator.
+
+# Arguments
+- `vals`: Vector of values at Chebyshev points of the second kind
+
+# Returns
+- Vector of Chebyshev coefficients
+
+# Details
+The function performs these steps:
+1. Checks for trivial cases (n ≤ 1)
+2. Detects symmetries in the input data
+3. Mirrors the values for FFT processing
+4. Applies IFFT and extracts real coefficients
+5. Enforces detected symmetries in the result
+
+The transformation preserves both even and odd symmetries if present in the input data.
+"""
 function (op::Cheb2Vals2CoeffsOp{TR,TP})(
     vals::AbstractVector{TR}
 ) where {TR<:AbstractFloat,TP<:Plan}
@@ -129,6 +141,26 @@ function (op::Cheb2Vals2CoeffsOp{TR,TP})(
     return op.coeffs
 end
 
+"""
+    cheb2_vals2coeffs(vals::AbstractVector)
+
+Convert values at Chebyshev points of the second kind to Chebyshev coefficients.
+
+# Arguments
+- `vals`: Vector of values at Chebyshev points
+
+# Returns
+- Vector of Chebyshev coefficients
+
+# Example
+```julia
+vals = [1.0, 2.0, 3.0, 4.0, 5.0]
+coeffs = cheb2_vals2coeffs(vals)
+```
+
+This is a convenience wrapper around `Cheb2Vals2CoeffsOp` for one-off conversions.
+For repeated conversions with the same size, create and reuse a `Cheb2Vals2CoeffsOp`.
+"""
 function cheb2_vals2coeffs(vals::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
     n = length(vals)
     if n <= 1
