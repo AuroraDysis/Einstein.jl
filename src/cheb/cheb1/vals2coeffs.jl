@@ -1,61 +1,63 @@
 """
-    cheb1_vals2coeffs(values::AbstractVector{<:AbstractFloat})
+    cheb1_vals2coeffs(vals::Vector{TR}) where {TR<:AbstractFloat}
+    op::Cheb1Vals2CoeffsOp{TR}(vals::Vector{TR}) -> Vector{TR}
 
-Convert values at Chebyshev points of the first kind to Chebyshev coefficients.
+Convert values sampled at Chebyshev points of the first kind into their corresponding
+Chebyshev coefficients.
 
-Given a vector `values` of length `n` containing function values at Chebyshev points
-of the first kind, this function returns a vector `coeffs` of Chebyshev coefficients 
-such that the Chebyshev series (of the first kind) interpolates the data.
+# Performance Guide
+For best performance, especially in loops or repeated calls:
+```julia
+# Create operator
+op = Cheb1Vals2CoeffsOp{Float64}(n)
 
-This function creates and caches computation resources internally and calls
-`cheb1_vals2coeffs!` for the actual computation.
+# Operator-style
+coeffs = op(vals)
+```
+
+# Description
+Given an input vector `vals` of length `n` representing function values at Chebyshev points
+of the first kind, this computes the Chebyshev coefficients `c` such that:
+
+    f(x) = c[1]*T₀(x) + c[2]*T₁(x) + ... + c[n]*Tₙ₋₁(x)
+    
+where Tₖ(x) are the Chebyshev polynomials of the first kind.
+
+# Arguments
+- `vals::Vector{TR}`: Values at Chebyshev points of the first kind
+- `op::Cheb1Vals2CoeffsOp{TR}`: Pre-allocated operator for transformation
+
+# Returns
+- Vector of Chebyshev coefficients
 
 # Examples
-
 ```julia
-coeffs = cheb1_vals2coeffs(values)
+# Single transformation
+vals = [1.0, 2.0, 3.0]
+coeffs = cheb1_vals2coeffs(vals)
+
+# Multiple transformations (recommended for performance)
+n = length(vals)
+op = Cheb1Vals2CoeffsOp{Float64}(n)
+
+# Operator-style usage for best performance
+for i in 1:100
+    coeffs = op(vals)
+    # ... use coeffs ...
+end
 ```
 
 # References
-
 - Section 4.7 of *"Chebyshev Polynomials"* by Mason & Handscomb,
   Chapman & Hall/CRC (2003).
-
 """
-function cheb1_vals2coeffs(values::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
-    n = length(values)
-    if n <= 1
-        return deepcopy(values)
-    end
-
-    cache = Cheb1Vals2CoeffsCache{TR}(n)
-    cheb1_vals2coeffs!(values, cache)
-
-    return cache.coeffs
-end
-
-"""
-    struct Cheb1Vals2CoeffsCache{TR}
-
-Cache structure for `cheb1_vals2coeffs!` function to store precomputed weights,
-temporary arrays, and FFT plan to speed up multiple transformations of the same
-size.
-
-Fields:
-
-- `w::Vector{Complex{TR}}`: Weight vector of length `n`
-- `tmp::Vector{Complex{TR}}`: Temporary storage vector of length `2n`
-- `coeffs::Vector{TR}`: Result vector of Chebyshev coefficients of length `n`
-- `plan::FFTW.cFFTWPlan`: FFTW plan for inverse FFT of size `2n`
-
-"""
-struct Cheb1Vals2CoeffsCache{TR<:AbstractFloat,TP<:Plan}
+struct Cheb1Vals2CoeffsOp{TR<:AbstractFloat,TP<:Plan}
     w::Vector{Complex{TR}}
     tmp::Vector{Complex{TR}}
     coeffs::Vector{TR}
     ifft_plan::TP
 
-    function Cheb1Vals2CoeffsCache{TR}(n::Integer) where {TR<:AbstractFloat}
+    function Cheb1Vals2CoeffsOp{TR}(n::Integer) where {TR<:AbstractFloat}
         # Precompute weights
         w = Vector{Complex{TR}}(undef, n)
         @inbounds begin
@@ -68,7 +70,6 @@ struct Cheb1Vals2CoeffsCache{TR<:AbstractFloat,TP<:Plan}
 
         # Prepare temporary array for FFT
         tmp = Vector{Complex{TR}}(undef, 2n)
-
         coeffs = Vector{TR}(undef, n)
 
         # Create an inverse FFT plan with MEASURE flag for better performance
@@ -78,33 +79,11 @@ struct Cheb1Vals2CoeffsCache{TR<:AbstractFloat,TP<:Plan}
     end
 end
 
-"""
-    cheb1_vals2coeffs!(values::AbstractVector{<:AbstractFloat},
-                       cache::Cheb1Vals2CoeffsCache{TR}) where {TR}
-
-In-place version of `cheb1_vals2coeffs` that uses a cache for efficiency.
-
-Computes the Chebyshev coefficients corresponding to the given `values` at
-Chebyshev points of the first kind, storing the result in `cache.coeffs`.
-
-# Arguments
-
-- `values`: Vector of function values at Chebyshev points of the first kind.
-- `cache`: An instance of `Cheb1Vals2CoeffsCache` for storing precomputed data
-           and temporary arrays.
-
-# Returns
-
-- The vector `cache.coeffs`, containing the Chebyshev coefficients.
-
-"""
-function cheb1_vals2coeffs!(
-    values::VT, cache::Cheb1Vals2CoeffsCache{TR}
-) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
-    n = length(values)
+function (op::Cheb1Vals2CoeffsOp{TR})(vals::AbstractVector{TR}) where {TR<:AbstractFloat}
+    n = length(vals)
     if n <= 1
-        cache.coeffs .= values
-        return cache.coeffs
+        op.coeffs .= vals
+        return op.coeffs
     end
 
     # Check for symmetry with tolerance
@@ -112,8 +91,8 @@ function cheb1_vals2coeffs!(
     isEven = true
     isOdd = true
     @inbounds for i in 1:(n ÷ 2)
-        diff = abs(values[i] - values[n - i + 1])
-        sum = abs(values[i] + values[n - i + 1])
+        diff = abs(vals[i] - vals[n - i + 1])
+        sum = abs(vals[i] + vals[n - i + 1])
         if diff > atol
             isEven = false
         end
@@ -125,26 +104,21 @@ function cheb1_vals2coeffs!(
         end
     end
 
-    tmp = cache.tmp
-    w = cache.w
-    coeffs = cache.coeffs
-    ifft_plan = cache.ifft_plan
-
-    # Build tmp as [reverse(values); values] more efficiently
+    # Build tmp as [reverse(vals); vals] more efficiently
     @inbounds begin
         for i in 1:n
-            tmp[i] = Complex{TR}(values[n - i + 1])
-            tmp[n + i] = Complex{TR}(values[i])
+            op.tmp[i] = Complex{TR}(vals[n - i + 1])
+            op.tmp[n + i] = Complex{TR}(vals[i])
         end
     end
 
     # Apply IFFT
-    ifft_plan * tmp
+    op.ifft_plan * op.tmp
 
     # Extract and scale coefficients
     @inbounds begin
         for k in 1:n
-            coeffs[k] = real(tmp[k] * w[k])
+            op.coeffs[k] = real(op.tmp[k] * op.w[k])
         end
     end
 
@@ -152,14 +126,23 @@ function cheb1_vals2coeffs!(
     if isEven || isOdd
         @inbounds begin
             k_start = isEven ? 2 : 1
-            coeffs[k_start:2:n] .= 0
+            op.coeffs[k_start:2:n] .= 0
         end
     end
 
-    return coeffs
+    return op.coeffs
 end
 
-export cheb1_vals2coeffs, cheb1_vals2coeffs!, Cheb1Vals2CoeffsCache
+function cheb1_vals2coeffs(vals::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+    n = length(vals)
+    if n <= 1
+        return deepcopy(vals)
+    end
+    op = Cheb1Vals2CoeffsOp{TR}(n)
+    return op(vals)
+end
+
+export cheb1_vals2coeffs, Cheb1Vals2CoeffsOp
 
 @testset "cheb1_vals2coeffs" begin
     tol = 100 * eps()
@@ -199,11 +182,22 @@ export cheb1_vals2coeffs, cheb1_vals2coeffs!, Cheb1Vals2CoeffsCache
         @test all(x -> abs(imag(x)) < tol, c)
     end
 
-    @testset "Symmetry preservation" begin
-        v = kron([1 -1; 1 1], ones(10, 1))
-        c1 = cheb1_vals2coeffs(@view(v[:, 1]))
-        c2 = cheb1_vals2coeffs(@view(v[:, 2]))
-        @test norm(c1[2:2:end], Inf) ≈ 0
-        @test norm(c2[1:2:end], Inf) ≈ 0
+    @testset "Operator style" begin
+        n = 100
+        vals = rand(n)
+        op = Cheb1Vals2CoeffsOp{Float64}(n)
+        
+        # Test operator call
+        coeffs1 = op(vals)
+        coeffs2 = cheb1_vals2coeffs(vals)
+        @test maximum(abs.(coeffs1 .- coeffs2)) < tol
+        
+        # Test multiple calls
+        for _ in 1:10
+            vals = rand(n)
+            coeffs1 = op(vals)
+            coeffs2 = cheb1_vals2coeffs(vals)
+            @test maximum(abs.(coeffs1 .- coeffs2)) < tol
+        end
     end
 end

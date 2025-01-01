@@ -1,3 +1,5 @@
+using FillArrays: OneElement
+
 """
     cheb2_coeffs_intmat([TR=Float64], n::Integer)
     cheb2_coeffs_intmat([TR=Float64], n::Integer, x_min::TR, x_max::TR)
@@ -103,6 +105,20 @@ function cheb2_coeffs_intmat(n::TI, x_min::Float64, x_max::Float64) where {TI<:I
     return cheb2_coeffs_intmat(Float64, n, x_min, x_max)
 end
 
+function cheb2_intmat_asmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    A, S = cheb2_asmat(TR, n)
+    B = cheb2_coeffs_intmat(TR, n)
+    return S * B * A
+end
+
+function cheb2_intmat_asmat(
+    ::Type{TR}, n::TI, x_min::TR, x_max::TR
+) where {TR<:AbstractFloat,TI<:Integer}
+    A, S = cheb2_asmat(TR, n)
+    B = cheb2_coeffs_intmat(TR, n, x_min, x_max)
+    return S * B * A
+end
+
 """
     cheb2_intmat([TR=Float64], n::Integer)
     cheb2_intmat([TR=Float64], n::Integer, x_min::TR, x_max::TR)
@@ -155,9 +171,27 @@ I_scaled = cheb2_intmat(Float64, 8, 0.0, π)
 See also: [`cheb2_coeffs_intmat`](@ref), [`cheb2_asmat`](@ref), [`cheb2_pts`](@ref)
 """
 function cheb2_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
-    A, S = cheb2_asmat(TR, n)
-    B = cheb2_coeffs_intmat(TR, n)
-    return S * B * A
+    # Build Lagrange basis
+    K = Array{TR}(undef, n + 1, n)
+    vals2coeffs_op = Cheb2Vals2CoeffsOp{TR}(n)
+    for i in 1:n
+        K[1:(end - 1), i] = vals2coeffs_op(OneElement(one(TR), i, n))
+    end
+
+    # Integrate
+    cumsum_op = ChebCumsumOp{TR,TI}(n)
+    for i in 1:n
+        K[:, i] = cumsum_op(@view(K[1:(end - 1), i]))
+    end
+
+    # Evaluate at grid
+    xn = cheb2_pts(n)
+    intmat = Array{TR}(undef, n, n)
+    for j in 1:n, i in 1:n
+        intmat[i, j] = cheb_feval(K[:, j], xn[i])
+    end
+
+    return intmat
 end
 
 function cheb2_intmat(n::TI) where {TI<:Integer}
@@ -168,9 +202,9 @@ end
 function cheb2_intmat(
     ::Type{TR}, n::TI, x_min::TR, x_max::TR
 ) where {TR<:AbstractFloat,TI<:Integer}
-    A, S = cheb2_asmat(TR, n)
-    B = cheb2_coeffs_intmat(TR, n, x_min, x_max)
-    return S * B * A
+    intmat = cheb2_intmat(TR, n)
+    intmat .*= (x_max - x_min) / 2
+    return intmat
 end
 
 function cheb2_intmat(n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
@@ -201,6 +235,20 @@ export cheb2_coeffs_intmat, cheb2_intmat
     ]
 
     @test intmat ≈ intmat_ana rtol = 1e-12
+
+    @testset "Compare direct vs coefficient-based integration" begin
+        for n in [4, 8, 16, 32]
+            # Test on standard domain [-1,1]
+            I1 = cheb2_intmat(Float64, n)
+            I2 = cheb2_intmat_asmat(Float64, n)
+            @test I1 ≈ I2 rtol = 1e-12
+
+            # Test on mapped domain [0,π]
+            I1 = cheb2_intmat(Float64, n, 0.0, Float64(π))
+            I2 = cheb2_intmat_asmat(Float64, n, 0.0, Float64(π))
+            @test I1 ≈ I2 rtol = 1e-12
+        end
+    end
 end
 
 @testset "cheb2_intmat - analytical" begin

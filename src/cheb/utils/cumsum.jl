@@ -1,6 +1,6 @@
 """
     cheb_cumsum(f::Vector{TR}) where {TR<:AbstractFloat}
-    op::ChebCumsumOp{TR}(f::Vector{TR}) -> Vector{TR}
+    op::ChebCumsumOp{TR,TI}(f::Vector{TR}) -> Vector{TR}
 
 Compute the indefinite integral of a function represented in Chebyshev basis.
 
@@ -26,7 +26,7 @@ its integral is represented with a series of length n+1:
 
 # Arguments
 - `f::Vector{TR}`: Coefficients ``c_r`` of the Chebyshev series
-- `op::ChebCumsumOp{TR}`: Pre-allocated operator for integration
+- `op::ChebCumsumOp{TR,TI}`: Pre-allocated operator for integration
 
 # Returns
 - Vector of coefficients ``b_r`` for the integral, with length n+1
@@ -49,11 +49,12 @@ end
 ```
 """
 struct ChebCumsumOp{TR<:AbstractFloat,TI<:Integer}
+    n::TI              # Number of coefficients
     tmp::Vector{TR}    # Temporary storage for padded coefficients
     result::Vector{TR} # Result storage
     v::Vector{TI}      # Pre-computed alternating signs
 
-    function ChebCumsumOp{TR}(n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    function ChebCumsumOp{TR,TI}(n::TI) where {TR<:AbstractFloat,TI<:Integer}
         # Pre-allocate workspace
         tmp = Vector{TR}(undef, n + 2)
         result = Vector{TR}(undef, n + 1)
@@ -64,12 +65,14 @@ struct ChebCumsumOp{TR<:AbstractFloat,TI<:Integer}
             v[i] = -one(TI)
         end
 
-        return new{TR,TI}(tmp, result, v)
+        return new{TR,TI}(n, tmp, result, v)
     end
 end
 
 # Add callable interface
-function (op::ChebCumsumOp{TR})(f::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+function (op::ChebCumsumOp{TR,TI})(f::VT) where {TR<:AbstractFloat,TI<:Integer,VT<:AbstractVector{TR}}
+    @argcheck length(f) == op.n "length(f) must be equal to n"
+
     n = length(f)
     tmp = op.tmp
     result = op.result
@@ -106,7 +109,7 @@ end
 
 function cheb_cumsum(f::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
     n = length(f)
-    op = ChebCumsumOp{TR}(n)
+    op = ChebCumsumOp{TR,typeof(n)}(n)
     return op(f)
 end
 
