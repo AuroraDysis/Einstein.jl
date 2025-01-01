@@ -48,7 +48,7 @@ println("New coefficients: ", f_new)
 ```
 
 # References
-- Mason & Handscomb, "Chebyshev Polynomials", Chapman & Hall/CRC (2003), pp. 32-33.
+- [mason2002chebyshev](@citet*), pp. 32-33.
 - [chebfun/@chebtech/cumsum.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech/cumsum.m)
 
 See also: [`diff`](@ref), [`sum`](@ref)
