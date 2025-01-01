@@ -2,20 +2,23 @@ using FFTW
 using FastTransforms
 
 function cheb1_quad_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
-    # Handle special cases similarly to MATLAB
+    # Handle the special cases:
     if n == 0
         return TR[]
     elseif n == 1
         return TR[2]
     end
 
-    # Compute moments (m) = 2 / [1, 1 - (2:2:(n-1))^2]
-    # First element is 1 for k = 0, then subtract squares of even indices
+    # Preallocate the array m for the moments
     evens = 2:2:(n - 1)
-    m = [TR(1); (ones(TR, length(evens)) .- (evens .^ 2))]
-    m = 2 ./ m
+    m = zeros(TR, length(evens) + 1)
+    @inbounds m[1] = 2 / one(TR)  # Corresponds to k=0
+    @inbounds for (i, k) in enumerate(evens)
+        # m[i+1] = 1 - k^2
+        m[i + 1] = 2 / (one(TR) - k^2)
+    end
 
-    # Pre-allocate the coefficient array for FFT
+    # Preallocate the coefficient array for FFT
     c = zeros(Complex{TR}, n)
     c[1:length(m)] .= m
 
@@ -28,7 +31,7 @@ function cheb1_quad_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
         c[(length(m) + 2):end] .= -@view(m[div(n, 2):-1:2])
     end
 
-    # Multiply by rotation factors exp(1im*(0:n-1)*pi/n)
+    # Multiply by rotation factors exp(1im*(0:n-1)*π/n)
     im_pi_over_n = im * convert(TR, π) / n
     @inbounds for k in 0:(n - 1)
         c[k + 1] *= exp(k * im_pi_over_n)
