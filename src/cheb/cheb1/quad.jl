@@ -9,40 +9,29 @@ function cheb1_quad_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
         return TR[2]
     end
 
-    # Pre-allocate the coefficient array for FFT
-    c = zeros(Complex{TR}, n)
-
     # Compute moments (m) = 2 / [1, 1 - (2:2:(n-1))^2]
     # First element is 1 for k = 0, then subtract squares of even indices
     evens = 2:2:(n - 1)
     m = [TR(1); (ones(TR, length(evens)) .- (evens .^ 2))]
     m = 2 ./ m
 
+    # Pre-allocate the coefficient array for FFT
+    c = zeros(Complex{TR}, n)
+    c[1:length(m)] .= m
+
     # Fill the coefficient array based on parity of n
     if isodd(n)
         # For odd n: c = [m..., -reverse(m[(n+1)/2 : 2])]
-        half_idx = (n + 1) ÷ 2
-        @inbounds for i in eachindex(m)
-            c[i] = m[i]
-        end
-        @inbounds for (j, i) in enumerate(half_idx:-1:2)
-            c[length(m) + j] = -m[i]
-        end
+        c[(length(m) + 1):end] .= -@view(m[div(n + 1, 2):-1:2])
     else
         # For even n: c = [m..., 0, -reverse(m[n/2 : 2])]
-        half_idx = n ÷ 2
-        @inbounds for i in eachindex(m)
-            c[i] = m[i]
-        end
-        @inbounds c[length(m) + 1] = 0
-        @inbounds for (j, i) in enumerate(half_idx:-1:2)
-            c[length(m) + 1 + j] = -m[i]
-        end
+        c[(length(m) + 2):end] .= -@view(m[div(n, 2):-1:2])
     end
 
     # Multiply by rotation factors exp(1im*(0:n-1)*pi/n)
+    im_pi_over_n = im * convert(TR, π) / n
     @inbounds for k in 0:(n - 1)
-        c[k + 1] *= exp(im * TR(k) * TR(π) / n)
+        c[k + 1] *= exp(k * im_pi_over_n)
     end
 
     # Compute inverse FFT in-place and take the real part for the weights
