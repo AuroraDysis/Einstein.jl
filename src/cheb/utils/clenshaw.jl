@@ -1,5 +1,5 @@
 """
-    clenshaw(c::VT, x::T) where {T<:AbstractFloat,VT<:AbstractVector{T}}
+    cheb_clenshaw(c::VT, x::T) where {T<:AbstractFloat,VT<:AbstractVector{T}}
 
 Evaluate a Chebyshev series using the Clenshaw algorithm.
 
@@ -33,23 +33,23 @@ f(x) &= \\frac{b_0 - b_2}{2}
 # Examples
 ```julia
 # Evaluate T₀(x) = 1
-julia> clenshaw([1.0], 0.5)
+julia> cheb_clenshaw([1.0], 0.5)
 1.0
 
 # Evaluate T₁(x) = x
-julia> clenshaw([0.0, 1.0], 0.5)
+julia> cheb_clenshaw([0.0, 1.0], 0.5)
 0.5
 
 # Evaluate 1 + 2x + 3x²
 julia> c = [1.0, 2.0, 3.0]
 julia> x = 0.5
-julia> clenshaw(c, x)
+julia> cheb_clenshaw(c, x)
 2.75
 ```
 
 See also: [`cheb1_coeffs2vals`](@ref), [`cheb2_coeffs2vals`](@ref)
 """
-function clenshaw(c::VT, x::T) where {T<:AbstractFloat,VT<:AbstractVector{T}}
+function cheb_clenshaw(c::VT, x::T) where {T<:AbstractFloat,VT<:AbstractVector{T}}
     @argcheck length(c) > 0 "c must have at least one element"
 
     x = 2 * x
@@ -77,18 +77,18 @@ function clenshaw(c::VT, x::T) where {T<:AbstractFloat,VT<:AbstractVector{T}}
     return y
 end
 
-@testset "clenshaw" begin
+@testset "cheb_clenshaw" begin
     tol = 10 * eps()
 
     @testset "Single coefficient tests" begin
         # Scalar evaluation
         c = [sqrt(2)]
-        v = clenshaw(c, 0.0)
+        v = cheb_clenshaw(c, 0.0)
         @test v ≈ sqrt(2)
 
         # Vector evaluation
         x = [-0.5, 1.0]
-        v = map(xi -> clenshaw(c, xi), x)
+        v = map(xi -> cheb_clenshaw(c, xi), x)
         @test all(v .≈ sqrt(2))
     end
 
@@ -97,13 +97,13 @@ end
         c = collect(5.0:-1:1)
         x = [-0.5, -0.1, 1.0]
 
-        v = map(xi -> clenshaw(c, xi), x)
+        v = map(xi -> cheb_clenshaw(c, xi), x)
         v_true = [3.0, 3.1728, 15.0]
         @test norm(v - v_true, Inf) < tol
 
         # Multiple polynomials
         c2 = reverse(c)
-        v = map(xi -> [clenshaw(c, xi), clenshaw(c2, xi)], x)
+        v = map(xi -> [cheb_clenshaw(c, xi), cheb_clenshaw(c2, xi)], x)
         v_true = [
             3.0 0.0
             3.1728 3.6480
@@ -114,9 +114,9 @@ end
 
     @testset "Edge cases" begin
         # Empty coefficient vector
-        @test_throws ArgumentError clenshaw(Float64[], 0.0)
+        @test_throws ArgumentError cheb_clenshaw(Float64[], 0.0)
 
         # Single coefficient
-        @test clenshaw([1.0], 0.5) ≈ 1.0
+        @test cheb_clenshaw([1.0], 0.5) ≈ 1.0
     end
 end

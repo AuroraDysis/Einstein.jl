@@ -11,7 +11,6 @@ using LinearAlgebra
 
 include("utils/bary.jl")
 include("utils/clenshaw.jl")
-include("utils/ndct.jl")
 include("utils/feval.jl")
 include("utils/fft.jl")
 include("utils/cumsum.jl")
