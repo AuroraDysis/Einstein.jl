@@ -52,7 +52,7 @@ end
 
 export cheb2_bary_wts
 
-@testset "cheb2 Barycentric Interpolation" begin
+@testset "cheb2_bary_wts" begin
     @testset "Barycentric weights" begin
         # Test n=1 case
         w1 = cheb2_bary_wts(Float64, 1)

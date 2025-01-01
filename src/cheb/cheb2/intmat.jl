@@ -179,7 +179,7 @@ end
 
 export cheb2_coeffs_intmat, cheb2_intmat
 
-@testset "cheb2 Integration Matrix" begin
+@testset "cheb2_coeffs_intmat" begin
     @testset "Standard domain [-1,1]" begin
         n = 32
         x = cheb2_grid(Float64, n)

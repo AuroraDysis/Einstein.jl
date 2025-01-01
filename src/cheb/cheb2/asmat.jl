@@ -94,7 +94,7 @@ end
 
 export cheb2_asmat
 
-@testset "cheb2 Spectral Transforms" begin
+@testset "cheb2_asmat" begin
     n = 32  # Enough points for good accuracy
     x = cheb2_grid(Float64, n)
     A, S = cheb2_asmat(Float64, n)

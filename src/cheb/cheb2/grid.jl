@@ -126,3 +126,44 @@ function cheb2_grid(n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
 end
 
 export cheb2_angle, cheb2_grid
+
+@testset "cheb2_grid" begin
+    @testset "n = 5" begin
+        n = 5
+        x = cheb2_grid(n)
+        θ = cheb2_angle(n)
+
+        @test length(x) == n
+        @test length(θ) == n
+
+        @test x ≈ [-1.0, -0.707106781186548, 0.0, 0.707106781186548, 1.0]
+        @test θ ≈
+            [3.14159265358979, 2.35619449019235, 1.57079632679490, 0.785398163397448, 0.0]
+    end
+
+    @testset "n = 6" begin
+        n = 6
+        x = cheb2_grid(n)
+        θ = cheb2_angle(n)
+
+        @test length(x) == n
+        @test length(θ) == n
+
+        @test x ≈ [
+            -1.0,
+            -0.809016994374948,
+            -0.309016994374947,
+            0.309016994374947,
+            0.809016994374948,
+            1.0,
+        ]
+        @test θ ≈ [
+            3.14159265358979,
+            2.51327412287183,
+            1.88495559215388,
+            1.25663706143592,
+            0.628318530717959,
+            0.0,
+        ]
+    end
+end

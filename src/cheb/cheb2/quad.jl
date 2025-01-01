@@ -107,7 +107,7 @@ end
 
 export cheb2_quad_wts
 
-@testset "cheb2 Quadrature" begin
+@testset "cheb2_quad_wts" begin
     @testset "Edge cases" begin
         # Test n=0 case
         @test cheb2_quad_wts(0) == Float64[]

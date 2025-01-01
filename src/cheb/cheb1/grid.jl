@@ -94,7 +94,7 @@ function cheb1_grid(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     pi_over_2n = convert(TR, π) / (2 * n)
     @inbounds begin
         for i in 1:n
-            k = n - 2i + 1
+            k = -n + 2i - 1
             x_grid[i] = sin(k * pi_over_2n)
         end
     end
@@ -121,4 +121,56 @@ end
 
 function cheb1_grid(n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
     return cheb1_grid(Float64, n, x_min, x_max)
+end
+
+@testset "cheb1_grid" begin
+    @testset "n = 5" begin
+        n = 5
+        x = cheb1_grid(n)
+        θ = cheb1_angle(n)
+
+        @test length(x) == n
+        @test length(θ) == n
+
+        @test x ≈ [
+            -0.951056516295154,
+            -0.587785252292473,
+            0.0,
+            0.587785252292473,
+            0.951056516295154,
+        ]
+        @test θ ≈ [
+            2.82743338823081,
+            2.19911485751286,
+            1.57079632679490,
+            0.942477796076938,
+            0.314159265358979,
+        ]
+    end
+
+    @testset "n = 6" begin
+        n = 6
+        x = cheb1_grid(n)
+        θ = cheb1_angle(n)
+
+        @test length(x) == n
+        @test length(θ) == n
+
+        @test x ≈ [
+            -0.965925826289068,
+            -0.707106781186548,
+            -0.258819045102521,
+            0.258819045102521,
+            0.707106781186548,
+            0.965925826289068,
+        ]
+        @test θ ≈ [
+            2.87979326579064,
+            2.35619449019235,
+            1.83259571459405,
+            1.30899693899575,
+            0.785398163397448,
+            0.261799387799149,
+        ]
+    end
 end
