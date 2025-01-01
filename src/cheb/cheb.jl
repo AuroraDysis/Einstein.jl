@@ -1,5 +1,10 @@
 module ChebyshevSuite
 
+using InlineTest
+using ArgCheck: @argcheck
+using FastBroadcast: @..
+using LinearAlgebra: dot
+
 include("utils.jl")
 
 include("cheb1/grid.jl")

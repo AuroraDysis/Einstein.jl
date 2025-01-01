@@ -1,3 +1,5 @@
+using InlineTest
+
 """
     cheb2_asmat([TR=Float64], n::Integer)
 
@@ -93,3 +95,23 @@ function cheb2_asmat(n::TI) where {TI<:Integer}
 end
 
 export cheb2_asmat
+
+@testset "cheb2 Spectral Transforms" begin
+    n = 32  # Enough points for good accuracy
+    x = cheb2_grid(Float64, n)
+    A, S = cheb2_asmat(Float64, n)
+
+    @testset "Transform and recover" begin
+        # Test with polynomial that should be exactly represented
+        f = @. 3x^2 + 2x - 1
+        coeffs = A * f
+        f_recovered = S * coeffs
+        @test f_recovered ≈ f rtol = 1e-12
+
+        # Test with trigonometric function
+        f = @. sin(π * x) * cos(2π * x)
+        coeffs = A * f
+        f_recovered = S * coeffs
+        @test f_recovered ≈ f rtol = 1e-12
+    end
+end

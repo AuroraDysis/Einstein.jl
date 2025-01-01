@@ -1,6 +1,3 @@
-using ArgCheck: @argcheck
-using FastBroadcast: @..
-
 """
     cheb1_angle([TR=Float64], n::Integer)
 

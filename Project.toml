@@ -8,6 +8,7 @@ ArgCheck = "dce04be8-c92d-5529-be00-80e4d2c0e197"
 FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
 FastBroadcast = "7034ab61-46d4-4ed7-9d0f-46aef9175898"
 FastTransforms = "057dd010-8810-581a-b7be-e3fc3b93f78c"
+InlineTest = "bd334432-b1e7-49c7-a2dc-dd9149e4ebd6"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [compat]
@@ -16,17 +17,17 @@ ArgCheck = "2.4.0"
 FFTW = "1.8.0"
 FastBroadcast = "0.3.5"
 FastTransforms = "0.16.8"
+InlineTest = "0.2.0"
 JET = "0.9.12"
 LinearAlgebra = "1.11.0"
-SafeTestsets = "0.1.0"
-Test = "1.11.0"
+ReTest = "0.3.3"
 julia = "1.10"
 
 [extras]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+InlineTest = "bd334432-b1e7-49c7-a2dc-dd9149e4ebd6"
 JET = "c3a54625-cd67-489e-a8e7-0a5a0ff4e31b"
-SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+ReTest = "e0db7c4e-2690-44b9-bad6-7687da720f89"
 
 [targets]
-test = ["Aqua", "JET", "Test", "SafeTestsets"]
+test = ["Aqua", "JET", "ReTest", "InlineTest"]

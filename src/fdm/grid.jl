@@ -1,5 +1,3 @@
-using ArgCheck
-
 """
     fdm_grid(::Type{TR}, x_min::TR, x_max::TR, dx::TR) where {TR<:AbstractFloat}
 

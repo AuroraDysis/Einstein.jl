@@ -1,3 +1,5 @@
+using InlineTest
+
 """
     cheb2_coeffs_intmat([TR=Float64], n::Integer)
     cheb2_coeffs_intmat([TR=Float64], n::Integer, x_min::TR, x_max::TR)
@@ -178,3 +180,41 @@ function cheb2_intmat(n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
 end
 
 export cheb2_coeffs_intmat, cheb2_intmat
+
+@testset "cheb2 Integration Matrix" begin
+    @testset "Standard domain [-1,1]" begin
+        n = 32
+        x = cheb2_grid(Float64, n)
+        intmat = cheb2_intmat(Float64, n)
+
+        # Test 1: Polynomial integration
+        f = @. x^3  # f(x) = x³
+        F_numeric = intmat * f   # Should give (x⁴ - 1) / 4
+        F_exact = @. (x^4 - 1) / 4
+        @test F_numeric ≈ F_exact rtol = 1e-12
+
+        # Test 2: Trigonometric integration
+        f = @. sin(π * x)
+        F_numeric = intmat * f   # Should give -(cos(πx)+1)/π
+        F_exact = @. -(cos(π * x) + 1) / π
+        @test F_numeric ≈ F_exact rtol = 1e-12
+    end
+
+    @testset "Mapped domain [0,π]" begin
+        n = 32
+        intmat = cheb2_intmat(Float64, n, 0.0, Float64(π))
+        x = cheb2_grid(Float64, n, 0.0, Float64(π))
+
+        # Test: Integration of sin(x) from 0 to x
+        f = sin.(x)
+        F_numeric = intmat * f   # Should give -cos(x) + 1
+        F_exact = @. -cos(x) + 1
+        @test F_numeric ≈ F_exact rtol = 1e-12
+
+        # Test: Integration of x*cos(x)
+        f = @. x * cos(x)
+        F_numeric = intmat * f   # Should give x*sin(x) - sin(x)
+        F_exact = @. x * sin(x) + cos(x) - 1
+        @test F_numeric ≈ F_exact rtol = 1e-12
+    end
+end

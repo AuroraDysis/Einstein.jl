@@ -1,8 +1,9 @@
-using PDESuite
-using SafeTestsets
-using Test
+module PDESuiteTests
+
 using Aqua
 using JET
+using PDESuite
+using InlineTest
 
 @testset "PDESuite.jl" begin
     @testset "Code quality (Aqua.jl)" begin
@@ -12,7 +13,11 @@ using JET
     @testset "Code linting (JET.jl)" begin
         JET.test_package(PDESuite; target_defined_modules=true)
     end
-
-    @time @safetestset "Chebyshev pseudospectral method" include("cheb_test.jl")
-    @time @safetestset "Finite difference method" include("fdm_test.jl")
 end
+
+end
+
+using ReTest
+using PDESuite
+
+retest(PDESuite, PDESuiteTests)

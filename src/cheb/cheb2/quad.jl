@@ -106,3 +106,60 @@ function cheb2_quad_wts(n::TI) where {TI<:Integer}
 end
 
 export cheb2_quad_wts
+
+@testset "cheb2 Quadrature" begin
+    @testset "Edge cases" begin
+        # Test n=0 case
+        @test cheb2_quad_wts(0) == Float64[]
+
+        # Test n=1 case
+        @test cheb2_quad_wts(1) ≈ [2.0]
+
+        # Test n=2 case (should sum to 2)
+        w = cheb2_quad_wts(2)
+        @test length(w) == 2
+        @test sum(w) ≈ 2.0
+        @test w[1] ≈ w[2]  # Symmetry
+    end
+
+    @testset "Basic properties" begin
+        n = 8
+        w = cheb2_quad_wts(n)
+
+        # Test length
+        @test length(w) == n
+
+        # Test sum of weights (should integrate constant to 2)
+        @test sum(w) ≈ 2.0
+
+        # Test symmetry
+        @test w ≈ reverse(w)
+
+        # Test positivity
+        @test all(w .> 0)
+    end
+
+    @testset "Integration accuracy" begin
+        n = 32
+        x = cheb2_grid(n)
+        w = cheb2_quad_wts(n)
+
+        # Test exact integration of polynomials
+        f1 = x -> 1.0    # Should give 2
+        f2 = x -> x      # Should give 0
+        f3 = x -> x^2    # Should give 2/3
+
+        @test dot(w, f1.(x)) ≈ 2.0 rtol = 1e-14
+        @test abs(dot(w, f2.(x))) < 1e-14
+        @test dot(w, f3.(x)) ≈ 2 / 3 rtol = 1e-14
+
+        # Test integration of trigonometric functions
+        f4 = x -> sin(π * x)    # Should give 0
+        f5 = x -> cos(π * x)    # Should give 0
+        f6 = x -> cos(x)      # Should give 2*sin(1)
+
+        @test abs(dot(w, f4.(x))) < 1e-14
+        @test abs(dot(w, f5.(x))) < 1e-14
+        @test dot(w, f6.(x)) ≈ 2 * sin(1) rtol = 1e-12
+    end
+end
