@@ -54,7 +54,7 @@ struct ChebCumsumOp{TR<:AbstractFloat,TI<:Integer}
     result::Vector{TR} # Result storage
     v::Vector{TI}      # Pre-computed alternating signs
 
-    function ChebCumsumOp{TR,TI}(n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    function ChebCumsumOp(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
         # Pre-allocate workspace
         tmp = Vector{TR}(undef, n + 2)
         result = Vector{TR}(undef, n + 1)
@@ -70,7 +70,9 @@ struct ChebCumsumOp{TR<:AbstractFloat,TI<:Integer}
 end
 
 # Add callable interface
-function (op::ChebCumsumOp{TR,TI})(f::VT) where {TR<:AbstractFloat,TI<:Integer,VT<:AbstractVector{TR}}
+function (op::ChebCumsumOp{TR,TI})(
+    f::VT
+) where {TR<:AbstractFloat,TI<:Integer,VT<:AbstractVector{TR}}
     @argcheck length(f) == op.n "length(f) must be equal to n"
 
     n = length(f)
@@ -109,7 +111,7 @@ end
 
 function cheb_cumsum(f::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
     n = length(f)
-    op = ChebCumsumOp{TR,typeof(n)}(n)
+    op = ChebCumsumOp(TR, n)
     return op(f)
 end
 

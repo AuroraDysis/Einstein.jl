@@ -63,14 +63,12 @@ function cheb2_coeffs2vals(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVect
         return deepcopy(coeffs)
     end
 
-    cache = Cheb2Coeffs2ValsCache{TR}(n)
-    cheb2_coeffs2vals!(coeffs, cache)
-
-    return cache.vals
+    op = Cheb2Coeffs2ValsOp(TR, n)
+    return op(coeffs)
 end
 
 """
-    Cheb2Coeffs2ValsCache{T}
+    Cheb2Coeffs2ValsOp{T}
 
 Pre-allocated workspace for Chebyshev coefficient to values transformation.
 Using this cache can significantly improve performance when performing multiple transforms
@@ -83,7 +81,7 @@ of the same size.
 # Example
 ```julia
 # Create cache for size 100 transforms
-cache = Cheb2Coeffs2ValsCache{Float64}(100)
+cache = Cheb2Coeffs2ValsOp{Float64}(100)
 
 # Use cache repeatedly
 for i in 1:1000
@@ -91,31 +89,35 @@ for i in 1:1000
 end
 ```
 """
-struct Cheb2Coeffs2ValsCache{TR<:AbstractFloat,TP<:Plan}
+struct Cheb2Coeffs2ValsOp{TR<:AbstractFloat,TP<:Plan}
     tmp::Vector{Complex{TR}}
     vals::Vector{TR}
     fft_plan::TP
 
-    function Cheb2Coeffs2ValsCache{TR}(n::TI) where {TI<:Integer,TR<:AbstractFloat}
+    function Cheb2Coeffs2ValsOp(::Type{TR}, n::TI) where {TI<:Integer,TR<:AbstractFloat}
         tmp = zeros(Complex{TR}, 2n - 2)
         vals = zeros(TR, n)
         fft_plan = plan_fft_measure!(tmp)
         return new{TR,typeof(fft_plan)}(tmp, vals, fft_plan)
     end
+
+    function Cheb2Coeffs2ValsOp(n::TI) where {TI<:Integer}
+        return Cheb2Coeffs2ValsOp(Float64, n)
+    end
 end
 
-function cheb2_coeffs2vals!(
-    coeffs::VT, cache::Cheb2Coeffs2ValsCache{TR}
-) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+function (op::Cheb2Coeffs2ValsOp{TR,TP})(
+    coeffs::VT
+) where {TR<:AbstractFloat,VT<:AbstractVector{TR},TP<:Plan}
     n = length(coeffs)
     if n <= 1
-        cache.vals .= coeffs
-        return cache.vals
+        op.vals .= coeffs
+        return op.vals
     end
 
-    vals = cache.vals
-    tmp = cache.tmp
-    fft_plan = cache.fft_plan
+    vals = op.vals
+    tmp = op.tmp
+    fft_plan = op.fft_plan
 
     # Determine which columns are purely even or purely odd based on middle coefficients
     isEven = all(x -> x ≈ 0, @view(coeffs[2:2:end]))
@@ -160,7 +162,7 @@ function cheb2_coeffs2vals!(
     return vals
 end
 
-export cheb2_coeffs2vals, cheb2_coeffs2vals!, Cheb2Coeffs2ValsCache
+export cheb2_coeffs2vals, Cheb2Coeffs2ValsOp
 
 @testset "cheb2_coeffs2vals" begin
     using LinearAlgebra

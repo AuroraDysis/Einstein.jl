@@ -173,22 +173,22 @@ See also: [`cheb2_coeffs_intmat`](@ref), [`cheb2_asmat`](@ref), [`cheb2_pts`](@r
 function cheb2_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     # Build Lagrange basis
     K = Array{TR}(undef, n + 1, n)
-    vals2coeffs_op = Cheb2Vals2CoeffsOp{TR}(n)
-    for i in 1:n
+    vals2coeffs_op = Cheb2Vals2CoeffsOp(TR, n)
+    @inbounds for i in 1:n
         K[1:(end - 1), i] = vals2coeffs_op(OneElement(one(TR), i, n))
     end
 
     # Integrate
-    cumsum_op = ChebCumsumOp{TR,TI}(n)
-    for i in 1:n
+    cumsum_op = ChebCumsumOp(TR, n)
+    @inbounds for i in 1:n
         K[:, i] = cumsum_op(@view(K[1:(end - 1), i]))
     end
 
     # Evaluate at grid
     xn = cheb2_pts(n)
     intmat = Array{TR}(undef, n, n)
-    for j in 1:n, i in 1:n
-        intmat[i, j] = cheb_feval(K[:, j], xn[i])
+    @inbounds for j in 1:n, i in 1:n
+        intmat[i, j] = cheb_feval(@view(K[:, j]), xn[i])
     end
 
     return intmat

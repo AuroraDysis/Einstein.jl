@@ -57,15 +57,21 @@ struct Cheb2Vals2CoeffsOp{TR<:AbstractFloat,TP<:Plan}
     coeffs::Vector{TR}
     ifft_plan::TP
 
-    function Cheb2Vals2CoeffsOp{TR}(n::Integer) where {TR<:AbstractFloat}
+    function Cheb2Vals2CoeffsOp(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
         tmp = zeros(Complex{TR}, 2n - 2)
         coeffs = zeros(TR, n)
         ifft_plan = plan_ifft_measure!(tmp)
         return new{TR,typeof(ifft_plan)}(tmp, coeffs, ifft_plan)
     end
+
+    function Cheb2Vals2CoeffsOp(n::TI) where {TI<:Integer}
+        Cheb2Vals2CoeffsOp(Float64, n)
+    end
 end
 
-function (op::Cheb2Vals2CoeffsOp{TR})(vals::AbstractVector{TR}) where {TR<:AbstractFloat}
+function (op::Cheb2Vals2CoeffsOp{TR,TP})(
+    vals::AbstractVector{TR}
+) where {TR<:AbstractFloat,TP<:Plan}
     n = length(vals)
 
     # Trivial case
@@ -128,7 +134,7 @@ function cheb2_vals2coeffs(vals::VT) where {TR<:AbstractFloat,VT<:AbstractVector
     if n <= 1
         return deepcopy(vals)
     end
-    op = Cheb2Vals2CoeffsOp{TR}(n)
+    op = Cheb2Vals2CoeffsOp(TR, n)
     return op(vals)
 end
 
@@ -186,13 +192,13 @@ export cheb2_vals2coeffs, Cheb2Vals2CoeffsOp
     @testset "Operator style" begin
         n = 100
         vals = rand(n)
-        op = Cheb2Vals2CoeffsOp{Float64}(n)
-        
+        op = Cheb2Vals2CoeffsOp(Float64, n)
+
         # Test operator call
         coeffs1 = op(vals)
         coeffs2 = cheb2_vals2coeffs(vals)
         @test maximum(abs.(coeffs1 .- coeffs2)) < tol
-        
+
         # Test multiple calls
         for _ in 1:10
             vals = rand(n)

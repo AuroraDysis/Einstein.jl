@@ -1,17 +1,18 @@
 """
-    cheb1_coeffs2vals(coeffs::AbstractVector{<:AbstractFloat}) -> Vector
-    cheb1_coeffs2vals!(coeffs, cache::Cheb1Coeffs2ValsCache) -> Vector
+    cheb1_coeffs2vals(coeffs::Vector{TR}) where {TR<:AbstractFloat}
+    op::Cheb1Coeffs2ValsOp{TR}(coeffs::Vector{TR}) -> Vector{TR}
 
-Convert Chebyshev coefficients of the first kind to values at Chebyshev nodes.
+Convert Chebyshev coefficients to values at Chebyshev points of the first kind.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:
-1. Create a cache: `cache = Cheb1Coeffs2ValsCache{Float64}(n)`
-2. Use the in-place version: `cheb1_coeffs2vals!(coeffs, cache)`
+```julia
+# Create operator
+op = Cheb1Coeffs2ValsOp(Float64, n)
 
-# Arguments
-- `coeffs::AbstractVector{<:AbstractFloat}`: Chebyshev coefficients in descending order
-- `cache::Cheb1Coeffs2ValsCache`: Pre-allocated workspace (for in-place version)
+# Operator-style
+values = op(coeffs)
+```
 
 # Mathematical Background
 The function implements the transform from coefficient space to physical space for Chebyshev
@@ -23,59 +24,15 @@ polynomials of the first kind Tₙ(x). The transformation:
    - Even coefficients produce even functions
    - Odd coefficients produce odd functions
 
-# Implementation Details
-1. Computes weights w[k] = exp(-ikπ/(2n))/2
-2. Applies special treatment for endpoints
-3. Uses FFT for efficient computation
-4. Enforces symmetry properties
-
-# Examples
-```julia
-# Convert a constant function
-julia> cheb1_coeffs2vals([1.0])
-1-element Vector{Float64}:
- 1.0
-
-# Convert linear coefficients
-julia> cheb1_coeffs2vals([1.0, 2.0])
-2-element Vector{Float64}:
-  3.0
- -1.0
-
-# Convert quadratic coefficients
-julia> cheb1_coeffs2vals([1.0, 0.0, -0.5])
-3-element Vector{Float64}:
-  0.5
- -0.5
-  0.5
-```
-
-# References
-1. Trefethen, L. N. (2000). Spectral Methods in MATLAB. SIAM.
-2. Mason, J. C., & Handscomb, D. C. (2002). Chebyshev Polynomials. Chapman & Hall/CRC.
-3. Boyd, J. P. (2001). Chebyshev and Fourier Spectral Methods. Dover.
-
-See also: [`cheb2_coeffs2vals`](@ref)
+See also: [`cheb1_vals2coeffs`](@ref), [`Cheb1Vals2CoeffsOp`](@ref)
 """
-function cheb1_coeffs2vals(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
-    n = length(coeffs)
-    if n <= 1
-        return deepcopy(coeffs)
-    end
-
-    cache = Cheb1Coeffs2ValsCache{TR}(n)
-    cheb1_coeffs2vals!(coeffs, cache)
-
-    return cache.vals
-end
-
-struct Cheb1Coeffs2ValsCache{TR<:AbstractFloat,TP<:Plan}
+struct Cheb1Coeffs2ValsOp{TR<:AbstractFloat,TP<:Plan}
     w::Vector{Complex{TR}}    # Weight vector
     tmp::Vector{Complex{TR}}  # Temporary storage
     vals::Vector{TR}          # Result storage
-    fft_plan::TP              # FFT fft_plan
+    fft_plan::TP              # fft plan
 
-    function Cheb1Coeffs2ValsCache{TR}(n::Integer) where {TR<:AbstractFloat}
+    function Cheb1Coeffs2ValsOp(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
         # Precompute weights
         w = Vector{Complex{TR}}(undef, 2n)
         @inbounds begin
@@ -95,21 +52,25 @@ struct Cheb1Coeffs2ValsCache{TR<:AbstractFloat,TP<:Plan}
         fft_plan = plan_fft_measure!(tmp)
         return new{TR,typeof(fft_plan)}(w, tmp, vals, fft_plan)
     end
+
+    function Cheb1Coeffs2ValsOp(n::TI) where {TI<:Integer}
+        Cheb1Coeffs2ValsOp(Float64, n)
+    end
 end
 
-function cheb1_coeffs2vals!(
-    coeffs::VT, cache::Cheb1Coeffs2ValsCache{TR}
-) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+function (op::Cheb1Coeffs2ValsOp{TR,TP})(
+    coeffs::AbstractVector{TR}
+) where {TR<:AbstractFloat,TP<:Plan}
     n = length(coeffs)
     if n <= 1
-        cache.vals .= coeffs
-        return cache.vals
+        op.vals .= coeffs
+        return op.vals
     end
 
-    w = cache.w
-    tmp = cache.tmp
-    vals = cache.vals
-    fft_plan = cache.fft_plan
+    w = op.w
+    tmp = op.tmp
+    vals = op.vals
+    fft_plan = op.fft_plan
 
     # Check for symmetry
     isEven = all(x -> x ≈ 0, @view(coeffs[2:2:end]))
@@ -164,8 +125,19 @@ function cheb1_coeffs2vals!(
     return vals
 end
 
-export cheb1_coeffs2vals, cheb1_coeffs2vals!, Cheb1Coeffs2ValsCache
+function cheb1_coeffs2vals(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+    n = length(coeffs)
+    if n <= 1
+        return deepcopy(coeffs)
+    end
 
+    op = Cheb1Coeffs2ValsOp(TR, n)
+    return op(coeffs)
+end
+
+export cheb1_coeffs2vals, Cheb1Coeffs2ValsOp
+
+# ...existing tests plus new operator test...
 @testset "cheb1_coeffs2vals" begin
     using LinearAlgebra
 
@@ -221,5 +193,24 @@ export cheb1_coeffs2vals, cheb1_coeffs2vals!, Cheb1Coeffs2ValsCache
         v2 = cheb1_coeffs2vals(c[:, 2])
         @test norm(v1 - reverse(v1), Inf) ≈ 0
         @test norm(v2 + reverse(v2), Inf) ≈ 0
+    end
+
+    @testset "Operator style" begin
+        n = 100
+        coeffs = rand(n)
+        op = Cheb1Coeffs2ValsOp(Float64, n)
+
+        # Test operator call
+        vals1 = op(coeffs)
+        vals2 = cheb1_coeffs2vals(coeffs)
+        @test maximum(abs.(vals1 .- vals2)) < tol
+
+        # Test multiple calls
+        for _ in 1:10
+            coeffs = rand(n)
+            vals1 = op(coeffs)
+            vals2 = cheb1_coeffs2vals(coeffs)
+            @test maximum(abs.(vals1 .- vals2)) < tol
+        end
     end
 end

@@ -30,7 +30,7 @@ struct Cheb2InterpOp{TR<:AbstractFloat}
     weights::Vector{TR}  # Barycentric weights
     tmp::Vector{TR}      # Temporary storage
 
-    function Cheb2InterpOp{TR}(n::Integer) where {TR<:AbstractFloat}
+    function Cheb2InterpOp(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
         nodes = cheb2_pts(TR, n)
         weights = cheb2_barywts(TR, n)
         tmp = Vector{TR}(undef, n)
@@ -46,7 +46,7 @@ end
 
 function cheb2_interp(values::AbstractVector{TR}, x::TR) where {TR<:AbstractFloat}
     n = length(values)
-    op = Cheb2InterpOp{TR}(n)
+    op = Cheb2InterpOp(TR, n)
     return op(values, x)
 end
 
@@ -59,7 +59,7 @@ export cheb2_interp, Cheb2InterpOp
         n = 5
         x = cheb2_pts(n)
         v = sin.(x)
-        op = Cheb2InterpOp{Float64}(n)
+        op = Cheb2InterpOp(Float64, n)
 
         for i in 1:n
             @test op(v, x[i]) ≈ v[i]
@@ -68,7 +68,7 @@ export cheb2_interp, Cheb2InterpOp
 
     @testset "Interpolation accuracy" begin
         n = 32
-        op = Cheb2InterpOp{Float64}(n)
+        op = Cheb2InterpOp(Float64, n)
         x = cheb2_pts(n)
         v = cos.(x)
 
