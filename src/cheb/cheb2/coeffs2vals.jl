@@ -3,15 +3,43 @@ using FastTransforms: fft, ifft
 
 """
     cheb2_coeffs2vals(coeffs::AbstractVector{<:AbstractFloat}) -> Vector
+    cheb2_coeffs2vals!(coeffs, cache::Cheb2Coeffs2ValsCache) -> Vector
 
 Convert Chebyshev coefficients of the second kind to values at Chebyshev nodes using a DCT-I equivalent
 transform.
 
+# Performance Guide
+For best performance, especially in loops or repeated calls:
+1. Create a cache: `cache = Cheb2Coeffs2ValsCache{Float64}(n)`
+2. Use the in-place version: `cheb2_coeffs2vals!(coeffs, cache)`
+
+This avoids repeated memory allocations and can be significantly faster.
+
+# Examples
+```julia
+# Single transform (allocating version)
+julia> v = cheb2_coeffs2vals([1.0, 2.0])
+
+# Multiple transforms (cached version for better performance)
+julia> cache = Cheb2Coeffs2ValsCache{Float64}(2)
+julia> for coeffs in coefficient_arrays
+           v = cheb2_coeffs2vals!(coeffs, cache)
+           # ... use v ...
+       end
+```
+
 # Arguments
 - `coeffs::AbstractVector{<:AbstractFloat}`: Vector of Chebyshev coefficients in descending order
+- `cache::Cheb2Coeffs2ValsCache`: Pre-allocated workspace (for in-place version)
 
 # Returns
 - Vector of values at Chebyshev nodes of the second kind: [`cheb2_pts`](@ref)
+
+# Cache Creation
+```julia
+# Create a cache for size n transforms
+cache = Cheb2Coeffs2ValsCache{Float64}(n)
+```
 
 # Mathematical Background
 The function implements the transform from coefficient space to physical space for Chebyshev
@@ -24,25 +52,11 @@ polynomials of the second kind \$U_n(x)\$. The transformation preserves symmetri
 2. Mirrors coefficients and applies FFT
 3. Enforces even/odd symmetries in the result
 
-# Examples
-```julia
-# Convert a constant function
-julia> cheb2_coeffs2vals([1.0])
-1-element Vector{Float64}:
- 1.0
-
-# Convert linear coefficients
-julia> cheb2_coeffs2vals([1.0, 2.0])
-2-element Vector{Float64}:
-  3.0
- -1.0
-```
-
 # References
 1. Trefethen, L. N. (2000). Spectral Methods in MATLAB. SIAM.
 2. Boyd, J. P. (2001). Chebyshev and Fourier Spectral Methods. Dover.
 
-See also: [`cheb1_coeffs2vals`](@ref)
+See also: [`cheb1_coeffs2vals`](@ref), [`Cheb2Coeffs2ValsCache`](@ref)
 """
 function cheb2_coeffs2vals(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
     n = length(coeffs)
@@ -52,41 +66,97 @@ function cheb2_coeffs2vals(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVect
         return deepcopy(coeffs)
     end
 
+    cache = Cheb2Coeffs2ValsCache{TR}(n)
+    cheb2_coeffs2vals!(coeffs, cache)
+
+    return cache.vals
+end
+
+"""
+    Cheb2Coeffs2ValsCache{T}
+
+Pre-allocated workspace for Chebyshev coefficient to values transformation.
+Using this cache can significantly improve performance when performing multiple transforms
+of the same size.
+
+# Fields
+- `tmp::Vector{Complex{T}}`: Temporary storage for FFT computation
+- `vals::Vector{T}`: Storage for the final result
+
+# Example
+```julia
+# Create cache for size 100 transforms
+cache = Cheb2Coeffs2ValsCache{Float64}(100)
+
+# Use cache repeatedly
+for i in 1:1000
+    vals = cheb2_coeffs2vals!(coeffs, cache)
+end
+```
+"""
+struct Cheb2Coeffs2ValsCache{TR}
+    tmp::Vector{Complex{TR}}
+    vals::Vector{TR}
+
+    function Cheb2Coeffs2ValsCache{TR}(n::TI) where {TI<:Integer,TR<:AbstractFloat}
+        return new(zeros(Complex{TR}, 2n - 2), zeros(TR, n))
+    end
+end
+
+"""
+    cheb2_coeffs2vals!(coeffs, cache::Cheb2Coeffs2ValsCache)
+
+Preallocated version of the Chebyshev (2nd kind) coeffs->values transform.
+Uses `cache` to avoid repeated allocations.
+"""
+function cheb2_coeffs2vals!(
+    coeffs::VT, cache::Cheb2Coeffs2ValsCache{TR}
+) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+    n = length(coeffs)
+    if n <= 1
+        return coeffs
+    end
+
+    vals = cache.vals
+    tmp = cache.tmp
+
     # Determine which columns are purely even or purely odd based on middle coefficients
     isEven = all(x -> x ≈ 0, @view(coeffs[2:2:end]))
     isOdd = all(x -> x ≈ 0, @view(coeffs[1:2:end]))
 
     # Scale the interior rows by 1/2
     half = one(TR) / 2
-    coeffs[2:(end - 1)] .*= half
+    @inbounds coeffs[2:(end - 1)] .*= half
 
-    # Mirror the coefficients for a DCT-I using FFT
-    tmp = vcat(coeffs, @view(coeffs[(n - 1):-1:2]))
+    # Reuse preallocated storage:
+    @inbounds tmp[1:n] .= coeffs
+    # Mirror part
+    @inbounds tmp[(n + 1):end] .= @view(coeffs[(n - 1):-1:2])
 
-    # apply the FFT.
-    values = real.(fft(tmp))
+    # FFT into vals
+    fft!(tmp)
 
-    # Flip and truncate to size n
-    values = @view(values[n:-1:1])
+    # Flip/truncate inside vals
+    @inbounds vals .= real.(@view(tmp[n:-1:1]))
 
-    # Enforce symmetry in each column based on isEven/isOdd
+    # In-place symmetry enforcement (reuse logic from original):
     if isEven
-        @inbounds for i in 1:div(length(values), 2)
-            j = length(values) - i + 1
-            s = values[i] + values[j]
-            values[i] = half * s
-            values[j] = half * s
+        @inbounds for i in 1:div(length(vals), 2)
+            j = length(vals) - i + 1
+            s = vals[i] + vals[j]
+            vals[i] = half * s
+            vals[j] = half * s
         end
     elseif isOdd
-        @inbounds for i in 1:div(length(values), 2)
-            j = length(values) - i + 1
-            d = values[i] - values[j]
-            values[i] = half * d
-            values[j] = -half * d
+        @inbounds for i in 1:div(length(vals), 2)
+            j = length(vals) - i + 1
+            d = vals[i] - vals[j]
+            vals[i] = half * d
+            vals[j] = -half * d
         end
     end
 
-    return values
+    return vals
 end
 
 export cheb2_coeffs2vals
