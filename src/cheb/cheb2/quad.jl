@@ -90,9 +90,11 @@ function cheb2_quad_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat, TI<:Integer
     w = zeros(TR, n)
     @inbounds begin
         w[1] = real(c[1]) / 2
+        for i in 2:nm1
+            w[i] = real(c[i])
+        end
         w[n] = real(c[1]) / 2
     end
-    w[2:(n - 1)] .= real.(@view(c[2:nm1]))
 
     return w
 end

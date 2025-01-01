@@ -41,10 +41,15 @@ function cheb1_barywts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     # the sine function, those computed with a big argument are replaced by ones
     # with a small argument, improving the relative accuracy.
     half_n = floor(Int, n / 2)
-    @inbounds v[1:half_n] .= v[end:-1:(n - half_n + 1)]
+    # Copy values from end to beginning for symmetry
+    @inbounds for i in 1:half_n
+        v[i] = v[n - i + 1]
+    end
 
-    # Flip signs for the odd indices near the end
-    @inbounds v[(end - 1):-2:1] .= -v[(end - 1):-2:1]
+    # Flip signs for odd indices
+    @inbounds for i in (n - 1):-2:1
+        v[i] = -v[i]
+    end
 
     return v
 end

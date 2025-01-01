@@ -38,9 +38,10 @@ function cheb2_barywts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     w = ones(TR, n)
 
     @inbounds begin
+        half = one(TR) / 2
         w[(end - 1):-2:1] .= -1
-        w[1] /= 2
-        w[end] = one(TR) / 2
+        w[1] *= half
+        w[end] = half
     end
 
     return w
