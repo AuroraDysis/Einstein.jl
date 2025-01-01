@@ -100,12 +100,6 @@ struct Cheb2Coeffs2ValsCache{TR}
     end
 end
 
-"""
-    cheb2_coeffs2vals!(coeffs, cache::Cheb2Coeffs2ValsCache)
-
-Preallocated version of the Chebyshev (2nd kind) coeffs->values transform.
-Uses `cache` to avoid repeated allocations.
-"""
 function cheb2_coeffs2vals!(
     coeffs::VT, cache::Cheb2Coeffs2ValsCache{TR}
 ) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
