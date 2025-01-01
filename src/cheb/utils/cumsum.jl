@@ -53,40 +53,69 @@ println("New coefficients: ", f_new)
 
 See also: [`diff`](@ref), [`sum`](@ref)
 """
-function cumsum(f::Vector{TR}) where {TR<:AbstractFloat}
-    # Copy input coefficients
-    c = copy(f)
-    n = length(c)
 
-    # Pad with zeros (equivalent to c = [c; zeros(2, m)] in MATLAB with m=1)
-    c = vcat(c, zeros(eltype(c), 2))
+struct ChebCumsumCache{TR<:AbstractFloat}
+    tmp::Vector{TR}    # Temporary storage for padded coefficients
+    result::Vector{TR} # Result storage
+    v::Vector{TR}      # Pre-computed alternating signs
 
-    # Prepare a new vector b (n+1 in length)
-    b = zeros(eltype(c), n + 1)
+    function ChebCumsumCache{TR}(n::TI) where {TR<:AbstractFloat,TI<:Integer}
+        # Pre-allocate workspace
+        tmp = Vector{TR}(undef, n + 2)
+        result = Vector{TR}(undef, n + 1)
 
-    # Compute b[3] ... b[n+1] (1-based indexing in Julia):
-    # b(3:n+1) = (c(2:n) - c(4:n+2)) ./ (2*(2:n)) in MATLAB
-    for r in 2:n
-        b[r + 1] = (c[r] - c[r + 2]) / (2 * r)
+        # Pre-compute alternating signs [1, -1, 1, -1, ...]
+        v = ones(TI, n)
+        @inbounds for i in 2:2:n
+            v[i] = -one(TI)
+        end
+
+        return new{TR}(tmp, result, v)
     end
-
-    # b(2) = c(1) - c(3)/2
-    b[2] = c[1] - c[3] / 2
-
-    # Construct vector v where v = [1, -1, 1, -1, ...]
-    v = ones(eltype(c), n)
-    for i in 2:2:n
-        v[i] = -1
-    end
-
-    # b(1) = v * b(2:end) (dots with appropriate indices)
-    # This enforces the condition analogous to f(-1) = 0 from the MATLAB code.
-    # If you want to further adjust the constant term for a specific boundary condition,
-    # you can do so here by evaluating the polynomial at x=-1 and subtracting that value.
-    b[1] = sum(v .* b[2:end])
-
-    return b
 end
+
+function cumsum(f::Vector{TR}) where {TR<:AbstractFloat}
+    n = length(f)
+    cache = ChebCumsumCache{TR}(n)
+    return cumsum!(f, cache)
+end
+
+function cumsum!(f::Vector{TR}, cache::ChebCumsumCache{TR}) where {TR<:AbstractFloat}
+    n = length(f)
+    tmp = cache.tmp
+    result = cache.result
+    v = cache.v
+
+    # Copy and pad input coefficients
+    @inbounds begin
+        tmp[1:n] .= f
+        tmp[n + 1] = 0
+        tmp[n + 2] = 0
+    end
+
+    # Compute interior coefficients
+    @inbounds begin
+        # b₂ = c₁ - c₃/2
+        result[2] = tmp[1] - tmp[3] / 2
+
+        # bᵣ = (cᵣ₋₁ - cᵣ₊₁)/(2r) for r > 1
+        for r in 2:n
+            result[r + 1] = (tmp[r] - tmp[r + 2]) / (2 * r)
+        end
+    end
+
+    # Compute b₀ to ensure f(-1) = 0
+    @inbounds begin
+        result[1] = 0
+        for i in 1:n
+            result[1] += v[i] * result[i + 1]
+        end
+    end
+
+    return result
+end
+
+export cumsum, cumsum!, ChebCumsumCache
 
 @testset "cumsum" begin
     tol = 100 * eps()
@@ -98,7 +127,7 @@ end
         If_coeffs = cumsum(f_coeffs)
         If = sin.(cheb1_pts(n)) .- sin(-1) # sin(x) - sin(-1) is the antiderivative of cos(x)
         If_coeffs_true = cheb1_vals2coeffs(If)
-        @test norm(If_coeffs[1:end-1] .- If_coeffs_true, Inf) < tol
+        @test norm(If_coeffs[1:(end - 1)] .- If_coeffs_true, Inf) < tol
     end
 
     @testset "cheb2" begin
@@ -108,6 +137,6 @@ end
         If_coeffs = cumsum(f_coeffs)
         If = sin.(cheb2_pts(n)) .- sin(-1) # sin(x) - sin(-1) is the antiderivative of cos(x)
         If_coeffs_true = cheb2_vals2coeffs(If)
-        @test norm(If_coeffs[1:end-1] .- If_coeffs_true, Inf) < tol
+        @test norm(If_coeffs[1:(end - 1)] .- If_coeffs_true, Inf) < tol
     end
 end
