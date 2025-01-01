@@ -11,11 +11,11 @@ transform.
 - `coeffs::AbstractVector{<:AbstractFloat}`: Vector of Chebyshev coefficients in descending order
 
 # Returns
-- Vector of values at Chebyshev nodes of the second kind: cos(jπ/n), j = 0,1,...,n
+- Vector of values at Chebyshev nodes of the second kind: [`cheb2_pts`](@ref)
 
 # Mathematical Background
 The function implements the transform from coefficient space to physical space for Chebyshev
-polynomials of the second kind Uₙ(x). The transformation preserves symmetries:
+polynomials of the second kind \$U_n(x)\$. The transformation preserves symmetries:
 - Even coefficients map to even functions
 - Odd coefficients map to odd functions
 
@@ -61,7 +61,7 @@ function cheb2_coeffs2vals(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVect
     coeffs[2:(end - 1)] .*= half
 
     # Mirror the coefficients for a DCT-I using FFT
-    tmp = vcat(coeffs, coeffs[(n - 1):-1:2])
+    tmp = vcat(coeffs, @view(coeffs[(n - 1):-1:2]))
 
     # apply the FFT.
     values = real.(fft(tmp))
