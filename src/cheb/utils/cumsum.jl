@@ -1,7 +1,18 @@
 """
     cumsum(f::Vector{TR}) where {TR<:AbstractFloat}
+    op::ChebCumsumOp{TR}(f::Vector{TR}) -> Vector{TR}
 
 Compute the indefinite integral of a function represented in Chebyshev basis.
+
+# Performance Guide
+For best performance, especially in loops or repeated calls:
+```julia
+# Create operator
+op = ChebCumsumOp{Float64}(n)
+
+# Operator-style
+result = op(coeffs)
+```
 
 # Mathematical Background
 Given a Chebyshev series of length n:
@@ -15,51 +26,36 @@ its integral is represented with a series of length n+1:
 
 # Arguments
 - `f::Vector{TR}`: Coefficients ``c_r`` of the Chebyshev series
+- `op::ChebCumsumOp{TR}`: Pre-allocated operator for integration
 
 # Returns
 - Vector of coefficients ``b_r`` for the integral, with length n+1
 
-# Mathematical Details
-The coefficients are computed as follows:
-```math
-\\begin{align*}
-b_0 &= \\sum_{r=1}^{n} (-1)^{r+1} b_r \\quad \\text{(constant of integration)} \\\\
-b_1 &= c_0 - \\frac{c_2}{2} \\\\
-b_r &= \\frac{c_{r-1} - c_{r+1}}{2r} \\quad \\text{for } r > 1
-\\end{align*}
-```
-where ``c_{n+1} = c_{n+2} = 0``
-
-The constant term ``b_0`` is chosen to make ``f(-1) = 0``.
-
 # Examples
 ```julia
-using Test
+# Single transformation
+coeffs = [1.0, 2.0, 3.0]
+result = cumsum(coeffs)
 
-# Suppose we have 3 Chebyshev coefficients:
-f = [1.0, 2.0, 3.0]
+# Multiple transformations (recommended for performance)
+n = length(coeffs)
+op = ChebCumsumOp{Float64}(n)
 
-# Perform the continuous sum:
-f_new = cumsum(f)
-
-@test length(f_new) == length(f) + 1
-println("Original coefficients: ", f)
-println("New coefficients: ", f_new)
+# Operator-style usage for best performance
+for i in 1:100
+    result = op(coeffs)
+    # ... use result ...
+end
 ```
 
-# References
-- [mason2002chebyshev](@citet*), pp. 32-33.
-- [chebfun/@chebtech/cumsum.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech/cumsum.m)
-
-See also: [`diff`](@ref), [`sum`](@ref)
+# See also: [`diff`](@ref), [`sum`](@ref)
 """
-
-struct ChebCumsumCache{TR<:AbstractFloat}
+struct ChebCumsumOp{TR<:AbstractFloat,TI<:Integer}
     tmp::Vector{TR}    # Temporary storage for padded coefficients
     result::Vector{TR} # Result storage
-    v::Vector{TR}      # Pre-computed alternating signs
+    v::Vector{TI}      # Pre-computed alternating signs
 
-    function ChebCumsumCache{TR}(n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    function ChebCumsumOp{TR}(n::TI) where {TR<:AbstractFloat,TI<:Integer}
         # Pre-allocate workspace
         tmp = Vector{TR}(undef, n + 2)
         result = Vector{TR}(undef, n + 1)
@@ -70,21 +66,26 @@ struct ChebCumsumCache{TR<:AbstractFloat}
             v[i] = -one(TI)
         end
 
-        return new{TR}(tmp, result, v)
+        return new{TR,TI}(tmp, result, v)
     end
+end
+
+# Add callable interface
+function (op::ChebCumsumOp{TR})(f::Vector{TR}) where {TR<:AbstractFloat}
+    return cumsum!(f, op)
 end
 
 function cumsum(f::Vector{TR}) where {TR<:AbstractFloat}
     n = length(f)
-    cache = ChebCumsumCache{TR}(n)
-    return cumsum!(f, cache)
+    op = ChebCumsumOp{TR}(n)
+    return op(f)
 end
 
-function cumsum!(f::Vector{TR}, cache::ChebCumsumCache{TR}) where {TR<:AbstractFloat}
+function cumsum!(f::Vector{TR}, op::ChebCumsumOp{TR}) where {TR<:AbstractFloat}
     n = length(f)
-    tmp = cache.tmp
-    result = cache.result
-    v = cache.v
+    tmp = op.tmp
+    result = op.result
+    v = op.v
 
     # Copy and pad input coefficients
     @inbounds begin
@@ -115,7 +116,7 @@ function cumsum!(f::Vector{TR}, cache::ChebCumsumCache{TR}) where {TR<:AbstractF
     return result
 end
 
-export cumsum, cumsum!, ChebCumsumCache
+export cumsum, ChebCumsumOp
 
 @testset "cumsum" begin
     tol = 100 * eps()
