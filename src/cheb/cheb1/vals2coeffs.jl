@@ -201,8 +201,8 @@ export cheb1_vals2coeffs, cheb1_vals2coeffs!, Cheb1Vals2CoeffsCache
 
     @testset "Symmetry preservation" begin
         v = kron([1 -1; 1 1], ones(10, 1))
-        c1 = cheb1_vals2coeffs(v[:, 1])
-        c2 = cheb1_vals2coeffs(v[:, 2])
+        c1 = cheb1_vals2coeffs(@view(v[:, 1]))
+        c2 = cheb1_vals2coeffs(@view(v[:, 2]))
         @test norm(c1[2:2:end], Inf) ≈ 0
         @test norm(c2[1:2:end], Inf) ≈ 0
     end
