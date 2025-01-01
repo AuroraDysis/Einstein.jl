@@ -97,7 +97,8 @@ function cheb1_coeffs2vals!(
 ) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
     n = length(coeffs)
     if n <= 1
-        return coeffs
+        cache.vals .= coeffs
+        return cache.vals
     end
 
     w = cache.w

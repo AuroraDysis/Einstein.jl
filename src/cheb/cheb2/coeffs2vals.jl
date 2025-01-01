@@ -114,7 +114,8 @@ function cheb2_coeffs2vals!(
 ) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
     n = length(coeffs)
     if n <= 1
-        return coeffs
+        cache.vals .= coeffs
+        return cache.vals
     end
 
     vals = cache.vals
@@ -124,20 +125,24 @@ function cheb2_coeffs2vals!(
     isEven = all(x -> x ≈ 0, @view(coeffs[2:2:end]))
     isOdd = all(x -> x ≈ 0, @view(coeffs[1:2:end]))
 
-    # Scale the interior rows by 1/2
     half = one(TR) / 2
-    @inbounds coeffs[2:(end - 1)] .*= half
+    @inbounds begin
+        tmp[1] = coeffs[1]
+        for i in 2:(n - 1)
+            hc = half * coeffs[i]
+            tmp[i] = hc
+            tmp[2n - i] = hc
+        end
+        tmp[n] = coeffs[n]
 
-    # Reuse preallocated storage:
-    @inbounds tmp[1:n] .= coeffs
-    # Mirror part
-    @inbounds tmp[(n + 1):end] .= @view(coeffs[(n - 1):-1:2])
+        # FFT into vals
+        fft!(tmp)
 
-    # FFT into vals
-    fft!(tmp)
-
-    # Flip/truncate inside vals
-    @inbounds vals .= real.(@view(tmp[n:-1:1]))
+        # Flip/truncate inside vals
+        for i in 1:n
+            vals[i] = real(tmp[n - i + 1])
+        end
+    end
 
     # In-place symmetry enforcement (reuse logic from original):
     if isEven
