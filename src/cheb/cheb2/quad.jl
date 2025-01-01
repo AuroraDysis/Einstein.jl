@@ -59,7 +59,7 @@ I = dot(w, f)  # ≈ 0
 1. [waldvogel2006fast](@citet*)
 2. [Fast Clenshaw-Curtis Quadrature - File Exchange - MATLAB Central](https://www.mathworks.com/matlabcentral/fileexchange/6911-fast-clenshaw-curtis-quadrature)
 """
-function cheb2_quad_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat, TI<:Integer}
+function cheb2_quad_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     if n == 0
         return TR[]
     elseif n == 1
@@ -68,26 +68,26 @@ function cheb2_quad_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat, TI<:Integer
 
     nm1 = n - 1
 
-    # Pre-allocate the full array for FFT
-    c = zeros(Complex{TR}, nm1)
-
     # Fill exact integrals of T_k (even k)
-    @inbounds c[1] = TR(2)  # k = 0 case
-    @inbounds for k in 2:2:nm1
-        c[k ÷ 2 + 1] = 2 / (TR(1) - k^2)
-    end
+    c = Array{Complex{TR}}(undef, nm1)
+    @inbounds begin
+        c[1] = TR(2)  # k = 0 case
+        for k in 2:2:nm1
+            c[k ÷ 2 + 1] = 2 / (TR(1) - k^2)
+        end
 
-    # Mirror for DCT via FFT (in-place)
-    half_idx = floor(Int, n / 2)
-    @inbounds for i in 2:half_idx
-        c[n - i + 1] = c[i]
-    end
+        # Mirror for DCT via FFT (in-place)
+        half_idx = floor(Int, n / 2)
+        for i in 2:half_idx
+            c[n - i + 1] = c[i]
+        end
 
-    # Compute weights via inverse FFT (in-place)
-    ifft!(c)
+        # Compute weights via inverse FFT (in-place)
+        ifft!(c)
+    end
 
     # Adjust boundary weights (in-place)
-    w = zeros(TR, n)
+    w = Vector{TR}(undef, n)
     @inbounds begin
         w[1] = real(c[1]) / 2
         for i in 2:nm1
