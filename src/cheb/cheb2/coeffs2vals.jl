@@ -1,6 +1,3 @@
-using FFTW: fft, ifft
-using FastTransforms: fft, ifft
-
 """
     cheb2_coeffs2vals(coeffs::AbstractVector{<:AbstractFloat}) -> Vector
     cheb2_coeffs2vals!(coeffs, cache::Cheb2Coeffs2ValsCache) -> Vector
