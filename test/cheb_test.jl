@@ -1,6 +1,6 @@
 using Test
 using LinearAlgebra: dot
-using GRSuite.ChebyshevSuite
+using PDESuite.ChebyshevSuite
 
 @testset "Chebyshev Spectral Transforms" begin
     n = 32  # Enough points for good accuracy

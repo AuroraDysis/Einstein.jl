@@ -1,10 +1,10 @@
 ```@meta
-CurrentModule = GRSuite
+CurrentModule = PDESuite
 ```
 
-# GRSuite
+# PDESuite
 
-Documentation for [GRSuite](https://github.com/AuroraDysis/GRSuite.jl).
+Documentation for [PDESuite](https://github.com/AuroraDysis/PDESuite.jl).
 
 !!! warning "AI-Generated Documentation"
     Most of the documentation in this package was generated with the assistance of AI.
@@ -15,5 +15,5 @@ Documentation for [GRSuite](https://github.com/AuroraDysis/GRSuite.jl).
 ```
 
 ```@autodocs
-Modules = [GRSuite]
+Modules = [PDESuite]
 ```

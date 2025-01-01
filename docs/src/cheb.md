@@ -1,11 +1,11 @@
 # Chebyshev Suite
 
 ```@index
-Modules = [GRSuite.ChebyshevSuite]
+Modules = [PDESuite.ChebyshevSuite]
 ```
 
 ```@autodocs
-Modules = [GRSuite.ChebyshevSuite]
+Modules = [PDESuite.ChebyshevSuite]
 ```
 
 ```@bibliography

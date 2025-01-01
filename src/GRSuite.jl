@@ -1,4 +1,4 @@
-module GRSuite
+module PDESuite
 
 include("cheb/cheb.jl")
 

@@ -1,17 +1,17 @@
-using GRSuite
+using PDESuite
 using Documenter
 using DocumenterCitations
 
-DocMeta.setdocmeta!(GRSuite, :DocTestSetup, :(using GRSuite); recursive=true)
+DocMeta.setdocmeta!(PDESuite, :DocTestSetup, :(using PDESuite); recursive=true)
 
 bib = CitationBibliography(joinpath(@__DIR__, "src/refs.bib"); style=:alpha)
 
 makedocs(;
-    modules=[GRSuite],
+    modules=[PDESuite],
     authors="Zhen Zhong <auroradysis@gmail.com> and contributors",
-    sitename="GRSuite.jl",
+    sitename="PDESuite.jl",
     format=Documenter.HTML(;
-        canonical="https://auroradysis.github.io/GRSuite.jl",
+        canonical="https://auroradysis.github.io/PDESuite.jl",
         edit_link="main",
         assets=String[],
     ),
@@ -23,4 +23,4 @@ makedocs(;
     plugins=[bib],
 )
 
-deploydocs(; repo="github.com/AuroraDysis/GRSuite.jl", devbranch="main")
+deploydocs(; repo="github.com/AuroraDysis/PDESuite.jl", devbranch="main")

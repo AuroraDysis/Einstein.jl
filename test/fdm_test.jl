@@ -1,5 +1,5 @@
 using Test
-using GRSuite.FiniteDifferenceSuite
+using PDESuite.FiniteDifferenceSuite
 
 @testset "Fornberg Finite Difference Weights" begin
     @testset "Standard First Derivatives" begin

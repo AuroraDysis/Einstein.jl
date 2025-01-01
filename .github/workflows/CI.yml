@@ -73,6 +73,6 @@ jobs:
         shell: julia --project=docs --color=yes {0}
         run: |
           using Documenter: DocMeta, doctest
-          using GRSuite
-          DocMeta.setdocmeta!(GRSuite, :DocTestSetup, :(using GRSuite); recursive=true)
-          doctest(GRSuite)
+          using PDESuite
+          DocMeta.setdocmeta!(PDESuite, :DocTestSetup, :(using PDESuite); recursive=true)
+          doctest(PDESuite)
