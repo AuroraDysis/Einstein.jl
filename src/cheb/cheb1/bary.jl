@@ -22,24 +22,31 @@ Chebyshev points of the first kind.
 See also: [`bary`](@ref), [`cheb1_grid`](@ref)
 """
 function cheb1_bary_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    # Handle corner cases
     if n == 0
         return TR[]
     elseif n == 1
         return [one(TR)]
     end
 
-    w = zeros(TR, n)
+    half = one(TR) / 2
     pi_over_n = convert(TR, π) / n
-
+    v = zeros(TR, n)
     @inbounds for j in 0:(n - 1)
-        θ = (n - j - 0.5) * pi_over_n
-        w[j + 1] = sin(θ)
+        θ = (n - j - half) * pi_over_n
+        v[j + 1] = sin(θ)
     end
 
-    # Flip signs for alternate elements
-    @inbounds @. w[(end - 1):-2:1] *= -1
+    # The following flipping trick forces symmetry. Also due to the nature of 
+    # the sine function, those computed with a big argument are replaced by ones
+    # with a small argument, improving the relative accuracy.
+    half_n = floor(Int, n / 2)
+    @inbounds v[1:half_n] .= v[end:-1:(n - half_n + 1)]
 
-    return w
+    # Flip signs for the odd indices near the end
+    @inbounds v[(end - 1):-2:1] .= -v[(end - 1):-2:1]
+
+    return v
 end
 
 function cheb1_bary_wts(n::TI) where {TI<:Integer}
@@ -49,21 +56,19 @@ end
 export cheb1_bary_wts
 
 @testset "cheb1_bary_wts" begin
-    # Test n=1 case
-    w1 = cheb1_bary_wts(Float64, 1)
-    @test w1 ≈ [1.0]
+    # Test n=0 case
+    @test cheb1_bary_wts(0) == Float64[]
 
-    # Test n=2 case
-    w2 = cheb1_bary_wts(Float64, 2)
-    @test w2 ≈ [-0.707106781186548, 0.707106781186548]
+    # Test n=1 case
+    @test cheb1_bary_wts(1) ≈ [1.0]
 
     # Test n=5 case
-    w5 = cheb1_bary_wts(Float64, 5)
+    w5 = cheb1_bary_wts(5)
     @test w5 ≈ [
         0.309016994374947, -0.809016994374948, 1.0, -0.809016994374948, 0.309016994374947
     ]
 
-    w6 = cheb1_bary_wts(Float64, 6)
+    w6 = cheb1_bary_wts(6)
     @test w6 ≈ [
         -0.258819045102521,
         0.707106781186548,
