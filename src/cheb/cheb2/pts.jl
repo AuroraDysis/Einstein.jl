@@ -47,7 +47,7 @@ function cheb2_pts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
         return [zero(TR)]
     end
 
-    x_grid = zeros(TR, n)
+    x_grid = Vector{TR}(undef, n)
 
     nm1 = n - 1
     pi_over_2nm1 = convert(TR, π) / (2 * nm1)

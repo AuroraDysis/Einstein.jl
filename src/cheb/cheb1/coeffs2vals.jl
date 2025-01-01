@@ -88,7 +88,7 @@ struct Cheb1Coeffs2ValsCache{TR}
                 w[k + 1] = -exp(k * m_im_pi_over_2n) / 2
             end
         end
-        return new(w, zeros(Complex{TR}, 2n), zeros(TR, n))
+        return new(w, Array{Complex{TR}}(undef, 2n), Vector{TR}(undef, n))
     end
 end
 

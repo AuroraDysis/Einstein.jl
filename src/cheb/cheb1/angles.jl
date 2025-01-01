@@ -24,7 +24,7 @@ function cheb1_angles(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
         return TR[convert(TR, π) / 2]
     end
 
-    θ = zeros(TR, n)
+    θ = Array{TR}(undef, n)
 
     pi_over_2n = convert(TR, pi) / (2 * n)
     @inbounds begin

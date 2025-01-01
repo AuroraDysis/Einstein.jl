@@ -73,7 +73,7 @@ function cheb2_quad_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     @inbounds begin
         c[1] = TR(2)  # k = 0 case
         for k in 2:2:nm1
-            c[k ÷ 2 + 1] = 2 / (TR(1) - k^2)
+            c[k ÷ 2 + 1] = 2 / (one(TR) - k^2)
         end
 
         # Mirror for DCT via FFT (in-place)

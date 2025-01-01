@@ -31,7 +31,7 @@ function cheb1_barywts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
 
     half = one(TR) / 2
     pi_over_n = convert(TR, π) / n
-    v = zeros(TR, n)
+    v = Vector{TR}(undef, n)
     @inbounds for j in 0:(n - 1)
         θ = (n - j - half) * pi_over_n
         v[j + 1] = sin(θ)

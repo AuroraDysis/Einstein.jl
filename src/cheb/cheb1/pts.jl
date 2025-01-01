@@ -46,7 +46,7 @@ function cheb1_pts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
         return [zero(TR)]
     end
 
-    x_grid = zeros(TR, n)
+    x_grid = Vector{TR}(undef, n)
 
     # Use symmetric indexing for better numerical properties
     pi_over_2n = convert(TR, π) / (2 * n)
