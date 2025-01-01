@@ -73,7 +73,7 @@ struct Cheb1Coeffs2ValsCache{TR<:AbstractFloat,TP<:Plan}
     w::Vector{Complex{TR}}    # Weight vector
     tmp::Vector{Complex{TR}}  # Temporary storage
     vals::Vector{TR}          # Result storage
-    plan::TP                  # FFT plan
+    fft_plan::TP              # FFT fft_plan
 
     function Cheb1Coeffs2ValsCache{TR}(n::Integer) where {TR<:AbstractFloat}
         # Precompute weights
@@ -92,8 +92,8 @@ struct Cheb1Coeffs2ValsCache{TR<:AbstractFloat,TP<:Plan}
         end
         tmp = Vector{Complex{TR}}(undef, 2n)
         vals = Vector{TR}(undef, n)
-        plan = plan_fft_measure!(tmp)
-        return new{TR,typeof(plan)}(w, tmp, vals, plan)
+        fft_plan = plan_fft_measure!(tmp)
+        return new{TR,typeof(fft_plan)}(w, tmp, vals, fft_plan)
     end
 end
 
@@ -109,7 +109,7 @@ function cheb1_coeffs2vals!(
     w = cache.w
     tmp = cache.tmp
     vals = cache.vals
-    plan = cache.plan
+    fft_plan = cache.fft_plan
 
     # Check for symmetry
     isEven = all(x -> x ≈ 0, @view(coeffs[2:2:end]))
@@ -136,7 +136,7 @@ function cheb1_coeffs2vals!(
         end
 
         # FFT
-        plan * tmp
+        fft_plan * tmp
     end
 
     # Extract real values

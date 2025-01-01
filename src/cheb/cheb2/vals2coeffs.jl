@@ -64,13 +64,16 @@ for i in 1:1000
 end
 ```
 """
-struct Cheb2Vals2CoeffsCache{T<:AbstractFloat}
-    tmp::Vector{Complex{T}}
-    coeffs::Vector{T}
+struct Cheb2Vals2CoeffsCache{TR<:AbstractFloat,TP<:Plan}
+    tmp::Vector{Complex{TR}}
+    coeffs::Vector{TR}
+    ifft_plan::TP
 
-    function Cheb2Vals2CoeffsCache{T}(n::Integer) where {T<:AbstractFloat}
-        # Allocate mirrored workspace of size 2n-2 and a vector of length n
-        return new(zeros(Complex{T}, 2n - 2), zeros(T, n))
+    function Cheb2Vals2CoeffsCache{TR}(n::Integer) where {TR<:AbstractFloat}
+        tmp = zeros(Complex{TR}, 2n - 2)
+        coeffs = zeros(TR, n)
+        ifft_plan = plan_ifft_measure!(tmp)
+        return new{TR,typeof(ifft_plan)}(tmp, coeffs, ifft_plan)
     end
 end
 
@@ -107,6 +110,7 @@ function cheb2_vals2coeffs!(
 
     tmp = cache.tmp
     coeffs = cache.coeffs
+    ifft_plan = cache.ifft_plan
 
     # Mirror the values (similar to MATLAB's [vals(n:-1:2) ; vals(1:n-1)])
     # The mirrored data occupies tmp[1 : 2n-2].
@@ -116,7 +120,7 @@ function cheb2_vals2coeffs!(
     end
 
     # Perform inverse FFT on the mirrored data
-    ifft!(tmp)
+    ifft_plan * tmp
 
     @inbounds begin
         coeffs[1] = real(tmp[1])

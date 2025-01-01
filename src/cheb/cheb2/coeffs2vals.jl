@@ -94,13 +94,13 @@ end
 struct Cheb2Coeffs2ValsCache{TR<:AbstractFloat,TP<:Plan}
     tmp::Vector{Complex{TR}}
     vals::Vector{TR}
-    plan::TP
+    fft_plan::TP
 
     function Cheb2Coeffs2ValsCache{TR}(n::TI) where {TI<:Integer,TR<:AbstractFloat}
         tmp = zeros(Complex{TR}, 2n - 2)
         vals = zeros(TR, n)
-        plan = plan_fft_measure!(tmp)
-        return new{TR,typeof(plan)}(tmp, vals, plan)
+        fft_plan = plan_fft_measure!(tmp)
+        return new{TR,typeof(fft_plan)}(tmp, vals, fft_plan)
     end
 end
 
@@ -115,7 +115,7 @@ function cheb2_coeffs2vals!(
 
     vals = cache.vals
     tmp = cache.tmp
-    plan = cache.plan
+    fft_plan = cache.fft_plan
 
     # Determine which columns are purely even or purely odd based on middle coefficients
     isEven = all(x -> x ≈ 0, @view(coeffs[2:2:end]))
@@ -132,7 +132,7 @@ function cheb2_coeffs2vals!(
         tmp[n] = coeffs[n]
 
         # FFT into vals
-        plan * tmp
+        fft_plan * tmp
 
         # Flip/truncate inside vals
         for i in 1:n
