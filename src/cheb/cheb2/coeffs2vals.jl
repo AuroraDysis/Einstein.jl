@@ -58,24 +58,32 @@ function cheb2_coeffs2vals(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVect
 
     # Scale the interior rows by 1/2
     half = one(TR) / 2
-    coeffs[2:(end - 1), :] .*= half
+    coeffs[2:(end - 1)] .*= half
 
     # Mirror the coefficients for a DCT-I using FFT
-    tmp = vcat(coeffs, coeffs[(n - 1):-1:2, :])
+    tmp = vcat(coeffs, coeffs[(n - 1):-1:2])
 
     # apply the FFT.
     values = real.(fft(tmp))
 
     # Flip and truncate to size n
-    values = values[n:-1:1]
+    values = @view(values[n:-1:1])
 
-    # Enforce symmetry in each column based on isEven and isOdd flags
+    # Enforce symmetry in each column based on isEven/isOdd
     if isEven
-        # (values + flipped(values)) / 2
-        values = half .* (values .+ reverse(values))
+        @inbounds for i in 1:div(length(values), 2)
+            j = length(values) - i + 1
+            s = values[i] + values[j]
+            values[i] = half * s
+            values[j] = half * s
+        end
     elseif isOdd
-        # (values - flipped(values)) / 2
-        values = half .* (values .- reverse(values))
+        @inbounds for i in 1:div(length(values), 2)
+            j = length(values) - i + 1
+            d = values[i] - values[j]
+            values[i] = half * d
+            values[j] = -half * d
+        end
     end
 
     return values
@@ -94,15 +102,15 @@ export cheb2_coeffs2vals
     v = cheb2_coeffs2vals(c)
     @test c ≈ v
 
-    # Test simple data conversion
     c = collect(1.0:5.0)
-    # Exact values
     vTrue = [3; -4 + sqrt(2); 3; -4 - sqrt(2); 15]
-
-    # Test real branch
     v = cheb2_coeffs2vals(c)
     @test norm(v - vTrue, Inf) < tol
-    @test all(iszero, imag.(v))
+
+    c = collect(1.0:6.0)
+    vTrue = [-3; 7 / 2; -(11 / 2) + sqrt(5); 7 / 2; -(11 / 2) - sqrt(5); 21]
+    v = cheb2_coeffs2vals(c)
+    @test norm(v - vTrue, Inf) < tol
 
     # Test symmetry preservation
     c = kron(ones(10), Matrix{Float64}(I, 2, 2))
