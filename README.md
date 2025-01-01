@@ -7,13 +7,17 @@
 [![Code Style: Blue](https://img.shields.io/badge/code%20style-blue-4495d1.svg)](https://github.com/invenia/BlueStyle)
 [![Aqua](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
+> [!WARNING]
+> The package is currently under development and is not yet ready for production use. I am migrating the code from a private repository to this public one. The documentation is also being updated to reflect the changes made to the codebase. Please be patient and check back later for updates.
+
 ## Description
 
 This package offers high-performance, arbitrary-precision solutions for solving partial differential equations (PDEs) in general relativity. It features the following numerical methods:
 
-- Chebyshev collocation in Chebyshev points of the first and second kinds  
-- Rectangular collocation in Chebyshev points of the second kind (TODO)  
-- Ultraspherical method (TODO)  
-- Ultraspherical rectangular pseudospectral method (TODO)  
+- Chebyshev collocation in Chebyshev points of the first and second kinds [WIP]
+- Finite difference method [WIP]
+- Rectangular collocation in Chebyshev points of the second kind (TODO)
+- Ultraspherical method (TODO)
+- Ultraspherical rectangular pseudospectral method (TODO)
 
 While the ChebyshevSuite is based on algorithms found in [Chebfun](https://github.com/chebfun/chebfun), it has been significantly enhanced in this package to prioritize performance and support arbitrary-precision calculations.
