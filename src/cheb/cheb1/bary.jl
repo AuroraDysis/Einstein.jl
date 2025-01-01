@@ -19,7 +19,7 @@ w_j = (-1)^j \\sin\\left(\\frac{(2j+1)\\pi}{2n}\\right), \\quad j = 0,\\ldots,n-
 These weights provide optimal stability for barycentric interpolation at
 Chebyshev points of the first kind.
 
-See also: [`bary`](@ref), [`cheb1_grid`](@ref)
+See also: [`bary`](@ref), [`cheb1_pts`](@ref)
 """
 function cheb1_bary_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     # Handle corner cases

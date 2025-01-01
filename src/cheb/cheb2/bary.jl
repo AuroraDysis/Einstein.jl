@@ -26,7 +26,7 @@ where ``\\delta_j`` is defined as:
 These weights are optimized for numerical stability and efficiency in the barycentric
 interpolation formula.
 
-See also: [`bary`](@ref), [`cheb2_grid`](@ref)
+See also: [`bary`](@ref), [`cheb2_pts`](@ref)
 """
 function cheb2_bary_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     if n == 0

@@ -53,7 +53,7 @@ Uses Waldvogel's algorithm (2006) with modifications by Nick Hale:
 w = cheb1_quad_wts(5)
 
 # Integrate sin(x) from -1 to 1
-x = cheb1_grid(5)
+x = cheb1_pts(5)
 f = sin.(x)
 I = dot(w, f)  # ≈ 0
 ```

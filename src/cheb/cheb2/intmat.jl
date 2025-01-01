@@ -44,7 +44,7 @@ B = cheb2_coeffs_intmat(Float64, 8)
 
 # Get Chebyshev coefficients of sin(x) using cheb2_asmat
 A, _ = cheb2_asmat(Float64, 8)
-x = cheb2_grid(Float64, 8)
+x = cheb2_pts(Float64, 8)
 f = sin.(x)
 a = A * f  # Chebyshev coefficients of sin(x)
 
@@ -52,7 +52,7 @@ a = A * f  # Chebyshev coefficients of sin(x)
 b = B * a  # Chebyshev coefficients of -cos(x) + C
 ```
 
-See also: [`cheb2_grid`](@ref), [`cheb2_asmat`](@ref)
+See also: [`cheb2_pts`](@ref), [`cheb2_asmat`](@ref)
 """
 function cheb2_coeffs_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     nm1 = n - 1
@@ -142,7 +142,7 @@ This composition allows integration in physical space through:
 I = cheb2_intmat(Float64, 8)
 
 # Get function values at Chebyshev points
-x = cheb2_grid(Float64, 8)
+x = cheb2_pts(Float64, 8)
 f = sin.(x)
 
 # Compute indefinite integral (-cos(x) + C)
@@ -152,7 +152,7 @@ F = I * f
 I_scaled = cheb2_intmat(Float64, 8, 0.0, π)
 ```
 
-See also: [`cheb2_coeffs_intmat`](@ref), [`cheb2_asmat`](@ref), [`cheb2_grid`](@ref)
+See also: [`cheb2_coeffs_intmat`](@ref), [`cheb2_asmat`](@ref), [`cheb2_pts`](@ref)
 """
 function cheb2_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     A, S = cheb2_asmat(TR, n)
@@ -206,7 +206,7 @@ end
 @testset "cheb2_intmat - analytical" begin
     @testset "Standard domain [-1,1]" begin
         n = 32
-        x = cheb2_grid(Float64, n)
+        x = cheb2_pts(Float64, n)
         intmat = cheb2_intmat(Float64, n)
 
         # Test 1: Polynomial integration
@@ -225,7 +225,7 @@ end
     @testset "Mapped domain [0,π]" begin
         n = 32
         intmat = cheb2_intmat(Float64, n, 0.0, Float64(π))
-        x = cheb2_grid(Float64, n, 0.0, Float64(π))
+        x = cheb2_pts(Float64, n, 0.0, Float64(π))
 
         # Test: Integration of sin(x) from 0 to x
         f = sin.(x)

@@ -34,7 +34,7 @@ it gives optimal interpolation properties.
 ```julia
 # Set up interpolation points and weights
 n = 10
-x = cheb2_grid(Float64, n)
+x = cheb2_pts(Float64, n)
 w = cheb2_bary_wts(Float64, n)
 
 # Function to interpolate
@@ -51,7 +51,7 @@ y = bary(w, x, f, x0)
 - [doi:10.1137/1.9781611975949](@citet*)
 - [chebfun/@chebtech2/bary.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/bary.m)
 
-See also: [`cheb1_bary_wts`](@ref), [`cheb1_grid`](@ref), [`cheb2_bary_wts`](@ref), [`cheb2_grid`](@ref)
+See also: [`cheb1_bary_wts`](@ref), [`cheb1_pts`](@ref), [`cheb2_bary_wts`](@ref), [`cheb2_pts`](@ref)
 """
 function bary(
     w::VT1, x::VT2, f::VT3, x0::TR

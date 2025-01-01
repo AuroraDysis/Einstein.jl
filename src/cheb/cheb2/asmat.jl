@@ -38,14 +38,14 @@ where:
 A, S = cheb2_asmat(Float64, 8)
 
 # Transform function values to spectral coefficients
-f_values = [sin(x) for x in cheb2_grid(Float64, 8)]
+f_values = [sin(x) for x in cheb2_pts(Float64, 8)]
 f_coeffs = A * f_values
 
 # Transform back to physical space
 f_recovered = S * f_coeffs
 ```
 
-See also: [`cheb2_grid`](@ref)
+See also: [`cheb2_pts`](@ref)
 """
 function cheb2_asmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     nm1 = n - 1
@@ -96,7 +96,7 @@ export cheb2_asmat
 
 @testset "cheb2_asmat" begin
     n = 32  # Enough points for good accuracy
-    x = cheb2_grid(Float64, n)
+    x = cheb2_pts(Float64, n)
     A, S = cheb2_asmat(Float64, n)
 
     @testset "Transform and recover" begin
