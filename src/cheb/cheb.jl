@@ -2,8 +2,9 @@ module ChebyshevSuite
 
 using InlineTest
 
-using FFTW: fft!, ifft!
-using FastTransforms: fft!, ifft!
+import AbstractFFTs: Plan
+using FFTW
+using FastTransforms
 using ArgCheck: @argcheck
 using FastBroadcast: @..
 
