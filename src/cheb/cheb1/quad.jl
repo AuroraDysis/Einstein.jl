@@ -81,7 +81,7 @@ function cheb1_quad_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
 
     # Preallocate the coefficient array for FFT
     c = Vector{Complex{TR}}(undef, n)
-    copy!(@view(c[1:nm]), m)
+    c[1:nm] .= m
 
     # Fill remaining coefficients based on parity of n
     if isodd(n)

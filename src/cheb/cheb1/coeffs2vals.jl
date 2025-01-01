@@ -158,7 +158,7 @@ function cheb1_coeffs2vals!(
     return vals
 end
 
-export cheb1_coeffs2vals
+export cheb1_coeffs2vals, cheb1_coeffs2vals!, Cheb1Coeffs2ValsCache
 
 @testset "cheb1_coeffs2vals" begin
     using LinearAlgebra
