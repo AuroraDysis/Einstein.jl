@@ -1,5 +1,5 @@
 """
-    cumsum(f::Vector{TR}) where {TR<:AbstractFloat}
+    cheb_cumsum(f::Vector{TR}) where {TR<:AbstractFloat}
     op::ChebCumsumOp{TR}(f::Vector{TR}) -> Vector{TR}
 
 Compute the indefinite integral of a function represented in Chebyshev basis.
@@ -35,7 +35,7 @@ its integral is represented with a series of length n+1:
 ```julia
 # Single transformation
 coeffs = [1.0, 2.0, 3.0]
-result = cumsum(coeffs)
+result = cheb_cumsum(coeffs)
 
 # Multiple transformations (recommended for performance)
 n = length(coeffs)
@@ -47,8 +47,6 @@ for i in 1:100
     # ... use result ...
 end
 ```
-
-# See also: [`diff`](@ref), [`sum`](@ref)
 """
 struct ChebCumsumOp{TR<:AbstractFloat,TI<:Integer}
     tmp::Vector{TR}    # Temporary storage for padded coefficients
@@ -71,7 +69,7 @@ struct ChebCumsumOp{TR<:AbstractFloat,TI<:Integer}
 end
 
 # Add callable interface
-function (op::ChebCumsumOp{TR})(f::Vector{TR}) where {TR<:AbstractFloat}
+function (op::ChebCumsumOp{TR})(f::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
     n = length(f)
     tmp = op.tmp
     result = op.result
@@ -106,22 +104,22 @@ function (op::ChebCumsumOp{TR})(f::Vector{TR}) where {TR<:AbstractFloat}
     return result
 end
 
-function cumsum(f::Vector{TR}) where {TR<:AbstractFloat}
+function cheb_cumsum(f::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
     n = length(f)
     op = ChebCumsumOp{TR}(n)
     return op(f)
 end
 
-export cumsum, ChebCumsumOp
+export cheb_cumsum, ChebCumsumOp
 
-@testset "cumsum" begin
+@testset "cheb_cumsum" begin
     tol = 100 * eps()
 
     @testset "cheb1" begin
         n = 15
         f = cos.(cheb1_pts(n))
         f_coeffs = cheb1_vals2coeffs(f)
-        If_coeffs = cumsum(f_coeffs)
+        If_coeffs = cheb_cumsum(f_coeffs)
         If = sin.(cheb1_pts(n)) .- sin(-1) # sin(x) - sin(-1) is the antiderivative of cos(x)
         If_coeffs_true = cheb1_vals2coeffs(If)
         @test norm(If_coeffs[1:(end - 1)] .- If_coeffs_true, Inf) < tol
@@ -131,7 +129,7 @@ export cumsum, ChebCumsumOp
         n = 15
         f = cos.(cheb2_pts(n))
         f_coeffs = cheb2_vals2coeffs(f)
-        If_coeffs = cumsum(f_coeffs)
+        If_coeffs = cheb_cumsum(f_coeffs)
         If = sin.(cheb2_pts(n)) .- sin(-1) # sin(x) - sin(-1) is the antiderivative of cos(x)
         If_coeffs_true = cheb2_vals2coeffs(If)
         @test norm(If_coeffs[1:(end - 1)] .- If_coeffs_true, Inf) < tol
