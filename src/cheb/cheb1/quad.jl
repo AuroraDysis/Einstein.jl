@@ -1,6 +1,3 @@
-using FFTW
-using FastTransforms
-
 """
     cheb1_quad_wts([TR=Float64], n::Integer)
 
