@@ -1,5 +1,3 @@
-using InlineTest
-
 """
     cheb2_coeffs_intmat([TR=Float64], n::Integer)
     cheb2_coeffs_intmat([TR=Float64], n::Integer, x_min::TR, x_max::TR)

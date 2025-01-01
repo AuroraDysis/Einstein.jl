@@ -1,5 +1,3 @@
-using InlineTest
-
 """
     cheb2_asmat([TR=Float64], n::Integer)
 
