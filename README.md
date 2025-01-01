@@ -1,6 +1,6 @@
 # PDESuite
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://AuroraDysis.github.io/PDESuite.jl/stable/)
+<!-- [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://AuroraDysis.github.io/PDESuite.jl/stable/) -->
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://AuroraDysis.github.io/PDESuite.jl/dev/)
 [![Build Status](https://github.com/AuroraDysis/PDESuite.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/AuroraDysis/PDESuite.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/AuroraDysis/PDESuite.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/AuroraDysis/PDESuite.jl)
