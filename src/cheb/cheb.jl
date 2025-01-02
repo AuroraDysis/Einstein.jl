@@ -26,8 +26,6 @@ include("cheb1/quad.jl")
 include("cheb1/diffmat.jl")
 include("cheb1/asmat.jl")
 include("cheb1/cumsummat.jl")
-# Rectangular spectral collocation
-include("cheb1/rectdiff.jl")
 
 include("cheb2/angles.jl")
 include("cheb2/pts.jl")
@@ -38,8 +36,9 @@ include("cheb2/quad.jl")
 include("cheb2/diffmat.jl")
 include("cheb2/asmat.jl")
 include("cheb2/cumsummat.jl")
+
 # Rectangular spectral collocation
-include("cheb2/intmat.jl")
-include("cheb2/rectdiff.jl")
+include("rect/rectint.jl")
+include("rect/rectdiff.jl")
 
 end
