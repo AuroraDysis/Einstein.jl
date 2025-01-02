@@ -4,6 +4,10 @@
 Construct nxn multiplication matrix
 representing the multiplication of F in the \$C^{(\\lambda)}\$ basis.
 
+# Arguments
+- `a::VT` : Vector of Chebyshev coefficients (!a is modified in place!)
+- `λ::TI` : Order of the ultraspherical basis
+
 # References
 - [chebfun/@ultraS/multmat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40ultraS/multmat.m)
 """
@@ -13,20 +17,20 @@ function ultra_multmat(
     n = length(a)
 
     if λ == 0 # λ == 0 case (Chebyshev T)
-        a .*= 0.5
-        M = sparse(Toeplitz([2a[1]; a[2:end]], [2a[1]; a[2:end]]))
-        H = ultra_sphankel(a[2:end])
-        sub1 = 2:n
-        sub2 = 1:(n - 1)
-        M[sub1, sub2] .+= H
+        half = one(TR) / 2
+        @inbounds a[2:end] .*= half
+        M = sparse(Toeplitz(a, a))
+        H = ultra_sphankel(@view(a[2:end]))
+        M[2:n, 1:(n - 1)] .+= H
         return M
     elseif λ == 1 # λ == 1 case (Chebyshev U)
-        M = sparse(Toeplitz([2a[1]; a[2:end]], [2a[1]; a[2:end]]) ./ 2)
-        sub = 1:(n - 2)
-        M[sub, sub] .-= ultra_sphankel(a[3:end] ./ 2)
+        half = one(TR) / 2
+        @inbounds a[2:end] .*= half
+        M = sparse(Toeplitz(a, a) .* half)
+        M[1:(n - 2), 1:(n - 2)] .-= ultra_sphankel(@view(a[3:end]))
         return M
     else # General λ case, Convert from T to C^(λ-1)
-        a = ultra_convertmat(n, 0, λ) * a
+        a = ultra_convertmat(TR, n, 0, λ) * a
         m = 2n
         M0 = sparse(I, m, m)
 
