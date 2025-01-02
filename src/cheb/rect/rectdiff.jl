@@ -3,12 +3,15 @@
 
 Constructing a 1st-order rectangular differentiation matrix mapping from a 1st-kind grid
 
-Arguments:
+# Arguments:
 - `m` : Size of the output grid (number of rows).
 - `n` : Size of the input grid (number of columns).
 
-Returns:
+# Returns:
 - `D` : The rectangular differentiation matrix (size `m x n`).
+
+# References
+- [chebfun/diffmat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/diffmat.m)
 """
 function cheb_rectdiff1(::Type{TR}, m::TI, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     # mapping-from grid (angles):
@@ -57,12 +60,15 @@ end
 
 Construct a 1st-order rectangular differentiation matrix mapping from a 2nd-kind grid.
 
-Arguments:
+# Arguments:
 - `m` : Size of the output grid (number of rows)
 - `n` : Size of the input grid (number of columns)
 
-Returns:
+# Returns:
 - `D` : The rectangular differentiation matrix (size `m x n`)
+
+# References
+- [chebfun/diffmat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/diffmat.m)
 """
 function cheb_rectdiff2(::Type{TR}, m::TI, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     nm1 = n - 1                     # For convenience
