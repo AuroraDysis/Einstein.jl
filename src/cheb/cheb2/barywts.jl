@@ -1,5 +1,5 @@
 """
-    cheb2_barywts([TR=Float64], n::Integer)
+    cheb2_barywts([TR=Float64], n::TI) where {TR<:AbstractFloat,TI<:Integer}
 
 Compute the barycentric weights for Chebyshev points of the second kind.
 

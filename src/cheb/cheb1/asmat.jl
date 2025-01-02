@@ -1,5 +1,5 @@
 """
-    cheb1_amat([TR=Float64], n::Integer) -> Matrix{TR}
+    cheb1_amat([TR=Float64], n::Integer)
 
 Construct the analysis matrix A that transforms function values at Chebyshev points of the first kind to Chebyshev coefficients.
 
@@ -21,7 +21,7 @@ function cheb1_amat(n::TI) where {TI<:Integer}
 end
 
 """
-    cheb1_smat([TR=Float64], n::Integer) -> Matrix{TR}
+    cheb1_smat([TR=Float64], n::Integer)
 
 Construct the synthesis matrix S that transforms Chebyshev coefficients to function values at Chebyshev points of the first kind.
 
