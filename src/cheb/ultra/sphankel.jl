@@ -1,10 +1,10 @@
-using ToeplitzMatrices
+using ToeplitzMatrices: Hankel
 
 """
     sphankel(r::VT) where {VT<:AbstractVector{TR},TR<:AbstractFloat}
 
-this forms a sparse Hankel matrix by forming it as an upside-
-down Toeplitz matrix. This is required by the ultraspherical multiplication
+Construct a sparse Hankel matrix by forming it as an upside-down
+Toeplitz matrix. This is required by the ultraspherical multiplication
 operator.
 
 # References
