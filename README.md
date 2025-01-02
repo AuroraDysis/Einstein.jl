@@ -8,7 +8,7 @@
 [![Aqua](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
 > [!WARNING]
-> The package is currently under development and is not yet ready for production use. I am migrating the code from a private repository to this public one. The documentation is also being updated to reflect the changes made to the codebase. Please be patient and check back later for updates.
+> I am migrating the code from a private repository to this public one. The documentation is also being updated to reflect the changes made to the codebase. Please be patient and check back later for updates.
 
 ## Description
 
