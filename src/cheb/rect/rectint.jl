@@ -12,24 +12,8 @@ Generate the Chebyshev integration matrix that operates directly on function val
 - `x_min`: (Optional) Lower bound of the integration interval
 - `x_max`: (Optional) Upper bound of the integration interval
 
-# Returns
-- `Matrix{TR}`: The integration matrix that operates on function values
-
-# Examples
-```julia
-# Generate 8×8 integration matrix for [-1,1]
-I = cheb_rectint(Float64, 8)
-
-# Get function values at Chebyshev points
-x = cheb2_pts(Float64, 8)
-f = sin.(x)
-
-# Compute indefinite integral (-cos(x) + C)
-F = I * f
-
-# Integration matrix for [0,π]
-I_scaled = cheb_rectint(Float64, 8, 0.0, π)
-```
+# References
+- [chebfun/intmat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/intmat.m)
 """
 function cheb_rectint(::Type{TR}, m::TI, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     # Build Lagrange basis
@@ -55,6 +39,10 @@ function cheb_rectint(::Type{TR}, m::TI, n::TI) where {TR<:AbstractFloat,TI<:Int
     return intmat
 end
 
+function cheb_rectint(n::TI) where {TI<:Integer}
+    return cheb_rectint(Float64, n, n)
+end
+
 function cheb_rectint(
     ::Type{TR}, m::TI, n::TI, x_min::TR, x_max::TR
 ) where {TR<:AbstractFloat,TI<:Integer}
@@ -63,16 +51,12 @@ function cheb_rectint(
     return intmat
 end
 
-function cheb_rectint(n::TI) where {TI<:Integer}
-    return cheb_rectint(Float64, n, n)
+function cheb_rectint(m::TI, n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
+    return cheb_rectint(Float64, m, n, x_min, x_max)
 end
 
 function cheb_rectint(n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
     return cheb_rectint(Float64, n, n, x_min, x_max)
-end
-
-function cheb_rectint(m::TI, n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
-    return cheb_rectint(Float64, m, n, x_min, x_max)
 end
 
 export cheb_rectint

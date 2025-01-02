@@ -1,14 +1,12 @@
 """
     cheb_rectdiff1([TR=Float64], m::TI, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    cheb_rectdiff1([TR=Float64], m::TI, n::TI, x_min::TR, x_max::TR) where {TR<:AbstractFloat,TI<:Integer}
 
 Constructing a 1st-order rectangular differentiation matrix mapping from a 1st-kind grid
 
 # Arguments:
 - `m` : Size of the output grid (number of rows).
 - `n` : Size of the input grid (number of columns).
-
-# Returns:
-- `D` : The rectangular differentiation matrix (size `m x n`).
 
 # References
 - [chebfun/diffmat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/diffmat.m)
@@ -55,17 +53,29 @@ function cheb_rectdiff1(::Type{TR}, m::TI, n::TI) where {TR<:AbstractFloat,TI<:I
     return D
 end
 
+function cheb_rectdiff1(m::TI, n::TI) where {TI<:Integer}
+    return cheb_rectdiff1(Float64, m, n)
+end
+
+function cheb_rectdiff1(::Type{TR}, m::TI, n::TI, x_min::TR, x_max::TR) where {TR<:AbstractFloat,TI<:Integer}
+    D = cheb_rectdiff1(TR, m, n)
+    D .*= 2 / (x_max - x_min)
+    return D
+end
+
+function cheb_rectdiff1(m::TI, n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
+    return cheb_rectdiff1(Float64, m, n, x_min, x_max)
+end
+
 """
     cheb_rectdiff2([TR=Float64], m::TI, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    cheb_rectdiff2([TR=Float64], m::TI, n::TI, x_min::TR, x_max::TR) where {TR<:AbstractFloat,TI<:Integer}
 
 Construct a 1st-order rectangular differentiation matrix mapping from a 2nd-kind grid.
 
 # Arguments:
 - `m` : Size of the output grid (number of rows)
 - `n` : Size of the input grid (number of columns)
-
-# Returns:
-- `D` : The rectangular differentiation matrix (size `m x n`)
 
 # References
 - [chebfun/diffmat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/diffmat.m)
@@ -133,12 +143,18 @@ function cheb_rectdiff2(::Type{TR}, m::TI, n::TI) where {TR<:AbstractFloat,TI<:I
     return D
 end
 
-function cheb_rectdiff1(m::TI, n::TI) where {TI<:Integer}
-    return cheb_rectdiff1(Float64, m, n)
-end
-
 function cheb_rectdiff2(m::TI, n::TI) where {TI<:Integer}
     return cheb_rectdiff2(Float64, m, n)
+end
+
+function cheb_rectdiff2(::Type{TR}, m::TI, n::TI, x_min::TR, x_max::TR) where {TR<:AbstractFloat,TI<:Integer}
+    D = cheb_rectdiff2(TR, m, n)
+    D .*= 2 / (x_max - x_min)
+    return D
+end
+
+function cheb_rectdiff2(m::TI, n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
+    return cheb_rectdiff2(Float64, m, n, x_min, x_max)
 end
 
 export cheb_rectdiff1, cheb_rectdiff2
