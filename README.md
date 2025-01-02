@@ -12,7 +12,7 @@
 
 ## Description
 
-This package is a high-performance suite designed to compute arbitrary-precision solutions for partial differential equations (PDEs) in general relativity. It includes the following numerical methods:
+This package is a **high-performance** suite designed to compute **arbitrary-precision** solutions for partial differential equations (PDEs) in general relativity. It includes the following numerical methods:
 
 - Chebyshev collocation at Chebyshev points of the first and second kinds
 - Finite difference method
