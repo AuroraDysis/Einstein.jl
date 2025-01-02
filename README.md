@@ -15,9 +15,9 @@
 This package is a high-performance suite designed to compute arbitrary-precision solutions for partial differential equations (PDEs) in general relativity. It includes the following numerical methods:
 
 - Chebyshev collocation at Chebyshev points of the first and second kinds
-- Finite difference method [WIP]
-- Rectangular collocation at Chebyshev points of the second kind (TODO)  
-- Ultraspherical method (TODO)  
-- Ultraspherical rectangular pseudospectral method (TODO)  
+- Finite difference method
+- Rectangular collocation
+- Ultraspherical spectral method [TODO]
+- Ultraspherical rectangular collocation [TODO]
 
 Although the ChebyshevSuite is inspired by algorithms from [Chebfun](https://github.com/chebfun/chebfun), it has been extensively enhanced in this package to optimize performance and enable arbitrary-precision calculations.
