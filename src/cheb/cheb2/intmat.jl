@@ -155,7 +155,7 @@ F = I * f
 I_scaled = cheb2_intmat(Float64, 8, 0.0, π)
 ```
 
-See also: [`cheb2_coeffs_intmat`](@ref), [`cheb2_asmat`](@ref), [`cheb2_pts`](@ref)
+See also: [`cheb2_coeffs_intmat`](@ref)
 """
 function cheb2_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     # Build Lagrange basis
