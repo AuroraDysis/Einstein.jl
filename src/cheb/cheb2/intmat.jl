@@ -39,7 +39,7 @@ The matrix elements are derived from the integration relation of Chebyshev polyn
 
 When `x_min` and `x_max` are provided, the matrix is scaled for integration over [x_min, x_max].
 
-See also: [`cheb2_pts`](@ref), [`cheb2_amat`](@ref), [`cheb2_smat`](@ref)
+See also: [`cheb2_pts`](@ref)
 """
 function cheb2_coeffs_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     nm1 = n - 1

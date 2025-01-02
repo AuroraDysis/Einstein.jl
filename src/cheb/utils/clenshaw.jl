@@ -46,8 +46,6 @@ julia> x = 0.5
 julia> cheb_clenshaw(c, x)
 2.75
 ```
-
-See also: [`cheb1_coeffs2vals`](@ref), [`cheb2_coeffs2vals`](@ref)
 """
 function cheb_clenshaw(c::VT, x::T) where {T<:AbstractFloat,VT<:AbstractVector{T}}
     @argcheck length(c) > 0 "c must have at least one element"

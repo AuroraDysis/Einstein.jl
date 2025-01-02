@@ -24,7 +24,7 @@ polynomials of the first kind Tₙ(x). The transformation:
    - Even coefficients produce even functions
    - Odd coefficients produce odd functions
 
-See also: [`cheb1_vals2coeffs`](@ref), [`Cheb1Vals2CoeffsOp`](@ref)
+See also: [`Cheb1Vals2CoeffsOp`](@ref)
 """
 struct Cheb1Coeffs2ValsOp{TR<:AbstractFloat,TP<:Plan}
     w::Vector{Complex{TR}}    # Weight vector
