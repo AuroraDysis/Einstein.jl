@@ -1,6 +1,6 @@
 """
-    cheb1_coeffs2vals(coeffs::Vector{TR}) where {TR<:AbstractFloat}
-    op::Cheb1Coeffs2ValsOp{TR}(coeffs::Vector{TR})
+    cheb1_coeffs2vals(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+    op::Cheb1Coeffs2ValsOp(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 1st kind.
 
