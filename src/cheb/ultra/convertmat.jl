@@ -5,6 +5,9 @@ Compute sparse representation for conversion operators.
 Returns the truncation of the operator that transforms \$C^{\\lambda}\$
 (Ultraspherical polynomials) to \$C^{\\lambda + 1}\$. The truncation gives
 back a matrix of size n x n.
+
+# References
+- [chebfun/@ultraS/spconvert.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40ultraS/spconvert.m)
 """
 function ultra_spconvert(::Type{TR}, n::TI, λ::TI) where {TI<:Integer,TR<:AbstractFloat}
     λf = convert(TR, λ)
@@ -29,6 +32,9 @@ end
 Conversion matrix used in the ultraspherical spectral method.
 Returns N-by-N matrix realization of conversion operator between ultraspherical polynomial bases.
 Maps N coefficients from C^{(K1)} basis to C^{(K2)} basis.
+
+# References
+- [chebfun/@ultraS/convertmat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40ultraS/convertmat.m)
 """
 function ultra_convertmat(
     ::Type{TR}, n::TI, K1::TI, K2::TI
