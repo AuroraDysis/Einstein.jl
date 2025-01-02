@@ -1,5 +1,5 @@
 """
-    cheb2_quad_wts([TR=Float64], n::Integer)
+    cheb2_quadwts([TR=Float64], n::Integer)
 
 Compute quadrature weights for Chebyshev points of the second kind (Clenshaw-Curtis quadrature).
 
@@ -47,7 +47,7 @@ Uses Waldvogel's algorithm (2006) with modifications by Nick Hale:
 # Examples
 ```julia
 # Compute weights for 5-point quadrature
-w = cheb2_quad_wts(5)
+w = cheb2_quadwts(5)
 
 # Integrate sin(x) from -1 to 1
 x = cheb2_pts(5)
@@ -59,7 +59,7 @@ I = dot(w, f)  # ≈ 0
 1. [waldvogel2006fast](@citet*)
 2. [Fast Clenshaw-Curtis Quadrature - File Exchange - MATLAB Central](https://www.mathworks.com/matlabcentral/fileexchange/6911-fast-clenshaw-curtis-quadrature)
 """
-function cheb2_quad_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+function cheb2_quadwts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     if n == 0
         return TR[]
     elseif n == 1
@@ -99,21 +99,21 @@ function cheb2_quad_wts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     return w
 end
 
-function cheb2_quad_wts(n::TI) where {TI<:Integer}
-    return cheb2_quad_wts(Float64, n)
+function cheb2_quadwts(n::TI) where {TI<:Integer}
+    return cheb2_quadwts(Float64, n)
 end
 
-export cheb2_quad_wts
+export cheb2_quadwts
 
-@testset "cheb2_quad_wts" begin
+@testset "cheb2_quadwts" begin
     # Test n=0 case
-    @test cheb2_quad_wts(0) == Float64[]
+    @test cheb2_quadwts(0) == Float64[]
 
     # Test n=1 case
-    @test cheb2_quad_wts(1) ≈ [2.0]
+    @test cheb2_quadwts(1) ≈ [2.0]
 
     # Test n=5 case
-    w5 = cheb2_quad_wts(5)
+    w5 = cheb2_quadwts(5)
     @test w5 ≈ [
         0.0666666666666667,
         0.533333333333333,
@@ -122,7 +122,7 @@ export cheb2_quad_wts
         0.0666666666666667,
     ]
 
-    w6 = cheb2_quad_wts(6)
+    w6 = cheb2_quadwts(6)
     @test w6 ≈ [
         0.0400000000000000,
         0.360743041200011,
