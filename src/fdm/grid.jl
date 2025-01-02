@@ -1,5 +1,5 @@
 """
-    fdm_grid(::Type{TR}, x_min::TR, x_max::TR, dx::TR) where {TR<:AbstractFloat}
+    fdm_grid([TR=Float64], x_min::TR, x_max::TR, dx::TR) where {TR<:AbstractFloat}
 
 Generate a uniform grid for finite difference methods.
 
@@ -11,28 +11,6 @@ Generate a uniform grid for finite difference methods.
 
 # Returns
 - Vector of n uniformly spaced points, where n = round((x_max - x_min)/dx) + 1
-
-# Mathematical Details
-The grid points are generated as:
-```math
-x_i = x_{min} + (i-1)dx, \\quad i = 1,\\ldots,n
-```
-where n is chosen to ensure the grid covers [x_min, x_max] with spacing dx.
-
-# Notes
-- The function ensures that x_max is accurately represented within floating-point precision
-- The actual number of points is computed to maintain uniform spacing
-- The final point may differ from x_max by at most machine epsilon
-
-# Examples
-```julia
-# Generate grid with spacing 0.1 on [0,1]
-x = fdm_grid(Float64, 0.0, 1.0, 0.1)
-
-# Generate grid with 100 points on [-1,1]
-dx = 2.0/99  # To get exactly 100 points
-x = fdm_grid(Float64, -1.0, 1.0, dx)
-```
 """
 function fdm_grid(::Type{TR}, x_min::TR, x_max::TR, dx::TR) where {TR<:AbstractFloat}
     n = round(Int, (x_max - x_min) / dx) + 1
@@ -46,6 +24,10 @@ function fdm_grid(::Type{TR}, x_min::TR, x_max::TR, dx::TR) where {TR<:AbstractF
     end
 
     return x_grid
+end
+
+function fdm_grid(x_min::Float64, x_max::Float64, dx::Float64)
+    return fdm_grid(Float64, x_min, x_max, dx)
 end
 
 export fdm_grid
