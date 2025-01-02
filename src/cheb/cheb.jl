@@ -35,7 +35,7 @@ include("cheb2/barywts.jl")
 include("cheb2/quad.jl")
 include("cheb2/diffmat.jl")
 include("cheb2/asmat.jl")
-include("cheb1/cumsummat.jl")
+include("cheb2/cumsummat.jl")
 include("cheb2/intmat.jl")
 
 end
