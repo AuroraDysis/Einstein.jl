@@ -14,17 +14,13 @@ with parameter \$k\$.
 - [chebfun/@ultraS/diffmat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40ultraS/diffmat.m)
 """
 function ultra_diffmat(n::TI, m::TI) where {TI<:Integer}
-    @argcheck n >= 1 "n must be positive"
-    @argcheck m >= 0 "m must be nonnegative"
+    @argcheck n >= 2 "n must be positive"
+    @argcheck m >= 1 "m must be nonnegative"
 
     nm1 = n - 1
-    if m > 0
-        D = spdiagm(1 => 1:nm1)
-        for s in 1:(m - 1)
-            D = spdiagm(1 => 2s * ones(TI, nm1)) * D
-        end
-    else
-        D = sparse(TI, I, nm1, nm1)
+    D = spdiagm(1 => 1:nm1)
+    for s in 1:(m - 1)
+        D = spdiagm(1 => 2s * ones(TI, nm1)) * D
     end
 
     return D
