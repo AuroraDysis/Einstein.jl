@@ -16,6 +16,10 @@ function cheb1_amat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     return A
 end
 
+function cheb1_amat(n::TI) where {TI<:Integer}
+    return cheb1_amat(Float64, n)
+end
+
 """
     cheb1_smat([TR=Float64], n::Integer) -> Matrix{TR}
 
@@ -32,10 +36,6 @@ function cheb1_smat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
         S[:, i] = op(OneElement(one(TR), i, n))
     end
     return S
-end
-
-function cheb1_amat(n::TI) where {TI<:Integer}
-    return cheb1_amat(Float64, n)
 end
 
 function cheb1_smat(n::TI) where {TI<:Integer}
