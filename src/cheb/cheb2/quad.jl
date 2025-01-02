@@ -1,7 +1,7 @@
 """
     cheb2_quadwts([TR=Float64], n::Integer)
 
-Compute quadrature weights for Chebyshev points of the second kind (Clenshaw-Curtis quadrature).
+Compute quadrature weights for Chebyshev points of the 2nd kind (Clenshaw-Curtis quadrature).
 
 # Arguments
 - `TR`: Type parameter for the weights (e.g., Float64)

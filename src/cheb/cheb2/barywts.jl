@@ -1,30 +1,15 @@
 """
     cheb2_barywts([TR=Float64], n::TI) where {TR<:AbstractFloat,TI<:Integer}
 
-Compute the barycentric weights for Chebyshev points of the second kind.
+Compute the barycentric weights for Chebyshev points of the 2nd kind.
 
 # Arguments
 - `TR`: Type parameter for the weights (e.g., Float64)
 - `n`: Number of points
 
-# Returns
-- Vector of n barycentric weights
+# References
 
-# Mathematical Details
-For Chebyshev points of the second kind, the barycentric weights are:
-```math
-w_j = (-1)^j \\delta_j, \\quad j = 0,\\ldots,n-1
-```
-where ``\\delta_j`` is defined as:
-```math
-\\delta_j = \\begin{cases}
-1/2 & j = 0 \\text{ or } j = n-1 \\\\
-1 & \\text{otherwise}
-\\end{cases}
-```
-
-These weights are optimized for numerical stability and efficiency in the barycentric
-interpolation formula.
+- [chebfun/@chebtech2/barywts.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/barywts.m)
 
 See also: [`bary`](@ref), [`cheb2_pts`](@ref)
 """

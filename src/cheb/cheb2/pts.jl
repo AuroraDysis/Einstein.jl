@@ -2,7 +2,7 @@
     cheb2_pts([TR=Float64], n::Integer)
     cheb2_pts([TR=Float64], n::Integer, x_min::TR, x_max::TR)
 
-Generate Chebyshev points of the second kind.
+Generate Chebyshev points of the 2nd kind.
 
 # Arguments
 - `TR`: Type parameter for the grid points (e.g., Float64)
@@ -11,7 +11,7 @@ Generate Chebyshev points of the second kind.
 - `x_max`: (Optional) Upper bound of the mapped interval
 
 # Returns
-- Vector of n Chebyshev points of the second kind
+- Vector of n Chebyshev points of the 2nd kind
 
 # Mathematical Details
 For the standard interval [-1,1]:
@@ -21,7 +21,7 @@ For mapped interval [x_min,x_max]:
 ``x_{mapped} = \\frac{x_{max} + x_{min}}{2} + \\frac{x_{min} - x_{max}}{2}x_k``
 
 # Notes
-Chebyshev points of the second kind are the extrema of Chebyshev polynomials T_n(x).
+Chebyshev points of the 2nd kind are the extrema of Chebyshev polynomials T_n(x).
 These points include the endpoints, making them suitable for boundary value problems.
 The convenience methods with Integer arguments default to Float64 precision.
 

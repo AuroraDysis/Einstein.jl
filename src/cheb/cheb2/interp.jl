@@ -1,7 +1,7 @@
 """
     op::Cheb2InterpOp{TR}(values::Vector{TR}, x::TR) -> TR
 
-Interpolate values at Chebyshev points of the second kind using barycentric interpolation.
+Interpolate values at Chebyshev points of the 2nd kind using barycentric interpolation.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:
@@ -17,7 +17,7 @@ end
 
 # Mathematical Background
 Uses the barycentric interpolation formula with simplified weights for
-Chebyshev points of the second kind:
+Chebyshev points of the 2nd kind:
 ```math
 p(x) = \\frac{\\sum_{j=0}^n \\frac{(-1)^j \\delta_j f_j}{x-x_j}}{\\sum_{j=0}^n \\frac{(-1)^j \\delta_j}{x-x_j}}
 ```

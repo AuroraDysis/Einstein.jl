@@ -8,7 +8,7 @@ For a Chebyshev series:
 ```math
 f(x) = \\sum_{k=0}^n c_k T_k(x)
 ```
-where ``T_k(x)`` are Chebyshev polynomials of the first kind, this module provides
+where ``T_k(x)`` are Chebyshev polynomials of the 1st kind, this module provides
 two evaluation methods:
 
 1. Clenshaw algorithm (default) - Efficient for moderate degree polynomials

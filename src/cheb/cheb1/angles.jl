@@ -1,7 +1,7 @@
 """
     cheb1_angles([TR=Float64], n::TI) where {TR<:AbstractFloat,TI<:Integer}
 
-Compute angles for Chebyshev points of the first kind:
+Compute angles for Chebyshev points of the 1st kind:
 ``\\theta_k = \\frac{(2k + 1)\\pi}{2n}, \\quad k = n-1,\\ldots,0``
 
 # Arguments

@@ -2,7 +2,7 @@
     cheb1_vals2coeffs(vals::Vector{TR}) where {TR<:AbstractFloat}
     op::Cheb1Vals2CoeffsOp{TR}(vals::Vector{TR}) -> Vector{TR}
 
-Convert values sampled at Chebyshev points of the first kind into their corresponding
+Convert values sampled at Chebyshev points of the 1st kind into their corresponding
 Chebyshev coefficients.
 
 # Performance Guide
@@ -12,14 +12,14 @@ For optimal performance when performing multiple transformations:
 
 # Description
 Given an input vector `vals` of length `n` representing function values at Chebyshev points
-of the first kind, this computes the Chebyshev coefficients `c` such that:
+of the 1st kind, this computes the Chebyshev coefficients `c` such that:
 
     f(x) = c[1]*T₀(x) + c[2]*T₁(x) + ... + c[n]*Tₙ₋₁(x)
     
-where Tₖ(x) are the Chebyshev polynomials of the first kind.
+where Tₖ(x) are the Chebyshev polynomials of the 1st kind.
 
 # Arguments
-- `vals::Vector{TR}`: Values at Chebyshev points of the first kind
+- `vals::Vector{TR}`: Values at Chebyshev points of the 1st kind
 - `op::Cheb1Vals2CoeffsOp{TR}`: Pre-allocated operator for transformation
 
 # Returns

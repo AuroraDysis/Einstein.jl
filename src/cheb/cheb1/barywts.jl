@@ -1,23 +1,16 @@
 """
     cheb1_barywts([TR=Float64], n::TI) where {TR<:AbstractFloat,TI<:Integer}
 
-Compute the barycentric weights for Chebyshev points of the first kind.
+Compute the barycentric weights for Chebyshev points of the 1st kind.
 
 # Arguments
 - `TR`: Type parameter for the weights (e.g., Float64)
 - `n`: Number of points
 
-# Returns
-- Vector of n barycentric weights
+# References
 
-# Mathematical Details
-For Chebyshev points of the first kind, the barycentric weights are:
-```math
-w_j = (-1)^j \\sin\\left(\\frac{(2j+1)\\pi}{2n}\\right), \\quad j = 0,\\ldots,n-1
-```
-
-These weights provide optimal stability for barycentric interpolation at
-Chebyshev points of the first kind.
+- [berrut2004barycentric](@citet*)
+- [chebfun/@chebtech1/barywts.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/barywts.m)
 
 See also: [`bary`](@ref), [`cheb1_pts`](@ref)
 """

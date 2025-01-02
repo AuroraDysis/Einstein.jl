@@ -1,5 +1,5 @@
 """
-This module provides functionality to convert values at Chebyshev points of the second kind
+This module provides functionality to convert values at Chebyshev points of the 2nd kind
 to Chebyshev coefficients using FFT-based methods. The implementation is optimized for 
 both performance and accuracy.
 
@@ -14,7 +14,7 @@ symmetric functions appropriately.
 """
     Cheb2Vals2CoeffsOp{TR<:AbstractFloat,TP<:Plan}
 
-An operator type for converting values at Chebyshev points of the second kind to
+An operator type for converting values at Chebyshev points of the 2nd kind to
 Chebyshev coefficients.
 
 # Fields
@@ -66,7 +66,7 @@ end
 Convert values at Chebyshev points to coefficients using a pre-allocated operator.
 
 # Arguments
-- `vals`: Vector of values at Chebyshev points of the second kind
+- `vals`: Vector of values at Chebyshev points of the 2nd kind
 
 # Returns
 - Vector of Chebyshev coefficients
@@ -144,7 +144,7 @@ end
 """
     cheb2_vals2coeffs(vals::AbstractVector)
 
-Convert values at Chebyshev points of the second kind to Chebyshev coefficients.
+Convert values at Chebyshev points of the 2nd kind to Chebyshev coefficients.
 
 # Arguments
 - `vals`: Vector of values at Chebyshev points

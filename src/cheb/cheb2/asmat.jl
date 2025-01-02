@@ -1,7 +1,7 @@
 """
     cheb2_amat([TR=Float64], n::TI) where {TR<:AbstractFloat,TI<:Integer}
 
-Construct the analysis matrix A that transforms function values at Chebyshev points of the second kind to Chebyshev coefficients.
+Construct the analysis matrix A that transforms function values at Chebyshev points of the 2nd kind to Chebyshev coefficients.
 
 # Arguments
 - `TR`: Element type (defaults to Float64)
@@ -23,7 +23,7 @@ end
 """
     cheb1_smat([TR=Float64], n::TI) where {TR<:AbstractFloat,TI<:Integer}
 
-Construct the synthesis matrix S that transforms Chebyshev coefficients to function values at Chebyshev points of the second kind.
+Construct the synthesis matrix S that transforms Chebyshev coefficients to function values at Chebyshev points of the 2nd kind.
 
 # Arguments
 - `TR`: Element type (defaults to Float64)

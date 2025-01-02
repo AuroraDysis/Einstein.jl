@@ -1,7 +1,7 @@
 """
     cheb1_quadwts([TR=Float64], n::Integer)
 
-Compute quadrature weights for Chebyshev points of the first kind.
+Compute quadrature weights for Chebyshev points of the 1st kind.
 
 # Arguments
 - `TR`: Type parameter for the weights (e.g., Float64)

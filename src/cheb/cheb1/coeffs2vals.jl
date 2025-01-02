@@ -2,7 +2,7 @@
     cheb1_coeffs2vals(coeffs::Vector{TR}) where {TR<:AbstractFloat}
     op::Cheb1Coeffs2ValsOp{TR}(coeffs::Vector{TR}) -> Vector{TR}
 
-Convert Chebyshev coefficients to values at Chebyshev points of the first kind.
+Convert Chebyshev coefficients to values at Chebyshev points of the 1st kind.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:
@@ -16,7 +16,7 @@ values = op(coeffs)
 
 # Mathematical Background
 The function implements the transform from coefficient space to physical space for Chebyshev
-polynomials of the first kind Tₙ(x). The transformation:
+polynomials of the 1st kind Tₙ(x). The transformation:
 
 1. Uses the relationship between Chebyshev polynomials and cosine series
 2. Applies a type-III discrete cosine transform via FFT

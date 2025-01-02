@@ -1,10 +1,10 @@
 """
     cheb1_diffmat(n::TI, k::TI=1) where {TI<:Integer}
 
-Construct a Chebyshev differentiation matrix for points of the first kind.
+Construct a Chebyshev differentiation matrix for points of the 1st kind.
 
 # Description
-Creates a matrix that maps function values at `n` Chebyshev points of the first kind 
+Creates a matrix that maps function values at `n` Chebyshev points of the 1st kind 
 to values of the `k`-th derivative of the interpolating polynomial at those points.
 
 # Arguments

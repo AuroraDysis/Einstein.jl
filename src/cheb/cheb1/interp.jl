@@ -1,7 +1,7 @@
 """
     op::Cheb1InterpOp{TR}(values::Vector{TR}, x::TR) -> TR
 
-Interpolate values at Chebyshev points of the first kind using barycentric interpolation.
+Interpolate values at Chebyshev points of the 1st kind using barycentric interpolation.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:

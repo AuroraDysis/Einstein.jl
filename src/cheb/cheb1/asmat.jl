@@ -1,7 +1,7 @@
 """
     cheb1_amat([TR=Float64], n::Integer)
 
-Construct the analysis matrix A that transforms function values at Chebyshev points of the first kind to Chebyshev coefficients.
+Construct the analysis matrix A that transforms function values at Chebyshev points of the 1st kind to Chebyshev coefficients.
 
 # Arguments
 - `TR`: Element type (defaults to Float64)
@@ -23,7 +23,7 @@ end
 """
     cheb1_smat([TR=Float64], n::Integer)
 
-Construct the synthesis matrix S that transforms Chebyshev coefficients to function values at Chebyshev points of the first kind.
+Construct the synthesis matrix S that transforms Chebyshev coefficients to function values at Chebyshev points of the 1st kind.
 
 # Arguments
 - `TR`: Element type (defaults to Float64)

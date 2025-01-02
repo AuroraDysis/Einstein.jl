@@ -8,7 +8,7 @@ For a Chebyshev series:
 ```math
 f(x) = \\sum_{k=0}^n c_k T_k(x)
 ```
-where ``T_k(x)`` are Chebyshev polynomials of the first kind, the Clenshaw algorithm
+where ``T_k(x)`` are Chebyshev polynomials of the 1st kind, the Clenshaw algorithm
 computes the sum using the recurrence relation:
 ```math
 \\begin{align*}

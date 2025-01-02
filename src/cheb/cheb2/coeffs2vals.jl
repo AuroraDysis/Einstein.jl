@@ -1,18 +1,18 @@
 """
     cheb2_coeffs2vals(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
 
-Convert Chebyshev coefficients of the second kind to values at Chebyshev points.
+Convert Chebyshev coefficients of the 2nd kind to values at Chebyshev points.
 
 # Arguments
 - `coeffs::AbstractVector{<:AbstractFloat}`: Vector of Chebyshev coefficients
 
 # Returns
-- Vector of values at Chebyshev points of the second kind
+- Vector of values at Chebyshev points of the 2nd kind
 
 # Description
 This function transforms Chebyshev coefficients to values at Chebyshev points using an FFT-based
 algorithm. For a polynomial of degree n-1, the transformation maps n coefficients to n values
-at the Chebyshev points of the second kind: cos(jπ/(n-1)) for j = 0:n-1.
+at the Chebyshev points of the 2nd kind: cos(jπ/(n-1)) for j = 0:n-1.
 
 # Example
 ```julia
