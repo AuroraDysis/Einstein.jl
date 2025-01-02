@@ -1,51 +1,14 @@
 """
     cheb_clenshaw(c::VT, x::T) where {T<:AbstractFloat,VT<:AbstractVector{T}}
 
-Evaluate a Chebyshev series using the Clenshaw algorithm.
-
-# Mathematical Background
-For a Chebyshev series:
-```math
-f(x) = \\sum_{k=0}^n c_k T_k(x)
-```
-where ``T_k(x)`` are Chebyshev polynomials of the 1st kind, the Clenshaw algorithm
-computes the sum using the recurrence relation:
-```math
-\\begin{align*}
-b_{n+1} &= b_{n+2} = 0 \\\\
-b_k &= c_k + 2x b_{k+1} - b_{k+2} \\\\
-f(x) &= \\frac{b_0 - b_2}{2}
-\\end{align*}
-```
+Evaluate Chebyshev coefficients at a point using Clenshaw's algorithm.
 
 # Arguments
 - `c`: Vector of Chebyshev coefficients ``[c_0, c_1, \\ldots, c_n]``
 - `x`: Evaluation point in [-1,1]
 
-# Returns
-- Value of the Chebyshev series at x
-
-# Performance Notes
-- Uses @inbounds for efficiency in the main loop
-- Avoids allocations in the recurrence calculation
-- Pre-scales x to reduce operations in the loop
-
-# Examples
-```julia
-# Evaluate T₀(x) = 1
-julia> cheb_clenshaw([1.0], 0.5)
-1.0
-
-# Evaluate T₁(x) = x
-julia> cheb_clenshaw([0.0, 1.0], 0.5)
-0.5
-
-# Evaluate 1 + 2x + 3x²
-julia> c = [1.0, 2.0, 3.0]
-julia> x = 0.5
-julia> cheb_clenshaw(c, x)
-2.75
-```
+# References
+- [chebfun/@chebtech/clenshaw.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech/clenshaw.m)
 """
 function cheb_clenshaw(c::VT, x::T) where {T<:AbstractFloat,VT<:AbstractVector{T}}
     @argcheck length(c) > 0 "c must have at least one element"
