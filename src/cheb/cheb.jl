@@ -46,5 +46,7 @@ include("rect/rectdiff.jl")
 # Ultraspherical spectral method
 include("ultra/diffmat.jl")
 include("ultra/convertmat.jl")
+include("ultra/sphankel.jl")
+include("ultra/multmat.jl")
 
 end
