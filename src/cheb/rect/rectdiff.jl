@@ -120,11 +120,19 @@ function cheb_rectdiff2(::Type{TR}, m::TI, n::TI) where {TR<:AbstractFloat,TI<:I
         # Negative sum trick for corner entries
         if n > 2
             D[1, 2] = -sum(D[1, [1; 3:n]])
-            D[end, end-1] = -D[1, 2]
+            D[end, end - 1] = -D[1, 2]
         end
     end
 
     return D
+end
+
+function cheb_rectdiff1(m::TI, n::TI) where {TI<:Integer}
+    return cheb_rectdiff1(Float64, m, n)
+end
+
+function cheb_rectdiff2(m::TI, n::TI) where {TI<:Integer}
+    return cheb_rectdiff2(Float64, m, n)
 end
 
 export cheb_rectdiff1, cheb_rectdiff2

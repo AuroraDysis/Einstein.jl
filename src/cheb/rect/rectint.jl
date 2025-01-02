@@ -15,24 +15,6 @@ Generate the Chebyshev integration matrix that operates directly on function val
 # Returns
 - `Matrix{TR}`: The integration matrix that operates on function values
 
-# Mathematical Background
-This matrix directly computes the indefinite integral of a function from its values
-at Chebyshev points. For a function ``f(x)``, the integral is computed as:
-
-```math
-\\int f(x)\\,dx = \\mathbf{I}f
-```
-
-where ``\\mathbf{I} = S B A`` is the integration matrix composed of:
-- ``A``: Analysis matrix (transform to spectral coefficients)
-- ``B``: Coefficient integration matrix
-- ``S``: Synthesis matrix (transform back to physical space)
-
-This composition allows integration in physical space through:
-1. Transform to spectral space (A)
-2. Integrate coefficients (B)
-3. Transform back to physical space (S)
-
 # Examples
 ```julia
 # Generate 8×8 integration matrix for [-1,1]
@@ -73,11 +55,6 @@ function cheb_rectint(::Type{TR}, m::TI, n::TI) where {TR<:AbstractFloat,TI<:Int
     return intmat
 end
 
-function cheb_rectint(n::TI) where {TI<:Integer}
-    return cheb_rectint(Float64, n, n)
-end
-
-# Second method documentation is inherited from the main docstring
 function cheb_rectint(
     ::Type{TR}, m::TI, n::TI, x_min::TR, x_max::TR
 ) where {TR<:AbstractFloat,TI<:Integer}
@@ -86,12 +63,16 @@ function cheb_rectint(
     return intmat
 end
 
-function cheb_rectint(m::TI, n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
-    return cheb_rectint(Float64, m, n, x_min, x_max)
+function cheb_rectint(n::TI) where {TI<:Integer}
+    return cheb_rectint(Float64, n, n)
 end
 
 function cheb_rectint(n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
     return cheb_rectint(Float64, n, n, x_min, x_max)
+end
+
+function cheb_rectint(m::TI, n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
+    return cheb_rectint(Float64, m, n, x_min, x_max)
 end
 
 export cheb_rectint
