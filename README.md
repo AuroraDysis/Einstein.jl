@@ -7,9 +7,6 @@
 [![Code Style: Blue](https://img.shields.io/badge/code%20style-blue-4495d1.svg)](https://github.com/invenia/BlueStyle)
 [![Aqua](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
-> [!WARNING]
-> I am migrating the code from a private repository to this public one. The documentation is also being updated to reflect the changes made to the codebase. Please be patient and check back later for updates.
-
 ## Description
 
 This package is a **high-performance** suite designed to compute **arbitrary-precision** solutions for partial differential equations (PDEs) in general relativity. It includes the following numerical methods:
