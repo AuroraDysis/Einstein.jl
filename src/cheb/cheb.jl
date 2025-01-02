@@ -9,6 +9,7 @@ using ArgCheck: @argcheck
 using FastBroadcast: @..
 using LinearAlgebra
 using ApproxFun
+using SparseArrays
 
 include("utils/bary.jl")
 include("utils/clenshaw.jl")
@@ -41,5 +42,8 @@ include("cheb2/cumsummat.jl")
 # Rectangular spectral collocation
 include("rect/rectint.jl")
 include("rect/rectdiff.jl")
+
+# Ultraspherical spectral method
+include("ultra/diffmat.jl")
 
 end

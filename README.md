@@ -17,7 +17,7 @@ This package is a **high-performance** suite designed to compute **arbitrary-pre
 - Chebyshev collocation at Chebyshev points of the first and second kinds
 - Finite difference method
 - Rectangular collocation
-- Ultraspherical spectral method [TODO]
+- Ultraspherical spectral method [WIP]
 - Ultraspherical rectangular collocation [TODO]
 
 Although the ChebyshevSuite is inspired by algorithms from [Chebfun](https://github.com/chebfun/chebfun), it has been extensively enhanced in this package to optimize performance and enable arbitrary-precision calculations.
