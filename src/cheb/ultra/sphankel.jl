@@ -1,5 +1,3 @@
-using ToeplitzMatrices: Hankel
-
 """
     sphankel(r::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
 

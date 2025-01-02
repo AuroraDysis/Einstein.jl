@@ -10,6 +10,7 @@ using FastBroadcast: @..
 using LinearAlgebra
 using ApproxFun
 using SparseArrays
+using ToeplitzMatrices: Toeplitz, Hankel
 
 include("utils/bary.jl")
 include("utils/clenshaw.jl")

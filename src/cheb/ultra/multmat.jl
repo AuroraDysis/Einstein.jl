@@ -1,4 +1,3 @@
-
 """
     ultra_multmat(a::VT, λ::TI) where {TR<:AbstractFloat,VT<:AbstractVector{TR},TI<:Integer}
 
