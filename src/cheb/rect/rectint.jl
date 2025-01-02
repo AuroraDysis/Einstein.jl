@@ -1,8 +1,8 @@
 using FillArrays: OneElement
 
 """
-    cheb_rectint([TR=Float64], n::Integer)
-    cheb_rectint([TR=Float64], n::Integer, x_min::TR, x_max::TR)
+    cheb_rectint([TR=Float64], n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    cheb_rectint([TR=Float64], n::TI, x_min::TR, x_max::TR) where {TR<:AbstractFloat,TI<:Integer}
 
 Generate the Chebyshev integration matrix that operates directly on function values.
 

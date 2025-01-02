@@ -1,5 +1,5 @@
 """
-    cheb_rectdiff1(m, n)
+    cheb_rectdiff1([TR=Float64], m::TI, n::TI) where {TR<:AbstractFloat,TI<:Integer}
 
 Constructing a 1st-order rectangular differentiation matrix mapping from a 1st-kind grid
 
@@ -53,7 +53,7 @@ function cheb_rectdiff1(::Type{TR}, m::TI, n::TI) where {TR<:AbstractFloat,TI<:I
 end
 
 """
-    cheb_rectdiff2(m, n)
+    cheb_rectdiff2([TR=Float64], m::TI, n::TI) where {TR<:AbstractFloat,TI<:Integer}
 
 Construct a 1st-order rectangular differentiation matrix mapping from a 2nd-kind grid.
 
