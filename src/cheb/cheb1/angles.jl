@@ -23,10 +23,8 @@ function cheb1_angles(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     θ = Array{TR}(undef, n)
 
     pi_over_2n = convert(TR, pi) / (2 * n)
-    @inbounds begin
-        for k in 0:(n - 1)
-            θ[n - k] = (2 * k + 1) * pi_over_2n
-        end
+    @inbounds for k in 0:(n - 1)
+        θ[n - k] = (2 * k + 1) * pi_over_2n
     end
 
     return θ
