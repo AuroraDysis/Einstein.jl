@@ -1,8 +1,14 @@
 """
-    cheb1_pts([TR=Float64], n::Integer)
-    cheb1_pts([TR=Float64], n::Integer, x_min::TR, x_max::TR)
+    cheb1_pts([TR=Float64], n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    cheb1_pts([TR=Float64], n::TI, x_min::TR, x_max::TR) where {TR<:AbstractFloat,TI<:Integer}
 
-Generate Chebyshev points of the 1st kind.
+Generate Chebyshev points of the 2nd kind.
+
+For the standard interval [-1,1]:
+``x_k = -\\cos\\left(\\frac{(2k + 1)\\pi}{2n}\\right), \\quad k = 0,1,\\ldots,n-1``
+
+For mapped interval [x_min,x_max]:
+``x_{mapped} = \\frac{x_{max} + x_{min}}{2} + \\frac{x_{min} - x_{max}}{2}x_k``
 
 # Arguments
 - `TR`: Type parameter for the grid points (e.g., Float64)
@@ -10,32 +16,8 @@ Generate Chebyshev points of the 1st kind.
 - `x_min`: (Optional) Lower bound of the mapped interval
 - `x_max`: (Optional) Upper bound of the mapped interval
 
-# Returns
-- Vector of n Chebyshev points of the 1st kind
-
-# Mathematical Details
-For the standard interval [-1,1]:
-``x_k = -\\cos\\left(\\frac{(2k + 1)\\pi}{2n}\\right), \\quad k = 0,1,\\ldots,n-1``
-
-For mapped interval [x_min,x_max]:
-``x_{mapped} = \\frac{x_{max} + x_{min}}{2} + \\frac{x_{min} - x_{max}}{2}x_k``
-
-# Notes
-Chebyshev points of the 1st kind are the roots of Chebyshev polynomials T_n(x).
-The convenience methods with Integer arguments default to Float64 precision.
-
-# Examples
-```julia
-# Generate 5 points on [-1,1]
-x = cheb1_pts(Float64, 5)
-x = cheb1_pts(5)  # Same as above
-
-# Generate 5 points mapped to [0,1]
-x = cheb1_pts(Float64, 5, 0.0, 1.0)
-x = cheb1_pts(5, 0.0, 1.0)  # Same as above
-```
-
-See also: [`cheb1_angles`](@ref), [`cheb2_pts`](@ref)
+# References
+- [chebfun/@chebtech1/chebpts.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/chebpts.m)
 """
 function cheb1_pts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     @argcheck n >= 0 "n must be nonnegative"
