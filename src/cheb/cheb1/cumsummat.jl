@@ -5,6 +5,9 @@
 Compute Chebyshev integration matrix that maps function values
 at `n` Chebyshev points of the 1st kind to values of the integral of the interpolating
 polynomial at those points, with the convention that the first value is zero.
+
+# References
+- [chebfun/@chebcolloc1/chebcolloc1.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc1/chebcolloc1.m)
 """
 function cheb1_cumsummat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     A = cheb1_amat(TR, n)

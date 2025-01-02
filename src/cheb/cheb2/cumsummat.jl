@@ -5,6 +5,9 @@
 Compute Chebyshev integration matrix that maps function values
 at `n` Chebyshev points of the 2st kind to values of the integral of the interpolating
 polynomial at those points, with the convention that the first value is zero.
+
+# References
+- [chebfun/@chebcolloc2/chebcolloc2.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc2/chebcolloc2.m)
 """
 function cheb2_cumsummat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     A = cheb2_amat(TR, n)

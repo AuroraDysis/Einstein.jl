@@ -1,9 +1,11 @@
 
 """
-    cheb_coeffs_cumsummat([TR=Float64], n::Integer)
-    cheb_coeffs_cumsummat([TR=Float64], n::Integer, x_min::TR, x_max::TR)
+    cheb_coeffs_cumsummat([TR=Float64], n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    cheb_coeffs_cumsummat([TR=Float64], n::TI, x_min::TR, x_max::TR) where {TR<:AbstractFloat,TI<:Integer}
 
-Generate the Chebyshev coefficient integration matrix for spectral integration.
+Generate the Chebyshev coefficient integration matrix
+that maps Chebyshev coefficients to the coefficients
+of the integral of the interpolating polynomial.
 
 # Arguments
 - `TR`: Type parameter for the matrix elements (e.g., Float64)
@@ -11,32 +13,9 @@ Generate the Chebyshev coefficient integration matrix for spectral integration.
 - `x_min`: (Optional) Lower bound of the integration interval
 - `x_max`: (Optional) Upper bound of the integration interval
 
-# Returns
-- `Matrix{TR}`: The integration matrix B (n×n)
-
-# Mathematical Background
-The integration matrix B operates on Chebyshev spectral coefficients to compute
-the coefficients of the indefinite integral. For a function expressed in the 
-Chebyshev basis:
-
-```math
-f(x) = \\sum_{k=0}^{N-1} a_k T_k(x)
-```
-
-The indefinite integral's coefficients ``b_k`` in:
-
-```math
-\\int f(x)\\,dx = \\sum_{k=0}^{N-1} b_k T_k(x) + C
-```
-
-are computed using the matrix B: ``b = Ba``
-
-The matrix elements are derived from the integration relation of Chebyshev polynomials:
-```math
-\\int T_n(x)\\,dx = \\frac{1}{2}\\left(\\frac{T_{n+1}(x)}{n+1} - \\frac{T_{n-1}(x)}{n-1}\\right)
-```
-
-When `x_min` and `x_max` are provided, the matrix is scaled for integration over [x_min, x_max].
+# References
+- [chebfun/@chebcolloc1/chebcolloc1.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc1/chebcolloc1.m)
+- [chebfun/@chebcolloc2/chebcolloc2.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc2/chebcolloc2.m)
 """
 function cheb_coeffs_cumsummat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     nm1 = n - 1
