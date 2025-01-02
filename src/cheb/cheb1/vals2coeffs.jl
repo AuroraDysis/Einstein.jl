@@ -1,50 +1,18 @@
 """
-    cheb1_vals2coeffs(vals::Vector{TR}) where {TR<:AbstractFloat}
-    op::Cheb1Vals2CoeffsOp{TR}(vals::Vector{TR}) -> Vector{TR}
+    cheb1_vals2coeffs(vals::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+    op::Cheb1Vals2CoeffsOp(vals::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
 
-Convert values sampled at Chebyshev points of the 1st kind into their corresponding
-Chebyshev coefficients.
+Convert values at Chebyshev points of the 1st kind into Chebyshev coefficients.
 
 # Performance Guide
-For optimal performance when performing multiple transformations:
-1. Create a reusable operator outside your computation loop
-2. Use the operator-style call syntax inside the loop
-
-# Description
-Given an input vector `vals` of length `n` representing function values at Chebyshev points
-of the 1st kind, this computes the Chebyshev coefficients `c` such that:
-
-    f(x) = c[1]*T₀(x) + c[2]*T₁(x) + ... + c[n]*Tₙ₋₁(x)
-    
-where Tₖ(x) are the Chebyshev polynomials of the 1st kind.
-
-# Arguments
-- `vals::Vector{TR}`: Values at Chebyshev points of the 1st kind
-- `op::Cheb1Vals2CoeffsOp{TR}`: Pre-allocated operator for transformation
-
-# Returns
-- Vector of Chebyshev coefficients
-
-# Examples
+For best performance, especially in loops or repeated calls:
 ```julia
-# Single transformation
-vals = [1.0, 2.0, 3.0]
-coeffs = cheb1_vals2coeffs(vals)
-
-# Multiple transformations (recommended for performance)
-n = length(vals)
-op = Cheb1Vals2CoeffsOp{Float64}(n)
-
-# Operator-style usage for best performance
-for i in 1:100
-    coeffs = op(vals)
-    # ... use coeffs ...
-end
+op = Cheb1Vals2CoeffsOp(Float64, n)
+values = op(coeffs)
 ```
 
 # References
-- Section 4.7 of *"Chebyshev Polynomials"* by Mason & Handscomb,
-  Chapman & Hall/CRC (2003).
+- [chebfun/@chebtech1/vals2coeffs.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/vals2coeffs.m)
 """
 struct Cheb1Vals2CoeffsOp{TR<:AbstractFloat,TP<:Plan}
     w::Vector{Complex{TR}}
