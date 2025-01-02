@@ -24,6 +24,8 @@ function cheb2_diffmat(n::TI, k::TI=1) where {TI<:Integer}
     return cheb2_diffmat(Float64, n, k)
 end
 
+export cheb2_diffmat
+
 @testset "cheb2_diffmat" begin
     tol = 100 * eps()
     # Test case for n=5
