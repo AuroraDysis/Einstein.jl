@@ -2,7 +2,7 @@ using ArgCheck
 using LinearAlgebra: I
 
 """
-    fornberg_calculate_weights([T=Float64], order::Integer, x0::Real, x::AbstractVector; 
+    fornberg_calculate_wts([T=Float64], order::Integer, x0::Real, x::AbstractVector; 
                              dfdx::Bool=false)
 
 Calculate finite difference weights for arbitrary-order derivatives using the Fornberg algorithm.
@@ -43,16 +43,16 @@ where N is the length of x
 ```julia
 # Standard central difference for first derivative
 x = [-1.0, 0.0, 1.0]
-w = fornberg_calculate_weights(1, 0.0, x)
+w = fornberg_calculate_wts(1, 0.0, x)
 # Returns approximately [-0.5, 0.0, 0.5]
 
 # Forward difference for second derivative
 x = [0.0, 1.0, 2.0, 3.0]
-w = fornberg_calculate_weights(2, 0.0, x)
+w = fornberg_calculate_wts(2, 0.0, x)
 
 # Hermite finite difference for third derivative
 x = [-1.0, 0.0, 1.0]
-w_f, w_d = fornberg_calculate_weights(3, 0.0, x, dfdx=true)
+w_f, w_d = fornberg_calculate_wts(3, 0.0, x, dfdx=true)
 ```
 
 # References
@@ -60,7 +60,7 @@ w_f, w_d = fornberg_calculate_weights(3, 0.0, x, dfdx=true)
 - [fornberg1988generation](@citet*)
 - [fornberg2021algorithm](@citet*)
 - [doi:10.1137/S0036144596322507](@citet*)
-- [MethodOfLines.jl/src/discretization/schemes/fornberg_calculate_weights.jl at master · SciML/MethodOfLines.jl](https://github.com/SciML/MethodOfLines.jl/blob/master/src/discretization/schemes/fornberg_calculate_weights.jl)
+- [MethodOfLines.jl/src/discretization/schemes/fornberg_calculate_wts.jl at master · SciML/MethodOfLines.jl](https://github.com/SciML/MethodOfLines.jl/blob/master/src/discretization/schemes/fornberg_calculate_wts.jl)
 - [precision - Numerical derivative and finite difference coefficients: any update of the Fornberg method? - Computational Science Stack Exchange](https://scicomp.stackexchange.com/questions/11249/numerical-derivative-and-finite-difference-coefficients-any-update-of-the-fornb)
 
 # Notes
@@ -72,7 +72,7 @@ w_f, w_d = fornberg_calculate_weights(3, 0.0, x, dfdx=true)
 
 See also: [`fdm_grid`](@ref)
 """
-function fornberg_calculate_weights(
+function fornberg_calculate_wts(
     order::TI, x0::T, x::VT; dfdx::Bool=false
 ) where {T<:Real,T2<:Real,VT<:AbstractVector{T2},TI<:Integer}
     N = length(x)
@@ -142,31 +142,31 @@ function fornberg_calculate_weights(
     end
 end
 
-export fornberg_calculate_weights
+export fornberg_calculate_wts
 
 @testset "Fornberg Finite Difference Weights" begin
     @testset "Standard First Derivatives" begin
         # Test forward difference (first derivative)
-        weights_forward = fornberg_calculate_weights(1, 0.0, [0.0, 1.0])
+        weights_forward = fornberg_calculate_wts(1, 0.0, [0.0, 1.0])
         @test weights_forward ≈ [-1.0, 1.0]
 
         # Test central difference (first derivative)
-        weights_central = fornberg_calculate_weights(1, 0.0, [-1.0, 0.0, 1.0])
+        weights_central = fornberg_calculate_wts(1, 0.0, [-1.0, 0.0, 1.0])
         @test weights_central ≈ [-0.5, 0.0, 0.5]
 
         # Test accuracy with non-uniform grid
-        weights_nonuniform = fornberg_calculate_weights(1, 0.0, [-2.0, -0.5, 1.0])
+        weights_nonuniform = fornberg_calculate_wts(1, 0.0, [-2.0, -0.5, 1.0])
         # Test against pre-computed values
         @test sum(weights_nonuniform) ≈ 0.0 atol = 1e-14
     end
 
     @testset "Standard Second Derivatives" begin
         # Test central difference (second derivative)
-        weights_central = fornberg_calculate_weights(2, 0.0, [-1.0, 0.0, 1.0])
+        weights_central = fornberg_calculate_wts(2, 0.0, [-1.0, 0.0, 1.0])
         @test weights_central ≈ [1.0, -2.0, 1.0]
 
         # Test with wider stencil
-        weights_wide = fornberg_calculate_weights(2, 0.0, [-2.0, -1.0, 0.0, 1.0, 2.0])
+        weights_wide = fornberg_calculate_wts(2, 0.0, [-2.0, -1.0, 0.0, 1.0, 2.0])
         # Test properties that must hold
         @test sum(weights_wide) ≈ 0.0 atol = 1e-14
         @test sum(weights_wide .* [-2.0, -1.0, 0.0, 1.0, 2.0] .^ 2) ≈ 2.0 atol = 1e-14
@@ -175,7 +175,7 @@ export fornberg_calculate_weights
     @testset "Hermite Finite Difference" begin
         # Test first derivative with function and derivative values
         x = [-1.0, 0.0, 1.0]
-        D, E = fornberg_calculate_weights(1, 0.0, x; dfdx=true)
+        D, E = fornberg_calculate_wts(1, 0.0, x; dfdx=true)
 
         # Known weights for Hermite interpolation
         @test length(D) == length(x)  # Function value weights
@@ -183,15 +183,15 @@ export fornberg_calculate_weights
         @test sum(D) ≈ 0.0 atol = 1e-14  # Consistency condition
 
         # Test second derivative with function and derivative values
-        D2, E2 = fornberg_calculate_weights(2, 0.0, x; dfdx=true)
+        D2, E2 = fornberg_calculate_wts(2, 0.0, x; dfdx=true)
         @test sum(D2) ≈ 0.0 atol = 1e-14
     end
 
     @testset "Error Handling" begin
         # Test insufficient points for order
-        @test_throws ArgumentError fornberg_calculate_weights(2, 0.0, [0.0, 1.0])
+        @test_throws ArgumentError fornberg_calculate_wts(2, 0.0, [0.0, 1.0])
 
         # Test insufficient points for Hermite interpolation
-        @test_throws ArgumentError fornberg_calculate_weights(3, 0.0, [0.0, 1.0], dfdx=true)
+        @test_throws ArgumentError fornberg_calculate_wts(3, 0.0, [0.0, 1.0], dfdx=true)
     end
 end
