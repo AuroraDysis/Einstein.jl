@@ -49,7 +49,7 @@ F = I * f
 I_scaled = cheb2_intmat(Float64, 8, 0.0, π)
 ```
 """
-function cheb2_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+function cheb2_intmat(::Type{TR}, m::TI, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     # Build Lagrange basis
     K = Array{TR}(undef, n + 1, n)
     vals2coeffs_op = Cheb2Vals2CoeffsOp(TR, n)
@@ -64,30 +64,34 @@ function cheb2_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     end
 
     # Evaluate at grid
-    xn = cheb2_pts(n)
-    intmat = Array{TR}(undef, n, n)
+    xm = cheb2_pts(m)
+    intmat = Array{TR}(undef, m, n)
     @inbounds for j in 1:n, i in 1:n
-        intmat[i, j] = cheb_feval(@view(K[:, j]), xn[i])
+        intmat[i, j] = cheb_feval(@view(K[:, j]), xm[i])
     end
 
     return intmat
 end
 
 function cheb2_intmat(n::TI) where {TI<:Integer}
-    return cheb2_intmat(Float64, n)
+    return cheb2_intmat(Float64, n, n)
 end
 
 # Second method documentation is inherited from the main docstring
 function cheb2_intmat(
-    ::Type{TR}, n::TI, x_min::TR, x_max::TR
+    ::Type{TR}, m::TI, n::TI, x_min::TR, x_max::TR
 ) where {TR<:AbstractFloat,TI<:Integer}
-    intmat = cheb2_intmat(TR, n)
+    intmat = cheb2_intmat(TR, m, n)
     intmat .*= (x_max - x_min) / 2
     return intmat
 end
 
+function cheb2_intmat(m::TI, n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
+    return cheb2_intmat(Float64, m, n, x_min, x_max)
+end
+
 function cheb2_intmat(n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
-    return cheb2_intmat(Float64, n, x_min, x_max)
+    return cheb2_intmat(Float64, n, n, x_min, x_max)
 end
 
 export cheb2_intmat
@@ -118,13 +122,13 @@ export cheb2_intmat
     @testset "Compare direct vs coefficient-based integration" begin
         for n in [4, 8, 16, 32]
             # Test on standard domain [-1,1]
-            I1 = cheb2_intmat(Float64, n)
+            I1 = cheb2_intmat(n)
             I2 = cheb2_cumsummat(Float64, n)
             @test I1 ≈ I2 rtol = 1e-12
 
             # Test on mapped domain [0,π]
-            I1 = cheb2_intmat(Float64, n, 0.0, Float64(π))
-            I2 = cheb2_cumsummat(Float64, n, 0.0, Float64(π))
+            I1 = cheb2_intmat(n, 0.0, Float64(π))
+            I2 = cheb2_cumsummat(n, 0.0, Float64(π))
             @test I1 ≈ I2 rtol = 1e-12
         end
     end
@@ -133,8 +137,8 @@ end
 @testset "cheb2_intmat - analytical" begin
     @testset "Standard domain [-1,1]" begin
         n = 32
-        x = cheb2_pts(Float64, n)
-        intmat = cheb2_intmat(Float64, n)
+        x = cheb2_pts(n)
+        intmat = cheb2_intmat(n)
 
         # Test 1: Polynomial integration
         f = @. x^3  # f(x) = x³
@@ -151,7 +155,7 @@ end
 
     @testset "Mapped domain [0,π]" begin
         n = 32
-        intmat = cheb2_intmat(Float64, n, 0.0, Float64(π))
+        intmat = cheb2_intmat(n, 0.0, Float64(π))
         x = cheb2_pts(Float64, n, 0.0, Float64(π))
 
         # Test: Integration of sin(x) from 0 to x
