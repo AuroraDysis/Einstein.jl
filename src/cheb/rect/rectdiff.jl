@@ -89,7 +89,8 @@ function cheb_rectdiff2(::Type{TR}, m::TI, n::TI) where {TR<:AbstractFloat,TI<:I
     end
 
     # Scale first and last columns
-    D[:, [1, n]] .*= 0.5
+    half = one(TR) / 2
+    D[:, [1, n]] .*= half
 
     # Flipping trick for cm1 == 0
     if cm1 == 0
@@ -111,7 +112,8 @@ function cheb_rectdiff2(::Type{TR}, m::TI, n::TI) where {TR<:AbstractFloat,TI<:I
 
     # Fix corner values for cm1 == 0
     if cm1 == 0
-        cornerVal = -0.25 / (nm1 * sin(π / (2 * m)) * sin(π / (4 * m))^2)
+        neg_quarter = -one(TR) / 4
+        cornerVal = neg_quarter / (nm1 * sin(π / (2 * m)) * sin(π / (4 * m))^2)
         D[1, 1] = cornerVal
         D[end, end] = -cornerVal
 
