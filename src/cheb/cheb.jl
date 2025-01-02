@@ -23,6 +23,7 @@ include("cheb1/vals2coeffs.jl")
 include("cheb1/barywts.jl")
 include("cheb1/quad.jl")
 include("cheb1/diffmat.jl")
+include("cheb1/asmat.jl")
 
 include("cheb2/angles.jl")
 include("cheb2/pts.jl")

@@ -6,7 +6,7 @@ Compute the barycentric differentiation matrix for points in the vector `x`.
 • `x` is a vector of distinct interpolation points.
 • `w` is an vector of barycentric weights associated with `x`. 
 • `k` is the order of the derivative to be approximated (default is 1).
-• `t` is an optional vector (e.g., `acos.(x)`) that may improve numerical stability for
+• `t` is an vector (e.g., `acos.(x)`) that may improve numerical stability for
   certain sets of points (see references [4]).
 
 Returns the matrix `D` such that `D * f_values ≈ f'` (or higher derivatives) at the points in `x`,
@@ -20,7 +20,7 @@ References:
 [5] [chebfun/@chebcolloc/baryDiffMat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc/baryDiffMat.m)
 """
 function bary_diffmat(
-    x::VT1, w::VT2, k::TI=1, t::Union{VT3,Nothing}=nothing
+    x::VT1, w::VT2, k::TI, t::VT3
 ) where {
     TR<:AbstractFloat,
     VT1<:AbstractVector{TR},
@@ -53,7 +53,7 @@ function bary_diffmat(
     Dw = zeros(TR, n, n)
 
     # If t is provided, use the sine-based formula for differences (see reference [4]):
-    if !isnothing(t)
+    if length(t) > 0
         # In MATLAB code, t was optionally passed in a reversed order. 
         # Here we assume user passes the correct array. 
         # We'll mimic the "flipud" approach if needed.
@@ -71,7 +71,7 @@ function bary_diffmat(
         end
 
         # Instead, rotate Dx by 180 degrees, then flip signs above diagonal:
-        DxRot = reverse(reverse(Dx, dims=1), dims=2)
+        DxRot = reverse(reverse(Dx; dims=1); dims=2)
         for i in 1:n
             for j in 1:n
                 if j > i
@@ -127,7 +127,7 @@ function bary_diffmat(
     # Indices from end down to n-floor(n/2)+1:
     # That is from n down to n-halfN+1
     Ddiag = collect(diag(D))
-    Ddiag[end:-1:n-halfN+1] = -Ddiag[1:halfN]
+    Ddiag[end:-1:(n - halfN + 1)] = -Ddiag[1:halfN]
     for i in 1:n
         D[i, i] = Ddiag[i]
     end

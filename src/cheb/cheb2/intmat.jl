@@ -39,22 +39,7 @@ The matrix elements are derived from the integration relation of Chebyshev polyn
 
 When `x_min` and `x_max` are provided, the matrix is scaled for integration over [x_min, x_max].
 
-# Examples
-```julia
-# Generate 8×8 integration matrix for [-1,1]
-B = cheb2_coeffs_intmat(Float64, 8)
-
-# Get Chebyshev coefficients of sin(x) using cheb2_asmat
-A, _ = cheb2_asmat(Float64, 8)
-x = cheb2_pts(Float64, 8)
-f = sin.(x)
-a = A * f  # Chebyshev coefficients of sin(x)
-
-# Compute coefficients of indefinite integral
-b = B * a  # Chebyshev coefficients of -cos(x) + C
-```
-
-See also: [`cheb2_pts`](@ref), [`cheb2_asmat`](@ref)
+See also: [`cheb2_pts`](@ref), [`cheb2_amat`](@ref), [`cheb2_smat`](@ref)
 """
 function cheb2_coeffs_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     nm1 = n - 1
@@ -106,7 +91,8 @@ function cheb2_coeffs_intmat(n::TI, x_min::Float64, x_max::Float64) where {TI<:I
 end
 
 function cheb2_intmat_asmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
-    A, S = cheb2_asmat(TR, n)
+    A = cheb2_amat(TR, n)
+    S = cheb2_smat(TR, n)
     B = cheb2_coeffs_intmat(TR, n)
     return S * B * A
 end
@@ -114,7 +100,8 @@ end
 function cheb2_intmat_asmat(
     ::Type{TR}, n::TI, x_min::TR, x_max::TR
 ) where {TR<:AbstractFloat,TI<:Integer}
-    A, S = cheb2_asmat(TR, n)
+    A = cheb2_amat(TR, n)
+    S = cheb2_smat(TR, n)
     B = cheb2_coeffs_intmat(TR, n, x_min, x_max)
     return S * B * A
 end
