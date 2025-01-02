@@ -1,8 +1,8 @@
 """
     ultra_diffmat(n::TI, m::TI) where {TI<:Integer}
 
-Differentiation matrices for ultraspherical spectral method that takes N Chebyshev
-coefficients and returns \$n C^{(m)}\$ coefficients that represent the derivative
+Differentiation matrices for ultraspherical spectral method that takes \$n\$ Chebyshev
+coefficients and returns \$n\$ \$C^{(m)}\$ coefficients that represent the derivative
 of the Chebyshev series. Here, \$C^{(k)}\$ is the ultraspherical polynomial basis
 with parameter \$k\$.
 
