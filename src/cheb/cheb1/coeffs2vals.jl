@@ -7,24 +7,13 @@ Convert Chebyshev coefficients to values at Chebyshev points of the 1st kind.
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-# Create operator
 op = Cheb1Coeffs2ValsOp(Float64, n)
-
-# Operator-style
 values = op(coeffs)
 ```
 
-# Mathematical Background
-The function implements the transform from coefficient space to physical space for Chebyshev
-polynomials of the 1st kind Tₙ(x). The transformation:
+# References
+- [chebfun/@chebtech1/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/coeffs2vals.m)
 
-1. Uses the relationship between Chebyshev polynomials and cosine series
-2. Applies a type-III discrete cosine transform via FFT
-3. Preserves polynomial symmetries:
-   - Even coefficients produce even functions
-   - Odd coefficients produce odd functions
-
-See also: [`Cheb1Vals2CoeffsOp`](@ref)
 """
 struct Cheb1Coeffs2ValsOp{TR<:AbstractFloat,TP<:Plan}
     w::Vector{Complex{TR}}    # Weight vector
