@@ -1,23 +1,10 @@
 """
     bary_diffmat(x; w=nothing, k=1, t=nothing)
 
-Compute the barycentric differentiation matrix for points in the vector `x`.
+Compute the barycentric differentiation matrix.
 
-• `x` is a vector of distinct interpolation points.
-• `w` is an vector of barycentric weights associated with `x`. 
-• `k` is the order of the derivative to be approximated (default is 1).
-• `t` is an vector (e.g., `acos.(x)`) that may improve numerical stability for
-  certain sets of points (see references [4]).
-
-Returns the matrix `D` such that `D * f_values ≈ f'` (or higher derivatives) at the points in `x`,
-based on the barycentric interpolation formula.
-
-References:
-[1] Schneider, C., & Werner, W. (1986). Some new aspects of rational interpolation. Mathematics of Computation, 47(176), 285–299.
-[2] Welfert, B. D. (1997). Generation of pseudospectral matrices I. SIAM Journal on Numerical Analysis, 34(4), 1640–1657.
-[3] Tee, T. W. (2006). An adaptive rational spectral method for differential equations with rapidly varying solutions (DPhil Thesis). University of Oxford.
-[4] Baltensperger, R., & Trummer, M. R. (2003). Spectral Differencing with a Twist. SIAM Journal on Scientific Computing, 24(5), 1465–1487.
-[5] [chebfun/@chebcolloc/baryDiffMat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc/baryDiffMat.m)
+# References:
+- [chebfun/@chebcolloc/baryDiffMat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc/baryDiffMat.m)
 """
 function bary_diffmat(
     x::VT1, w::VT2, k::TI, t::VT3
