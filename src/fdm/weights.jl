@@ -73,8 +73,8 @@ w_f, w_d = fornberg_calculate_weights(3, 0.0, x, dfdx=true)
 See also: [`fdm_grid`](@ref)
 """
 function fornberg_calculate_weights(
-    order::Int, x0::T, x::VT; dfdx::Bool=false
-) where {T<:Real,T2<:Real,VT<:AbstractVector{T2}}
+    order::TI, x0::T, x::VT; dfdx::Bool=false
+) where {T<:Real,T2<:Real,VT<:AbstractVector{T2},TI<:Integer}
     N = length(x)
     @argcheck dfdx || N > order "Standard finite difference requires at least order + 1 points."
     @argcheck !dfdx || N > div(order, 2) + 1 "Hermite finite difference requires at least order / 2 + 1 points."
