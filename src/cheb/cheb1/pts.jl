@@ -66,32 +66,26 @@ end
 export cheb1_pts
 
 @testset "cheb1_pts" begin
-    @testset "n = 5" begin
-        n = 5
-        x = cheb1_pts(n)
-
-        @test length(x) == n
-        @test x ≈ [
-            -0.951056516295154,
-            -0.587785252292473,
-            0.0,
-            0.587785252292473,
-            0.951056516295154,
-        ]
+    @testset "[-1, 1]" begin
+        for type in [Float64, BigFloat]
+            @testset "$type" begin
+                # points(Chebyshev(big"-1.0"..big"1.0"), 1)
+                for n in 0:5
+                    @test cheb1_pts(type, n) ≈
+                        reverse(points(Chebyshev(-one(type) .. one(type)), n))
+                end
+            end
+        end
     end
 
-    @testset "n = 6" begin
-        n = 6
-        x = cheb1_pts(n)
-
-        @test length(x) == n
-        @test x ≈ [
-            -0.965925826289068,
-            -0.707106781186548,
-            -0.258819045102521,
-            0.258819045102521,
-            0.707106781186548,
-            0.965925826289068,
-        ]
+    @testset "[0, 1]" begin
+        for type in [Float64, BigFloat]
+            @testset "$type" begin
+                for n in 0:5
+                    @test cheb1_pts(type, n, zero(type), one(type)) ≈
+                        reverse(points(Chebyshev(zero(type) .. one(type)), n))
+                end
+            end
+        end
     end
 end

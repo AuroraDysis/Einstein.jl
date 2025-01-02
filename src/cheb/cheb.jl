@@ -8,6 +8,7 @@ using FastTransforms
 using ArgCheck: @argcheck
 using FastBroadcast: @..
 using LinearAlgebra
+using ApproxFun
 
 include("utils/bary.jl")
 include("utils/clenshaw.jl")
