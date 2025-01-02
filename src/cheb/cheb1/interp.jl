@@ -34,7 +34,7 @@ function (op::Cheb1InterpOp{TR})(
     return bary(op.weights, op.nodes, values, x)
 end
 
-function cheb1_interp(values::AbstractVector{TR}, x::TR) where {TR<:AbstractFloat}
+function cheb1_interp(values::VT, x::TR) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
     n = length(values)
     op = Cheb1InterpOp(TR, n)
     return op(values, x)

@@ -31,7 +31,7 @@ struct ChebCumsumOp{TR<:AbstractFloat,TI<:Integer}
     end
 
     function ChebCumsumOp(n::TI) where {TI<:Integer}
-        return ChebCumsumOp{Float64,TI}(Float64, n)
+        return ChebCumsumOp(Float64, n)
     end
 end
 
