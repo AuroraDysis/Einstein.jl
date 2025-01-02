@@ -1,6 +1,6 @@
 """
     cheb_cumsum(f::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
-    ChebCumsumOp(::Type{TR}, n::TI)(f::VT) where {TR<:AbstractFloat,TI<:Integer,VT<:AbstractVector{TR}}
+    ChebCumsumOp([TR=Float64], n::TI)(f::VT) where {TR<:AbstractFloat,TI<:Integer,VT<:AbstractVector{TR}}
 
 Compute the indefinite integral of a function given its Chebyshev coefficients.
 
@@ -28,6 +28,10 @@ struct ChebCumsumOp{TR<:AbstractFloat,TI<:Integer}
         end
 
         return new{TR,TI}(n, tmp, result, v)
+    end
+
+    function ChebCumsumOp(n::TI) where {TI<:Integer}
+        return ChebCumsumOp{Float64,TI}(Float64, n)
     end
 end
 
