@@ -1,7 +1,8 @@
 """
     cheb1_angles([TR=Float64], n::Integer)
 
-Compute angles for Chebyshev points of the first kind.
+Compute angles for Chebyshev points of the first kind:
+``\\theta_k = \\frac{(2k + 1)\\pi}{2n}, \\quad k = n-1,\\ldots,0``
 
 # Arguments
 - `TR`: Type parameter for the angles (e.g., Float64)
@@ -9,11 +10,6 @@ Compute angles for Chebyshev points of the first kind.
 
 # Returns
 - Vector of n angles in [0,π], ordered decreasing
-
-# Mathematical Details
-``\\theta_k = \\frac{(2k + 1)\\pi}{2n}, \\quad k = n-1,\\ldots,0``
-
-These angles generate first-kind Chebyshev points via: x_k = -cos(θ_k)
 """
 function cheb1_angles(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     @argcheck n >= 0 "n must be nonnegative"
