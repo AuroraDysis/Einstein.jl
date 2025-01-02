@@ -13,7 +13,6 @@ values = op(coeffs)
 
 # References
 - [chebfun/@chebtech1/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/coeffs2vals.m)
-
 """
 struct Cheb1Coeffs2ValsOp{TR<:AbstractFloat,TP<:Plan}
     w::Vector{Complex{TR}}    # Weight vector
