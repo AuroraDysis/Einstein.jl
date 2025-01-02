@@ -70,15 +70,19 @@ function bary_diffmat(
             end
         end
 
-        # Implement the flipping trick to enforce symmetry:
-        # We'll rotate Dx 180 degrees and flip signs for upper/lower triangles.
+        # Instead, rotate Dx by 180 degrees, then flip signs above diagonal:
+        DxRot = reverse(reverse(Dx, dims=1), dims=2)
         for i in 1:n
             for j in 1:n
                 if j > i
-                    # swap with bottom-left
-                    Dx[i, j] = -Dx[n - j + 1, n - i + 1]
+                    Dx[i, j] = -DxRot[i, j]
                 end
             end
+        end
+
+        # Finally, set the diagonal to 1:
+        for i in 1:n
+            Dx[i, i] = 1
         end
     else
         # Standard difference (x[i] - x[j]):
@@ -122,8 +126,10 @@ function bary_diffmat(
     halfN = div(n, 2)
     # Indices from end down to n-floor(n/2)+1:
     # That is from n down to n-halfN+1
-    for idx in n:-1:(n - halfN + 1)
-        D[idx, idx] = -D[idx, idx]
+    Ddiag = collect(diag(D))
+    Ddiag[end:-1:n-halfN+1] = -Ddiag[1:halfN]
+    for i in 1:n
+        D[i, i] = Ddiag[i]
     end
 
     # If k=1, we're done:
@@ -139,7 +145,7 @@ function bary_diffmat(
         # diag(D) for row i is D[i,i]
         dii = D[i, i]
         for j in 1:n
-            D2[i, j] = 2.0 * D[i, j] * (dii - Dxi[i, j])
+            D2[i, j] = 2 * D[i, j] * (dii - Dxi[i, j])
         end
     end
     # negative sum trick
@@ -172,3 +178,5 @@ function bary_diffmat(
 
     return D_current
 end
+
+export bary_diffmat
