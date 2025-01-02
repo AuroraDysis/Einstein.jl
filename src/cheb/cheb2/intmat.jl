@@ -48,8 +48,6 @@ F = I * f
 # Integration matrix for [0,π]
 I_scaled = cheb2_intmat(Float64, 8, 0.0, π)
 ```
-
-See also: [`cheb2_coeffs_intmat`](@ref)
 """
 function cheb2_intmat(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     # Build Lagrange basis
@@ -92,7 +90,7 @@ function cheb2_intmat(n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
     return cheb2_intmat(Float64, n, x_min, x_max)
 end
 
-export cheb2_coeffs_intmat, cheb2_intmat
+export cheb2_intmat
 
 @testset "cheb2_intmat" begin
     n = 4
