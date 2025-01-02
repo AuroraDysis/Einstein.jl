@@ -1,18 +1,14 @@
 """
-    ChebCumsumOp{TR<:AbstractFloat,TI<:Integer}
+    cheb_cumsum(f::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+    ChebCumsumOp(::Type{TR}, n::TI)(f::VT) where {TR<:AbstractFloat,TI<:Integer,VT<:AbstractVector{TR}}
 
-A pre-allocated operator for computing the indefinite integral (cumulative sum) of a function
-represented in the Chebyshev basis.
+Compute the indefinite integral of a function given its Chebyshev coefficients.
 
-# Fields
-- `n::TI`: Number of coefficients in the expansion
-- `tmp::Vector{TR}`: Temporary storage for padded coefficients
-- `result::Vector{TR}`: Storage for the result coefficients
-- `v::Vector{TI}`: Pre-computed alternating signs [1, -1, 1, -1, ...]
+# Arguments
+- `f`: Vector of Chebyshev coefficients of the function to be integrated
 
-# Type Parameters
-- `TR`: The floating-point type for coefficients (e.g., Float64)
-- `TI`: The integer type for indexing and signs (e.g., Int64)
+# References
+- [chebfun/@chebtech/cumsum.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech/cumsum.m)
 """
 struct ChebCumsumOp{TR<:AbstractFloat,TI<:Integer}
     n::TI              # Number of coefficients
@@ -35,26 +31,6 @@ struct ChebCumsumOp{TR<:AbstractFloat,TI<:Integer}
     end
 end
 
-"""
-    (op::ChebCumsumOp)(f::AbstractVector)
-
-Compute the indefinite integral of a function given its Chebyshev coefficients.
-
-# Arguments
-- `f`: Vector of Chebyshev coefficients of the function to be integrated
-
-# Returns
-- Vector of Chebyshev coefficients of the indefinite integral
-
-# Notes
-The integration constant is chosen such that f(-1) = 0. The computation follows
-the recurrence relation for Chebyshev integration:
-1. b₂ = c₁ - c₃/2
-2. bᵣ = (cᵣ₋₁ - cᵣ₊₁)/(2r) for r > 1
-3. b₀ is computed to ensure f(-1) = 0
-
-where bᵢ are the coefficients of the integral and cᵢ are the input coefficients.
-"""
 function (op::ChebCumsumOp{TR,TI})(
     f::VT
 ) where {TR<:AbstractFloat,TI<:Integer,VT<:AbstractVector{TR}}
@@ -94,27 +70,6 @@ function (op::ChebCumsumOp{TR,TI})(
     return result
 end
 
-"""
-    cheb_cumsum(f::AbstractVector)
-
-Compute the indefinite integral of a function given its Chebyshev coefficients.
-This is a convenience wrapper that creates a temporary ChebCumsumOp.
-
-# Arguments
-- `f`: Vector of Chebyshev coefficients of the function to be integrated
-
-# Returns
-- Vector of Chebyshev coefficients of the indefinite integral
-
-# Example
-```julia
-# Integrate cos(x)
-n = 15
-f = cos.(cheb1_pts(n))
-f_coeffs = cheb1_vals2coeffs(f)
-If_coeffs = cheb_cumsum(f_coeffs)  # Coefficients of sin(x) - sin(-1)
-```
-"""
 function cheb_cumsum(f::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
     n = length(f)
     op = ChebCumsumOp(TR, n)

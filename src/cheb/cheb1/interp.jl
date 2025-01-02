@@ -1,39 +1,30 @@
 """
-    op::Cheb1InterpOp{TR}(values::Vector{TR}, x::TR) -> TR
+    cheb1_interp(values::VT, x::TR) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+    Cheb1InterpOp([TR=Float64], n::TI)(values::VT, x::TR) where {TR<:AbstractFloat,TI<:Integer,VT<:AbstractVector{TR}}
 
 Interpolate values at Chebyshev points of the 1st kind using barycentric interpolation.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-# Create operator for size n
-op = Cheb1InterpOp{Float64}(n)
-
-# Evaluate at multiple points
-for x in points
-    result = op(values, x)
-end
+op = Cheb1InterpOp(Float64, n)
+y = op(v, x)
 ```
-
-# Mathematical Background
-Uses the barycentric interpolation formula:
-```math
-p(x) = \\frac{\\sum_{j=0}^n \\frac{w_j f_j}{x-x_j}}{\\sum_{j=0}^n \\frac{w_j}{x-x_j}}
-```
-where ``w_j`` are the barycentric weights and ``x_j`` are the Chebyshev points.
-
-See also: [`cheb1_pts`](@ref), [`cheb1_barywts`](@ref)
 """
 struct Cheb1InterpOp{TR<:AbstractFloat}
     nodes::Vector{TR}    # Interpolation nodes
     weights::Vector{TR}  # Barycentric weights
     tmp::Vector{TR}      # Temporary storage
 
-    function Cheb1InterpOp{TR}(n::Integer) where {TR<:AbstractFloat}
+    function Cheb1InterpOp(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
         nodes = cheb1_pts(TR, n)
         weights = cheb1_barywts(TR, n)
         tmp = Vector{TR}(undef, n)
         return new{TR}(nodes, weights, tmp)
+    end
+
+    function Cheb1InterpOp(n::TI) where {TI<:Integer}
+        return Cheb1InterpOp(Float64, n)
     end
 end
 
@@ -45,7 +36,7 @@ end
 
 function cheb1_interp(values::AbstractVector{TR}, x::TR) where {TR<:AbstractFloat}
     n = length(values)
-    op = Cheb1InterpOp{TR}(n)
+    op = Cheb1InterpOp(TR, n)
     return op(values, x)
 end
 
@@ -58,7 +49,7 @@ export cheb1_interp, Cheb1InterpOp
         n = 5
         x = cheb1_pts(n)
         v = sin.(x)
-        op = Cheb1InterpOp{Float64}(n)
+        op = Cheb1InterpOp(n)
 
         for i in 1:n
             @test op(v, x[i]) ≈ v[i]
@@ -67,7 +58,7 @@ export cheb1_interp, Cheb1InterpOp
 
     @testset "Interpolation accuracy" begin
         n = 32
-        op = Cheb1InterpOp{Float64}(n)
+        op = Cheb1InterpOp(n)
         x = cheb1_pts(n)
         v = cos.(x)
 

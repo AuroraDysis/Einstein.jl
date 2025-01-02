@@ -1,29 +1,18 @@
 """
-    op::Cheb2InterpOp{TR}(values::Vector{TR}, x::TR) -> TR
+    cheb2_coeffs2vals(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+    op::Cheb2Coeffs2ValsOp([TR=Float64], n::TI)(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR},TI<:Integer}
 
-Interpolate values at Chebyshev points of the 2nd kind using barycentric interpolation.
+Convert Chebyshev coefficients to values at Chebyshev points of the 2nd kind.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-# Create operator for size n
-op = Cheb2InterpOp{Float64}(n)
-
-# Evaluate at multiple points
-for x in points
-    result = op(values, x)
-end
+op = Cheb2Coeffs2ValsOp(Float64, n)
+values = op(coeffs)
 ```
 
-# Mathematical Background
-Uses the barycentric interpolation formula with simplified weights for
-Chebyshev points of the 2nd kind:
-```math
-p(x) = \\frac{\\sum_{j=0}^n \\frac{(-1)^j \\delta_j f_j}{x-x_j}}{\\sum_{j=0}^n \\frac{(-1)^j \\delta_j}{x-x_j}}
-```
-where ``\\delta_j`` is 1/2 at endpoints and 1 elsewhere.
-
-See also: [`cheb2_pts`](@ref), [`cheb2_barywts`](@ref)
+# References
+- [chebfun/@chebtech2/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/coeffs2vals.m)
 """
 struct Cheb2InterpOp{TR<:AbstractFloat}
     nodes::Vector{TR}    # Interpolation nodes
@@ -35,6 +24,10 @@ struct Cheb2InterpOp{TR<:AbstractFloat}
         weights = cheb2_barywts(TR, n)
         tmp = Vector{TR}(undef, n)
         return new{TR}(nodes, weights, tmp)
+    end
+
+    function Cheb2InterpOp(n::TI) where {TI<:Integer}
+        return Cheb2InterpOp(Float64, n)
     end
 end
 
@@ -59,7 +52,7 @@ export cheb2_interp, Cheb2InterpOp
         n = 5
         x = cheb2_pts(n)
         v = sin.(x)
-        op = Cheb2InterpOp(Float64, n)
+        op = Cheb2InterpOp(n)
 
         for i in 1:n
             @test op(v, x[i]) ≈ v[i]
@@ -68,7 +61,7 @@ export cheb2_interp, Cheb2InterpOp
 
     @testset "Interpolation accuracy" begin
         n = 32
-        op = Cheb2InterpOp(Float64, n)
+        op = Cheb2InterpOp(n)
         x = cheb2_pts(n)
         v = cos.(x)
 
