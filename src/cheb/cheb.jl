@@ -15,6 +15,7 @@ include("utils/feval.jl")
 include("utils/fft.jl")
 include("utils/cumsum.jl")
 include("utils/bary_diffmat.jl")
+include("utils/cumsummat.jl")
 
 include("cheb1/angles.jl")
 include("cheb1/pts.jl")
