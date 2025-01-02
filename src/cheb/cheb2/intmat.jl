@@ -1,8 +1,8 @@
 using FillArrays: OneElement
 
 """
-    cheb_intmat([TR=Float64], n::Integer)
-    cheb_intmat([TR=Float64], n::Integer, x_min::TR, x_max::TR)
+    cheb2_intmat([TR=Float64], n::Integer)
+    cheb2_intmat([TR=Float64], n::Integer, x_min::TR, x_max::TR)
 
 Generate the Chebyshev integration matrix that operates directly on function values.
 
@@ -36,7 +36,7 @@ This composition allows integration in physical space through:
 # Examples
 ```julia
 # Generate 8×8 integration matrix for [-1,1]
-I = cheb_intmat(Float64, 8)
+I = cheb2_intmat(Float64, 8)
 
 # Get function values at Chebyshev points
 x = cheb2_pts(Float64, 8)
@@ -46,10 +46,10 @@ f = sin.(x)
 F = I * f
 
 # Integration matrix for [0,π]
-I_scaled = cheb_intmat(Float64, 8, 0.0, π)
+I_scaled = cheb2_intmat(Float64, 8, 0.0, π)
 ```
 """
-function cheb_intmat(::Type{TR}, m::TI, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+function cheb2_intmat(::Type{TR}, m::TI, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     # Build Lagrange basis
     K = Array{TR}(undef, n + 1, n)
     vals2coeffs_op = Cheb2Vals2CoeffsOp(TR, n)
@@ -73,32 +73,32 @@ function cheb_intmat(::Type{TR}, m::TI, n::TI) where {TR<:AbstractFloat,TI<:Inte
     return intmat
 end
 
-function cheb_intmat(n::TI) where {TI<:Integer}
-    return cheb_intmat(Float64, n, n)
+function cheb2_intmat(n::TI) where {TI<:Integer}
+    return cheb2_intmat(Float64, n, n)
 end
 
 # Second method documentation is inherited from the main docstring
-function cheb_intmat(
+function cheb2_intmat(
     ::Type{TR}, m::TI, n::TI, x_min::TR, x_max::TR
 ) where {TR<:AbstractFloat,TI<:Integer}
-    intmat = cheb_intmat(TR, m, n)
+    intmat = cheb2_intmat(TR, m, n)
     intmat .*= (x_max - x_min) / 2
     return intmat
 end
 
-function cheb_intmat(m::TI, n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
-    return cheb_intmat(Float64, m, n, x_min, x_max)
+function cheb2_intmat(m::TI, n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
+    return cheb2_intmat(Float64, m, n, x_min, x_max)
 end
 
-function cheb_intmat(n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
-    return cheb_intmat(Float64, n, n, x_min, x_max)
+function cheb2_intmat(n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
+    return cheb2_intmat(Float64, n, n, x_min, x_max)
 end
 
-export cheb_intmat
+export cheb2_intmat
 
-@testset "cheb_intmat" begin
+@testset "cheb2_intmat" begin
     n = 4
-    intmat = cheb_intmat(n)
+    intmat = cheb2_intmat(n)
     intmat_ana = [
         -1.73472347597681e-17 -2.08166817117217e-17 2.08166817117217e-17 3.46944695195361e-18
         0.204861111111111 0.326388888888889 -0.0486111111111111 0.0173611111111111
@@ -108,7 +108,7 @@ export cheb_intmat
     @test intmat ≈ intmat_ana rtol = 1e-12
 
     n = 5
-    intmat = cheb_intmat(n)
+    intmat = cheb2_intmat(n)
     intmat_ana = [
         -3.46944695195361e-18 1.38777878078145e-17 2.08166817117217e-17 -6.93889390390723e-18 0
         0.119403559372885 0.190063432038124 -0.0242640687119285 0.0132867367414871 -0.00559644062711508
@@ -122,23 +122,23 @@ export cheb_intmat
     @testset "Compare direct vs coefficient-based integration" begin
         for n in [4, 8, 16, 32]
             # Test on standard domain [-1,1]
-            I1 = cheb_intmat(n)
+            I1 = cheb2_intmat(n)
             I2 = cheb2_cumsummat(Float64, n)
             @test I1 ≈ I2 rtol = 1e-12
 
             # Test on mapped domain [0,π]
-            I1 = cheb_intmat(n, 0.0, Float64(π))
+            I1 = cheb2_intmat(n, 0.0, Float64(π))
             I2 = cheb2_cumsummat(n, 0.0, Float64(π))
             @test I1 ≈ I2 rtol = 1e-12
         end
     end
 end
 
-@testset "cheb_intmat - analytical" begin
+@testset "cheb2_intmat - analytical" begin
     @testset "Standard domain [-1,1]" begin
         n = 32
         x = cheb2_pts(n)
-        intmat = cheb_intmat(n)
+        intmat = cheb2_intmat(n)
 
         # Test 1: Polynomial integration
         f = @. x^3  # f(x) = x³
@@ -155,7 +155,7 @@ end
 
     @testset "Mapped domain [0,π]" begin
         n = 32
-        intmat = cheb_intmat(n, 0.0, Float64(π))
+        intmat = cheb2_intmat(n, 0.0, Float64(π))
         x = cheb2_pts(Float64, n, 0.0, Float64(π))
 
         # Test: Integration of sin(x) from 0 to x
