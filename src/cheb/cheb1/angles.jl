@@ -7,9 +7,6 @@ Compute angles for Chebyshev points of the first kind:
 # Arguments
 - `TR`: Type parameter for the angles (e.g., Float64)
 - `n`: Number of points
-
-# Returns
-- Vector of n angles in [0,π], ordered decreasing
 """
 function cheb1_angles(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     @argcheck n >= 0 "n must be nonnegative"

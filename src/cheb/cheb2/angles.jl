@@ -1,22 +1,12 @@
 """
     cheb2_angles([TR=Float64], n::Integer)
 
-Compute angles for Chebyshev points of the second kind.
+Compute angles for Chebyshev points of the second kind:
+``\\theta_k = \\frac{k\\pi}{n-1}, \\quad k = n-1,\\ldots,0``
 
 # Arguments
 - `TR`: Type parameter for the angles (e.g., Float64)
 - `n`: Number of points
-
-# Returns
-- Vector of n angles in [0,π], ordered decreasing
-- Empty vector if n=0
-- [π/2] if n=1
-
-# Mathematical Details
-For n > 1:
-``\\theta_k = \\frac{k\\pi}{n-1}, \\quad k = n-1,\\ldots,0``
-
-These angles generate second-kind Chebyshev points via: x_k = -cos(θ_k)
 """
 function cheb2_angles(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     @argcheck n >= 0 "n must be nonnegative"
