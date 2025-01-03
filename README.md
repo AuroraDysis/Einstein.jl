@@ -18,7 +18,7 @@ When solving GR PDEs in spherical symmetry or even axisymmetry, the requirements
 
 ## Description
 
-In summary, **GRSuite.jl** is a **high-performance** suite designed to compute **arbitrary-precision solutions**. It supports solving the following built-in equations (some of which were developed for previous projects and will be ported to this library):
+In summary, **GRSuite.jl** is a **high-performance** suite designed to compute **arbitrary-precision solutions**. It is planned to support solving the following built-in equations (some of which were developed for previous projects and will be ported to this library):
 
 - **Spherical Symmetry**
 
