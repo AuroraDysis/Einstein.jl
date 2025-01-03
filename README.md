@@ -18,7 +18,24 @@ When solving GR PDEs in spherical symmetry or even axisymmetry, the requirements
 
 ## Description
 
-This package is a **high-performance** suite designed to compute **arbitrary-precision** solutions for partial differential equations (PDEs) in general relativity. It includes the following numerical methods:
+In summary, **GRSuite.jl** is a **high-performance** suite designed to compute **arbitrary-precision solutions**. It supports solving the following built-in equations (some of which were developed for previous projects and will be ported to this library):
+
+- **Spherical Symmetry**
+
+  - [ ] Regge-Wheeler-Zerilli equation in hyperboloidal, Kerr-Schild, and tortoise coordinates
+  - [ ] Klein-Gordon equation in hyperboloidal, Kerr-Schild, and tortoise coordinates
+  - [ ] Einstein equations with a scalar field using the Z4 formulation
+
+- **Axisymmetry**
+
+  - [ ] Teukolsky equation in hyperboloidal, Kerr-Schild, and tortoise coordinates
+  - [ ] Klein-Gordon equation in hyperboloidal, Kerr-Schild, and tortoise coordinates
+
+- **Quasinormal Modes**
+  - [ ] Compute quasinormal modes for the Schwarzschild black hole using the Regge-Wheeler-Zerilli equation. Use the continued fraction method to determine the eigenvalue and the ultraspherical spectral method in hyperboloidal coordinates to determine the eigenfunction.
+  - [ ] Compute quasinormal modes for the Teukolsky equation using the continued fraction method. Apply the Cook-Zalutskiy spectral approach for the angular sector to determine the eigenvalue and the ultraspherical spectral method in hyperboloidal coordinates to determine the eigenfunction.
+
+`GRSuite.jl` currently includes utilities for the following numerical methods:
 
 - Chebyshev collocation at Chebyshev points of the first and second kinds
 - Finite difference method
@@ -26,4 +43,6 @@ This package is a **high-performance** suite designed to compute **arbitrary-pre
 - Ultraspherical spectral method
 - Ultraspherical rectangular collocation [TODO]
 
-Although the ChebSuite is inspired by algorithms from [Chebfun](https://github.com/chebfun/chebfun), it has been extensively enhanced in this package to optimize performance and enable arbitrary-precision calculations.
+While the `ChebyshevSuite` is inspired by algorithms from [Chebfun](https://www.chebfun.org/), it has been significantly enhanced in this package to improve performance and support arbitrary-precision calculations.
+
+This project is under active development, so feel free to give it a try!
