@@ -1,20 +1,35 @@
 @testset "cheb1_amat, cheb1_smat" begin
-    n = 32  # Enough points for good accuracy
-    x = cheb1_pts(Float64, n)
-    A = cheb1_amat(Float64, n)
-    S = cheb1_smat(Float64, n)
+    for type in [Float64, BigFloat]
+        tol = 1000 * eps(type)
 
-    @testset "Transform and recover" begin
-        # Test with polynomial that should be exactly represented
-        f = @. 3x^2 + 2x - 1
-        coeffs = A * f
-        f_recovered = S * coeffs
-        @test f_recovered ≈ f rtol = 1e-12
+        @testset "polynomial" begin
+            dom = -one(type) .. one(type)
+            f = Fun(x -> 3x^2 + 2x - 1, Chebyshev(dom))
+            f_coeffs = coefficients(f)
+            n = ncoefficients(f)
 
-        # Test with trigonometric function
-        f = @. sin(π * x) * cos(2π * x)
-        coeffs = A * f
-        f_recovered = S * coeffs
-        @test f_recovered ≈ f rtol = 1e-12
+            x = cheb1_pts(type, n)
+            f_vals = f.(x)
+            A = cheb1_amat(type, n)
+            S = cheb1_smat(type, n)
+
+            @test isapprox(A * f_vals, f_coeffs, atol=tol)
+            @test isapprox(S * f_coeffs, f_vals, atol=tol)
+        end
+
+        @testset "trigonometric" begin
+            dom = -one(type) .. one(type)
+            f = Fun(x -> sin(π * x) * cos(2π * x), Chebyshev(dom))
+            f_coeffs = coefficients(f)
+            n = ncoefficients(f)
+
+            x = cheb1_pts(type, n)
+            f_vals = f.(x)
+            A = cheb1_amat(type, n)
+            S = cheb1_smat(type, n)
+
+            @test isapprox(A * f_vals, f_coeffs, atol=tol)
+            @test isapprox(S * f_coeffs, f_vals, atol=tol)
+        end
     end
 end
