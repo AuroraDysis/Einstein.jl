@@ -13,8 +13,8 @@ w_k = e^{-\\alpha\\left(k / n\\right)^{2 p}}, \\quad k = 0, \\ldots, n-1
 - `p`: Order of dissipation
 
 # Suggested values
-- \$\\alpha = 36\$ and \$p = 32\$ for weak dissipation [Szilagyi:2009qz, Hilditch:2015aba](@cite)
-- \$\\alpha = 36\$ and \$p = 8\$ for strong dissipation [justin_ripley_2023_8215577](@cite)
+- `α = 36` and `p = 32` for weak dissipation [Szilagyi:2009qz, Hilditch:2015aba](@cite)
+- `α = 40` and `p = 8` for strong dissipation [justin_ripley_2023_8215577](@cite)
 """
 function cheb_disswts(::Type{TR}, n::TI, α::TI, p::TI) where {TR<:AbstractFloat,TI<:Integer}
     wts = zeros(TR, n)
