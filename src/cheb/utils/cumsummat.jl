@@ -28,23 +28,23 @@ function cheb_coeffs_cumsummat(::Type{TR}, n::Integer) where {TR<:AbstractFloat}
         B[2, 1] = 1
         B[2, 3] = -one(TR) / 2
         B[3, 2] = one(TR) / 4
+
+        for i in 3:nm1
+            # upper diagonal
+            B[i, i + 1] = -one(TR) / (2 * (i - 1))
+
+            # lower diagonal
+            B[i + 1, i] = one(TR) / (2 * i)
+
+            # first row
+            c = i % 2 == 0 ? -1 : 1
+            B[1, i] = c * (B[i - 1, i] + B[i + 1, i])
+        end
+
+        # fix B[end-1, end]
+        B[end - 1, end] += one(TR) / (2 * n)
+        B[1, end] = (nm1 % 2 == 0 ? 1 : -1) * B[end - 1, end]
     end
-
-    @inbounds for i in 3:nm1
-        # upper diagonal
-        B[i, i + 1] = -one(TR) / (2 * (i - 1))
-
-        # lower diagonal
-        B[i + 1, i] = one(TR) / (2 * i)
-
-        # first row
-        c = i % 2 == 0 ? -1 : 1
-        B[1, i] = c * (B[i - 1, i] + B[i + 1, i])
-    end
-
-    # fix B[end-1, end]
-    @inbounds B[end - 1, end] += one(TR) / (2 * n)
-    @inbounds B[1, end] = (nm1 % 2 == 0 ? 1 : -1) * B[end - 1, end]
 
     return B
 end
