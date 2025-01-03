@@ -22,14 +22,15 @@ function cheb2_cumsummat(n::Integer)
     return cheb2_cumsummat(Float64, n)
 end
 
-function cheb2_cumsummat(n::Integer, x_min::T, x_max::T) where {T<:AbstractFloat}
+function cheb2_cumsummat(::Type{T}, n::Integer, x_min::T, x_max::T) where {T<:AbstractFloat}
     Q = cheb2_cumsummat(T, n)
-    Q .*= (x_max - x_min) / 2
+    scale = (x_max - x_min) / 2
+    Q .*= scale
     return Q
 end
 
-function cheb2_cumsummat(::Type{T}, n::Integer, x_min::T, x_max::T) where {T<:AbstractFloat}
-    return cheb2_cumsummat(n, x_min, x_max)
+function cheb2_cumsummat(n::Integer, x_min::Float64, x_max::Float64)
+    return cheb2_cumsummat(Float64, n, x_min, x_max)
 end
 
 export cheb2_cumsummat
