@@ -39,7 +39,7 @@ function ultra_multmat(
         λf = convert(TR, λ)
         d1 = Array{TR}(undef, m - 1)
         d2 = Array{TR}(undef, m - 1)
-        for i in 0:(m - 2)
+        @inbounds for i in 0:(m - 2)
             d1[i + 1] = (2λf + i) / (2(λf + i + 1))
             d2[i + 1] = (1 + i) / (2(λf + i))
         end
