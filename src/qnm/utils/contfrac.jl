@@ -3,7 +3,7 @@
 
 Compute the continued fraction
 ```math
-f(x)=b_0+\\frac{a_1}{b_1+\\frac{a_2}{b_2+\\frac{a_3}{b_3+\\frac{a_4}{b_4+\\frac{a_5}{b_5+\\cdots}}}}}
+f(x)=b_0+\frac{a_1}{b_1+\frac{a_2}{b_2+\frac{a_3}{b_3+\frac{a_4}{b_4+\frac{a_5}{b_5+\cdots}}}}}
 ```
 using modified Lentz's method. Translated from [duetosymmetry/qnm](https://github.com/duetosymmetry/qnm).
 
@@ -24,7 +24,7 @@ using modified Lentz's method. Translated from [duetosymmetry/qnm](https://githu
 ## Compute the square root of two using continued fractions
 
 ```math
-\\sqrt{2} = 1 + \\frac{1}{2 + \\frac{1}{2 + \\frac{1}{2 + \\frac{1}{2 + \\cdots}}}} \\approx 1.414213562373095
+\sqrt{2} = 1 + \frac{1}{2 + \frac{1}{2 + \frac{1}{2 + \frac{1}{2 + \cdots}}}} \approx 1.414213562373095
 ```
 
 ```julia
@@ -36,7 +36,7 @@ contfrac_lentz(Float64, a, b, 10*eps(Float64), 50, 1000)
 ## Compute Golden Ratio
 
 ```math
-\\phi = 1 + \\frac{1}{1 + \\frac{1}{1 + \\frac{1}{1 + \\cdots}}} \\approx 1.618033988749895
+\phi = 1 + \frac{1}{1 + \frac{1}{1 + \frac{1}{1 + \cdots}}} \approx 1.618033988749895
 ```
 
 ```julia
