@@ -1,9 +1,9 @@
-"""
+@doc raw"""
     cheb_disswts([T=Float64], n::Integer, a::Integer, p::Integer) where {T<:AbstractFloat}
 
 Compute exponential dissipation weights for Chebyshev spectral methods [Szilagyi:2009qz](@cite).
 ```math
-w_k = e^{-\\alpha\\left(k / n\\right)^{2 p}}, \\quad k = 0, \\ldots, n-1
+w_k = e^{-\alpha\left(k / n\right)^{2 p}}, \quad k = 0, \ldots, n-1
 ```
 
 # Arguments
@@ -13,8 +13,8 @@ w_k = e^{-\\alpha\\left(k / n\\right)^{2 p}}, \\quad k = 0, \\ldots, n-1
 - `p`: Order of dissipation
 
 # Suggested values
-- `α = 36` and `p = 32` for weak dissipation [Szilagyi:2009qz, Hilditch:2015aba](@cite)
-- `α = 40` and `p = 8` for strong dissipation [justin_ripley_2023_8215577](@cite)
+- $\alpha = 36$ and $p = 32$ for weak dissipation [Szilagyi:2009qz, Hilditch:2015aba](@cite)
+- $\alpha = 40$ and $p = 8$ for strong dissipation [justin_ripley_2023_8215577](@cite)
 """
 function cheb_disswts(
     ::Type{T}, n::Integer, α::Integer, p::Integer
