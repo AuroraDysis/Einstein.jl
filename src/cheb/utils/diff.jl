@@ -23,14 +23,14 @@ function cheb_diff!(
     end
 
     # Compute 2k * c[k+1] for k = 1:n-1
-    for i in 1:(n - 1)
+    @inbounds for i in 1:(n - 1)
         coeffs_der[i] = 2 * i * coeffs[i + 1]
     end
     coeffs_der[n:end] .= 0
 
     # Compute cumulative sums for odd and even indices separately
     # This avoids the need to create temporary arrays
-    begin
+    @inbounds begin
         # Odd indices (n-1:-2:1)
         for i in (n - 1):-2:3
             coeffs_der[i - 2] += coeffs_der[i]
