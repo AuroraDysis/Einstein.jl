@@ -205,7 +205,7 @@ function cheb_rectdiff_rec(
 
     # Compute denominator matrix
     denom = [2 * sin((tau + t) / 2) * sin((tau - t) / 2) for tau in TAU, t in T]
-    idx = [argmin(abs.(@view(denom[i, :]))) for i in 1:m]
+    idx = @inbounds [argmin(abs.(@view(denom[i, :]))) for i in 1:m]
 
     # Higher-order derivatives
     for l in 2:p
@@ -215,7 +215,7 @@ function cheb_rectdiff_rec(
     end
 
     # Apply negative-sum trick
-    for i in 1:m
+    @inbounds for i in 1:m
         row_sum = sum(@view(D[i, :]))
         D[i, idx[i]] = -row_sum + D[i, idx[i]]
     end
