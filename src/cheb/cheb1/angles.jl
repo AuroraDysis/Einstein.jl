@@ -1,5 +1,5 @@
 @doc raw"""
-    cheb1_angles([TR=Float64], n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    cheb1_angles([T=Float64], n::Integer) where {T<:AbstractFloat}
 
 Compute angles for Chebyshev points of the 1st kind:
 ```math
@@ -7,21 +7,21 @@ Compute angles for Chebyshev points of the 1st kind:
 ```
 
 # Arguments
-- `TR`: Type parameter for the angles (e.g., Float64)
+- `T`: Type parameter for the angles (e.g., Float64)
 - `n`: Number of points
 """
-function cheb1_angles(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+function cheb1_angles(::Type{T}, n::Integer) where {T<:AbstractFloat}
     @argcheck n >= 0 "n must be nonnegative"
 
     if n == 0
-        return TR[]
+        return T[]
     elseif n == 1
-        return TR[convert(TR, π) / 2]
+        return T[convert(T, π) / 2]
     end
 
-    θ = Array{TR}(undef, n)
+    θ = Array{T}(undef, n)
 
-    pi_over_2n = convert(TR, pi) / (2 * n)
+    pi_over_2n = convert(T, pi) / (2 * n)
     @inbounds for k in 0:(n - 1)
         θ[n - k] = (2 * k + 1) * pi_over_2n
     end
@@ -29,7 +29,7 @@ function cheb1_angles(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     return θ
 end
 
-function cheb1_angles(n::TI) where {TI<:Integer}
+function cheb1_angles(n::Integer)
     return cheb1_angles(Float64, n)
 end
 
