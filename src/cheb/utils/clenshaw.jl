@@ -1,5 +1,5 @@
 """
-    cheb_clenshaw(c::VT, x::T) where {T<:AbstractFloat,VT<:AbstractVector{T}}
+    cheb_clenshaw(c::AbstractVector{T}, x::T) where {T<:AbstractFloat}
 
 Evaluate Chebyshev coefficients at a point using Clenshaw's algorithm.
 
@@ -10,7 +10,7 @@ Evaluate Chebyshev coefficients at a point using Clenshaw's algorithm.
 # References
 - [chebfun/@chebtech/clenshaw.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech/clenshaw.m)
 """
-function cheb_clenshaw(c::VT, x::T) where {T<:AbstractFloat,VT<:AbstractVector{T}}
+function cheb_clenshaw(c::AbstractVector{T}, x::T) where {T<:AbstractFloat}
     @argcheck length(c) > 0 "c must have at least one element"
 
     n = length(c) - 1
@@ -40,8 +40,8 @@ end
 
 # TODO: Implement the vectorized version of cheb_clenshaw
 function cheb_clenshaw(
-    c::VT1, x::VT2
-) where {TR<:AbstractFloat,VT1<:AbstractVector{TR},VT2<:AbstractVector{TR}}
+    c::AbstractVector{TR}, x::AbstractVector{TR}
+) where {TR<:AbstractFloat}
     return @inbounds [cheb_clenshaw(c, x[i]) for i in eachindex(x)]
 end
 

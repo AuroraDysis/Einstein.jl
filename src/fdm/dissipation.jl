@@ -15,7 +15,7 @@ end
 
 Calculate the weights for Kreiss-Oliger dissipation of given order [Babiuc:2007vr](@cite).
 """
-function fdm_disswts(diss_order::Integer)
+function fdm_disswts(diss_order::TI) where {TI<:Integer}
     @argcheck iseven(diss_order) "Only even orders are supported."
     r = div(diss_order, 2)
     wts_f = fornberg_calculate_wts(2r, zero(Float64), (-r):r)

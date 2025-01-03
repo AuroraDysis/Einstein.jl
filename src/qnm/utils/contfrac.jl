@@ -1,5 +1,5 @@
 @doc raw"""
-    contfrac_lentz([T=Float64], a::TF1, b::TF2, tol::T, min_iter::TI, max_iter::TI) where { T <: AbstractFloat, TF1 <: Function, TF2 <: Function }
+    contfrac_lentz([T=Float64], a::Function, b::Function, tol::T, min_iter::Integer, max_iter::Integer) where {T<:AbstractFloat}
 
 Compute the continued fraction
 ```math
@@ -50,8 +50,8 @@ contfrac_lentz(Float64, a, b, 10*eps(Float64), 50, 1000)
 - [press2007numerical, Stein:2019mop, lentz1976generating, thompson1986coulomb, DLMF_3103_online](@cite)
 """
 function contfrac_lentz(
-    ::Type{T}, a::TF1, b::TF2, tol::T, min_iter::Integer, max_iter::Integer
-) where {T<:AbstractFloat,TF1<:Function,TF2<:Function}
+    ::Type{T}, a::Function, b::Function, tol::T, min_iter::Integer, max_iter::Integer
+) where {T<:AbstractFloat}
     tiny = eps(T)^2
 
     fᵢ₋₁ = b(0)

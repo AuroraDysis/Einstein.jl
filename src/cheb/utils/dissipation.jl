@@ -16,7 +16,9 @@ w_k = e^{-\\alpha\\left(k / n\\right)^{2 p}}, \\quad k = 0, \\ldots, n-1
 - `α = 36` and `p = 32` for weak dissipation [Szilagyi:2009qz, Hilditch:2015aba](@cite)
 - `α = 40` and `p = 8` for strong dissipation [justin_ripley_2023_8215577](@cite)
 """
-function cheb_disswts(::Type{T}, n::Integer, α::Integer, p::Integer) where {T<:AbstractFloat}
+function cheb_disswts(
+    ::Type{T}, n::Integer, α::Integer, p::Integer
+) where {T<:AbstractFloat}
     wts = zeros(T, n)
     p2 = 2 * p
     ninv = one(T) / n
@@ -31,7 +33,7 @@ function cheb_disswts(n::Integer, α::Integer, p::Integer)
 end
 
 """
-    cheb_dissmat(wts::VT, S::MR1, A::MR2; negsum::Bool = true) where {T<:AbstractFloat,VT<:AbstractVector{T},MR1<:AbstractMatrix{T},MR2<:AbstractMatrix{T}}
+    cheb_dissmat(wts::AbstractVector{T}, S::AbstractMatrix{T}, A::AbstractMatrix{T}; negsum::Bool=true) where T<:AbstractFloat
 
 Construct a dissipation matrix using precomputed weights and operators,
 optionally applying the 'negative sum trick', which seems make the simulation more stable
@@ -47,10 +49,8 @@ The function applies the weights through diagonal scaling and implements
 the negative sum trick for diagonal elements when negsum is true.
 """
 function cheb_dissmat(
-    wts::VT, S::MR1, A::MR2; negsum::Bool=true
-) where {
-    T<:AbstractFloat,VT<:AbstractVector{T},MR1<:AbstractMatrix{T},MR2<:AbstractMatrix{T}
-}
+    wts::AbstractVector{T}, S::AbstractMatrix{T}, A::AbstractMatrix{T}; negsum::Bool=true
+) where {T<:AbstractFloat}
     F = S * Diagonal(wts) * A
 
     if !negsum

@@ -1,6 +1,6 @@
 """
-    cheb1_coeffs2vals(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
-    op::Cheb1Coeffs2ValsOp([TR=Float64], n::Integer)(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+    cheb1_coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat}
+    op::Cheb1Coeffs2ValsOp([TR=Float64], n::Integer)(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat}
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 1st kind.
 
@@ -42,7 +42,7 @@ struct Cheb1Coeffs2ValsOp{TR<:AbstractFloat,TP<:Plan}
     end
 
     function Cheb1Coeffs2ValsOp(n::Integer)
-        Cheb1Coeffs2ValsOp(Float64, n)
+        return Cheb1Coeffs2ValsOp(Float64, n)
     end
 end
 
@@ -113,7 +113,7 @@ function (op::Cheb1Coeffs2ValsOp{TR,TP})(
     return vals
 end
 
-function cheb1_coeffs2vals(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+function cheb1_coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat}
     n = length(coeffs)
     if n <= 1
         return deepcopy(coeffs)

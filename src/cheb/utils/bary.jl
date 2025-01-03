@@ -1,9 +1,6 @@
 """
-    bary(w::VT1, x::VT2, f::VT3, x0::TR) where {
-        TR<:AbstractFloat,
-        VT1<:AbstractVector{TR},
-        VT2<:AbstractVector{TR},
-        VT3<:AbstractVector{TR},
+    bary(w::AbstractVector{TR}, x::AbstractVector{TR}, f::AbstractVector{TR}, x0::TR) where {
+        TR<:AbstractFloat
     }
 
 Evaluate a polynomial interpolant using the barycentric interpolation formula.
@@ -18,12 +15,9 @@ Evaluate a polynomial interpolant using the barycentric interpolation formula.
 - [chebfun/@chebtech2/bary.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/bary.m)
 """
 function bary(
-    w::VT1, x::VT2, f::VT3, x0::TR
+    w::AbstractVector{TR}, x::AbstractVector{TR}, f::AbstractVector{TR}, x0::TR
 ) where {
     TR<:AbstractFloat,
-    VT1<:AbstractVector{TR},
-    VT2<:AbstractVector{TR},
-    VT3<:AbstractVector{TR},
 }
     p = zero(TR)
     q = zero(TR)
