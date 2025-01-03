@@ -29,7 +29,7 @@ function ultra_multmat(
         M = sparse(Toeplitz(a, a) .* half)
         M[1:(n - 2), 1:(n - 2)] .-= ultra_sphankel(@view(a[3:end]))
         return M
-    else # General λ case, Convert from T to C^(λ-1)
+    else # General λ case, Convert from T to C^λ
         a = ultra_convertmat(TR, n, 0, λ) * a
         m = 2n
         M0 = sparse(I, m, m)
@@ -49,3 +49,5 @@ function ultra_multmat(
         return M[1:n, 1:n]
     end
 end
+
+export ultra_multmat
