@@ -1,6 +1,7 @@
 # GRSuite
 
 <!-- [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://AuroraDysis.github.io/GRSuite.jl/stable/) -->
+
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://AuroraDysis.github.io/GRSuite.jl/dev/)
 [![Build Status](https://github.com/AuroraDysis/GRSuite.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/AuroraDysis/GRSuite.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/AuroraDysis/GRSuite.jl/graph/badge.svg?token=C99DVUUULL)](https://codecov.io/gh/AuroraDysis/GRSuite.jl)
@@ -37,11 +38,15 @@ In summary, **GRSuite.jl** is a **high-performance** suite designed to compute *
 
 `GRSuite.jl` currently includes utilities for the following numerical methods:
 
-- Chebyshev collocation at Chebyshev points of the first and second kinds
-- Finite difference method
-- Rectangular collocation
-- Ultraspherical spectral method
-- Ultraspherical rectangular collocation [TODO]
+- **Spatial Discretization**
+  - [x] Chebyshev collocation at Chebyshev points of the first and second kinds (Most of algorithms are translated from Chebfun)
+  - [x] Finite difference method
+  - [x] Rectangular collocation method (Most of algorithms are translated from Chebfun)
+  - [x] Ultraspherical spectral method (Most of algorithms are translated from Chebfun)
+  - [ ] Ultraspherical rectangular collocation [TODO]
+- **Quasinormal Mode Computation**
+  - [x] Modified Lentz method for continued fractions
+  - [ ] Cook-Zalutskiy spectral method [TODO]
 
 While the `ChebyshevSuite` is inspired by algorithms from [Chebfun](https://www.chebfun.org/), it has been significantly enhanced in this package to improve performance and support arbitrary-precision calculations.
 

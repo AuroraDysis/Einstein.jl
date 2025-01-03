@@ -6,6 +6,7 @@ using LinearAlgebra: I
                              dfdx::Bool=false)
 
 Calculate finite difference weights for arbitrary-order derivatives using the Fornberg algorithm.
+Taken from [SciML/MethodOfLines.jl](https://github.com/SciML/MethodOfLines.jl).
 
 # Arguments
 - `T`: Type parameter for the weights (defaults to type of x0)
