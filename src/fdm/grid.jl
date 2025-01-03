@@ -12,6 +12,9 @@ Generate a uniform grid for finite difference methods.
 - Vector of n uniformly spaced points, where n = round((x_max - x_min)/dx) + 1
 """
 function fdm_grid(x_min::T, x_max::T, dx::T) where {T<:AbstractFloat}
+    @argcheck x_max > x_min "Invalid interval"
+    @argcheck dx > 0 "Spacing must be positive"
+
     n = round(Int, (x_max - x_min) / dx) + 1
 
     x_grid_end = x_min + (n - 1) * dx
