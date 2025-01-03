@@ -7,6 +7,9 @@
 [![Code Style: Blue](https://img.shields.io/badge/code%20style-blue-4495d1.svg)](https://github.com/invenia/BlueStyle)
 [![Aqua](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
+> [!WARNING]  
+> I'm still actively developing it and migrating code from private repositories to this one, so it may currently lack some features.
+
 ## Motivation and Purpose
 
 After developing hundreds of PDE solvers for various projects, I decided to create `PDESuite.jl` because I couldn't find a library that was both highly convenient and effective for solving partial differential equations (PDEs) in the context of general relativity (GR).
