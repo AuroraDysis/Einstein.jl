@@ -107,4 +107,10 @@ function contfrac_lentz(
     return fᵢ, errorᵢ, i
 end
 
+function contfrac_lentz(
+    a::TF1, b::TF2, tol::Float64, min_iter::TI, max_iter::TI
+) where {TF1<:Function,TF2<:Function,TI<:Integer}
+    return contfrac_lentz(Float64, a, b, tol, min_iter, max_iter)
+end
+
 export contfrac_lentz
