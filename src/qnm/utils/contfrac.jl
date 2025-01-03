@@ -97,7 +97,11 @@ function contfrac_lentz(
     end
 
     if !converged
-        @warn "Continued fraction did not converge after $i iterations"
+        throw(
+            ConvergenceError(
+                "contfrac_lentz: Continued fraction did not converge after $max_iter iterations",
+            ),
+        )
     end
 
     return fᵢ, errorᵢ, i
