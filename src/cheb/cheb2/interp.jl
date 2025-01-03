@@ -1,13 +1,13 @@
 """
     cheb2_coeffs2vals(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
-    op::Cheb2Coeffs2ValsOp([TR=Float64], n::Integer)(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+    op::Cheb2Coeffs2ValsOp{[TR=Float64]}(n::Integer)(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 2nd kind.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-op = Cheb2Coeffs2ValsOp(Float64, n)
+op = Cheb2Coeffs2ValsOp{Float64}(n)
 values = op(coeffs)
 ```
 
@@ -19,7 +19,7 @@ struct Cheb2InterpOp{TR<:AbstractFloat}
     weights::Vector{TR}  # Barycentric weights
     tmp::Vector{TR}      # Temporary storage
 
-    function Cheb2InterpOp(::Type{TR}, n::Integer) where {TR<:AbstractFloat}
+    function Cheb2InterpOp{TR}(n::Integer) where {TR<:AbstractFloat}
         nodes = cheb2_pts(TR, n)
         weights = cheb2_barywts(TR, n)
         tmp = Vector{TR}(undef, n)
@@ -27,7 +27,7 @@ struct Cheb2InterpOp{TR<:AbstractFloat}
     end
 
     function Cheb2InterpOp(n::Integer)
-        return Cheb2InterpOp(Float64, n)
+        return Cheb2InterpOp{Float64}(n)
     end
 end
 
@@ -39,7 +39,7 @@ end
 
 function cheb2_interp(values::AbstractVector{TR}, x::TR) where {TR<:AbstractFloat}
     n = length(values)
-    op = Cheb2InterpOp(TR, n)
+    op = Cheb2InterpOp{TR}(n)
     return op(values, x)
 end
 

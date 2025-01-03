@@ -16,13 +16,13 @@ Generate the Chebyshev integration matrix that operates directly on function val
 function cheb_rectint(::Type{TR}, m::Integer, n::Integer) where {TR<:AbstractFloat}
     # Build Lagrange basis
     K = Array{TR}(undef, n + 1, n)
-    vals2coeffs_op = Cheb2Vals2CoeffsOp(TR, n)
+    vals2coeffs_op = Cheb2Vals2CoeffsOp{TR}(n)
     @inbounds for i in 1:n
         K[1:(end - 1), i] = vals2coeffs_op(OneElement(one(TR), i, n))
     end
 
     # Integrate
-    cumsum_op = ChebCumsumOp(TR, n)
+    cumsum_op = ChebCumsumOp{TR}(n)
     @inbounds for i in 1:n
         K[:, i] = cumsum_op(@view(K[1:(end - 1), i]))
     end

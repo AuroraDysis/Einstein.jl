@@ -1,6 +1,6 @@
 """
-    cheb_diff(coeffs::VT) where {T<:AbstractFloat,VT<:AbstractVector{T}}
-    cheb_diff!(coeffs::VT1, coeffs_der::VT2) where {T<:AbstractFloat,VT1<:AbstractVector{T},VT2<:AbstractVector{T}}
+    cheb_diff(coeffs::AbstractVector{T}) where {T<:AbstractFloat}
+    cheb_diff!(coeffs::AbstractVector{T}, coeffs_der::AbstractVector{T}) where {T<:AbstractFloat}
 
 Compute derivatives of Chebyshev coefficients.
 
@@ -9,8 +9,8 @@ Compute derivatives of Chebyshev coefficients.
 - `coeffs_der`: Pre-allocated output vector for derivative coefficients (length at least n - 1)
 """
 function cheb_diff!(
-    coeffs::VT1, coeffs_der::VT2
-) where {T<:AbstractFloat,VT1<:AbstractVector{T},VT2<:AbstractVector{T}}
+    coeffs::AbstractVector{T}, coeffs_der::AbstractVector{T}
+) where {T<:AbstractFloat}
     n = length(coeffs)
     n_der = length(coeffs_der)
 
@@ -49,7 +49,7 @@ function cheb_diff!(
     return nothing
 end
 
-function cheb_diff(coeffs::VT) where {T<:AbstractFloat,VT<:AbstractVector{T}}
+function cheb_diff(coeffs::AbstractVector{T}) where {T<:AbstractFloat}
     n = length(coeffs)
     coeffs_der = similar(coeffs, n - 1)
     cheb_diff!(coeffs, coeffs_der)

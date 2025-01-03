@@ -1,13 +1,13 @@
 """
-    cheb1_interp(values::VT, x::TR) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
-    Cheb1InterpOp([TR=Float64], n::Integer)(values::VT, x::TR) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+    cheb1_interp(values::AbstractVector{TR}, x::TR) where {TR<:AbstractFloat}
+    Cheb1InterpOp{[TR=Float64]}(n::Integer)(values::AbstractVector{TR}, x::TR) where {TR<:AbstractFloat}
 
 Interpolate values at Chebyshev points of the 1st kind using barycentric interpolation.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-op = Cheb1InterpOp(Float64, n)
+op = Cheb1InterpOp{Float64}(n)
 y = op(v, x)
 ```
 """
@@ -16,7 +16,7 @@ struct Cheb1InterpOp{TR<:AbstractFloat}
     weights::Vector{TR}  # Barycentric weights
     tmp::Vector{TR}      # Temporary storage
 
-    function Cheb1InterpOp(::Type{TR}, n::Integer) where {TR<:AbstractFloat}
+    function Cheb1InterpOp{TR}(n::Integer) where {TR<:AbstractFloat}
         nodes = cheb1_pts(TR, n)
         weights = cheb1_barywts(TR, n)
         tmp = Vector{TR}(undef, n)
@@ -24,7 +24,7 @@ struct Cheb1InterpOp{TR<:AbstractFloat}
     end
 
     function Cheb1InterpOp(n::Integer)
-        return Cheb1InterpOp(Float64, n)
+        return Cheb1InterpOp{Float64}(n)
     end
 end
 
@@ -34,9 +34,9 @@ function (op::Cheb1InterpOp{TR})(
     return bary(op.weights, op.nodes, values, x)
 end
 
-function cheb1_interp(values::VT, x::TR) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+function cheb1_interp(values::AbstractVector{TR}, x::TR) where {TR<:AbstractFloat}
     n = length(values)
-    op = Cheb1InterpOp(TR, n)
+    op = Cheb1InterpOp{TR}(n)
     return op(values, x)
 end
 

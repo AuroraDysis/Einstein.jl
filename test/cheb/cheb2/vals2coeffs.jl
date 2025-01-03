@@ -54,7 +54,7 @@ using TestItems
     @testset "Operator style" begin
         n = 100
         vals = rand(n)
-        op = Cheb2Vals2CoeffsOp(Float64, n)
+        op = Cheb2Vals2CoeffsOp(n)
 
         # Test operator call
         coeffs1 = op(vals)

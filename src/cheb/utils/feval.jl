@@ -1,5 +1,5 @@
 """
-    cheb_feval(f::VT, x::TR) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+    cheb_feval(f::AbstractVector{TR}, x::TR) where {TR<:AbstractFloat}
 
 Evaluate Chebyshev coefficients at a point.
 
@@ -10,7 +10,7 @@ Evaluate Chebyshev coefficients at a point.
 # References
 - [chebfun/@chebtech/feval.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech/feval.m)
 """
-function cheb_feval(f::VT, x::TR) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+function cheb_feval(f::AbstractVector{TR}, x::TR) where {TR<:AbstractFloat}
     return cheb_clenshaw(f, x)
 end
 

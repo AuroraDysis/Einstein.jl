@@ -1,6 +1,6 @@
 """
     cheb_cumsum(f::AbstractVector{TR}) where {TR<:AbstractFloat}
-    ChebCumsumOp([TR=Float64], n::TI)(f::AbstractVector{TR}) where {TR<:AbstractFloat,TI<:Integer}
+    ChebCumsumOp{[TR=Float64]}(n::TI)(f::AbstractVector{TR}) where {TR<:AbstractFloat,TI<:Integer}
 
 Compute the indefinite integral of a function given its Chebyshev coefficients.
 
@@ -16,7 +16,7 @@ struct ChebCumsumOp{TR<:AbstractFloat,TI<:Integer}
     result::Vector{TR} # Result storage
     v::Vector{TI}      # Pre-computed alternating signs
 
-    function ChebCumsumOp(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    function ChebCumsumOp{TR}(n::TI) where {TR<:AbstractFloat,TI<:Integer}
         # Pre-allocate workspace
         tmp = Vector{TR}(undef, n + 2)
         result = Vector{TR}(undef, n + 1)
@@ -31,7 +31,7 @@ struct ChebCumsumOp{TR<:AbstractFloat,TI<:Integer}
     end
 
     function ChebCumsumOp(n::TI) where {TI<:Integer}
-        return ChebCumsumOp(Float64, n)
+        return ChebCumsumOp{Float64}(n)
     end
 end
 
@@ -74,9 +74,9 @@ function (op::ChebCumsumOp{TR,TI})(
     return result
 end
 
-function cheb_cumsum(f::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+function cheb_cumsum(f::AbstractVector{TR}) where {TR<:AbstractFloat}
     n = length(f)
-    op = ChebCumsumOp(TR, n)
+    op = ChebCumsumOp{TR}(n)
     return op(f)
 end
 

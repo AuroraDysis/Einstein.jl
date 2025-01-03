@@ -1,39 +1,37 @@
 """
-    cheb2_vals2coeffs(vals::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
-    op::Cheb2Vals2CoeffsOp([TR=Float64], n::Integer)(vals::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+    cheb2_vals2coeffs(vals::AbstractVector{TR}) where {TR<:AbstractFloat}
+    op::Cheb2Vals2CoeffsOp{[TR=Float64]}(n::Integer)(vals::AbstractVector{TR}) where {TR<:AbstractFloat}
 
 Convert values at Chebyshev points of the 2nd kind into Chebyshev coefficients.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-op = Cheb2Vals2CoeffsOp(Float64, n)
+op = Cheb2Vals2CoeffsOp{Float64}(n)
 values = op(coeffs)
 ```
 
 # References
 - [chebfun/@chebtech2/vals2coeffs.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/vals2coeffs.m)
 """
-struct Cheb2Vals2CoeffsOp{TR<:AbstractFloat,TP<:Plan}
+struct Cheb2Vals2CoeffsOp{TR<:AbstractFloat}
     tmp::Vector{Complex{TR}}
     coeffs::Vector{TR}
-    ifft_plan::TP
+    ifft_plan::Plan{Complex{TR}}
 
-    function Cheb2Vals2CoeffsOp(::Type{TR}, n::Integer) where {TR<:AbstractFloat}
+    function Cheb2Vals2CoeffsOp{TR}(n::Integer) where {TR<:AbstractFloat}
         tmp = zeros(Complex{TR}, 2n - 2)
         coeffs = zeros(TR, n)
         ifft_plan = plan_ifft_measure!(tmp)
-        return new{TR,typeof(ifft_plan)}(tmp, coeffs, ifft_plan)
+        return new{TR}(tmp, coeffs, ifft_plan)
     end
 
     function Cheb2Vals2CoeffsOp(n::Integer)
-        Cheb2Vals2CoeffsOp(Float64, n)
+        return Cheb2Vals2CoeffsOp{Float64}(n)
     end
 end
 
-function (op::Cheb2Vals2CoeffsOp{TR,TP})(
-    vals::AbstractVector{TR}
-) where {TR<:AbstractFloat,TP<:Plan}
+function (op::Cheb2Vals2CoeffsOp{TR})(vals::AbstractVector{TR}) where {TR<:AbstractFloat}
     n = length(vals)
 
     # Trivial case
@@ -91,12 +89,12 @@ function (op::Cheb2Vals2CoeffsOp{TR,TP})(
     return op.coeffs
 end
 
-function cheb2_vals2coeffs(vals::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+function cheb2_vals2coeffs(vals::AbstractVector{TR}) where {TR<:AbstractFloat}
     n = length(vals)
     if n <= 1
         return deepcopy(vals)
     end
-    op = Cheb2Vals2CoeffsOp(TR, n)
+    op = Cheb2Vals2CoeffsOp{TR}(n)
     return op(vals)
 end
 

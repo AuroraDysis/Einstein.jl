@@ -9,7 +9,7 @@ Construct the analysis matrix A that transforms function values at Chebyshev poi
 """
 function cheb2_amat(::Type{T}, n::Integer) where {T<:AbstractFloat}
     A = Array{T,2}(undef, n, n)
-    op = Cheb2Vals2CoeffsOp(T, n)
+    op = Cheb2Vals2CoeffsOp{T}(n)
     @inbounds for i in 1:n
         A[:, i] = op(OneElement(one(T), i, n))
     end
@@ -31,7 +31,7 @@ Construct the synthesis matrix S that transforms Chebyshev coefficients to funct
 """
 function cheb2_smat(::Type{T}, n::Integer) where {T<:AbstractFloat}
     S = Array{T,2}(undef, n, n)
-    op = Cheb2Coeffs2ValsOp(T, n)
+    op = Cheb2Coeffs2ValsOp{T}(n)
     @inbounds for i in 1:n
         S[:, i] = op(OneElement(one(T), i, n))
     end
