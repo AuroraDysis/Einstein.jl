@@ -1,6 +1,6 @@
 """
     cheb_cumsum(f::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
-    ChebCumsumOp([TR=Float64], n::TI)(f::VT) where {TR<:AbstractFloat,TI<:Integer,VT<:AbstractVector{TR}}
+    ChebCumsumOp([TR=Float64], n::Integer)(f::VT) where {TR<:AbstractFloat,TI<:Integer,VT<:AbstractVector{TR}}
 
 Compute the indefinite integral of a function given its Chebyshev coefficients.
 

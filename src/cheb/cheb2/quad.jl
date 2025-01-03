@@ -1,5 +1,5 @@
 """
-    cheb2_quadwts([TR=Float64], n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    cheb2_quadwts([TR=Float64], n::Integer) where {TR<:AbstractFloat}
 
 Compute quadrature weights for Chebyshev points of the 2nd kind.
 
@@ -10,7 +10,7 @@ Compute quadrature weights for Chebyshev points of the 2nd kind.
 # References
 - [chebfun/@chebtech2/quadwts.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/quadwts.m)
 """
-function cheb2_quadwts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+function cheb2_quadwts(::Type{TR}, n::Integer) where {TR<:AbstractFloat}
     if n == 0
         return TR[]
     elseif n == 1
@@ -50,7 +50,7 @@ function cheb2_quadwts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     return w
 end
 
-function cheb2_quadwts(n::TI) where {TI<:Integer}
+function cheb2_quadwts(n::Integer)
     return cheb2_quadwts(Float64, n)
 end
 

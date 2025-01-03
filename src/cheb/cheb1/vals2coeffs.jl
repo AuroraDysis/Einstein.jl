@@ -1,6 +1,6 @@
 """
     cheb1_vals2coeffs(vals::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
-    op::Cheb1Vals2CoeffsOp([TR=Float64], n::TI)(vals::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR},TI<:Integer}
+    op::Cheb1Vals2CoeffsOp([TR=Float64], n::Integer)(vals::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
 
 Convert values at Chebyshev points of the 1st kind into Chebyshev coefficients.
 
@@ -20,7 +20,7 @@ struct Cheb1Vals2CoeffsOp{TR<:AbstractFloat,TP<:Plan}
     coeffs::Vector{TR}
     ifft_plan::TP
 
-    function Cheb1Vals2CoeffsOp(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    function Cheb1Vals2CoeffsOp(::Type{TR}, n::Integer) where {TR<:AbstractFloat}
         # Precompute weights
         w = Vector{Complex{TR}}(undef, n)
         @inbounds begin
@@ -41,7 +41,7 @@ struct Cheb1Vals2CoeffsOp{TR<:AbstractFloat,TP<:Plan}
         return new{TR,typeof(ifft_plan)}(w, tmp, coeffs, ifft_plan)
     end
 
-    function Cheb1Vals2CoeffsOp(n::TI) where {TI<:Integer}
+    function Cheb1Vals2CoeffsOp(n::Integer)
         return Cheb1Vals2CoeffsOp(Float64, n)
     end
 end

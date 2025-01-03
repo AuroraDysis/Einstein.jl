@@ -1,5 +1,5 @@
 """
-    cheb2_diffmat([TR=Float64], n::TI, k::TI=1) where {TR<:AbstractFloat,TI<:Integer}
+    cheb2_diffmat([TR=Float64], n::Integer, k::Integer=1) where {TR<:AbstractFloat}
 
 Construct a Chebyshev differentiation that maps function values at `n` Chebyshev points of the 2nd kind 
 to values of the `k`-th derivative of the interpolating polynomial at those points.
@@ -12,7 +12,7 @@ to values of the `k`-th derivative of the interpolating polynomial at those poin
 # References
 - [chebfun/@chebcolloc2/chebcolloc2.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc2/chebcolloc2.m)
 """
-function cheb2_diffmat(::Type{TR}, n::TI, k::TI=1) where {TR<:AbstractFloat,TI<:Integer}
+function cheb2_diffmat(::Type{TR}, n::Integer, k::Integer=1) where {TR<:AbstractFloat}
     x = cheb2_pts(TR, n)               # First kind points.
     w = cheb2_barywts(TR, n)           # Barycentric weights.
     t = cheb2_angles(TR, n)            # acos(x).
@@ -20,7 +20,7 @@ function cheb2_diffmat(::Type{TR}, n::TI, k::TI=1) where {TR<:AbstractFloat,TI<:
     return D
 end
 
-function cheb2_diffmat(n::TI, k::TI=1) where {TI<:Integer}
+function cheb2_diffmat(n::Integer, k::Integer=1)
     return cheb2_diffmat(Float64, n, k)
 end
 

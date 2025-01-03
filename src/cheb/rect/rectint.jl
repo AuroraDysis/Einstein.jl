@@ -1,6 +1,6 @@
 """
-    cheb_rectint([TR=Float64], n::TI) where {TR<:AbstractFloat,TI<:Integer}
-    cheb_rectint([TR=Float64], n::TI, x_min::TR, x_max::TR) where {TR<:AbstractFloat,TI<:Integer}
+    cheb_rectint([TR=Float64], n::Integer) where {TR<:AbstractFloat}
+    cheb_rectint([TR=Float64], n::Integer, x_min::TR, x_max::TR) where {TR<:AbstractFloat}
 
 Generate the Chebyshev integration matrix that operates directly on function values.
 
@@ -13,7 +13,7 @@ Generate the Chebyshev integration matrix that operates directly on function val
 # References
 - [chebfun/intmat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/intmat.m)
 """
-function cheb_rectint(::Type{TR}, m::TI, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+function cheb_rectint(::Type{TR}, m::Integer, n::Integer) where {TR<:AbstractFloat}
     # Build Lagrange basis
     K = Array{TR}(undef, n + 1, n)
     vals2coeffs_op = Cheb2Vals2CoeffsOp(TR, n)
@@ -37,23 +37,23 @@ function cheb_rectint(::Type{TR}, m::TI, n::TI) where {TR<:AbstractFloat,TI<:Int
     return intmat
 end
 
-function cheb_rectint(n::TI) where {TI<:Integer}
+function cheb_rectint(n::Integer)
     return cheb_rectint(Float64, n, n)
 end
 
 function cheb_rectint(
-    ::Type{TR}, m::TI, n::TI, x_min::TR, x_max::TR
-) where {TR<:AbstractFloat,TI<:Integer}
+    ::Type{TR}, m::Integer, n::Integer, x_min::TR, x_max::TR
+) where {TR<:AbstractFloat}
     intmat = cheb_rectint(TR, m, n)
     intmat .*= (x_max - x_min) / 2
     return intmat
 end
 
-function cheb_rectint(m::TI, n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
+function cheb_rectint(m::Integer, n::Integer, x_min::Float64, x_max::Float64)
     return cheb_rectint(Float64, m, n, x_min, x_max)
 end
 
-function cheb_rectint(n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
+function cheb_rectint(n::Integer, x_min::Float64, x_max::Float64)
     return cheb_rectint(Float64, n, n, x_min, x_max)
 end
 

@@ -65,8 +65,8 @@ w_f, w_d = fornberg_calculate_wts(3, 0.0, x, dfdx=true)
 - [precision - Numerical derivative and finite difference coefficients: any update of the Fornberg method? - Computational Science Stack Exchange](https://scicomp.stackexchange.com/questions/11249/numerical-derivative-and-finite-difference-coefficients-any-update-of-the-fornb)
 """
 function fornberg_calculate_wts(
-    order::TI, x0::T, x::VT; dfdx::Bool=false
-) where {T<:Real,T2<:Real,VT<:AbstractVector{T2},TI<:Integer}
+    order::Integer, x0::T, x::VT; dfdx::Bool=false
+) where {T<:Real,T2<:Real,VT<:AbstractVector{T2}}
     N = length(x)
     @argcheck dfdx || N > order "Standard finite difference requires at least order + 1 points."
     @argcheck !dfdx || N > div(order, 2) + 1 "Hermite finite difference requires at least order / 2 + 1 points."

@@ -1,5 +1,5 @@
 """
-    cheb1_quadwts([TR=Float64], n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    cheb1_quadwts([TR=Float64], n::Integer) where {TR<:AbstractFloat}
 
 Compute quadrature weights for Chebyshev points of the 1st kind.
 
@@ -10,7 +10,7 @@ Compute quadrature weights for Chebyshev points of the 1st kind.
 # References
 - [chebfun/@chebtech1/quadwts.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/quadwts.m)
 """
-function cheb1_quadwts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+function cheb1_quadwts(::Type{TR}, n::Integer) where {TR<:AbstractFloat}
     # Handle the special cases:
     if n == 0
         return TR[]
@@ -61,7 +61,7 @@ function cheb1_quadwts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     return w
 end
 
-function cheb1_quadwts(n::TI) where {TI<:Integer}
+function cheb1_quadwts(n::Integer)
     return cheb1_quadwts(Float64, n)
 end
 

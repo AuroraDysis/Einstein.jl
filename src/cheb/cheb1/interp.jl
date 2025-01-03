@@ -1,6 +1,6 @@
 """
     cheb1_interp(values::VT, x::TR) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
-    Cheb1InterpOp([TR=Float64], n::TI)(values::VT, x::TR) where {TR<:AbstractFloat,TI<:Integer,VT<:AbstractVector{TR}}
+    Cheb1InterpOp([TR=Float64], n::Integer)(values::VT, x::TR) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
 
 Interpolate values at Chebyshev points of the 1st kind using barycentric interpolation.
 
@@ -16,14 +16,14 @@ struct Cheb1InterpOp{TR<:AbstractFloat}
     weights::Vector{TR}  # Barycentric weights
     tmp::Vector{TR}      # Temporary storage
 
-    function Cheb1InterpOp(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    function Cheb1InterpOp(::Type{TR}, n::Integer) where {TR<:AbstractFloat}
         nodes = cheb1_pts(TR, n)
         weights = cheb1_barywts(TR, n)
         tmp = Vector{TR}(undef, n)
         return new{TR}(nodes, weights, tmp)
     end
 
-    function Cheb1InterpOp(n::TI) where {TI<:Integer}
+    function Cheb1InterpOp(n::Integer)
         return Cheb1InterpOp(Float64, n)
     end
 end

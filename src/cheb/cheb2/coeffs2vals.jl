@@ -1,6 +1,6 @@
 """
     cheb2_coeffs2vals(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
-    op::Cheb2Coeffs2ValsOp([TR=Float64], n::TI)(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR},TI<:Integer}
+    op::Cheb2Coeffs2ValsOp([TR=Float64], n::Integer)(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 2nd kind.
 
@@ -31,14 +31,14 @@ struct Cheb2Coeffs2ValsOp{TR<:AbstractFloat,TP<:Plan}
     vals::Vector{TR}
     fft_plan::TP
 
-    function Cheb2Coeffs2ValsOp(::Type{TR}, n::TI) where {TI<:Integer,TR<:AbstractFloat}
+    function Cheb2Coeffs2ValsOp(::Type{TR}, n::Integer) where {TR<:AbstractFloat}
         tmp = zeros(Complex{TR}, 2n - 2)
         vals = zeros(TR, n)
         fft_plan = plan_fft_measure!(tmp)
         return new{TR,typeof(fft_plan)}(tmp, vals, fft_plan)
     end
 
-    function Cheb2Coeffs2ValsOp(n::TI) where {TI<:Integer}
+    function Cheb2Coeffs2ValsOp(n::Integer)
         return Cheb2Coeffs2ValsOp(Float64, n)
     end
 end

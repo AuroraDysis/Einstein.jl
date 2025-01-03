@@ -1,19 +1,19 @@
 @doc raw"""
-    ultra_multmat(coeffs::VT, λ::TI) where {TR<:AbstractFloat,VT<:AbstractVector{TR},TI<:Integer}
+    ultra_multmat(coeffs::VT, λ::Integer) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
 
 Construct nxn multiplication matrix
 representing the multiplication of F in the $C^{(\lambda)}$ basis.
 
 # Arguments
 - `coeffs::VT` : Vector of Chebyshev coefficients
-- `λ::TI` : Order of the ultraspherical basis
+- `λ::Integer` : Order of the ultraspherical basis
 
 # References
 - [chebfun/@ultraS/multmat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40ultraS/multmat.m)
 """
 function ultra_multmat(
-    coeffs::VT, λ::TI
-) where {TR<:AbstractFloat,VT<:AbstractVector{TR},TI<:Integer}
+    coeffs::VT, λ::Integer
+) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
     n = length(coeffs)
 
     coeffs = deepcopy(coeffs)

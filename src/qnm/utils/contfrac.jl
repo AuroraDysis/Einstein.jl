@@ -1,5 +1,5 @@
 @doc raw"""
-    contfrac_lentz([TR=Float64], a::TF1, b::TF2, tol::TR, min_iter::TI, max_iter::TI) where { T <: AbstractFloat, TF1 <: Function, TF2 <: Function }
+    contfrac_lentz([T=Float64], a::TF1, b::TF2, tol::T, min_iter::TI, max_iter::TI) where { T <: AbstractFloat, TF1 <: Function, TF2 <: Function }
 
 Compute the continued fraction
 ```math
@@ -50,9 +50,9 @@ contfrac_lentz(Float64, a, b, 10*eps(Float64), 50, 1000)
 - [press2007numerical, Stein:2019mop, lentz1976generating, thompson1986coulomb, DLMF_3103_online](@cite)
 """
 function contfrac_lentz(
-    ::Type{TR}, a::TF1, b::TF2, tol::TR, min_iter::TI, max_iter::TI
-) where {TR<:AbstractFloat,TF1<:Function,TF2<:Function,TI<:Integer}
-    tiny = eps(TR)^2
+    ::Type{T}, a::TF1, b::TF2, tol::T, min_iter::Integer, max_iter::Integer
+) where {T<:AbstractFloat,TF1<:Function,TF2<:Function}
+    tiny = eps(T)^2
 
     fᵢ₋₁ = b(0)
     if iszero(fᵢ₋₁)
@@ -62,7 +62,7 @@ function contfrac_lentz(
     Dᵢ₋₁ = zero(fᵢ₋₁)
 
     fᵢ = fᵢ₋₁ # use fᵢ to store the result
-    errorᵢ = typemax(TR) # use errorᵢ to store the error
+    errorᵢ = typemax(T) # use errorᵢ to store the error
 
     i = 1
     converged = false
@@ -108,8 +108,8 @@ function contfrac_lentz(
 end
 
 function contfrac_lentz(
-    a::TF1, b::TF2, tol::Float64, min_iter::TI, max_iter::TI
-) where {TF1<:Function,TF2<:Function,TI<:Integer}
+    a::TF1, b::TF2, tol::Float64, min_iter::Integer, max_iter::Integer
+) where {TF1<:Function,TF2<:Function}
     return contfrac_lentz(Float64, a, b, tol, min_iter, max_iter)
 end
 

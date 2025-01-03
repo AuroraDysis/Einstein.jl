@@ -1,6 +1,6 @@
 """
     cheb2_coeffs2vals(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
-    op::Cheb2Coeffs2ValsOp([TR=Float64], n::TI)(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR},TI<:Integer}
+    op::Cheb2Coeffs2ValsOp([TR=Float64], n::Integer)(coeffs::VT) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 2nd kind.
 
@@ -19,14 +19,14 @@ struct Cheb2InterpOp{TR<:AbstractFloat}
     weights::Vector{TR}  # Barycentric weights
     tmp::Vector{TR}      # Temporary storage
 
-    function Cheb2InterpOp(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    function Cheb2InterpOp(::Type{TR}, n::Integer) where {TR<:AbstractFloat}
         nodes = cheb2_pts(TR, n)
         weights = cheb2_barywts(TR, n)
         tmp = Vector{TR}(undef, n)
         return new{TR}(nodes, weights, tmp)
     end
 
-    function Cheb2InterpOp(n::TI) where {TI<:Integer}
+    function Cheb2InterpOp(n::Integer)
         return Cheb2InterpOp(Float64, n)
     end
 end

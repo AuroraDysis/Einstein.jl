@@ -45,7 +45,7 @@ function cheb2_pts(::Type{T}, n::Integer) where {T<:AbstractFloat}
     return x_grid
 end
 
-function cheb2_pts(n::TI) where {TI<:Integer}
+function cheb2_pts(n::Integer)
     return cheb2_pts(Float64, n)
 end
 
