@@ -43,10 +43,9 @@ When solving GR PDEs in spherical symmetry or even axisymmetry, the requirements
   - [x] Finite difference method
   - [x] Rectangular collocation method (Most of algorithms are translated from Chebfun)
   - [x] Ultraspherical spectral method (Most of algorithms are translated from Chebfun)
-  - [ ] Ultraspherical rectangular collocation [TODO]
+  - [ ] Ultraspherical rectangular collocation
 - **Quasinormal Mode Computation**
   - [x] Modified Lentz method for continued fractions
-  - [ ] Cook-Zalutskiy spectral method [TODO]
 
 While the `ChebyshevSuite` is inspired by algorithms from [Chebfun](https://www.chebfun.org/), it has been significantly enhanced in this package to improve performance and support arbitrary-precision calculations.
 
