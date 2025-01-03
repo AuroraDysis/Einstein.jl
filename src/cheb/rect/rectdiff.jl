@@ -66,7 +66,7 @@ function cheb_rectdiff1(
 end
 
 function cheb_rectdiff1(m::Integer, n::Integer, x_min::Float64, x_max::Float64)
-    return cheb_rectdiff1(T, m, n, x_min, x_max)
+    return cheb_rectdiff1(Float64, m, n, x_min, x_max)
 end
 
 """
@@ -158,7 +158,7 @@ function cheb_rectdiff2(
 end
 
 function cheb_rectdiff2(m::Integer, n::Integer, x_min::Float64, x_max::Float64)
-    return cheb_rectdiff2(T, m, n, x_min, x_max)
+    return cheb_rectdiff2(Float64, m, n, x_min, x_max)
 end
 
 """
