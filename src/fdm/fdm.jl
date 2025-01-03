@@ -1,6 +1,4 @@
-module FiniteDifferenceSuite
-
-using InlineTest
+module FDMSuite
 
 using ArgCheck: @argcheck
 

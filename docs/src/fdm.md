@@ -1,11 +1,11 @@
 # Finite Difference Suite
 
 ```@index
-Modules = [PDESuite.FiniteDifferenceSuite]
+Modules = [PDESuite.FDMSuite]
 ```
 
 ```@autodocs
-Modules = [PDESuite.FiniteDifferenceSuite]
+Modules = [PDESuite.FDMSuite]
 ```
 
 ```@bibliography

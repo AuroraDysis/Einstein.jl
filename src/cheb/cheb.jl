@@ -1,6 +1,4 @@
-module ChebyshevSuite
-
-using InlineTest
+module ChebSuite
 
 import AbstractFFTs: Plan
 using FFTW
@@ -8,7 +6,6 @@ using FastTransforms
 using ArgCheck: @argcheck
 using FastBroadcast: @..
 using LinearAlgebra
-using ApproxFun
 using FillArrays
 using SparseArrays
 using BandedMatrices
