@@ -1,30 +1,18 @@
 @testset "cheb1_angles" begin
-    @testset "n = 5" begin
-        n = 5
-        θ = cheb1_angles(n)
-
-        @test length(θ) == n
-        @test θ ≈ [
-            2.82743338823081,
-            2.19911485751286,
-            1.57079632679490,
-            0.942477796076938,
-            0.314159265358979,
-        ]
-    end
-
-    @testset "n = 6" begin
-        n = 6
-        θ = cheb1_angles(n)
-
-        @test length(θ) == n
-        @test θ ≈ [
-            2.87979326579064,
-            2.35619449019235,
-            1.83259571459405,
-            1.30899693899575,
-            0.785398163397448,
-            0.261799387799149,
-        ]
+    for TR in [Float64, BigFloat]
+        tol = 10 * eps(TR)
+        for intervals in [[-1, 1], [0, 1]]
+            x_min = convert(TR, intervals[1])
+            x_max = convert(TR, intervals[2])
+            @testset "$TR, $intervals" begin
+                for n in 0:10
+                    @test isapprox(
+                        cheb1_pts(TR, n, x_min, x_max),
+                        reverse(acos.(points(Chebyshev(x_min .. x_max), n))),
+                        atol=tol,
+                    )
+                end
+            end
+        end
     end
 end
