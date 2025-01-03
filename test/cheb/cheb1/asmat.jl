@@ -6,7 +6,7 @@ using TestItems
     for type in [Float64, BigFloat]
         tol = 1000 * eps(type)
 
-        @testitem "polynomial" begin
+        @testset "polynomial" begin
             dom = -one(type) .. one(type)
             f = Fun(x -> 3x^2 + 2x - 1, Chebyshev(dom))
             f_coeffs = coefficients(f)
@@ -21,7 +21,7 @@ using TestItems
             @test isapprox(S * f_coeffs, f_vals, atol=tol)
         end
 
-        @testitem "trigonometric" begin
+        @testset "trigonometric" begin
             dom = -one(type) .. one(type)
             f = Fun(x -> sin(π * x) * cos(2π * x), Chebyshev(dom))
             f_coeffs = coefficients(f)
