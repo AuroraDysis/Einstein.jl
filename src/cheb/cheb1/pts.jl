@@ -1,6 +1,6 @@
 @doc raw"""
-    cheb1_pts([TR=Float64], n::TI) where {TR<:AbstractFloat,TI<:Integer}
-    cheb1_pts([TR=Float64], n::TI, x_min::TR, x_max::TR) where {TR<:AbstractFloat,TI<:Integer}
+    cheb1_pts([T=Float64], n::Integer) where {T<:AbstractFloat}
+    cheb1_pts([T=Float64], n::Integer, x_min::T, x_max::T) where {T<:AbstractFloat}
 
 Generate Chebyshev points of the 2nd kind.
 
@@ -15,7 +15,7 @@ x_{\mathrm{mapped}} = \frac{x_{\mathrm{max}} + x_{\mathrm{min}}}{2} + \frac{x_{\
 ```
 
 # Arguments
-- `TR`: Type parameter for the grid points (e.g., Float64)
+- `T`: Type parameter for the grid points (e.g., Float64)
 - `n`: Number of points
 - `x_min`: (Optional) Lower bound of the mapped interval
 - `x_max`: (Optional) Upper bound of the mapped interval
@@ -23,19 +23,19 @@ x_{\mathrm{mapped}} = \frac{x_{\mathrm{max}} + x_{\mathrm{min}}}{2} + \frac{x_{\
 # References
 - [chebfun/@chebtech1/chebpts.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/chebpts.m)
 """
-function cheb1_pts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+function cheb1_pts(::Type{T}, n::Integer) where {T<:AbstractFloat}
     @argcheck n >= 0 "n must be nonnegative"
 
     if n == 0
-        return TR[]
+        return T[]
     elseif n == 1
-        return [zero(TR)]
+        return [zero(T)]
     end
 
-    x_grid = Vector{TR}(undef, n)
+    x_grid = Vector{T}(undef, n)
 
     # Use symmetric indexing for better numerical properties
-    pi_over_2n = convert(TR, π) / (2 * n)
+    pi_over_2n = convert(T, π) / (2 * n)
     @inbounds begin
         for i in 1:n
             k = -n + 2i - 1
@@ -46,15 +46,13 @@ function cheb1_pts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     return x_grid
 end
 
-function cheb1_pts(n::TI) where {TI<:Integer}
+function cheb1_pts(n::Integer)
     return cheb1_pts(Float64, n)
 end
 
-# Mapped version documentation is inherited from the main docstring
-function cheb1_pts(
-    ::Type{TR}, n::TI, x_min::TR, x_max::TR
-) where {TR<:AbstractFloat,TI<:Integer}
-    x_grid = cheb1_pts(TR, n)
+# Mapped version
+function cheb1_pts(::Type{T}, n::Integer, x_min::T, x_max::T) where {T<:AbstractFloat}
+    x_grid = cheb1_pts(T, n)
 
     a = (x_max + x_min) / 2
     b = (x_max - x_min) / 2
@@ -63,8 +61,8 @@ function cheb1_pts(
     return x_grid
 end
 
-function cheb1_pts(n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
-    return cheb1_pts(Float64, n, x_min, x_max)
+function cheb1_pts(n::Integer, x_min::T, x_max::T) where {T<:AbstractFloat}
+    return cheb1_pts(T, n, x_min, x_max)
 end
 
 export cheb1_pts
