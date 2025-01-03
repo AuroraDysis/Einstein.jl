@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb2_interp" begin
-    using PDESuite.ChebSuite, Test
+    using GRSuite.ChebSuite, Test
 
     tol = 100 * eps()
     n = 5

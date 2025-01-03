@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb_rectdiff1" begin
-    using PDESuite.ChebSuite, Test
+    using GRSuite.ChebSuite, Test
 
     # TODO: check the correctness of the results, why 100 * eps(Float64)?
     tol = 100 * eps(Float64)
@@ -27,7 +27,7 @@ using TestItems
 end
 
 @testitem "cheb_rectdiff2" begin
-    using PDESuite.ChebSuite, Test
+    using GRSuite.ChebSuite, Test
 
     # TODO: check the correctness of the results, why 100 * eps(Float64)?
     tol = 100 * eps(Float64)
@@ -53,7 +53,7 @@ end
 end
 
 @testitem "cheb_rectdiff_rec" begin
-    using PDESuite.ChebSuite, Test
+    using GRSuite.ChebSuite, Test
 
     # TODO: check the correctness of the results, why 1000 * eps(Float64)?
     tol = 1000 * eps(Float64)

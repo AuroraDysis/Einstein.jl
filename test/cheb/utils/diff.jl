@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb_diff!" begin
-    using PDESuite.ChebSuite, Test
+    using GRSuite.ChebSuite, Test
 
     @testset "Basic functionality" begin
         # Test case 1: Simple polynomial

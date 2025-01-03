@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb_clenshaw" begin
-    using LinearAlgebra, PDESuite.ChebSuite, Test
+    using LinearAlgebra, GRSuite.ChebSuite, Test
 
     tol = 10 * eps()
 

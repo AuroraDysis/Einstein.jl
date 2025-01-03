@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "fornberg_calculate_wts" begin
-    using PDESuite.FDMSuite, Test
+    using GRSuite.FDMSuite, Test
 
     @testset "Standard First Derivatives" begin
         # Test forward difference (first derivative)

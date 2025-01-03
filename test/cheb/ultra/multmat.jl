@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "ultra_multmat" begin
-    using ApproxFun, PDESuite.ChebSuite, Test
+    using ApproxFun, GRSuite.ChebSuite, Test
 
     for TR in [Float64, BigFloat]
         tol = 1000 * eps(TR)

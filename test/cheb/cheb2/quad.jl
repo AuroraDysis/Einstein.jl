@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb2_quadwts" begin
-    using PDESuite.ChebSuite, Test
+    using GRSuite.ChebSuite, Test
 
     # Test n=0 case
     @test cheb2_quadwts(0) == Float64[]

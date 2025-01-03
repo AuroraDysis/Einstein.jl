@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "ultra_diffmat" begin
-    using ApproxFun, PDESuite.ChebSuite, Test
+    using ApproxFun, GRSuite.ChebSuite, Test
 
     for n in 2:10
         for m in 1:3

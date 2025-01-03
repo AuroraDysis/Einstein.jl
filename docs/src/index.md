@@ -1,14 +1,14 @@
 ```@meta
-CurrentModule = PDESuite
+CurrentModule = GRSuite
 ```
 
-# PDESuite
+# GRSuite
 
-Documentation for [PDESuite](https://github.com/AuroraDysis/PDESuite.jl).
+Documentation for [GRSuite](https://github.com/AuroraDysis/GRSuite.jl).
 
 ```@index
 ```
 
 ```@autodocs
-Modules = [PDESuite]
+Modules = [GRSuite]
 ```

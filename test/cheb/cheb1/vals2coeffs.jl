@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb1_vals2coeffs" begin
-    using LinearAlgebra, PDESuite.ChebSuite, Test
+    using LinearAlgebra, GRSuite.ChebSuite, Test
 
     tol = 100 * eps()
 

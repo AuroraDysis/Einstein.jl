@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb2_pts" begin
-    using PDESuite.ChebSuite, Test
+    using GRSuite.ChebSuite, Test
 
     @testset "n = 5" begin
         n = 5

@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb1_interp" begin
-    using PDESuite.ChebSuite, Test
+    using GRSuite.ChebSuite, Test
 
     tol = 100 * eps()
 
@@ -16,7 +16,7 @@ using TestItems
 end
 
 @testitem "Interpolation accuracy" begin
-    using PDESuite.ChebSuite, Test
+    using GRSuite.ChebSuite, Test
 
     tol = 100 * eps()
 

@@ -1,4 +1,4 @@
-name = "PDESuite"
+name = "GRSuite"
 uuid = "090ec698-01a0-4de4-b9a9-b0520fa6fd58"
 authors = ["Zhen Zhong <auroradysis@gmail.com> and contributors"]
 version = "1.0.0-DEV"
