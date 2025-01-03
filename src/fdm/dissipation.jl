@@ -1,5 +1,5 @@
 """
-    fdm_dissorder(acc_order::Integer)
+    fdm_dissorder(acc_order::TI) where {TI<:Integer}
 
 Calculate the order of dissipation needed for a given finite difference accuracy order [Babiuc:2007vr](@cite).
 For a scheme of accuracy order 2r-2, returns dissipation order 2r.
@@ -11,7 +11,7 @@ function fdm_dissorder(acc_order::TI) where {TI<:Integer}
 end
 
 """
-    fdm_disswts(diss_order::Integer)
+    fdm_disswts(diss_order::TI) where {TI<:Integer}
 
 Calculate the weights for Kreiss-Oliger dissipation of given order [Babiuc:2007vr](@cite).
 """
