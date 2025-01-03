@@ -9,7 +9,9 @@ using ArgCheck: @argcheck
 using FastBroadcast: @..
 using LinearAlgebra
 using ApproxFun
+using FillArrays
 using SparseArrays
+using BandedMatrices
 using ToeplitzMatrices: Toeplitz, Hankel
 
 include("utils/bary.jl")
