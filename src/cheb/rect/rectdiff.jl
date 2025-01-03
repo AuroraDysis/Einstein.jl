@@ -17,7 +17,7 @@ function cheb_rectdiff1(::Type{TR}, m::TI, n::TI) where {TR<:AbstractFloat,TI<:I
     # difference between dimensions:
     c = n - m
     # mapping-to grid (angles):
-    TAU = cheb1_angles(m)       # Column vector of length m
+    TAU = cheb1_angles(TR, m)       # Column vector of length m
 
     # Denominator term
     denom = @. 2 * sin((T + TAU) / 2) * sin((TAU - T) / 2)
@@ -57,7 +57,9 @@ function cheb_rectdiff1(m::TI, n::TI) where {TI<:Integer}
     return cheb_rectdiff1(Float64, m, n)
 end
 
-function cheb_rectdiff1(::Type{TR}, m::TI, n::TI, x_min::TR, x_max::TR) where {TR<:AbstractFloat,TI<:Integer}
+function cheb_rectdiff1(
+    ::Type{TR}, m::TI, n::TI, x_min::TR, x_max::TR
+) where {TR<:AbstractFloat,TI<:Integer}
     D = cheb_rectdiff1(TR, m, n)
     D .*= 2 / (x_max - x_min)
     return D
@@ -147,7 +149,9 @@ function cheb_rectdiff2(m::TI, n::TI) where {TI<:Integer}
     return cheb_rectdiff2(Float64, m, n)
 end
 
-function cheb_rectdiff2(::Type{TR}, m::TI, n::TI, x_min::TR, x_max::TR) where {TR<:AbstractFloat,TI<:Integer}
+function cheb_rectdiff2(
+    ::Type{TR}, m::TI, n::TI, x_min::TR, x_max::TR
+) where {TR<:AbstractFloat,TI<:Integer}
     D = cheb_rectdiff2(TR, m, n)
     D .*= 2 / (x_max - x_min)
     return D
@@ -156,6 +160,70 @@ end
 function cheb_rectdiff2(m::TI, n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
     return cheb_rectdiff2(Float64, m, n, x_min, x_max)
 end
+
+# """
+#     cheb_rectdiff([TR=Float64], m::TI, n::TI, p::TI, kind::TI) where {TR<:AbstractFloat,TI<:Integer}
+
+# Construct a p-th order rectangular differentiation matrix mapping between Chebyshev grids.
+
+# # Arguments
+# - `m` : Size of the output grid (number of rows)
+# - `n` : Size of the input grid (number of columns)
+# - `p` : Order of differentiation
+# - `kind` : Kind of Chebyshev grid (1 or 2)
+# """
+# function cheb_rectdiff(
+#     ::Type{TR}, m::TI, n::TI, p::TI, kind::TI
+# )::Matrix{TR} where {TR<:AbstractFloat,TI<:Integer}
+#     @argcheck kind == 1 || kind == 2 "kind must be 1 or 2"
+
+#     # Initialize sign vector
+#     sgn = ones(TR, n)
+#     sgn[1:2:n] .= -1
+
+#     if kind == 1
+#         # First-kind grid
+#         T = cheb1_angles(TR, n)
+#         D = cheb_rectdiff1(TR, m, n)
+#         a = vcat(zeros(TR, n), one(TR))
+#         sgn .*= ((-1)^(n - 1)) / TR(n) .* sin.(T)
+#     else
+#         # Second-kind grid
+#         T = cheb2_angles(TR, n)
+#         D = cheb_rectdiff2(TR, m, n)
+#         a = vcat(zeros(TR, n - 2), -one(TR), zero(TR), one(TR))
+#         sgn .*= ((-1)^(n - 1)) / TR(2 * (n - 1))
+#         sgn[[1, n]] .*= TR(1/2)
+#     end
+
+#     # Setup grids
+#     tau = cheb1_pts(TR, m)
+#     TAU = cheb1_angles(TR, m)
+#     a = computeDerCoeffs(a)
+
+#     # Compute denominator matrix
+#     denom = [2 * sin((TAU[i] + T[j]) / 2) * sin((TAU[i] - T[j]) / 2) for i in 1:m, j in 1:n]
+#     idx = [argmin(abs.(@view(denom[i, :]))) for i in 1:m]
+
+#     # Higher-order derivatives
+#     for l in 2:p
+#         a = computeDerCoeffs(a)
+#         Tt = cheb_clenshaw(tau, a)
+#         D .= (Tt .* sgn' .+ l .* D) ./ denom
+#     end
+
+#     # Apply negative-sum trick
+#     for i in 1:m
+#         row_sum = sum(@view(D[i, :]))
+#         D[i, idx[i]] = -row_sum + D[i, idx[i]]
+#     end
+
+#     return D
+# end
+
+# function cheb_rectdiff(m::TI, n::TI, p::TI, kind::TI) where {TI<:Integer}
+#     return cheb_rectdiff(Float64, m, n, p, kind)
+# end
 
 export cheb_rectdiff1, cheb_rectdiff2
 
