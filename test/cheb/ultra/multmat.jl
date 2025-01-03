@@ -1,4 +1,8 @@
-@testset "ultra_multmat" begin
+using TestItems
+
+@testitem "ultra_multmat" begin
+    using ApproxFun, PDESuite.ChebSuite, Test
+
     for TR in [Float64, BigFloat]
         tol = 1000 * eps(TR)
         for n in 5:10

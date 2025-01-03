@@ -1,5 +1,9 @@
-@testset "cheb1_diffmat" begin
-    @testset "n=5 first derivative" begin
+using TestItems
+
+@testitem "cheb1_diffmat" begin
+    using PDESuite.ChebSuite, Test
+
+    @testitem "n=5 first derivative" begin
         expected = [
             -4.97979656976556 7.20682929858878 -3.40260323340816 1.70130161670408 -0.525731112119134
             -1.05146222423827 -0.449027976579586 2.10292444847654 -0.850650808352040 0.248216560693358
@@ -11,7 +15,7 @@
         @test isapprox(result, expected, rtol=1e-12)
     end
 
-    @testset "n=6 first derivative" begin
+    @testitem "n=6 first derivative" begin
         expected = [
             -7.20976852010751 10.5558337350587 -5.27791686752937 3.04720672422855 -1.63299316185545 0.517638090205042
             -1.41421356237310 -0.707106781186547 3.04720672422855 -1.41421356237310 0.707106781186548 -0.218779599482357
@@ -24,7 +28,7 @@
         @test isapprox(result, expected, rtol=1e-12)
     end
 
-    @testset "Type tests" begin
+    @testitem "Type tests" begin
         @test eltype(cheb1_diffmat(Float32, 5)) == Float32
         @test eltype(cheb1_diffmat(Float64, 5)) == Float64
     end

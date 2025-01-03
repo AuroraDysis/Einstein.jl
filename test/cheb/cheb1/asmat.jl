@@ -1,8 +1,12 @@
-@testset "cheb1_amat, cheb1_smat" begin
+using TestItems
+
+@testitem "cheb1_amat, cheb1_smat" begin
+    using ApproxFun, PDESuite.ChebSuite, Test
+
     for type in [Float64, BigFloat]
         tol = 1000 * eps(type)
 
-        @testset "polynomial" begin
+        @testitem "polynomial" begin
             dom = -one(type) .. one(type)
             f = Fun(x -> 3x^2 + 2x - 1, Chebyshev(dom))
             f_coeffs = coefficients(f)
@@ -17,7 +21,7 @@
             @test isapprox(S * f_coeffs, f_vals, atol=tol)
         end
 
-        @testset "trigonometric" begin
+        @testitem "trigonometric" begin
             dom = -one(type) .. one(type)
             f = Fun(x -> sin(π * x) * cos(2π * x), Chebyshev(dom))
             f_coeffs = coefficients(f)

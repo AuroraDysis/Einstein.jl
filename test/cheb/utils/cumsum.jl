@@ -1,4 +1,8 @@
-@testset "cheb_cumsum" begin
+using TestItems
+
+@testitem "cheb_cumsum" begin
+    using LinearAlgebra, PDESuite.ChebSuite, Test
+
     tol = 100 * eps()
 
     @testset "cheb1" begin

@@ -1,4 +1,8 @@
-@testset "cheb_diff!" begin
+using TestItems
+
+@testitem "cheb_diff!" begin
+    using PDESuite.ChebSuite, Test
+
     @testset "Basic functionality" begin
         # Test case 1: Simple polynomial
         c = [1.0, 2.0, 3.0]
@@ -42,5 +46,3 @@
         @test der ≈ [0.0, 32.0, 0.0, 64.0]
     end
 end
-
-export cheb_diff, cheb_diff!

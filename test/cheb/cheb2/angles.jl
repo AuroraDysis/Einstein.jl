@@ -1,4 +1,8 @@
-@testset "cheb2_angles" begin
+using TestItems
+
+@testitem "cheb2_angles" begin
+    using PDESuite.ChebSuite, Test
+
     @testset "n = 5" begin
         n = 5
         θ = cheb2_angles(n)

@@ -1,5 +1,7 @@
-@testset "cheb2_coeffs2vals" begin
-    using LinearAlgebra
+using TestItems
+
+@testitem "cheb2_coeffs2vals" begin
+    using LinearAlgebra, PDESuite.ChebSuite, Test
 
     # Set tolerance
     tol = 100 * eps()

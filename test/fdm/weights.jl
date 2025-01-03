@@ -1,4 +1,8 @@
-@testset "fornberg_calculate_wts" begin
+using TestItems
+
+@testitem "fornberg_calculate_wts" begin
+    using PDESuite.FDMSuite, Test
+
     @testset "Standard First Derivatives" begin
         # Test forward difference (first derivative)
         weights_forward = fornberg_calculate_wts(1, 0.0, [0.0, 1.0])

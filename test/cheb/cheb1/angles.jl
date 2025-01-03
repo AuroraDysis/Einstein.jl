@@ -1,8 +1,12 @@
-@testset "cheb1_angles" begin
+using TestItems
+
+@testitem "cheb1_angles" begin
+    using ApproxFun, PDESuite.ChebSuite, Test
+
     for TR in [Float64, BigFloat]
         tol = 10 * eps(TR)
         dom = -one(TR) .. one(TR)
-        @testset "$TR" begin
+        @testitem "$TR" begin
             for n in 0:10
                 @test isapprox(
                     cheb1_angles(TR, n), reverse(acos.(points(Chebyshev(dom), n))), atol=tol

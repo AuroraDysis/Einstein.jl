@@ -1,4 +1,8 @@
-@testset "cheb2_diffmat" begin
+using TestItems
+
+@testitem "cheb2_diffmat" begin
+    using PDESuite.ChebSuite, Test
+
     tol = 100 * eps()
     # Test case for n=5
     D5 = cheb2_diffmat(Float64, 5)

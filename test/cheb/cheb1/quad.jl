@@ -1,4 +1,8 @@
-@testset "cheb1_quadwts" begin
+using TestItems
+
+@testitem "cheb1_quadwts" begin
+    using PDESuite.ChebSuite, Test
+
     # Test n=0 case
     @test cheb1_quadwts(0) == Float64[]
 

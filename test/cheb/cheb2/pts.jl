@@ -1,4 +1,8 @@
-@testset "cheb2_pts" begin
+using TestItems
+
+@testitem "cheb2_pts" begin
+    using PDESuite.ChebSuite, Test
+
     @testset "n = 5" begin
         n = 5
         x = cheb2_pts(n)

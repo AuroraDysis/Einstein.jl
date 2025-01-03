@@ -1,4 +1,8 @@
-@testset "cheb_clenshaw" begin
+using TestItems
+
+@testitem "cheb_clenshaw" begin
+    using LinearAlgebra, PDESuite.ChebSuite, Test
+
     tol = 10 * eps()
 
     @testset "Single coefficient tests" begin

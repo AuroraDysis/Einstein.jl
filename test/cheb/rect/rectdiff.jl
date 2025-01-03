@@ -1,4 +1,8 @@
-@testset "cheb_rectdiff1" begin
+using TestItems
+
+@testitem "cheb_rectdiff1" begin
+    using PDESuite.ChebSuite, Test
+
     tol = 100 * eps(Float64)
 
     D45 = cheb_rectdiff1(Float64, 4, 5)
@@ -21,7 +25,9 @@
     @test isapprox(D56, D56_res; atol=tol)
 end
 
-@testset "cheb_rectdiff2" begin
+@testitem "cheb_rectdiff2" begin
+    using PDESuite.ChebSuite, Test
+
     tol = 1000 * eps(Float64)
 
     D45 = cheb_rectdiff2(Float64, 4, 5)

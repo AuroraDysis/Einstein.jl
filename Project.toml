@@ -27,9 +27,10 @@ FastTransforms = "0.16.8"
 FillArrays = "1.13.0"
 JET = "0.9.12"
 LinearAlgebra = "1.11.0"
-SafeTestsets = "0.1.0"
 SparseArrays = "1.11.0"
 Test = "1.11.0"
+TestItemRunner = "1.0.5"
+TestItems = "1.0.0"
 ToeplitzMatrices = "0.8.5"
 julia = "1.10"
 
@@ -37,8 +38,9 @@ julia = "1.10"
 ApproxFun = "28f2ccd6-bb30-5033-b560-165f7b14dc2f"
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
 JET = "c3a54625-cd67-489e-a8e7-0a5a0ff4e31b"
-SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+TestItemRunner = "f8b46487-2199-4994-9208-9a1283c18c0a"
+TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 
 [targets]
-test = ["Test", "SafeTestsets", "Aqua", "JET", "ApproxFun"]
+test = ["Test", "TestItems", "TestItemRunner", "Aqua", "JET", "ApproxFun"]

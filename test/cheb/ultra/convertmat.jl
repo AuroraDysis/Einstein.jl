@@ -1,4 +1,8 @@
-@testset "ultra_convertmat" begin
+using TestItems
+
+@testitem "ultra_convertmat" begin
+    using ApproxFun, PDESuite.ChebSuite, Test
+
     for type in [Float64, BigFloat]
         tol = 10 * eps(type)
         for n in 2:10

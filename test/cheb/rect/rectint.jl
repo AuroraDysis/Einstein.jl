@@ -1,4 +1,8 @@
-@testset "cheb_rectint" begin
+using TestItems
+
+@testitem "cheb_rectint" begin
+    using PDESuite.ChebSuite, Test
+
     n = 4
     intmat = cheb_rectint(n)
     intmat_ana = [
@@ -36,7 +40,9 @@
     end
 end
 
-@testset "cheb_rectint - analytical" begin
+@testitem "cheb_rectint - analytical" begin
+    using PDESuite.ChebSuite, Test
+
     @testset "Standard domain [-1,1]" begin
         n = 32
         x = cheb2_pts(n)

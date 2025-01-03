@@ -1,4 +1,8 @@
-@testset "cheb2_vals2coeffs" begin
+using TestItems
+
+@testitem "cheb2_vals2coeffs" begin
+    using PDESuite.ChebSuite, Test
+
     # Set tolerance
     tol = 100 * eps()
 

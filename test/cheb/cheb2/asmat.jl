@@ -1,4 +1,8 @@
-@testset "cheb2_amat, cheb2_smat" begin
+using TestItems
+
+@testitem "cheb2_amat, cheb2_smat" begin
+    using PDESuite.ChebSuite, Test
+
     n = 32  # Enough points for good accuracy
     x = cheb2_pts(Float64, n)
     A = cheb2_amat(Float64, n)

@@ -1,4 +1,8 @@
-@testset "cheb1_pts" begin
+using TestItems
+
+@testitem "cheb1_pts" begin
+    using ApproxFun, PDESuite.ChebSuite, Test
+
     for TR in [Float64, BigFloat]
         tol = 10 * eps(TR)
         for intervals in [[-1, 1], [0, 1]]
