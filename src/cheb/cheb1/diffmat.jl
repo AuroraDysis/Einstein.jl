@@ -24,4 +24,17 @@ function cheb1_diffmat(n::Integer, k::Integer=1)
     return cheb1_diffmat(Float64, n, k)
 end
 
+function cheb1_diffmat(
+    ::Type{TR}, n::Integer, x_min::TR, x_max::TR, k::Integer=1
+) where {TR<:AbstractFloat}
+    D = cheb1_diffmat(TR, n, k)
+    scale = 2 / (x_max - x_min)
+    D .*= scale
+    return D
+end
+
+function cheb1_diffmat(n::Integer, x_min::Float64, x_max::Float64, k::Integer=1)
+    return cheb1_diffmat(Float64, n, x_min, x_max, k)
+end
+
 export cheb1_diffmat

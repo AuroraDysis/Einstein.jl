@@ -108,8 +108,8 @@ function contfrac_lentz(
 end
 
 function contfrac_lentz(
-    a::TF1, b::TF2, tol::Float64, min_iter::Integer, max_iter::Integer
-) where {TF1<:Function,TF2<:Function}
+    a::Function, b::Function, tol::Float64, min_iter::Integer, max_iter::Integer
+)
     return contfrac_lentz(Float64, a, b, tol, min_iter, max_iter)
 end
 

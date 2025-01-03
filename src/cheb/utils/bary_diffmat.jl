@@ -7,13 +7,8 @@ Compute the barycentric differentiation matrix.
 - [chebfun/@chebcolloc/baryDiffMat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc/baryDiffMat.m)
 """
 function bary_diffmat(
-    x::VT1, w::VT2, k::Integer, t::VT3
-) where {
-    TR<:AbstractFloat,
-    VT1<:AbstractVector{TR},
-    VT2<:AbstractVector{TR},
-    VT3<:AbstractVector{TR},
-}
+    x::AbstractVector{TR}, w::AbstractVector{TR}, k::Integer, t::AbstractVector{TR}
+) where {TR<:AbstractFloat}
     n = length(x)
 
     # Handle trivial cases:

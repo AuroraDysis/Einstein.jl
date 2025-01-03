@@ -60,8 +60,8 @@ function cheb2_pts(::Type{T}, n::Integer, x_min::T, x_max::T) where {T<:Abstract
     return x_grid
 end
 
-function cheb2_pts(n::Integer, x_min::T, x_max::T) where {T<:AbstractFloat}
-    return cheb2_pts(T, n, x_min, x_max)
+function cheb2_pts(n::Integer, x_min::Float64, x_max::Float64)
+    return cheb2_pts(Float64, n, x_min, x_max)
 end
 
 export cheb2_pts
