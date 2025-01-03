@@ -2,10 +2,10 @@
     cheb_diff(coeffs::VT) where {T<:AbstractFloat,VT<:AbstractVector{T}}
     cheb_diff!(coeffs::VT1, coeffs_der::VT2) where {T<:AbstractFloat,VT1<:AbstractVector{T},VT2<:AbstractVector{T}}
 
-Compute derivatives of Chebyshev coefficients in-place.
+Compute derivatives of Chebyshev coefficients.
 
 # Arguments
-- `coeffs`: Input vector of Chebyshev coefficients [c₀, c₁, ..., cₙ]
+- `coeffs`: Input vector of Chebyshev coefficients with length n
 - `coeffs_der`: Pre-allocated output vector for derivative coefficients (length at least n - 1)
 """
 function cheb_diff!(
