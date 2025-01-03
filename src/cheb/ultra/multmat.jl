@@ -1,8 +1,8 @@
-"""
+@doc raw"""
     ultra_multmat(coeffs::VT, λ::TI) where {TR<:AbstractFloat,VT<:AbstractVector{TR},TI<:Integer}
 
 Construct nxn multiplication matrix
-representing the multiplication of F in the \$C^{(\\lambda)}\$ basis.
+representing the multiplication of F in the $C^{(\lambda)}$ basis.
 
 # Arguments
 - `coeffs::VT` : Vector of Chebyshev coefficients

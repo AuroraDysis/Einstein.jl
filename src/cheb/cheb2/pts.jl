@@ -1,14 +1,18 @@
-"""
+@doc raw"""
     cheb2_pts([TR=Float64], n::TI) where {TR<:AbstractFloat,TI<:Integer}
     cheb2_pts([TR=Float64], n::TI, x_min::TR, x_max::TR) where {TR<:AbstractFloat,TI<:Integer}
 
 Generate Chebyshev points of the 1st kind.
 
 For the standard interval [-1,1]:
-``x_k = -\\cos\\left(\\frac{k\\pi}{n-1}\\right), \\quad k = 0,1,\\ldots,n-1``
+```math
+x_k = -\cos\left(\frac{k\pi}{n-1}\right), \quad k = 0,1,\ldots,n-1
+```
 
 For mapped interval [x_min,x_max]:
-``x_{mapped} = \\frac{x_{max} + x_{min}}{2} + \\frac{x_{min} - x_{max}}{2}x_k``
+```math
+x_{\mathrm{mapped}} = \frac{x_{\mathrm{max}} + x_{\mathrm{min}}}{2} + \frac{x_{\mathrm{min}} - x_{\mathrm{max}}}{2}x_k
+```
 
 # Arguments
 - `TR`: Type parameter for the grid points (e.g., Float64)

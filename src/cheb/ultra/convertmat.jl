@@ -1,9 +1,9 @@
-"""
+@doc raw"""
     ultra_spconvert([TR=Float64], n::TI, λ::TR) where {TR<:AbstractFloat,TI<:Integer,TR<:Real}
 
 Compute sparse representation for conversion operators.
-Returns the truncation of the operator that transforms \$C^{\\lambda}\$
-(Ultraspherical polynomials) to \$C^{\\lambda + 1}\$. The truncation gives
+Returns the truncation of the operator that transforms $C^{\lambda}$
+(Ultraspherical polynomials) to $C^{\lambda + 1}$. The truncation gives
 back a matrix of size n x n.
 
 # References
