@@ -1,4 +1,4 @@
-module QNM
+module QNMSuite
 
 include("utils/contfrac.jl")
 

@@ -1,5 +1,5 @@
 @testitem "Continued Fraction" begin
-    using GRSuite.QNM, Test
+    using GRSuite.QNMSuite, Test
 
     for type in [Float64, BigFloat]
         max_error = 10 * eps(type)
