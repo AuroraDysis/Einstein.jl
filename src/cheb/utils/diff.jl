@@ -101,4 +101,4 @@ end
     end
 end
 
-export cheb_diff!
+export cheb_diff, cheb_diff!
