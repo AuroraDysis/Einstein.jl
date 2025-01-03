@@ -161,68 +161,70 @@ function cheb_rectdiff2(m::TI, n::TI, x_min::Float64, x_max::Float64) where {TI<
     return cheb_rectdiff2(Float64, m, n, x_min, x_max)
 end
 
-# """
-#     cheb_rectdiff([TR=Float64], m::TI, n::TI, p::TI, kind::TI) where {TR<:AbstractFloat,TI<:Integer}
+"""
+    cheb_rectdiff([TR=Float64], m::TI, n::TI, p::TI, kind::TI) where {TR<:AbstractFloat,TI<:Integer}
 
-# Construct a p-th order rectangular differentiation matrix mapping between Chebyshev grids.
+Construct a p-th order rectangular differentiation matrix mapping between Chebyshev grids.
 
-# # Arguments
-# - `m` : Size of the output grid (number of rows)
-# - `n` : Size of the input grid (number of columns)
-# - `p` : Order of differentiation
-# - `kind` : Kind of Chebyshev grid (1 or 2)
-# """
-# function cheb_rectdiff(
-#     ::Type{TR}, m::TI, n::TI, p::TI, kind::TI
-# )::Matrix{TR} where {TR<:AbstractFloat,TI<:Integer}
-#     @argcheck kind == 1 || kind == 2 "kind must be 1 or 2"
+# Arguments
+- `m` : Size of the output grid (number of rows)
+- `n` : Size of the input grid (number of columns)
+- `p` : Order of differentiation
+- `kind` : Kind of Chebyshev grid (1 or 2)
+"""
+function cheb_rectdiff_rec(
+    ::Type{TR}, m::TI, n::TI, p::TI, kind::TI
+)::Matrix{TR} where {TR<:AbstractFloat,TI<:Integer}
+    @argcheck p >= 2 "p must be at least 2"
+    @argcheck kind == 1 || kind == 2 "kind must be 1 or 2"
 
-#     # Initialize sign vector
-#     sgn = ones(TR, n)
-#     sgn[1:2:n] .= -1
+    # Initialize sign vector
+    sgn = ones(TR, n)
+    sgn[1:2:n] .= -1
 
-#     if kind == 1
-#         # First-kind grid
-#         T = cheb1_angles(TR, n)
-#         D = cheb_rectdiff1(TR, m, n)
-#         a = vcat(zeros(TR, n), one(TR))
-#         sgn .*= ((-1)^(n - 1)) / TR(n) .* sin.(T)
-#     else
-#         # Second-kind grid
-#         T = cheb2_angles(TR, n)
-#         D = cheb_rectdiff2(TR, m, n)
-#         a = vcat(zeros(TR, n - 2), -one(TR), zero(TR), one(TR))
-#         sgn .*= ((-1)^(n - 1)) / TR(2 * (n - 1))
-#         sgn[[1, n]] .*= TR(1/2)
-#     end
+    if kind == 1
+        # First-kind grid
+        T = cheb1_angles(TR, n)
+        D = cheb_rectdiff1(TR, m, n)
+        a = vcat(zeros(TR, n), one(TR))
+        sgn_coeff = (-1)^(n - 1) / TR(n)
+        @. sgn = sgn_coeff * sgn * sin(T)
+    else
+        # Second-kind grid
+        T = cheb2_angles(TR, n)
+        D = cheb_rectdiff2(TR, m, n)
+        a = vcat(zeros(TR, n - 2), -one(TR), zero(TR), one(TR))
+        sgn .*= (-1)^(n - 1) / TR(2 * (n - 1))
+        sgn[[1, n]] .*= one(TR) / 2
+    end
 
-#     # Setup grids
-#     tau = cheb1_pts(TR, m)
-#     TAU = cheb1_angles(TR, m)
-#     a = computeDerCoeffs(a)
+    # Setup grids
+    tau = cheb1_pts(TR, m)
+    TAU = cheb1_angles(TR, m)
+    a = cheb_diff(a)
 
-#     # Compute denominator matrix
-#     denom = [2 * sin((TAU[i] + T[j]) / 2) * sin((TAU[i] - T[j]) / 2) for i in 1:m, j in 1:n]
-#     idx = [argmin(abs.(@view(denom[i, :]))) for i in 1:m]
+    # Compute denominator matrix
+    denom = [2 * sin((tau + t) / 2) * sin((tau - t) / 2) for tau in TAU, t in T]
+    idx = [argmin(abs.(@view(denom[i, :]))) for i in 1:m]
 
-#     # Higher-order derivatives
-#     for l in 2:p
-#         a = computeDerCoeffs(a)
-#         Tt = cheb_clenshaw(tau, a)
-#         D .= (Tt .* sgn' .+ l .* D) ./ denom
-#     end
+    # Higher-order derivatives
+    for l in 2:p
+        a = cheb_diff(a)
+        Tt = cheb_clenshaw(a, tau)
+        D .= (Tt .* sgn' .+ l .* D) ./ denom
+    end
 
-#     # Apply negative-sum trick
-#     for i in 1:m
-#         row_sum = sum(@view(D[i, :]))
-#         D[i, idx[i]] = -row_sum + D[i, idx[i]]
-#     end
+    # Apply negative-sum trick
+    for i in 1:m
+        row_sum = sum(@view(D[i, :]))
+        D[i, idx[i]] = -row_sum + D[i, idx[i]]
+    end
 
-#     return D
-# end
+    return D
+end
 
-# function cheb_rectdiff(m::TI, n::TI, p::TI, kind::TI) where {TI<:Integer}
-#     return cheb_rectdiff(Float64, m, n, p, kind)
-# end
+function cheb_rectdiff_rec(m::TI, n::TI, p::TI, kind::TI) where {TI<:Integer}
+    return cheb_rectdiff_rec(Float64, m, n, p, kind)
+end
 
-export cheb_rectdiff1, cheb_rectdiff2
+export cheb_rectdiff1, cheb_rectdiff2, cheb_rectdiff_rec

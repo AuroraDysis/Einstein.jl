@@ -13,12 +13,12 @@ Evaluate Chebyshev coefficients at a point using Clenshaw's algorithm.
 function cheb_clenshaw(c::VT, x::T) where {T<:AbstractFloat,VT<:AbstractVector{T}}
     @argcheck length(c) > 0 "c must have at least one element"
 
+    n = length(c) - 1
+
     x = 2 * x
 
     bk1 = zero(T)
     bk2 = zero(T)
-
-    n = length(c) - 1
 
     @inbounds for k in (n + 1):-2:3
         bk2 = c[k] + x * bk1 - bk2
@@ -36,6 +36,13 @@ function cheb_clenshaw(c::VT, x::T) where {T<:AbstractFloat,VT<:AbstractVector{T
     @inbounds y = c[1] + x * bk1 / 2 - bk2
 
     return y
+end
+
+# TODO: Implement the vectorized version of cheb_clenshaw
+function cheb_clenshaw(
+    c::VT1, x::VT2
+) where {TR<:AbstractFloat,VT1<:AbstractVector{TR},VT2<:AbstractVector{TR}}
+    return @inbounds [cheb_clenshaw(c, x[i]) for i in eachindex(x)]
 end
 
 export cheb_clenshaw
