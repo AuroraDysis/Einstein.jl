@@ -1,10 +1,10 @@
 """
-    cheb2_barywts([TR=Float64], n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    cheb2_barywts([T=Float64], n::Integer) where {T<:AbstractFloat}
 
 Compute the barycentric weights for Chebyshev points of the 2nd kind.
 
 # Arguments
-- `TR`: Type parameter for the weights (e.g., Float64)
+- `T`: Type parameter for the weights (e.g., Float64)
 - `n`: Number of points
 
 # References
@@ -13,17 +13,17 @@ Compute the barycentric weights for Chebyshev points of the 2nd kind.
 
 See also: [`bary`](@ref), [`cheb2_pts`](@ref)
 """
-function cheb2_barywts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+function cheb2_barywts(::Type{T}, n::Integer) where {T<:AbstractFloat}
     if n == 0
-        return TR[]
+        return T[]
     elseif n == 1
-        return [one(TR)]
+        return T[one(T)]
     end
 
-    w = ones(TR, n)
+    w = ones(T, n)
 
     @inbounds begin
-        half = one(TR) / 2
+        half = one(T) / 2
         w[(end - 1):-2:1] .= -1
         w[1] *= half
         w[end] = half
@@ -32,7 +32,7 @@ function cheb2_barywts(::Type{TR}, n::TI) where {TR<:AbstractFloat,TI<:Integer}
     return w
 end
 
-function cheb2_barywts(n::TI) where {TI<:Integer}
+function cheb2_barywts(n::Integer)
     return cheb2_barywts(Float64, n)
 end
 
