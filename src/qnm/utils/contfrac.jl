@@ -47,7 +47,7 @@ contfrac_lentz(Float64, a, b, 10*eps(Float64), 50, 1000)
 
 # References
 - [qnm/qnm/contfrac.py at master · duetosymmetry/qnm](https://github.com/duetosymmetry/qnm/blob/master/qnm/contfrac.py)
-- [press2007numerical, Stein:2019mop, lentz1976generating, thompson1986coulomb, DLMF§3103:online](@cite)
+- [press2007numerical, Stein:2019mop, lentz1976generating, thompson1986coulomb, DLMF_3103_online](@cite)
 """
 function contfrac_lentz(
     ::Type{TR}, a::TF1, b::TF2, tol::TR, min_iter::TI, max_iter::TI
