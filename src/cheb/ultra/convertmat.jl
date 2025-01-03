@@ -41,7 +41,7 @@ function ultra_convertmat(
 ) where {T<:AbstractFloat}
     @argcheck n >= 2 "n must be positive"
     @argcheck K2 >= K1 "K2 must be greater than or equal to K1"
-    S = sparse(I, n, n)
+    S = sparse(one(T) * I, n, n)
     for s in K1:(K2 - 1)
         S = ultra_spconvert(T, n, s) * S
     end
