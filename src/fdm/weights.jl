@@ -1,4 +1,4 @@
-@docs raw"""
+@doc raw"""
     fornberg_calculate_wts([T=Float64], order::Integer, x0::Real, x::AbstractVector; 
                              dfdx::Bool=false)
 
