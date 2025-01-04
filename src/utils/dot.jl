@@ -7,14 +7,17 @@ Compute the dot product of two vectors using extended precision accumulation.
 Uses the Xsum package for improved numerical accuracy.
 
 # Note
-Both input vectors must have the same length, which is not checked for performance reasons.
+- Very fast for large vectors, but a bit slower than Kahan summation for small vectors.
+- Both input vectors must have the same length, which is not checked for performance reasons.
 
 # References
 - [neal2015fastexactsummationusing](@citet*)
 - [JuliaMath/Xsum.jl](https://github.com/JuliaMath/Xsum.jl)
 - [Radford Neal / xsum · GitLab](https://gitlab.com/radfordneal/xsum)
 """
-function dot_xsum(x::StridedVector{T}, y::StridedVector{T}) where {T<:Real}
+function dot_xsum(
+    x::StridedVector{T}, y::StridedVector{T}
+) where {T<:Union{Float32,Float64}}
     acc = XAccumulator(zero(T))
     @inbounds for i in eachindex(x)
         accumulate!(acc, x[i] * y[i])
@@ -28,7 +31,9 @@ end
 Compute the dot product using Kahan summation algorithm to reduce numerical errors.
 
 # Note
-Implements the standard Kahan summation algorithm for reduced round-off errors.
+- Slower than `dot_xsum` for large vectors, but faster for small vectors.
+- Similar performance to `dot_kahan_opt`
+- Both input vectors must have the same length, which is not checked for performance reasons.
 """
 function dot_kahan(v1::StridedVector{T}, v2::StridedVector{T}) where {T<:Number}
     s = zero(T)
@@ -54,7 +59,9 @@ end
 Optimized version of Kahan summation for dot product computation.
 
 # Note
-Uses loop unrolling for better performance while maintaining Kahan summation's
+- Slower than `dot_xsum` for large vectors, but faster for small vectors.
+- Similar performance to `dot_kahan`
+- Uses loop unrolling for better performance while maintaining Kahan summation's
 numerical stability. Processes two elements per iteration when possible.
 
 # References

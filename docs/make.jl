@@ -20,6 +20,7 @@ makedocs(;
         "Chebyshev Suite" => "cheb.md",
         "Finite Difference Suite" => "fdm.md",
         "QNM Suite" => "qnm.md",
+        "Utilities" => "utils.md",
     ],
     plugins=[bib],
 )
