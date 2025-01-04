@@ -5,19 +5,15 @@ Compute the sum of a vector using extended precision accumulation.
 Uses the `xsum` package for improved numerical accuracy.
 
 # Note
-- Very fast for large vectors, but a bit slower than Kahan summation for small vectors.
+- Very fast for large vectors, but a bit slower than Kahan summation for small vectors (n ⪅ 80)
 
 # References
 - [neal2015fastexactsummationusing](@citet*)
 - [JuliaMath/Xsum.jl](https://github.com/JuliaMath/Xsum.jl)
 - [Radford Neal / xsum · GitLab](https://gitlab.com/radfordneal/xsum)
 """
-function sum_xsum(vec::StridedVector{T}) where {T<:Union{Float32,Float64}}
-    acc = XAccumulator(zero(T))
-    @inbounds for i in eachindex(vec)
-        accumulate!(acc, vec[i])
-    end
-    return float(acc)
+@inline function sum_xsum(vec::StridedVector{Float64})
+    return xsum(vec)
 end
 
 """
