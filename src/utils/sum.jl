@@ -55,7 +55,7 @@ Neumaier's variant of Kahan summation algorithm to reduce numerical errors.
 numerical stability. Processes two elements per iteration when possible.
 
 # References
-- [Radford Neal / xsum · GitLab](https://gitlab.com/radfordneal/xsum)
+- [JuliaMath/KahanSummation.jl](https://github.com/JuliaMath/KahanSummation.jl)
 """
 function sum_kahan_neumaier(v::StridedVector{T}) where {T<:Number}
     @inbounds begin
