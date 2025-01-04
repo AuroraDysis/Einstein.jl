@@ -1,6 +1,7 @@
 module QNMSuite
 
-include("utils/exceptions.jl")
+using ..Utils
+
 include("utils/contfrac.jl")
 
 end
