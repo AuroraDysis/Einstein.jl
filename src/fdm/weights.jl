@@ -1,7 +1,4 @@
-using ArgCheck
-using LinearAlgebra: I
-
-"""
+@docs raw"""
     fornberg_calculate_wts([T=Float64], order::Integer, x0::Real, x::AbstractVector; 
                              dfdx::Bool=false)
 
@@ -27,12 +24,12 @@ For a function f(x), the derivative approximation takes the form:
 
 If `dfdx == false` (standard finite differences):
 ```math
-f^{(n)}(x_0) \\approx \\sum_{j=1}^N c_j f(x_j)
+f^{(n)}(x_0) \approx \sum_{j=1}^N c_j f(x_j)
 ```
 
 If `dfdx == true` (Hermite finite differences):
 ```math
-f^{(n)}(x_0) \\approx \\sum_{j=1}^N [d_j f(x_j) + e_j f'(x_j)]
+f^{(n)}(x_0) \approx \sum_{j=1}^N [d_j f(x_j) + e_j f'(x_j)]
 ```
 
 # Requirements
