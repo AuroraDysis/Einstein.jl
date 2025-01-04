@@ -8,5 +8,6 @@ include("grid.jl")
 include("weights.jl")
 include("stencil.jl")
 include("diss.jl")
+include("fdmop.jl")
 
 end
