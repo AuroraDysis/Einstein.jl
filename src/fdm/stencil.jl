@@ -88,4 +88,46 @@ function fdm_extrapwts_right(extrap_order::Int)
     return fdm_fornbergwts(0, 0, extrap_order:-1:1)
 end
 
+"""
+    fdm_boundwts([T=Rational{TI}], der_order::TI, acc_order::TI) where {T<:Real, TI<:Integer}
+
+Generate finite difference coefficients for shifted boundary conditions.
+
+# Arguments
+- `der_order::Integer`: The order of the derivative to approximate
+- `acc_order::Integer`: The desired order of accuracy
+
+# Returns
+Tuple of left and right shifted boundary finite difference coefficients
+The coefficients are stored in a matrix with the columns representing the different grid points.
+The columns are ordered from the leftmost grid point to the rightmost grid point.
+"""
+function fdm_boundwts(::Type{T}, der_order::Integer, acc_order::Integer) where {T<:Real}
+    num_coeffs = fdm_boundnum(der_order, acc_order)
+    num_central = fdm_centralnum(der_order, acc_order)
+    num_side = div(num_central - 1, 2)
+
+    D_left = zeros(T, num_coeffs, num_side)
+    D_right = zeros(T, num_coeffs, num_side)
+
+    local_grid = zeros(T, num_coeffs)
+    for i in 1:num_side
+        for j in 1:num_coeffs
+            local_grid[j] = -(i - 1) + (j - 1)
+        end
+        D_left[:, i] = fdm_fornbergwts(der_order, zero(T), local_grid)
+
+        for j in 1:num_coeffs
+            local_grid[end - j + 1] = (i - 1) - (j - 1)
+        end
+        D_right[:, end - i + 1] = fdm_fornbergwts(der_order, zero(T), local_grid)
+    end
+
+    return D_left, D_right
+end
+
+function fdm_boundwts(der_order::TI, acc_order::TI) where {TI<:Integer}
+    return fdm_boundwts(Rational{TI}, der_order, acc_order)
+end
+
 export fdm_central, fdm_hermite, fdm_extrapwts_right, fdm_extrapwts_left

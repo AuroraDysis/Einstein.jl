@@ -32,4 +32,17 @@ function fdm_hermitenum(der_order::Integer, acc_order::Integer)
     return return div(der_order, 2) + div(acc_order, 2)
 end
 
-export fdm_centralnum, fdm_hermitenum
+"""
+    fdm_boundnum(der_order::Integer, acc_order::Integer)
+
+Calculate the number of coefficients needed for shifted boundary FDM stencil.
+
+# Arguments
+- `der_order::Integer`: Order of the derivative
+- `acc_order::Integer`: Order of accuracy
+"""
+function fdm_boundnum(der_order::Integer, acc_order::Integer)
+    return der_order + acc_order
+end
+
+export fdm_centralnum, fdm_hermitenum, fdm_boundnum
