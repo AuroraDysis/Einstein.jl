@@ -1,5 +1,5 @@
 """
-    fdm_central(der_order::Integer, acc_order::Integer)
+    fdm_central([T=Rational{TI}], der_order::TI, acc_order::TI) where {T<:Real, TI<:Integer}
 
 Generate central finite difference coefficients for a given derivative and accuracy order.
 
@@ -10,17 +10,21 @@ Generate central finite difference coefficients for a given derivative and accur
 # Returns
 Vector of rational coefficients for the finite difference stencil
 """
-function fdm_central(der_order::TI, acc_order::TI) where {TI<:Integer}
+function fdm_central(::Type{T}, der_order::Integer, acc_order::Integer) where {T<:Real}
     @argcheck acc_order % 2 == 0 "Only even orders are supported for central FDM stencils."
 
     num_coeffs = fdm_centralnum(der_order, acc_order)
     num_side = div(num_coeffs - 1, 2)
-    local_grid = collect(Rational{TI}, (-num_side):num_side)
-    return fdm_fornbergwts(der_order, zero(Rational{TI}), local_grid)
+    local_grid = collect(T, (-num_side):num_side)
+    return fdm_fornbergwts(der_order, zero(T), local_grid)
+end
+
+function fdm_central(der_order::TI, acc_order::TI) where {TI<:Integer}
+    return fdm_central(Rational{TI}, der_order, acc_order)
 end
 
 """
-    fdm_hermite(der_order::Integer, acc_order::Integer)
+    fdm_hermite([T=Rational{TI}], der_order::TI, acc_order::TI) where {T<:Real, TI<:Integer}
 
 Generate Hermite-type finite difference coefficients that include function value and derivative information.
 
@@ -33,7 +37,7 @@ Generate Hermite-type finite difference coefficients that include function value
 # Returns
 Vector of rational coefficients for the Hermite-type finite difference stencil
 """
-function fdm_hermite(der_order::TI, acc_order::TI) where {TI<:Integer}
+function fdm_hermite(::Type{T}, der_order::Integer, acc_order::Integer) where {T<:Real}
     @argcheck der_order >= 2 "Only derivative order greater than or equal to 2 are supported for Hermite-type finite difference."
 
     if mod(div(der_order, 2), 2) == 1
@@ -46,8 +50,12 @@ function fdm_hermite(der_order::TI, acc_order::TI) where {TI<:Integer}
 
     num_coeffs = fdm_hermitenum(der_order, acc_order)
     num_side = div(num_coeffs - 1, 2)
-    local_grid = collect(Rational{TI}, (-num_side):num_side)
-    return fdm_fornbergwts(der_order, zero(Rational{TI}), local_grid; dfdx=true)
+    local_grid = collect(T, (-num_side):num_side)
+    return fdm_fornbergwts(der_order, zero(T), local_grid; dfdx=true)
+end
+
+function fdm_hermite(der_order::TI, acc_order::TI) where {TI<:Integer}
+    return fdm_hermite(Rational{TI}, der_order, acc_order)
 end
 
 export fdm_central, fdm_hermite
