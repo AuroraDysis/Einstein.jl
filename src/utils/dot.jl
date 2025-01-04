@@ -28,7 +28,7 @@ Compute the dot product using Kahan summation algorithm to reduce numerical erro
 
 # Note
 - Slower than `dot_xsum` for large vectors, but faster for small vectors.
-- Similar performance to `dot_kahan_opt`
+- Similar performance to `dot_kahan_neumaier`
 - Both input vectors must have the same length, which is not checked for performance reasons.
 """
 function dot_kahan(v1::StridedVector{T}, v2::StridedVector{T}) where {T<:Number}
@@ -51,9 +51,9 @@ function dot_kahan(v1::StridedVector{T}, v2::StridedVector{T}) where {T<:Number}
 end
 
 """
-    dot_kahan_opt(v1::StridedVector{T}, v2::StridedVector{T}) where {T<:Number}
+    dot_kahan_neumaier(v1::StridedVector{T}, v2::StridedVector{T}) where {T<:Number}
 
-Optimized version of Kahan summation for dot product computation.
+Neumaier's variant of Kahan summation algorithm to reduce numerical errors.
 
 # Note
 - Slower than `dot_xsum` for large vectors, but faster for small vectors.
@@ -64,37 +64,23 @@ numerical stability. Processes two elements per iteration when possible.
 # References
 - [Radford Neal / xsum · GitLab](https://gitlab.com/radfordneal/xsum)
 """
-function dot_kahan_opt(v1::StridedVector{T}, v2::StridedVector{T}) where {T<:Number}
-    s = zero(T)
-    c = zero(T)
-    y = zero(T)
-    t = zero(T)
-    j = 2
-    n = length(v1)
-
-    @inbounds while j <= n
-        vjm1 = v1[j - 1] * v2[j - 1]
-        y = vjm1 - c
-        t = s
-        s += y
-        c = (s - t) - y
-        vj = v1[j] * v2[j]
-        y = vj - c
-        t = s
-        s += y
-        c = (s - t) - y
-        j += 2
+function dot_kahan_neumaier(v1::StridedVector{T}, v2::StridedVector{T}) where {T<:Number}
+    @inbounds begin
+        n = length(v1)
+        c = zero(T)
+        s = v1[1] * v2[1] - c
+        for i in 2:n
+            si = v1[i] * v2[i]
+            t = s + si
+            if abs(s) >= abs(si)
+                c -= ((s - t) + si)
+            else
+                c -= ((si - t) + s)
+            end
+            s = t
+        end
+        return s - c
     end
-
-    @inbounds for k in (j - 1):n
-        vk = v1[k] * v2[k]
-        y = vk - c
-        t = s
-        s += y
-        c = (s - t) - y
-    end
-
-    return s
 end
 
-export dot_xsum, dot_kahan, dot_kahan_opt
+export dot_xsum, dot_kahan, dot_kahan_neumaier

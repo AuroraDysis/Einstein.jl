@@ -23,7 +23,7 @@ Compute the sum using Kahan summation algorithm to reduce numerical errors.
 
 # Note
 - Slower than `sum_xsum` for large vectors, but faster for small vectors.
-- Similar performance to `sum_kahan_opt`
+- Similar performance to `sum_kahan_neumaier`
 """
 function sum_kahan(v::StridedVector{T}) where {T<:Number}
     s = zero(T)
@@ -44,9 +44,9 @@ function sum_kahan(v::StridedVector{T}) where {T<:Number}
 end
 
 """
-    sum_kahan_opt(v::StridedVector{T}) where {T<:Number}
+    sum_kahan_neumaier(v::StridedVector{T}) where {T<:Number}
 
-Optimized version of Kahan summation for vector sum computation.
+Neumaier's variant of Kahan summation algorithm to reduce numerical errors.
 
 # Note
 - Slower than `sum_xsum` for large vectors, but faster for small vectors.
@@ -57,34 +57,23 @@ numerical stability. Processes two elements per iteration when possible.
 # References
 - [Radford Neal / xsum · GitLab](https://gitlab.com/radfordneal/xsum)
 """
-function sum_kahan_opt(v::StridedVector{T}) where {T<:Number}
-    s = zero(T)
-    c = zero(T)
-    y = zero(T)
-    t = zero(T)
-    j = 2
-    n = length(v)
-
-    @inbounds while j <= n
-        y = v[j - 1] - c
-        t = s
-        s += y
-        c = (s - t) - y
-        y = v[j] - c
-        t = s
-        s += y
-        c = (s - t) - y
-        j += 2
+function sum_kahan_neumaier(v::StridedVector{T}) where {T<:Number}
+    @inbounds begin
+        n = length(v)
+        c = zero(T)
+        s = v[1] - c
+        for i in 2:n
+            si = v[i]
+            t = s + si
+            if abs(s) >= abs(si)
+                c -= ((s - t) + si)
+            else
+                c -= ((si - t) + s)
+            end
+            s = t
+        end
+        return s - c
     end
-
-    @inbounds for k in (j - 1):n
-        y = v[k] - c
-        t = s
-        s += y
-        c = (s - t) - y
-    end
-
-    return s
 end
 
-export sum_xsum, sum_kahan, sum_kahan_opt
+export sum_xsum, sum_kahan, sum_kahan_neumaier
