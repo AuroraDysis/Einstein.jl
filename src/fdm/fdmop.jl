@@ -46,7 +46,9 @@ struct FDMHermiteOp{T<:Real}
 end
 
 # TODO: benchmark this and implement a more efficient version
-function (op::FDMHermiteOp{T})(f::StridedVector{T}, df::StridedVector{T}) where {T<:AbstractFloat}
+function (op::FDMHermiteOp{T})(
+    f::StridedVector{T}, df::StridedVector{T}
+) where {T<:AbstractFloat}
     return dot(op.Dwts, f) * op.one_over_dxn + dot(op.Ewts, df) * op.one_over_dxnm1
 end
 
@@ -91,6 +93,15 @@ end
     return dot(op.wts, v) * op.one_over_dx
 end
 
+"""
+    fdm_dissop(diss_order::Integer, dx::T) where {T<:AbstractFloat}
+
+Create a finite difference dissipation operator with specified order.
+
+# Arguments
+- `diss_order::Integer`: The order of the dissipation operator
+- `dx::T`: Grid spacing
+"""
 function fdm_dissop(diss_order::Integer, dx::T) where {T<:AbstractFloat}
     wts = fdm_disswts(diss_order)
     num_coeffs = length(wts)
