@@ -1,7 +1,19 @@
 using Xsum
 
-# TODO: benchmark this against the naive implementation
-# The size of the vectors should be same
+"""
+    dot_xsum(x::StridedVector{T}, y::StridedVector{T}) where {T<:Real}
+
+Compute the dot product of two vectors using extended precision accumulation.
+Uses the Xsum package for improved numerical accuracy.
+
+# Note
+Both input vectors must have the same length, which is not checked for performance reasons.
+
+# References
+- [neal2015fastexactsummationusing](@citet*)
+- [JuliaMath/Xsum.jl](https://github.com/JuliaMath/Xsum.jl)
+- [Radford Neal / xsum · GitLab](https://gitlab.com/radfordneal/xsum)
+"""
 function dot_xsum(x::StridedVector{T}, y::StridedVector{T}) where {T<:Real}
     acc = XAccumulator(zero(T))
     @inbounds for i in eachindex(x)
@@ -10,6 +22,14 @@ function dot_xsum(x::StridedVector{T}, y::StridedVector{T}) where {T<:Real}
     return float(acc)
 end
 
+"""
+    dot_kahan(v1::StridedVector{T}, v2::StridedVector{T}) where {T<:Number}
+
+Compute the dot product using Kahan summation algorithm to reduce numerical errors.
+
+# Note
+Implements the standard Kahan summation algorithm for reduced round-off errors.
+"""
 function dot_kahan(v1::StridedVector{T}, v2::StridedVector{T}) where {T<:Number}
     s = zero(T)
     c = zero(T)
@@ -28,7 +48,18 @@ function dot_kahan(v1::StridedVector{T}, v2::StridedVector{T}) where {T<:Number}
     return s
 end
 
-# manually optimized routine
+"""
+    dot_kahan_opt(v1::StridedVector{T}, v2::StridedVector{T}) where {T<:Number}
+
+Optimized version of Kahan summation for dot product computation.
+
+# Note
+Uses loop unrolling for better performance while maintaining Kahan summation's
+numerical stability. Processes two elements per iteration when possible.
+
+# References
+- [Radford Neal / xsum · GitLab](https://gitlab.com/radfordneal/xsum)
+"""
 function dot_kahan_opt(v1::StridedVector{T}, v2::StridedVector{T}) where {T<:Number}
     s = zero(T)
     c = zero(T)
