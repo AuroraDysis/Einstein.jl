@@ -63,7 +63,7 @@ w_f, w_d = fdm_fornbergwts(3, 0.0, x, dfdx=true)
 """
 function fdm_fornbergwts(
     order::Integer, x0::T, x::AbstractVector{T}; dfdx::Bool=false
-) where {T<:AbstractFloat}
+) where {T<:Real}
     N = length(x)
     @argcheck dfdx || N > order "Standard finite difference requires at least order + 1 points."
     @argcheck !dfdx || N > div(order, 2) + 1 "Hermite finite difference requires at least order / 2 + 1 points."
@@ -116,7 +116,7 @@ function fdm_fornbergwts(
         s = sum(1 ./ (A + I(N)); dims=1) .- 1
         cp = factorial.(0:M)
         cc = C ./ cp'
-        c̃ = zeros(N, M + 2)
+        c̃ = zeros(T, N, M + 2)
         for k in 1:(M + 1)
             c̃[:, k + 1] = sum(cc[:, 1:k] .* cc[:, k:-1:1]; dims=2)
         end
