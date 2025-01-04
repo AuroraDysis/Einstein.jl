@@ -130,4 +130,4 @@ function fdm_boundwts(der_order::TI, acc_order::TI) where {TI<:Integer}
     return fdm_boundwts(Rational{TI}, der_order, acc_order)
 end
 
-export fdm_central, fdm_hermite, fdm_extrapwts_right, fdm_extrapwts_left
+export fdm_central, fdm_hermite, fdm_extrapwts_right, fdm_extrapwts_left, fdm_boundwts
