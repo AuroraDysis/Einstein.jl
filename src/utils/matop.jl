@@ -14,6 +14,6 @@ struct MatrixOp{TR<:AbstractFloat}
     end
 end
 
-function (op::MatrixOp)(row::Integer, vec::StridedVector{TR}) where {TR<:IEE}
-    return dot_xsum(op.rows[row], vec)
+function (op::MatrixOp)(row::Integer, vec::StridedVector{TR}) where {TR<:AbstractFloat}
+    return dot_kahan(op.rows[row], vec)
 end

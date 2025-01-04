@@ -13,10 +13,8 @@ Uses the `xsum` package for improved numerical accuracy.
 - [JuliaMath/Xsum.jl](https://github.com/JuliaMath/Xsum.jl)
 - [Radford Neal / xsum · GitLab](https://gitlab.com/radfordneal/xsum)
 """
-function dot_xsum(
-    x::StridedVector{T}, y::StridedVector{T}
-) where {T<:Union{Float32,Float64}}
-    acc = XAccumulator(zero(T))
+function dot_xsum(x::StridedVector{Float64}, y::StridedVector{Float64})
+    acc = XAccumulator(0.0)
     @inbounds for i in eachindex(x)
         accumulate!(acc, x[i] * y[i])
     end

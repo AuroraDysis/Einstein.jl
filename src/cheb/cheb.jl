@@ -1,6 +1,7 @@
 module ChebSuite
 
 import AbstractFFTs: Plan
+using ..Utils
 using FFTW
 using FastTransforms
 using ArgCheck: @argcheck
