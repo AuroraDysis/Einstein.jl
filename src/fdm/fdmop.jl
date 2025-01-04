@@ -26,9 +26,9 @@ Create a central finite difference operator with specified derivative order and 
 function fdm_centralop(
     der_order::Integer, acc_order::Integer, dx::T
 ) where {T<:AbstractFloat}
-    num_coeffs = fdm_centralnum(der_order, acc_order)
-    num_side = div(num_coeffs - 1, 2)
     wts = fdm_central(T, der_order, acc_order)
+    num_coeffs = length(wts)
+    num_side = div(num_coeffs - 1, 2)
     return FDMCentralOp{T}(
         der_order, acc_order, num_coeffs, num_side, wts, one(T) / dx^der_order
     )
@@ -46,8 +46,8 @@ struct FDMHermiteOp{T<:Real}
 end
 
 # TODO: benchmark this and implement a more efficient version
-function (op::FDMHermiteOp{T})(v::StridedVector{T}) where {T<:AbstractFloat}
-    return dot(op.Dwts, v) * op.one_over_dxn + dot(op.Ewts, v) * op.one_over_dxnm1
+function (op::FDMHermiteOp{T})(f::StridedVector{T}, df::StridedVector{T}) where {T<:AbstractFloat}
+    return dot(op.Dwts, f) * op.one_over_dxn + dot(op.Ewts, df) * op.one_over_dxnm1
 end
 
 """
@@ -63,9 +63,9 @@ Create a Hermite finite difference operator with specified derivative order and 
 function fdm_hermiteop(
     der_order::Integer, acc_order::Integer, dx::T
 ) where {T<:AbstractFloat}
-    num_coeffs = fdm_hermitenum(der_order, acc_order)
-    num_side = div(num_coeffs - 1, 2)
     Dwts, Ewts = fdm_hermite(T, der_order, acc_order)
+    num_coeffs = length(Dwts)
+    num_side = div(num_coeffs - 1, 2)
     return FDMHermiteOp{T}(
         der_order,
         acc_order,
@@ -78,5 +78,26 @@ function fdm_hermiteop(
     )
 end
 
+struct FDMDissOp{T<:Real}
+    diss_order::Integer
+    num_coeffs::Integer
+    num_side::Integer
+    wts::Vector{T}
+    one_over_dx::T
+end
+
+# TODO: benchmark this and implement a more efficient version
+@inline function (op::FDMDissOp{T})(v::StridedVector{T}) where {T<:AbstractFloat}
+    return dot(op.wts, v) * op.one_over_dx
+end
+
+function fdm_dissop(diss_order::Integer, dx::T) where {T<:AbstractFloat}
+    wts = fdm_disswts(diss_order)
+    num_coeffs = length(wts)
+    num_side = div(num_coeffs - 1, 2)
+    return FDMDissOp{T}(diss_order, num_coeffs, num_side, wts, one(T) / dx)
+end
+
 export FDMCentralOp, fdm_centralop
 export FDMHermiteOp, fdm_hermiteop
+export FDMDissOp, fdm_dissop
