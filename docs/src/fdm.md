@@ -7,6 +7,3 @@ Modules = [GRSuite.FDMSuite]
 ```@autodocs
 Modules = [GRSuite.FDMSuite]
 ```
-
-```@bibliography
-```
