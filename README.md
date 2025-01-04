@@ -41,6 +41,7 @@ When solving GR PDEs in spherical symmetry or even axisymmetry, the requirements
 - **Spatial Discretization**
   - [x] Chebyshev collocation at Chebyshev points of the first and second kinds (Most of algorithms are translated from Chebfun)
   - [x] Finite difference method
+  - [x] Hermite finite difference method
   - [x] Rectangular collocation method (Most of algorithms are translated from Chebfun)
   - [x] Ultraspherical spectral method (Most of algorithms are translated from Chebfun)
   - [ ] Ultraspherical rectangular collocation

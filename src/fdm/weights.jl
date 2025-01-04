@@ -1,5 +1,5 @@
 @doc raw"""
-    fornberg_calculate_wts([T=Float64], order::Integer, x0::Real, x::AbstractVector; 
+    fdm_fornbergwts([T=Float64], order::Integer, x0::Real, x::AbstractVector; 
                              dfdx::Bool=false)
 
 Calculate finite difference weights for arbitrary-order derivatives using the Fornberg algorithm.
@@ -41,27 +41,27 @@ where N is the length of x
 ```julia
 # Standard central difference for first derivative
 x = [-1.0, 0.0, 1.0]
-w = fornberg_calculate_wts(1, 0.0, x)
+w = fdm_fornbergwts(1, 0.0, x)
 # Returns approximately [-0.5, 0.0, 0.5]
 
 # Forward difference for second derivative
 x = [0.0, 1.0, 2.0, 3.0]
-w = fornberg_calculate_wts(2, 0.0, x)
+w = fdm_fornbergwts(2, 0.0, x)
 
 # Hermite finite difference for third derivative
 x = [-1.0, 0.0, 1.0]
-w_f, w_d = fornberg_calculate_wts(3, 0.0, x, dfdx=true)
+w_f, w_d = fdm_fornbergwts(3, 0.0, x, dfdx=true)
 ```
 
 # References
 
-- [MethodOfLines.jl/src/discretization/schemes/fornberg_calculate_wts.jl at master · SciML/MethodOfLines.jl](https://github.com/SciML/MethodOfLines.jl/blob/master/src/discretization/schemes/fornberg_calculate_wts.jl)
+- [MethodOfLines.jl/src/discretization/schemes/fdm_fornbergwts.jl at master · SciML/MethodOfLines.jl](https://github.com/SciML/MethodOfLines.jl/blob/master/src/discretization/schemes/fdm_fornbergwts.jl)
 - [fornberg1988generation](@citet*)
 - [fornberg2021algorithm](@citet*)
 - [doi:10.1137/S0036144596322507](@citet*)
 - [precision - Numerical derivative and finite difference coefficients: any update of the Fornberg method? - Computational Science Stack Exchange](https://scicomp.stackexchange.com/questions/11249/numerical-derivative-and-finite-difference-coefficients-any-update-of-the-fornb)
 """
-function fornberg_calculate_wts(
+function fdm_fornbergwts(
     order::Integer, x0::T, x::AbstractVector{T}; dfdx::Bool=false
 ) where {T<:AbstractFloat}
     N = length(x)
@@ -131,4 +131,4 @@ function fornberg_calculate_wts(
     end
 end
 
-export fornberg_calculate_wts
+export fdm_fornbergwts
