@@ -44,3 +44,13 @@ end
     @test D4 == [7//54, 64//27, -5//1, 64//27, 7//54]
     @test E4 == [1//36, 8//9, 0//1, -8//9, -1//36]
 end
+
+@testitem "fdm_extrapwts" begin
+    using GRSuite.FDMSuite, Test
+
+    @test fdm_extrapwts_left(4) == [4, -6, 4, -1]
+    @test fdm_extrapwts_right(4) == [-1, 4, -6, 4]
+
+    @test fdm_extrapwts_left(5) == [5, -10, 10, -5, 1]
+    @test fdm_extrapwts_right(5) == [1, -5, 10, -10, 5]
+end

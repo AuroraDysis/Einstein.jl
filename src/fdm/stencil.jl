@@ -58,4 +58,34 @@ function fdm_hermite(der_order::TI, acc_order::TI) where {TI<:Integer}
     return fdm_hermite(Rational{TI}, der_order, acc_order)
 end
 
-export fdm_central, fdm_hermite
+"""
+    fdm_extrapwts_left(extrap_order::Int)
+
+Generate weights for left-sided extrapolation of order `extrap_order`.
+
+# Arguments
+- `extrap_order::Int`: Order of extrapolation
+
+# Returns
+Vector of rational coefficients for left-sided extrapolation
+"""
+function fdm_extrapwts_left(extrap_order::Int)
+    return fdm_fornbergwts(0, 0, 1:extrap_order)
+end
+
+"""
+    fdm_extrapwts_right(extrap_order::Int)
+
+Generate weights for right-sided extrapolation of order `extrap_order`.
+
+# Arguments
+- `extrap_order::Int`: Order of extrapolation
+
+# Returns
+Vector of rational coefficients for right-sided extrapolation
+"""
+function fdm_extrapwts_right(extrap_order::Int)
+    return fdm_fornbergwts(0, 0, extrap_order:-1:1)
+end
+
+export fdm_central, fdm_hermite, fdm_extrapwts_right, fdm_extrapwts_left
