@@ -1,10 +1,8 @@
-using Xsum
-
 """
     dot_xsum(x::StridedVector{T}, y::StridedVector{T}) where {T<:Real}
 
 Compute the dot product of two vectors using extended precision accumulation.
-Uses the Xsum package for improved numerical accuracy.
+Uses the `xsum` package for improved numerical accuracy.
 
 # Note
 - Very fast for large vectors, but a bit slower than Kahan summation for small vectors.
@@ -50,6 +48,7 @@ function dot_kahan(v1::StridedVector{T}, v2::StridedVector{T}) where {T<:Number}
         s += y
         c = (s - t) - y
     end
+
     return s
 end
 
