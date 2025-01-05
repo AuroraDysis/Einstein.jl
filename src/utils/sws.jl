@@ -13,10 +13,13 @@ Minimum allowed value of l for given s, m. Returns max(|s|, |m|).
     return max(abs(s), abs(m))
 end
 
-"""
+@doc raw"""
     sws_A0(::Type{TR}, s::Integer, l::Integer, m::Integer) where {TR<:AbstractFloat}
 
-Calculate angular separation constant at a=0. Formula is A₀ = l(l+1) - s(s+1).
+Calculate angular separation constant at a=0.
+```math
+{}_s A_{\ell m}(0)=l(l+1)-s(s+1)
+```
 
 # Arguments
 - `TR`: type for floating point conversion
