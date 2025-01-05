@@ -9,6 +9,25 @@
     Lm::AbstractMatrix{Complex{TR}}
 end
 
+"""
+    qnm_kerrnep_cache(::Type{TR}, a, s, m, n; ρ_min=0, ρ_max=1, lo_bc=BCType.Natural, hi_bc=BCType.Natural)
+
+Initialize the cache for Kerr QNM nonlinear eigenvalue problem using Ultraspherical spectral method.
+
+# Arguments
+- `TR`: Type parameter for floating-point precision
+- `a`: Black hole spin parameter
+- `s`: Spin weight of the field
+- `m`: Azimuthal mode number
+- `n`: Number of Chebyshev points
+- `ρ_min`: Minimum compactified radial coordinate (default: 0)
+- `ρ_max`: Maximum compactified radial coordinate (default: 1)
+- `lo_bc`: Boundary condition at ρ_min (default: Natural)
+- `hi_bc`: Boundary condition at ρ_max (default: Natural) - not implemented yet
+
+# Returns
+- `QNMKerrCache` object containing pre-computed matrices
+"""
 function qnm_kerrnep_cache(
     ::Type{TR},
     a::TR,
@@ -69,6 +88,20 @@ function qnm_kerrnep_cache(
     )
 end
 
+"""
+    qnm_kerrnep_step!(cache, ω, l; l_max=20)
+
+Perform one iteration step in the QNM eigenvalue search.
+
+# Arguments
+- `cache`: Pre-computed QNMKerrCache object
+- `ω`: Current frequency guess
+- `l`: Angular mode number
+- `l_max`: Maximum l value for angular eigenvalue calculation (default: 20)
+
+# Returns
+- Difference between the seperation constant between the radial and angular equations
+"""
 function qnm_kerrnep_step!(
     cache::QNMKerrCache{TR}, ω::Complex{TR}, l::Integer; l_max::Integer=20
 ) where {TR<:AbstractFloat}
