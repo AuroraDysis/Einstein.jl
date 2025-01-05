@@ -4,10 +4,12 @@ using ..Utils
 using ..ChebSuite
 
 using ArgCheck: @argcheck
+using NonlinearEigenproblems: PEP
+
 using EnumX
+using ApproxFun
 using Parameters
 using LinearAlgebra
-using NonlinearEigenproblems
 
 include("utils/contfrac.jl")
 

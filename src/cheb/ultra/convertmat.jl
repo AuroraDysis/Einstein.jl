@@ -15,10 +15,10 @@ function ultra_spconvert(::Type{T}, λ::Integer, n::Integer) where {T<:AbstractF
         half = one(T) / 2
         dg = fill(half, n - 2)
         # Construct sparse matrix with diagonals at 0 and 2
-        return spdiagm(0 => [one(T); half; dg], 2 => -dg)
+        return BandedMatrix(0 => [one(T); half; dg], 2 => -dg)
     else
         dg = [λf / (λf + i) for i in 2:(n - 1)]
-        return spdiagm(0 => [one(T); λf / (λf + 1); dg], 2 => -dg)
+        return BandedMatrix(0 => [one(T); λf / (λf + 1); dg], 2 => -dg)
     end
 end
 
@@ -41,7 +41,7 @@ function ultra_convertmat(
 ) where {T<:AbstractFloat}
     @argcheck n >= 2 "n must be positive"
     @argcheck K2 >= K1 "K2 must be greater than or equal to K1"
-    S = sparse(one(T) * I, n, n)
+    S = BandedMatrix(FillArrays.Eye{T}(n))
     for s in K1:(K2 - 1)
         S = ultra_spconvert(T, s, n) * S
     end

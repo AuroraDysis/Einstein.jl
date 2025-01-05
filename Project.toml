@@ -5,6 +5,7 @@ version = "1.0.0-DEV"
 
 [deps]
 AbstractFFTs = "621f4979-c628-5d54-868e-fcf4e3e8185c"
+ApproxFun = "28f2ccd6-bb30-5033-b560-165f7b14dc2f"
 ArgCheck = "dce04be8-c92d-5529-be00-80e4d2c0e197"
 BandedMatrices = "aae01518-5342-5314-be14-df237901396f"
 EnumX = "4e289a0a-7415-4d19-859d-a7e5c4648b56"

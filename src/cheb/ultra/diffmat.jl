@@ -30,4 +30,21 @@ function ultra_diffmat(m::TI, n::TI) where {TI<:Integer}
     return ultra_diffmat(Float64, m, n)
 end
 
+function ultra_diffmat(
+    ::Type{TR}, m::TI, n::TI, x_min::TR, x_max::TR
+) where {TR<:AbstractFloat,TI<:Integer}
+    @argcheck x_min < x_max "x_min must be less than x_max"
+    @argcheck n >= 2 "n must be positive"
+
+    scale = (2 / (x_max - x_min))^m
+    D = ultra_diffmat(TR, m, n)
+    D .*= scale
+
+    return D
+end
+
+function ultra_diffmat(m::TI, n::TI, x_min::Float64, x_max::Float64) where {TI<:Integer}
+    return ultra_diffmat(Float64, m, n, x_min, x_max)
+end
+
 export ultra_diffmat
