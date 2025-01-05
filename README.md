@@ -46,6 +46,7 @@ When solving GR PDEs in spherical symmetry or even axisymmetry, the requirements
   - [x] Hermite finite difference method
   - [x] Rectangular collocation method (Most of algorithms are translated from Chebfun)
   - [x] Ultraspherical spectral method (Most of algorithms are translated from Chebfun)
+    - For boundary value problems, I recommended using [ApproxFun.jl](https://github.com/JuliaApproximation/ApproxFun.jl).
   - [ ] Ultraspherical rectangular collocation
 - **Quasinormal Mode Computation**
   - [x] Modified Lentz method for continued fractions
