@@ -1,5 +1,5 @@
 """
-    fdm_diffmat(::Type{TR}, der_order::Integer, acc_order::Integer, xmin::TR, x_max::TR, dx::TR) where {TR<:Real}
+    fdm_diffmat(::Type{TR}, der_order::Integer, acc_order::Integer, x_min::TR, x_max::TR, dx::TR) where {TR<:Real}
 
 Construct a finite difference matrix for numerical differentiation.
 
@@ -7,7 +7,7 @@ Construct a finite difference matrix for numerical differentiation.
 - `TR`: Type parameter for the real number type to be used
 - `der_order`: Order of the derivative to approximate
 - `acc_order`: Order of accuracy for the approximation
-- `xmin`: Minimum value of the domain
+- `x_min`: Minimum value of the domain
 - `x_max`: Maximum value of the domain
 - `dx`: Grid spacing
 
@@ -19,12 +19,12 @@ Construct a finite difference matrix for numerical differentiation.
 # Notes
 - Uses central difference schemes in the interior points
 - Employs one-sided differences near boundaries
-- The resulting matrix has dimensions n×n where n = round(Int, (x_max - xmin) / dx) + 1
+- The resulting matrix has dimensions n×n where n = round(Int, (x_max - x_min) / dx) + 1
 """
 function fdm_diffmat(
-    ::Type{TR}, der_order::Integer, acc_order::Integer, xmin::TR, x_max::TR, dx::TR;
+    ::Type{TR}, der_order::Integer, acc_order::Integer, x_min::TR, x_max::TR, dx::TR;
 ) where {TR<:Real}
-    n = round(Int, (x_max - xmin) / dx) + 1
+    n = round(Int, (x_max - x_min) / dx) + 1
 
     x_grid_end = x_min + (n - 1) * dx
     @argcheck (x_max - x_grid_end) < 10 * eps(T) "Grid endpoint mismatch: |x_max - x_grid_end| = $(abs(x_max - x_grid_end)) exceeds tolerance ($(10 * eps(T))). Consider adjusting dx to ensure x_max is reached precisely."
