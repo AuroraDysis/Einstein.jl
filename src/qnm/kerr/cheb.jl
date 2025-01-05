@@ -6,12 +6,10 @@
     A1::AbstractMatrix{Complex{TR}}
     A2::AbstractMatrix{TR}
     An::AbstractMatrix{Complex{TR}}
-    has_v::Bool
-    v::Vector{Complex{TR}}
-    Lm::Matrix{Complex{TR}}
+    Lm::AbstractMatrix{Complex{TR}}
 end
 
-function qnm_kerrpep_cache(
+function qnm_kerrnep_cache(
     ::Type{TR},
     a::TR,
     s::Integer,
@@ -50,10 +48,10 @@ function qnm_kerrpep_cache(
     c20 = -16 * M^2 * (1 + 2 * M * ρ) + a^2 * (1 + 4 * M * ρ)^2
     A2 = (c20 * conversion):chebSpace
 
-    A0m = A0c[1:n, 1:n]
-    A1m = A1c[1:n, 1:n]
-    A2m = A2[1:n, 1:n]
-    Anm = Matrix{Complex{TR}}(conversion[1:n, 1:n])
+    A0m = Matrix(@view(A0c[1:n, 1:n]))
+    A1m = Matrix(@view(A1c[1:n, 1:n]))
+    A2m = Matrix(@view(A2[1:n, 1:n]))
+    Anm = Matrix(@view(conversion[1:n, 1:n]))
 
     if lo_bc == BCType.Dirichlet
         A0m[end, :] .= TR(1)
@@ -67,28 +65,27 @@ function qnm_kerrpep_cache(
     end
 
     return QNMKerrCache{TR}(;
-        a=a,
-        s=s,
-        m=m,
-        A0=A0m,
-        A1=A1m,
-        A2=A2m,
-        An=Anm,
-        has_v=false,
-        v=Vector{Complex{TR}}(undef, n),
-        Lm=Matrix{Complex{TR}}(undef, n, n),
+        a=a, s=s, m=m, A0=A0m, A1=A1m, A2=A2m, An=Anm, Lm=Matrix{Complex{TR}}(undef, n, n)
     )
 end
 
-function qnm_kerrpep_step!(
-    cache::QNMKerrCache{TR}, ω::Complex{TR}
+function qnm_kerrnep_step!(
+    cache::QNMKerrCache{TR}, ω::Complex{TR}, l::Integer; l_max::Integer=20
 ) where {TR<:AbstractFloat}
     @unpack_QNMKerrCache cache
 
+    c = a * ω
     ω2 = ω^2
     @.. Lm = A0 + ω * A1 + ω2 * A2
-    return eigvals!(Lm, An; sortby=abs)
+    evals = eigvals!(Lm, An; sortby=abs)
+
+    Ac_idx = sws_eigvalidx(s, l, m)
+    Ac = sws_eigvals(TR, s, c, m, l_max)[Ac_idx]
+
+    δ = -argmin(vi -> abs(-vi - Ac), evals) - Ac
+
+    return δ
 end
 
 export QNMKerrCache, @unpack_QNMKerrCache
-export qnm_kerrpep_cache
+export qnm_kerrnep_cache, qnm_kerrnep_step!
