@@ -197,7 +197,9 @@ function sws_eigen(
 end
 
 @doc raw"""
-    struct SWSFun{TR<:AbstractFloat}
+    SWSFun{TR<:AbstractFloat}()
+    (swsf::SWSFun{TR})(θ::TR)
+    coefficients(swsf::SWSFun)
 
 Spherical-weighted spheroidal harmonics.
 The eigenvectors contain the $C$ coefficients in the equation:
@@ -232,8 +234,8 @@ struct SWSFun{TR<:AbstractFloat}
     sqrt_2pi::TR
     Y_storage
 
-    function SWSFun(
-        ::Type{TR}, s::Integer, c::Complex{TR}, m::Integer, l::Integer, l_max::Integer
+    function SWSFun{TR}(
+        s::Integer, c::Complex{TR}, m::Integer, l::Integer, l_max::Integer
     ) where {TR<:AbstractFloat}
         l_min = sws_l_min(s, m)
         Y_storage = sYlm_prep(l_max, s, TR, l_min)
@@ -258,7 +260,7 @@ struct SWSFun{TR<:AbstractFloat}
     end
 end
 
-function (f::SWSFun)(θ::TR) where {TR<:AbstractFloat}
+function (f::SWSFun{TR})(θ::TR) where {TR<:AbstractFloat}
     Y = sYlm_values!(f.Y_storage, θ, zero(TR), f.s)
     return f.sqrt_2pi * dot(f.coeffs, @view(Y[f.Y_idx]))
 end
