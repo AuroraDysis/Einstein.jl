@@ -8,12 +8,12 @@ include("cheb.jl")
     m::Integer
     n::Integer = 0
     ω_guess::Complex{TR}
-    A_guess::Complex{TR} = sws_A0(TR, s, l)
+    A_guess::Complex{TR} = sws_A0(s, l)
     poles::Vector{Complex{TR}} = []
     l_max::Integer = l + 20
     cf_N_min::Integer = 300
     cf_N_max::Integer = 100000
-    cf_tol::TR = typetol(TR)
+    cf_tol::TR = typetol(typeof(a))
 end
 
 struct QNMKerrCache{TR<:AbstractFloat}

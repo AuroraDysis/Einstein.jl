@@ -39,20 +39,19 @@ Minimum allowed value of l for given s, m. Returns max(|s|, |m|).
 end
 
 @doc raw"""
-    sws_A0(::Type{TR}, s::Integer, l::Integer) where {TR<:AbstractFloat}
+    sws_A0(s::Integer, l::Integer) where {TR<:AbstractFloat}
 
-Calculate angular separation constant at a=0.
+Calculate angular separation constant at $a = 0$.
 ```math
 {}_s A_{\ell m}(0)=l(l+1)-s(s+1)
 ```
 
 # Arguments
-- `TR`: type for floating point conversion
 - `s::Integer`: spin
 - `l::Integer`: angular number
 """
-@inline function sws_A0(::Type{TR}, s::Integer, l::Integer) where {TR<:AbstractFloat}
-    return convert(TR, l * (l + 1) - s * (s + 1))
+@inline function sws_A0(s::Integer, l::Integer)
+    return l * (l + 1) - s * (s + 1)
 end
 
 @inline function sws_recF(
@@ -140,7 +139,7 @@ function sws_Melem(
     elseif lprime == l - 1
         return -c^2 * sws_calD(TR, s, lprime, m) + 2 * c * s * sws_recF(TR, s, lprime, m)
     elseif lprime == l
-        return sws_A0(TR, s, lprime) - c^2 * sws_calB(TR, s, lprime, m) +
+        return sws_A0(s, lprime) - c^2 * sws_calB(TR, s, lprime, m) +
                2 * c * s * sws_recH(TR, s, lprime, m)
     elseif lprime == l + 1
         return -c^2 * sws_calE(TR, s, lprime, m) + 2 * c * s * sws_recG(TR, s, lprime, m)
