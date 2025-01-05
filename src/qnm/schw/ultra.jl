@@ -13,8 +13,8 @@ Construct a polynomial eigenvalue problem for the Schwarzschild spacetime using 
 - `potential::SchwPotential.T`: Potential type
 - `σ_min::TR=zero(TR)`: Minimum value of the radial coordinate (hyperboloidal slicing)
 - `σ_max::TR=one(TR)`: Maximum value of the radial coordinate (hyperboloidal slicing)
-- `lo_bc::BoundaryCondition.T=Natural`: Boundary condition at the lower boundary, either `Natural` or `Dirichlet`.
-- `hi_bc::BoundaryCondition.T=Natural`: Boundary condition at the upper boundary, either `Natural` or `Dirichlet`.
+- `lo_bc::BoundaryCondition.T=BoundaryCondition.Natural`: Boundary condition at the lower boundary, either `Natural` or `Dirichlet`.
+- `hi_bc::BoundaryCondition.T=BoundaryCondition.Natural`: Boundary condition at the upper boundary, either `Natural` or `Dirichlet`.
 
 # Returns
 Polynomial eigenvalue problem
@@ -30,11 +30,11 @@ function qnm_schwpep(
     potential::SchwPotential.T;
     σ_min::TR=zero(TR),
     σ_max::TR=one(TR),
-    lo_bc::BoundaryCondition.T=Natural,
-    hi_bc::BoundaryCondition.T=Natural,
+    lo_bc::BoundaryCondition.T=BoundaryCondition.Natural,
+    hi_bc::BoundaryCondition.T=BoundaryCondition.Natural,
 ) where {TR<:AbstractFloat,TI<:Integer}
     # Zerilli must have s = 2
-    if potential == Zerilli
+    if potential == SchwPotential.Zerilli
         @argcheck s == 2 "s must be 2 for Zerilli potential"
     end
 
