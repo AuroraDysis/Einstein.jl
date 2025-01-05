@@ -1,8 +1,8 @@
-@enumx SchwPotential ReggeWheeler Zerilli
-@enumx BoundaryCondition Natural Dirichlet
+@enumx SchwPType ReggeWheeler Zerilli
+@enumx BCType Natural Dirichlet
 
 @doc raw"""
-    qnm_schwpep(::Type{TR}, s::Integer, ℓ::Integer, cheb_n::Integer, potential::SchwPotential.T; σ_min::TR=zero(TR), σ_max::TR=one(TR), lo_bc::BoundaryCondition.T=Natural, hi_bc::BoundaryCondition.T=Natural)
+    qnm_schwpep(::Type{TR}, s::Integer, ℓ::Integer, cheb_n::Integer, potential::SchwPType.T; σ_min::TR=zero(TR), σ_max::TR=one(TR), lo_bc::BCType.T=Natural, hi_bc::BCType.T=Natural)
 
 Construct a polynomial eigenvalue problem for the Schwarzschild spacetime using the hyperboloidal coordinates and the ultraspherical spectral method.
 The coordinate transformation from standard Schwarzschild coordinates to hyperboloidal coordinates is given by (we use $M = 1$ in the code):
@@ -18,11 +18,11 @@ r_* &= 2 M \left(\frac{1}{\sigma} + \ln(1 - \sigma) - \ln\sigma \right)
 - `s::Integer`: Spin
 - `ℓ::Integer`: Angular number
 - `cheb_n::Integer`: Number of Chebyshev points
-- `potential::SchwPotential.T`: Potential type
+- `potential::SchwPType.T`: Potential type
 - `σ_min::TR=zero(TR)`: Minimum value of the radial coordinate (hyperboloidal slicing)
 - `σ_max::TR=one(TR)`: Maximum value of the radial coordinate (hyperboloidal slicing)
-- `lo_bc::BoundaryCondition.T=BoundaryCondition.Natural`: Boundary condition at the lower boundary, either `Natural` or `Dirichlet`.
-- `hi_bc::BoundaryCondition.T=BoundaryCondition.Natural`: Boundary condition at the upper boundary, either `Natural` or `Dirichlet`.
+- `lo_bc::BCType.T=BCType.Natural`: Boundary condition at the lower boundary, either `Natural` or `Dirichlet`.
+- `hi_bc::BCType.T=BCType.Natural`: Boundary condition at the upper boundary, either `Natural` or `Dirichlet`.
 
 # Returns
 Polynomial eigenvalue problem, can be solved using solvers from the [NonlinearEigenproblems.jl](https://github.com/nep-pack/NonlinearEigenproblems.jl) package, such as `polyeig`.
@@ -35,14 +35,14 @@ function qnm_schwpep(
     s::Integer,
     ℓ::Integer,
     cheb_n::Integer,
-    potential::SchwPotential.T;
+    potential::SchwPType.T;
     σ_min::TR=zero(TR),
     σ_max::TR=one(TR),
-    lo_bc::BoundaryCondition.T=BoundaryCondition.Natural,
-    hi_bc::BoundaryCondition.T=BoundaryCondition.Natural,
+    lo_bc::BCType.T=BCType.Natural,
+    hi_bc::BCType.T=BCType.Natural,
 ) where {TR<:AbstractFloat}
     # Zerilli must have s = 2
-    if potential == SchwPotential.Zerilli
+    if potential == SchwPType.Zerilli
         @argcheck s == 2 "s must be 2 for Zerilli potential"
     end
 
@@ -57,7 +57,7 @@ function qnm_schwpep(
     σ = Fun(chebSpace)
     c02 = -(σ - 1) * σ^2 / 16
     c01 = (2 - 3 * σ) * σ / 16
-    c00 = if potential == SchwPotential.ReggeWheeler
+    c00 = if potential == SchwPType.ReggeWheeler
         (-(ℓ * (ℓ + 1)) + (s^2 - 1) * σ) / 16
     else
         let n = TR(ℓ - 1) * TR(ℓ + 2) / 2
@@ -81,20 +81,20 @@ function qnm_schwpep(
     A1m .= @view(A1c[1:cheb_n, 1:cheb_n])
     A2m .= @view(A2[1:cheb_n, 1:cheb_n])
 
-    if lo_bc == Dirichlet && hi_bc == BoundaryCondition.Dirichlet
+    if lo_bc == BCType.Dirichlet && hi_bc == BCType.Dirichlet
         # not test yet
         A0m[end - 1, 1:2:end] .= 1
         A0m[end - 1, 2:2:end] .= -1
         A0m[end, :] .= 1
         A1m[(end - 1):end, :] .= 0
         A2m[(end - 1):end, :] .= 0
-    elseif lo_bc == Dirichlet && hi_bc == BoundaryCondition.Natural
+    elseif lo_bc == BCType.Dirichlet && hi_bc == BCType.Natural
         # not test yet
         A0m[end, 1:2:end] .= 1
         A0m[end, 2:2:end] .= -1
         A1m[end, :] .= 0
         A2m[end, :] .= 0
-    elseif lo_bc == BoundaryCondition.Natural && hi_bc == BoundaryCondition.Dirichlet
+    elseif lo_bc == BCType.Natural && hi_bc == BCType.Dirichlet
         A0m[end, :] .= 1
         A1m[end, :] .= 0
         A2m[end, :] .= 0
@@ -105,4 +105,4 @@ function qnm_schwpep(
     return nep
 end
 
-export SchwPotential, BoundaryCondition, qnm_schwpep
+export SchwPType, BCType, qnm_schwpep
