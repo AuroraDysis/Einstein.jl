@@ -28,7 +28,7 @@ function cheb2_diffmat(
     ::Type{TR}, n::Integer, x_min::TR, x_max::TR, k::Integer=1
 ) where {TR<:AbstractFloat}
     D = cheb2_diffmat(TR, n, k)
-    scale = 2 / (x_max - x_min)
+    scale = (2 / (x_max - x_min))^k
     D .*= scale
     return D
 end
