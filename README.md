@@ -53,5 +53,3 @@ When solving GR PDEs in spherical symmetry or even axisymmetry, the requirements
   - [x] Correctly rounded floating-point dot/sum using [xsum](https://arxiv.org/abs/1505.05571) or [Kahan summation](https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
 
 While the `ChebyshevSuite` is inspired by algorithms from [Chebfun](https://www.chebfun.org/), it has been significantly enhanced in this package to improve performance and support arbitrary-precision calculations.
-
-This project is under active development, so feel free to give it a try!
