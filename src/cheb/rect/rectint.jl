@@ -45,7 +45,8 @@ function cheb_rectint(
     ::Type{TR}, m::Integer, n::Integer, x_min::TR, x_max::TR
 ) where {TR<:AbstractFloat}
     intmat = cheb_rectint(TR, m, n)
-    intmat .*= (x_max - x_min) / 2
+    scale = (x_max - x_min) / 2
+    intmat .*= scale
     return intmat
 end
 

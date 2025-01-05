@@ -8,7 +8,9 @@ struct FDMCentralOp{T<:Real}
 end
 
 # TODO: benchmark this and implement a more efficient version
-@inline function (op::FDMCentralOp{T})(v::StridedVector{T}) where {T<:AbstractFloat}
+@inline function (op::FDMCentralOp{T})(
+    v::StridedVector{T}
+) where {T<:AbstractFloatOrComplex}
     return dot(op.wts, v) * op.one_over_dxn
 end
 
@@ -48,7 +50,7 @@ end
 # TODO: benchmark this and implement a more efficient version
 function (op::FDMHermiteOp{T})(
     f::StridedVector{T}, df::StridedVector{T}
-) where {T<:AbstractFloat}
+) where {T<:AbstractFloatOrComplex}
     return dot(op.Dwts, f) * op.one_over_dxn + dot(op.Ewts, df) * op.one_over_dxnm1
 end
 
@@ -89,7 +91,7 @@ struct FDMDissOp{T<:Real}
 end
 
 # TODO: benchmark this and implement a more efficient version
-@inline function (op::FDMDissOp{T})(v::StridedVector{T}) where {T<:AbstractFloat}
+@inline function (op::FDMDissOp{T})(v::StridedVector{T}) where {T<:AbstractFloatOrComplex}
     return dot(op.wts, v) * op.one_over_dx
 end
 
