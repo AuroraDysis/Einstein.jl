@@ -181,6 +181,7 @@ where $C$ is normalized by
 ```math
 \sum_{\ell^{\prime}=\ell_{\text {min }}}^{\ell_{\max }}\left|C_{\ell^{\prime} \ell m}(c)\right|^2=1
 ```
+and the phase is chosen such that $C_{\ell^{\prime} \ell m}(c)$ is real for $\ell^{\prime}=\ell$ [Cook:2014cta](@cite).
 
 # Arguments
 - `TR`: Type for floating point conversion
