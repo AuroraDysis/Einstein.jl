@@ -25,7 +25,7 @@ r_* &= 2 M \left(\frac{1}{\sigma} + \ln(1 - \sigma) - \ln\sigma \right)
 - `hi_bc::BoundaryCondition.T=BoundaryCondition.Natural`: Boundary condition at the upper boundary, either `Natural` or `Dirichlet`.
 
 # Returns
-Polynomial eigenvalue problem
+Polynomial eigenvalue problem, can be solved using solvers from the [NonlinearEigenproblems.jl](https://github.com/nep-pack/NonlinearEigenproblems.jl) package, such as `polyeig`.
 
 # References
 - [Jaramillo:2020tuu, PanossoMacedo:2023qzp](@citet*)
