@@ -163,7 +163,7 @@ function sws_eigvals(
     ::Type{TR}, s::Integer, c::Complex{TR}, m::Integer, l_max::Integer
 ) where {TR<:AbstractFloat}
     M = sws_eigM(TR, s, c, m, l_max)
-    vals = eigvals!(M)
+    vals = eigvals!(M, sortby=abs)
     return vals
 end
 

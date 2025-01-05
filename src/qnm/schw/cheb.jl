@@ -1,8 +1,7 @@
 @enumx SchwPType ReggeWheeler Zerilli
-@enumx BCType Natural Dirichlet
 
 @doc raw"""
-    qnm_schwpep(::Type{TR}, s::Integer, ℓ::Integer, cheb_n::Integer, potential::SchwPType.T; σ_min::TR=zero(TR), σ_max::TR=one(TR), lo_bc::BCType.T=Natural, hi_bc::BCType.T=Natural)
+    qnm_schwpep(::Type{TR}, s::Integer, ℓ::Integer, n::Integer, potential::SchwPType.T; σ_min::TR=zero(TR), σ_max::TR=one(TR), lo_bc::BCType.T=Natural, hi_bc::BCType.T=Natural)
 
 Construct a polynomial eigenvalue problem for the Schwarzschild spacetime using the hyperboloidal coordinates and the ultraspherical spectral method.
 The coordinate transformation from standard Schwarzschild coordinates to hyperboloidal coordinates is given by (we use $M = 1$ in the code):
@@ -17,7 +16,7 @@ r_* &= 2 M \left(\frac{1}{\sigma} + \ln(1 - \sigma) - \ln\sigma \right)
 # Arguments
 - `s::Integer`: Spin
 - `ℓ::Integer`: Angular number
-- `cheb_n::Integer`: Number of Chebyshev points
+- `n::Integer`: Number of Chebyshev points
 - `potential::SchwPType.T`: Potential type
 - `σ_min::TR=zero(TR)`: Minimum value of the radial coordinate (hyperboloidal slicing)
 - `σ_max::TR=one(TR)`: Maximum value of the radial coordinate (hyperboloidal slicing)
@@ -34,7 +33,7 @@ function qnm_schwpep(
     ::Type{TR},
     s::Integer,
     ℓ::Integer,
-    cheb_n::Integer,
+    n::Integer,
     potential::SchwPType.T;
     σ_min::TR=zero(TR),
     σ_max::TR=one(TR),
@@ -47,12 +46,13 @@ function qnm_schwpep(
     end
 
     @argcheck ℓ >= s "ℓ must be greater than or equal to s"
-    @argcheck cheb_n >= 2 "cheb_n must be greater than or equal to 2"
+    @argcheck n >= 2 "n must be greater than or equal to 2"
 
-    chebSpace = Chebyshev(σ_min .. σ_max)
-    ultraSpace = Ultraspherical(2, σ_min .. σ_max)
+    dom = σ_min .. σ_max
+    chebSpace = Chebyshev(dom)
+    ultraSpace = Ultraspherical(2, dom)
     conversion = Conversion(chebSpace, ultraSpace)
-    conversionA1 = Conversion(Ultraspherical(1, σ_min .. σ_max), ultraSpace)
+    conversionA1 = Conversion(Ultraspherical(1, dom), ultraSpace)
 
     σ = Fun(chebSpace)
     c02 = -(σ - 1) * σ^2 / 16
@@ -74,26 +74,31 @@ function qnm_schwpep(
     c20 = σ + 1
     A2 = (c20 * conversion):chebSpace
 
-    A0m = zeros(TR, cheb_n, cheb_n)
-    A1m = zeros(Complex{TR}, cheb_n, cheb_n)
-    A2m = zeros(TR, cheb_n, cheb_n)
-    A0m .= @view(A0[1:cheb_n, 1:cheb_n])
-    A1m .= @view(A1c[1:cheb_n, 1:cheb_n])
-    A2m .= @view(A2[1:cheb_n, 1:cheb_n])
+    A0m = Matrix(@view(A0[1:n, 1:n]))
+    A1m = Matrix(@view(A1c[1:n, 1:n]))
+    A2m = Matrix(@view(A2[1:n, 1:n]))
 
     if lo_bc == BCType.Dirichlet && hi_bc == BCType.Dirichlet
         # not test yet
-        A0m[end - 1, 1:2:end] .= 1
-        A0m[end - 1, 2:2:end] .= -1
-        A0m[end, :] .= 1
-        A1m[(end - 1):end, :] .= 0
-        A2m[(end - 1):end, :] .= 0
+        # A0m[end - 1, 1:2:end] .= 1
+        # A0m[end - 1, 2:2:end] .= -1
+        # A0m[end, :] .= 1
+        # A1m[(end - 1):end, :] .= 0
+        # A2m[(end - 1):end, :] .= 0
+        throw(
+            ArgumentError(
+                "lo_bc is Dirichlet and hi_bc is Dirichlet is not implemented yet"
+            ),
+        )
     elseif lo_bc == BCType.Dirichlet && hi_bc == BCType.Natural
         # not test yet
-        A0m[end, 1:2:end] .= 1
-        A0m[end, 2:2:end] .= -1
-        A1m[end, :] .= 0
-        A2m[end, :] .= 0
+        # A0m[end, 1:2:end] .= 1
+        # A0m[end, 2:2:end] .= -1
+        # A1m[end, :] .= 0
+        # A2m[end, :] .= 0
+        throw(
+            ArgumentError("lo_bc is Dirichlet and hi_bc is Natural is not implemented yet")
+        )
     elseif lo_bc == BCType.Natural && hi_bc == BCType.Dirichlet
         A0m[end, :] .= 1
         A1m[end, :] .= 0
@@ -105,4 +110,4 @@ function qnm_schwpep(
     return nep
 end
 
-export SchwPType, BCType, qnm_schwpep
+export SchwPType, qnm_schwpep
