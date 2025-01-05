@@ -20,6 +20,7 @@ include("utils/contfrac.jl")
 
 include("schw/cheb.jl")
 
+include("kerr/radial.jl")
 include("kerr/cheb.jl")
 
 end

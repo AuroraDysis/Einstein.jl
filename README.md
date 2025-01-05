@@ -37,6 +37,7 @@ When solving GR PDEs in spherical symmetry or even axisymmetry, the requirements
     - [ ] Continued fraction method to determine the eigenvalue
     - [x] Ultraspherical spectral method in hyperboloidal coordinates to determine the eigenfunction.
   - [ ] Compute quasinormal modes for the Teukolsky equation using the continued fraction method. Apply the Cook-Zalutskiy spectral approach for the angular sector to determine the eigenvalue and the ultraspherical spectral method in hyperboloidal coordinates to determine the eigenfunction.
+    - [x] Continued fraction method to solve the radial equation
     - [x] Ultraspherical spectral method in hyperboloidal coordinates to determine the eigenfunction.
 
 `GRSuite.jl` currently includes utilities for the following numerical methods:
