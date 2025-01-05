@@ -1,7 +1,29 @@
-@inline function sws_l_min(s::T, m::T) where {T<:Integer}
+using SphericalFunctions
+
+"""
+    sws_l_min(s::Integer, m::Integer)
+
+Minimum allowed value of l for given s, m. Returns max(|s|, |m|).
+
+# Arguments
+- `s::Integer`: spin
+- `m::Integer`: azimuthal number
+"""
+@inline function sws_l_min(s::Integer, m::Integer)
     return max(abs(s), abs(m))
 end
 
+"""
+    sws_A0(::Type{TR}, s::Integer, l::Integer, m::Integer) where {TR<:AbstractFloat}
+
+Calculate angular separation constant at a=0. Formula is A₀ = l(l+1) - s(s+1).
+
+# Arguments
+- `TR`: type for floating point conversion
+- `s::Integer`: spin
+- `l::Integer`: angular number
+- `m::Integer`: azimuthal number
+"""
 @inline function sws_A0(
     ::Type{TR}, s::Integer, l::Integer, m::Integer
 ) where {TR<:AbstractFloat}
@@ -104,8 +126,24 @@ function sws_Melem(
     return zero(Complex{TR})
 end
 
-@inline sws_l_range(s::Integer, m::Integer, l_max::Integer) = sws_l_min(s, m):(l_max + 1)
+@inline sws_l_range(s::Integer, m::Integer, l_max::Integer) = sws_l_min(s, m):l_max
 
+"""
+    sws_eigM(::Type{TR}, s::Integer, c::Complex{TR}, m::Integer, l_max::Integer) where {TR<:AbstractFloat}
+
+Construct the spherical-spheroidal decomposition matrix truncated at l_max.
+
+# Arguments
+- `TR`: Type for floating point conversion
+- `s::Integer`: spin
+- `c::Complex`: oblateness parameter
+- `m::Integer`: azimuthal number
+- `l_max::Integer`: maximum angular number
+
+# References
+- [Cook:2014cta](@citet*)
+- [duetosymmetry/qnm](https://github.com/duetosymmetry/qnm)
+"""
 function sws_eigM(
     ::Type{TR}, s::Integer, c::Complex{TR}, m::Integer, l_max::Integer
 ) where {TR<:AbstractFloat}
@@ -126,11 +164,35 @@ function sws_eigvals(
     return vals
 end
 
-@inline function sws_eigvalidx(s::Integer, m::Integer, l::Integer)
+@inline function sws_eigvalidx(s::Integer, l::Integer, m::Integer)
     l_min = sws_l_min(s, m)
     return l - l_min + 1
 end
 
+@doc raw"""
+    sws_eigen(::Type{TR}, s::Integer, c::Complex{TR}, m::Integer, l_max::Integer) where {TR<:AbstractFloat}
+
+Calculate eigenvalues and eigenvectors of the spherical-spheroidal decomposition matrix.
+The eigenvectors contain the $C$ coefficients in the equation:
+```math
+S_{\ell m}(x; c)=\sum_{\ell^{\prime}=\ell_{\min }}^{\infty} C_{\ell^{\prime} \ell m}(c), S_{\ell^{\prime} m}(x; 0)
+```
+where $C$ is normalized by
+```math
+\sum_{\ell^{\prime}=\ell_{\text {min }}}^{\ell_{\max }}\left|C_{\ell^{\prime} \ell m}(c)\right|^2=1
+```
+
+# Arguments
+- `TR`: Type for floating point conversion
+- `s::Integer`: spin
+- `c::Complex`: oblateness parameter
+- `m::Integer`: azimuthal number
+- `l_max::Integer`: maximum angular number
+
+# References
+- [Cook:2014cta](@citet*)
+- [duetosymmetry/qnm](https://github.com/duetosymmetry/qnm)
+"""
 function sws_eigen(
     ::Type{TR}, s::Integer, c::Complex{TR}, m::Integer, l_max::Integer
 ) where {TR<:AbstractFloat}
@@ -139,4 +201,41 @@ function sws_eigen(
     return vals, vecs
 end
 
-export sws_l_min, sws_A0, sws_eigM, sws_eigvals, sws_eigvalidx, sws_eigen
+struct SWSFun{TR<:AbstractFloat}
+    s::Integer
+    c::Complex{TR}
+    m::Integer
+    l_min::Integer
+    l_max::Integer
+    coeffs::Vector{Complex{TR}}
+    Y_idx::Vector{Int}
+    Y_storage
+
+    function SWSFun(
+        ::Type{TR}, s::Integer, c::Complex{TR}, m::Integer, l::Integer, l_max::Integer
+    ) where {TR<:AbstractFloat}
+        l_min = sws_l_min(s, m)
+        Y_storage = sYlm_prep(l_max, s, TR, l_min)
+        vals, vecs = sws_eigen(TR, s, c, m, l_max)
+        vals_idx = sws_eigvalidx(s, l, m)
+        i = 1
+        Y_idx = zeros(Int, l_max - l_min + 1)
+        # TODO: make this more efficient
+        for lprime in l_min:l_max
+            for mprime in (-lprime):lprime
+                if m == mprime
+                    Y_idx[lprime - l_min + 1] = i
+                end
+                i += 1
+            end
+        end
+        return new{TR}(s, c, m, l_min, l_max, vecs[:, vals_idx], Y_idx, Y_storage)
+    end
+end
+
+function (f::SWSFun)(θ::TR) where {TR<:AbstractFloat}
+    Y = sYlm_values!(f.Y_storage, θ, zero(TR), f.s)
+    return dot(f.coeffs, @view(Y[f.Y_idx]))
+end
+
+export sws_l_min, sws_A0, sws_eigM, sws_eigvals, sws_eigvalidx, sws_eigen, SWSFun
