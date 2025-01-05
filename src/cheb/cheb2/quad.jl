@@ -54,4 +54,16 @@ function cheb2_quadwts(n::Integer)
     return cheb2_quadwts(Float64, n)
 end
 
+function cheb2_quadwts(
+    ::Type{TR}, n::Integer, x_min::TR, x_max::TR
+) where {TR<:AbstractFloat}
+    w = cheb2_quadwts(TR, n)
+    w .*= (x_max - x_min) / 2
+    return w
+end
+
+function cheb2_quadwts(n::Integer, x_min::Float64, x_max::Float64)
+    return cheb2_quadwts(Float64, n, x_min, x_max)
+end
+
 export cheb2_quadwts

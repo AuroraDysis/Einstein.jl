@@ -1,5 +1,7 @@
 module FDMSuite
 
+using ..Utils
+
 using ArgCheck: @argcheck
 using LinearAlgebra
 
