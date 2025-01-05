@@ -1,10 +1,18 @@
 @enumx SchwPotential ReggeWheeler Zerilli
 @enumx BoundaryCondition Natural Dirichlet
 
-"""
+@doc raw"""
     qnm_schwpep(::Type{TR}, s::Integer, ℓ::Integer, cheb_n::Integer, potential::SchwPotential.T; σ_min::TR=zero(TR), σ_max::TR=one(TR), lo_bc::BoundaryCondition.T=Natural, hi_bc::BoundaryCondition.T=Natural)
 
-Construct a polynomial eigenvalue problem for the Schwarzschild spacetime using the Ultraspherical spectral method.
+Construct a polynomial eigenvalue problem for the Schwarzschild spacetime using the hyperboloidal coordinates and the ultraspherical spectral method.
+The coordinate transformation from standard Schwarzschild coordinates to hyperboloidal coordinates is given by (we use $M = 1$ in the code):
+```math
+\begin{align}
+\sigma &= \frac{2 M}{r} \\
+\tau &= t + 2 M \left( \ln\sigma + \ln(1 - \sigma) - \frac{1}{\sigma} \right) \\
+r_* &= 2 M \left(\frac{1}{\sigma} + \ln(1 - \sigma) - \ln\sigma \right) 
+\end{align}
+```
 
 # Arguments
 - `s::Integer`: Spin
@@ -20,7 +28,7 @@ Construct a polynomial eigenvalue problem for the Schwarzschild spacetime using 
 Polynomial eigenvalue problem
 
 # References
-- [Jaramillo:2020tuu](@citet*)
+- [Jaramillo:2020tuu, PanossoMacedo:2023qzp](@citet*)
 """
 function qnm_schwpep(
     ::Type{TR},
@@ -47,19 +55,19 @@ function qnm_schwpep(
     conversionA1 = Conversion(Ultraspherical(1, σ_min .. σ_max), ultraSpace)
 
     σ = Fun(chebSpace)
-    c02 = -(σ - 1) * σ^2
-    c01 = (2 - 3 * σ) * σ
+    c02 = -(σ - 1) * σ^2 / 16
+    c01 = (2 - 3 * σ) * σ / 16
     c00 = if potential == SchwPotential.ReggeWheeler
-        -(ℓ * (ℓ + 1)) + (s^2 - 1) * σ
+        (-(ℓ * (ℓ + 1)) + (s^2 - 1) * σ) / 16
     else
         let n = TR(ℓ - 1) * TR(ℓ + 2) / 2
-            -σ - 2n * (4n * σ + 4n * (n + 1) + 3σ^2) / (2n + 3σ)^2
+            (-σ - 2n * (4n * σ + 4n * (n + 1) + 3σ^2) / (2n + 3σ)^2) / 16
         end
     end
     A0 = (c02 * 𝒟^2 + c01 * 𝒟 + c00):chebSpace
 
-    c11 = im * (-1 + 2 * σ^2)
-    c10 = 2im * σ
+    c11 = 1im * (2 * σ^2 - 1) / 4
+    c10 = 1im * σ / 2
     A1 = (c11 * 𝒟 + c10):chebSpace
     A1c = conversionA1 * A1
 
@@ -73,20 +81,20 @@ function qnm_schwpep(
     A1m .= A1c[1:cheb_n, 1:cheb_n]
     A2m .= A2[1:cheb_n, 1:cheb_n]
 
-    if lo_bc == Dirichlet && hi_bc == Dirichlet
+    if lo_bc == Dirichlet && hi_bc == BoundaryCondition.Dirichlet
         # not test yet
         A0m[end - 1, 1:2:end] .= 1
         A0m[end - 1, 2:2:end] .= -1
         A0m[end, :] .= 1
         A1m[(end - 1):end, :] .= 0
         A2m[(end - 1):end, :] .= 0
-    elseif lo_bc == Dirichlet && hi_bc == Natural
+    elseif lo_bc == Dirichlet && hi_bc == BoundaryCondition.Natural
         # not test yet
         A0m[end, 1:2:end] .= 1
         A0m[end, 2:2:end] .= -1
         A1m[end, :] .= 0
         A2m[end, :] .= 0
-    elseif lo_bc == Natural && hi_bc == Dirichlet
+    elseif lo_bc == BoundaryCondition.Natural && hi_bc == BoundaryCondition.Dirichlet
         A0m[end, :] .= 1
         A1m[end, :] .= 0
         A2m[end, :] .= 0
