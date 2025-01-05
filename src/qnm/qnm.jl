@@ -13,6 +13,6 @@ using LinearAlgebra
 
 include("utils/contfrac.jl")
 
-include("schw/ultra.jl")
+include("schw/cheb.jl")
 
 end
