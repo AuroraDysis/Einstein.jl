@@ -49,7 +49,7 @@ function qnm_schwpep(
     σ = Fun(chebSpace)
     c02 = -(σ - 1) * σ^2
     c01 = (2 - 3 * σ) * σ
-    c00 = if potential == ReggeWheeler
+    c00 = if potential == SchwPotential.ReggeWheeler
         -(ℓ * (ℓ + 1)) + (s^2 - 1) * σ
     else
         let n = TR(ℓ - 1) * TR(ℓ + 2) / 2
