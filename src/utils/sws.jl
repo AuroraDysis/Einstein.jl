@@ -175,7 +175,7 @@ end
 Calculate eigenvalues and eigenvectors of the spherical-spheroidal decomposition matrix.
 The eigenvectors contain the $C$ coefficients in the equation:
 ```math
-S_{\ell m}(x; c)=\sum_{\ell^{\prime}=\ell_{\min }}^{\infty} C_{\ell^{\prime} \ell m}(c), S_{\ell^{\prime} m}(x; 0)
+{}_s S_{\ell m}(x; c)=\sum_{\ell^{\prime}=\ell_{\min }}^{\infty} C_{\ell^{\prime} \ell m}(c) {}_s S_{\ell^{\prime} m}(x; 0)
 ```
 where $C$ is normalized by
 ```math
