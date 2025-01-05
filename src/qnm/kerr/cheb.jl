@@ -27,6 +27,9 @@ Initialize the cache for Kerr QNM nonlinear eigenvalue problem using Ultraspheri
 
 # Returns
 - `QNMKerrCache` object containing pre-computed matrices
+
+# References
+- [Ripley:2022ypi](@citet*)
 """
 function qnm_kerrnep_cache(
     ::Type{TR},
