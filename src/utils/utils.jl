@@ -1,5 +1,7 @@
 module Utils
 
+using ArgCheck: @argcheck
+
 using Xsum
 using LinearAlgebra
 

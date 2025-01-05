@@ -5,6 +5,7 @@ using ..ChebSuite
 
 using ArgCheck: @argcheck
 using NonlinearEigenproblems: PEP
+using SciMLBase: AbstractNonlinearAlgorithm
 
 using EnumX
 using ApproxFun
@@ -12,6 +13,7 @@ using Parameters
 using StaticArrays
 using LinearAlgebra
 using FastBroadcast
+using NonlinearSolve
 
 @enumx BCType Natural Dirichlet
 
@@ -19,10 +21,8 @@ export BCType
 
 include("utils/contfrac.jl")
 
-include("schw/expansion.jl")
-include("schw/cheb.jl")
+include("schw/schw.jl")
 
-include("kerr/radial.jl")
-include("kerr/cheb.jl")
+include("kerr/kerr.jl")
 
 end

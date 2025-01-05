@@ -39,7 +39,7 @@ Minimum allowed value of l for given s, m. Returns max(|s|, |m|).
 end
 
 @doc raw"""
-    sws_A0(::Type{TR}, s::Integer, l::Integer, m::Integer) where {TR<:AbstractFloat}
+    sws_A0(::Type{TR}, s::Integer, l::Integer) where {TR<:AbstractFloat}
 
 Calculate angular separation constant at a=0.
 ```math
@@ -50,11 +50,8 @@ Calculate angular separation constant at a=0.
 - `TR`: type for floating point conversion
 - `s::Integer`: spin
 - `l::Integer`: angular number
-- `m::Integer`: azimuthal number
 """
-@inline function sws_A0(
-    ::Type{TR}, s::Integer, l::Integer, m::Integer
-) where {TR<:AbstractFloat}
+@inline function sws_A0(::Type{TR}, s::Integer, l::Integer) where {TR<:AbstractFloat}
     return convert(TR, l * (l + 1) - s * (s + 1))
 end
 
@@ -143,7 +140,7 @@ function sws_Melem(
     elseif lprime == l - 1
         return -c^2 * sws_calD(TR, s, lprime, m) + 2 * c * s * sws_recF(TR, s, lprime, m)
     elseif lprime == l
-        return sws_A0(TR, s, lprime, m) - c^2 * sws_calB(TR, s, lprime, m) +
+        return sws_A0(TR, s, lprime) - c^2 * sws_calB(TR, s, lprime, m) +
                2 * c * s * sws_recH(TR, s, lprime, m)
     elseif lprime == l + 1
         return -c^2 * sws_calE(TR, s, lprime, m) + 2 * c * s * sws_recG(TR, s, lprime, m)
@@ -158,6 +155,7 @@ end
 
 """
     sws_eigM(::Type{TR}, s::Integer, c::Complex{TR}, m::Integer, l_max::Integer) where {TR<:AbstractFloat}
+    sws_eigM!(M::AbstractMatrix{TR}, s::Integer, c::Complex, m::Integer, l_max::Integer) where {TR<:AbstractFloat}
 
 Construct the spherical-spheroidal decomposition matrix truncated at l_max.
 
@@ -178,7 +176,15 @@ function sws_eigM(
     l_range = sws_l_range(s, m, l_max)
     M_size = length(l_range)
     M = Array{Complex{TR}}(undef, M_size, M_size)
-    for (i, l) in enumerate(l_range), (j, lprime) in enumerate(l_range)
+    return sws_eigM!(M, s, c, m, l_max)
+end
+
+function sws_eigM!(
+    M::AbstractMatrix{Complex{TR}}, s::Integer, c::Complex{TR}, m::Integer, l_max::Integer
+) where {TR<:AbstractFloat}
+    l_range = sws_l_range(s, m, l_max)
+    @argcheck size(M) == (length(l_range), length(l_range))
+    @inbounds for (i, l) in enumerate(l_range), (j, lprime) in enumerate(l_range)
         M[i, j] = sws_Melem(TR, s, c, m, l, lprime)
     end
     return M
@@ -188,8 +194,8 @@ function sws_eigvals(
     ::Type{TR}, s::Integer, c::Complex{TR}, m::Integer, l_max::Integer
 ) where {TR<:AbstractFloat}
     M = sws_eigM(TR, s, c, m, l_max)
-    vals = eigvals!(M, sortby=abs)
-    return vals
+    evals = eigvals!(M; sortby=abs)
+    return evals
 end
 
 @inline function sws_eigvalidx(s::Integer, l::Integer, m::Integer)
@@ -294,4 +300,4 @@ function coefficients(f::SWSFun)
     return f.coeffs
 end
 
-export sws_l_min, sws_A0, sws_eigM, sws_eigvals, sws_eigvalidx, sws_eigen, SWSFun
+export sws_l_min, sws_A0, sws_eigM, sws_eigM!, sws_eigvals, sws_eigvalidx, sws_eigen, SWSFun

@@ -1,7 +1,7 @@
-@with_kw struct QNMKerrCache{TR<:AbstractFloat}
+@with_kw struct QNMKerrChebNEPCache{TR<:AbstractFloat}
     a::TR # black hole spin
-    s::Integer
-    m::Integer
+    s::Integer # spin weight of the field
+    m::Integer # azimuthal mode number
     A0::AbstractMatrix{Complex{TR}}
     A1::AbstractMatrix{Complex{TR}}
     A2::AbstractMatrix{TR}
@@ -10,7 +10,7 @@
 end
 
 """
-    qnm_kerrnep_cache(::Type{TR}, a, s, m, n; ρ_min=0, ρ_max=1, lo_bc=BCType.Natural, hi_bc=BCType.Natural)
+    qnm_kerrchebnep_cache(::Type{TR}, a, s, m, n; ρ_min=0, ρ_max=1, lo_bc=BCType.Natural, hi_bc=BCType.Natural)
 
 Initialize the cache for Kerr QNM nonlinear eigenvalue problem using Ultraspherical spectral method.
 
@@ -26,12 +26,12 @@ Initialize the cache for Kerr QNM nonlinear eigenvalue problem using Ultraspheri
 - `hi_bc`: Boundary condition at ρ_max (default: Natural) - not implemented yet
 
 # Returns
-- `QNMKerrCache` object containing pre-computed matrices
+- `QNMKerrChebNEPCache` object containing pre-computed matrices
 
 # References
 - [Ripley:2022ypi](@citet*)
 """
-function qnm_kerrnep_cache(
+function qnm_kerrchebnep_cache(
     ::Type{TR},
     a::TR,
     s::Integer,
@@ -86,18 +86,18 @@ function qnm_kerrnep_cache(
         throw(ArgumentError("hi_bc not implemented yet"))
     end
 
-    return QNMKerrCache{TR}(;
+    return QNMKerrChebNEPCache{TR}(;
         a=a, s=s, m=m, A0=A0m, A1=A1m, A2=A2m, An=Anm, Lm=Matrix{Complex{TR}}(undef, n, n)
     )
 end
 
 """
-    qnm_kerrnep_step!(cache, ω, l; l_max=20)
+    qnm_kerrchebnep_step!(cache, ω, l; l_max=20)
 
 Perform one iteration step in the QNM eigenvalue search.
 
 # Arguments
-- `cache`: Pre-computed QNMKerrCache object
+- `cache`: Pre-computed QNMKerrChebNEPCache object
 - `ω`: Current frequency guess
 - `l`: Angular mode number
 - `l_max`: Maximum l value for angular eigenvalue calculation (default: 20)
@@ -105,10 +105,10 @@ Perform one iteration step in the QNM eigenvalue search.
 # Returns
 - Difference between the seperation constant between the radial and angular equations
 """
-function qnm_kerrnep_step!(
-    cache::QNMKerrCache{TR}, ω::Complex{TR}, l::Integer; l_max::Integer=20
+function qnm_kerrchebnep_step!(
+    cache::QNMKerrChebNEPCache{TR}, ω::Complex{TR}, l::Integer; l_max::Integer=20
 ) where {TR<:AbstractFloat}
-    @unpack_QNMKerrCache cache
+    @unpack_QNMKerrChebNEPCache cache
 
     c = a * ω
     ω2 = ω^2
@@ -123,5 +123,5 @@ function qnm_kerrnep_step!(
     return δ
 end
 
-export QNMKerrCache, @unpack_QNMKerrCache
-export qnm_kerrnep_cache, qnm_kerrnep_step!
+export QNMKerrChebNEPCache, @unpack_QNMKerrChebNEPCache
+export qnm_kerrchebnep_cache, qnm_kerrchebnep_step!
