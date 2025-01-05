@@ -1,5 +1,5 @@
 @doc raw"""
-    ultra_spconvert([T=Float64], n::Integer, λ::T) where {T<:AbstractFloat}
+    ultra_spconvert([T=Float64], λ::T, n::Integer) where {T<:AbstractFloat}
 
 Compute sparse representation for conversion operators.
 Returns the truncation of the operator that transforms $C^{\lambda}$
@@ -9,7 +9,7 @@ back a matrix of size n x n.
 # References
 - [chebfun/@ultraS/spconvert.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40ultraS/spconvert.m)
 """
-function ultra_spconvert(::Type{T}, n::Integer, λ::Integer) where {T<:AbstractFloat}
+function ultra_spconvert(::Type{T}, λ::Integer, n::Integer) where {T<:AbstractFloat}
     λf = convert(T, λ)
     if λ == 0
         half = one(T) / 2
@@ -22,12 +22,12 @@ function ultra_spconvert(::Type{T}, n::Integer, λ::Integer) where {T<:AbstractF
     end
 end
 
-function ultra_spconvert(n::Integer, λ::T) where {T<:Real,Integer<:Integer}
-    return ultra_spconvert(Float64, n, λ)
+function ultra_spconvert(λ::Integer, n::Integer) where {Integer<:Integer}
+    return ultra_spconvert(Float64, λ, n)
 end
 
 """
-    ultra_convertmat([T=Float64], n::Integer, K1::Integer, K2::Integer) where {T<:AbstractFloat}
+    ultra_convertmat([T=Float64], K1::Integer, K2::Integer, n::Integer) where {T<:AbstractFloat}
 
 Conversion matrix used in the ultraspherical spectral method.
 Returns N-by-N matrix realization of conversion operator between ultraspherical polynomial bases.
@@ -37,19 +37,19 @@ Maps N coefficients from C^{(K1)} basis to C^{(K2)} basis.
 - [chebfun/@ultraS/convertmat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40ultraS/convertmat.m)
 """
 function ultra_convertmat(
-    ::Type{T}, n::Integer, K1::Integer, K2::Integer
+    ::Type{T}, K1::Integer, K2::Integer, n::Integer
 ) where {T<:AbstractFloat}
     @argcheck n >= 2 "n must be positive"
     @argcheck K2 >= K1 "K2 must be greater than or equal to K1"
     S = sparse(one(T) * I, n, n)
     for s in K1:(K2 - 1)
-        S = ultra_spconvert(T, n, s) * S
+        S = ultra_spconvert(T, s, n) * S
     end
     return S
 end
 
-function ultra_convertmat(n::Integer, K1::T, K2::T) where {T<:Real}
-    return ultra_convertmat(Float64, n, K1, K2)
+function ultra_convertmat(K1::Integer, K2::Integer, n::Integer)
+    return ultra_convertmat(Float64, K1, K2, n)
 end
 
 export ultra_convertmat, ultra_spconvert

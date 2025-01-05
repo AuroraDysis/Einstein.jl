@@ -16,14 +16,16 @@ values = op(coeffs)
 """
 struct Cheb2Vals2CoeffsOp{TR<:AbstractFloat}
     tmp::Vector{Complex{TR}}
-    coeffs::Vector{TR}
+    coeffs::Vector{Complex{TR}}
+    real_coeffs::Vector{TR}
     ifft_plan::Plan{Complex{TR}}
 
     function Cheb2Vals2CoeffsOp{TR}(n::Integer) where {TR<:AbstractFloat}
         tmp = zeros(Complex{TR}, 2n - 2)
-        coeffs = zeros(TR, n)
+        coeffs = zeros(Complex{TR}, n)
+        real_coeffs = zeros(TR, n)
         ifft_plan = plan_ifft_measure!(tmp)
-        return new{TR}(tmp, coeffs, ifft_plan)
+        return new{TR}(tmp, coeffs, real_coeffs, ifft_plan)
     end
 
     function Cheb2Vals2CoeffsOp(n::Integer)
@@ -31,13 +33,20 @@ struct Cheb2Vals2CoeffsOp{TR<:AbstractFloat}
     end
 end
 
-function (op::Cheb2Vals2CoeffsOp{TR})(vals::AbstractVector{TR}) where {TR<:AbstractFloat}
+function (op::Cheb2Vals2CoeffsOp{TR})(vals::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
+    type_is_float = typeisfloat(TR)
+
     n = length(vals)
 
     # Trivial case
     if n <= 1
-        op.coeffs .= vals
-        return op.coeffs
+        if type_is_float
+            op.real_coeffs .= vals
+            return op.real_coeffs
+        else
+            op.coeffs .= vals
+            return op.coeffs
+        end
     end
 
     # Determine if vals are even or odd symmetric
@@ -86,15 +95,22 @@ function (op::Cheb2Vals2CoeffsOp{TR})(vals::AbstractVector{TR}) where {TR<:Abstr
         end
     end
 
-    return op.coeffs
+    if type_is_float
+        @inbounds for k in 1:n
+            op.real_coeffs[k] = real(op.coeffs[k])
+        end
+        return op.real_coeffs
+    else
+        return op.coeffs
+    end
 end
 
-function cheb2_vals2coeffs(vals::AbstractVector{TR}) where {TR<:AbstractFloat}
+function cheb2_vals2coeffs(vals::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
     n = length(vals)
     if n <= 1
         return deepcopy(vals)
     end
-    op = Cheb2Vals2CoeffsOp{TR}(n)
+    op = Cheb2Vals2CoeffsOp{real(TR)}(n)
     return op(vals)
 end
 

@@ -1,19 +1,19 @@
 @doc raw"""
-    ultra_multmat(coeffs::VT, λ::Integer) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+    ultra_multmat(coeffs::AbstractVector{TR}, λ::Integer) where {TR<:Union{AbstractFloat,Complex{<:AbstractFloat}}
 
 Construct nxn multiplication matrix
 representing the multiplication of F in the $C^{(\lambda)}$ basis.
 
 # Arguments
-- `coeffs::VT` : Vector of Chebyshev coefficients
+- `coeffs::AbstractVector{TR}` : Vector of Chebyshev coefficients
 - `λ::Integer` : Order of the ultraspherical basis
 
 # References
 - [chebfun/@ultraS/multmat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40ultraS/multmat.m)
 """
 function ultra_multmat(
-    coeffs::VT, λ::Integer
-) where {TR<:AbstractFloat,VT<:AbstractVector{TR}}
+    coeffs::AbstractVector{TR}, λ::Integer
+) where {TR<:AbstractFloatOrComplex}
     n = length(coeffs)
 
     coeffs = deepcopy(coeffs)
@@ -32,7 +32,7 @@ function ultra_multmat(
         M[1:(n - 2), 1:(n - 2)] .-= ultra_sphankel(@view(coeffs[3:end]))
         return M
     else # General λ case, Convert from T to C^λ
-        coeffs = ultra_convertmat(TR, n, 0, λ) * coeffs
+        coeffs = ultra_convertmat(real(TR), 0, λ, n) * coeffs
         m = 2n
         M0 = BandedMatrix(Eye{TR}(m))
 
