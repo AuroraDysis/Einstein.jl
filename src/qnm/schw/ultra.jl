@@ -40,7 +40,7 @@ function qnm_schwpep(
     σ_max::TR=one(TR),
     lo_bc::BoundaryCondition.T=BoundaryCondition.Natural,
     hi_bc::BoundaryCondition.T=BoundaryCondition.Natural,
-) where {TR<:AbstractFloat,TI<:Integer}
+) where {TR<:AbstractFloat}
     # Zerilli must have s = 2
     if potential == SchwPotential.Zerilli
         @argcheck s == 2 "s must be 2 for Zerilli potential"
@@ -77,9 +77,9 @@ function qnm_schwpep(
     A0m = zeros(TR, cheb_n, cheb_n)
     A1m = zeros(Complex{TR}, cheb_n, cheb_n)
     A2m = zeros(TR, cheb_n, cheb_n)
-    A0m .= A0[1:cheb_n, 1:cheb_n]
-    A1m .= A1c[1:cheb_n, 1:cheb_n]
-    A2m .= A2[1:cheb_n, 1:cheb_n]
+    A0m .= @view(A0[1:cheb_n, 1:cheb_n])
+    A1m .= @view(A1c[1:cheb_n, 1:cheb_n])
+    A2m .= @view(A2[1:cheb_n, 1:cheb_n])
 
     if lo_bc == Dirichlet && hi_bc == BoundaryCondition.Dirichlet
         # not test yet
