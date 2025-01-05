@@ -85,7 +85,8 @@ function qnm_kerrpep_step!(
 ) where {TR<:AbstractFloat}
     @unpack_QNMKerrCache cache
 
-    @.. Lm = A0 + ω * A1 + ω^2 * A2
+    ω2 = ω^2
+    @.. Lm = A0 + ω * A1 + ω2 * A2
     return eigvals!(Lm, An; sortby=abs)
 end
 
