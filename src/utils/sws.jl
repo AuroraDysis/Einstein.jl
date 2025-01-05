@@ -176,15 +176,6 @@ end
     sws_eigen(::Type{TR}, s::Integer, c::Complex{TR}, m::Integer, l_max::Integer) where {TR<:AbstractFloat}
 
 Calculate eigenvalues and eigenvectors of the spherical-spheroidal decomposition matrix.
-The eigenvectors contain the $C$ coefficients in the equation:
-```math
-{}_s S_{\ell m}(x; c)=\sum_{\ell^{\prime}=\ell_{\min }}^{\infty} C_{\ell^{\prime} \ell m}(c) {}_s S_{\ell^{\prime} m}(x; 0)
-```
-where $C$ is normalized by
-```math
-\sum_{\ell^{\prime}=\ell_{\text {min }}}^{\ell_{\max }}\left|C_{\ell^{\prime} \ell m}(c)\right|^2=1
-```
-and the phase is chosen such that $C_{\ell^{\prime} \ell m}(c)$ is real for $\ell^{\prime}=\ell$ [Cook:2014cta](@cite).
 
 # Arguments
 - `TR`: Type for floating point conversion
@@ -205,6 +196,31 @@ function sws_eigen(
     return vals, vecs
 end
 
+@doc raw"""
+    struct SWSFun{TR<:AbstractFloat}
+
+Spherical-weighted spheroidal harmonics.
+The eigenvectors contain the $C$ coefficients in the equation:
+```math
+{}_s S_{\ell m}(x; c)=\sum_{\ell^{\prime}=\ell_{\min }}^{\infty} C_{\ell^{\prime} \ell m}(c) {}_s S_{\ell^{\prime} m}(x; 0)
+```
+where $C$ is normalized by
+```math
+\sum_{\ell^{\prime}=\ell_{\text {min }}}^{\ell_{\max }}\left|C_{\ell^{\prime} \ell m}(c)\right|^2=1
+```
+and the phase is chosen such that $C_{\ell^{\prime} \ell m}(c)$ is real for $\ell^{\prime}=\ell$ [Cook:2014cta](@cite).
+The spin-weighted spheroidal harmonics are normalized such that
+```math
+\int_0^\pi {}_s S_{\ell m}(x; c) {}_s S^*_{\ell m}(x; c) \sin(\theta) d\theta = 1
+```
+
+# Arguments
+- `s::Integer`: spin
+- `c::Complex{TR}`: oblateness parameter
+- `m::Integer`: azimuthal number
+- `l::Integer`: angular number
+- `l_max::Integer`: maximum angular number
+"""
 struct SWSFun{TR<:AbstractFloat}
     s::Integer
     c::Complex{TR}
@@ -213,6 +229,7 @@ struct SWSFun{TR<:AbstractFloat}
     l_max::Integer
     coeffs::Vector{Complex{TR}}
     Y_idx::Vector{Int}
+    sqrt_2pi::TR
     Y_storage
 
     function SWSFun(
@@ -233,13 +250,21 @@ struct SWSFun{TR<:AbstractFloat}
                 i += 1
             end
         end
-        return new{TR}(s, c, m, l_min, l_max, vecs[:, vals_idx], Y_idx, Y_storage)
+        coeffs = vecs[:, vals_idx]
+        scale = abs(coeffs[l - l_min + 1]) / coeffs[l - l_min + 1]
+        coeffs .*= scale
+        sqrt_2pi = sqrt(2 * convert(TR, π))
+        return new{TR}(s, c, m, l_min, l_max, coeffs, Y_idx, sqrt_2pi, Y_storage)
     end
 end
 
 function (f::SWSFun)(θ::TR) where {TR<:AbstractFloat}
     Y = sYlm_values!(f.Y_storage, θ, zero(TR), f.s)
-    return dot(f.coeffs, @view(Y[f.Y_idx]))
+    return f.sqrt_2pi * dot(f.coeffs, @view(Y[f.Y_idx]))
+end
+
+function coefficients(f::SWSFun)
+    return f.coeffs
 end
 
 export sws_l_min, sws_A0, sws_eigM, sws_eigvals, sws_eigvalidx, sws_eigen, SWSFun
