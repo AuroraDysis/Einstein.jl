@@ -1,6 +1,6 @@
 """
-    cheb1_coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat}
-    Cheb1Coeffs2ValsOp{[TR=Float64]}(n::Integer)(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat}
+    cheb1_coeffs2vals(coeffs::AbstractVector{TR})
+    Cheb1Coeffs2ValsOp{[TR=Float64]}(n::Integer)(coeffs::AbstractVector{TR})
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 1st kind.
 
@@ -17,7 +17,8 @@ values = op(coeffs)
 struct Cheb1Coeffs2ValsOp{TR<:AbstractFloat}
     w::Vector{Complex{TR}}    # Weight vector
     tmp::Vector{Complex{TR}}  # Temporary storage
-    vals::Vector{TR}          # Result storage
+    vals::Vector{Complex{TR}} # values
+    real_vals::Vector{TR} # values
     fft_plan::Plan{Complex{TR}}        # fft plan
 
     function Cheb1Coeffs2ValsOp{TR}(n::Integer) where {TR<:AbstractFloat}
@@ -36,9 +37,10 @@ struct Cheb1Coeffs2ValsOp{TR<:AbstractFloat}
             end
         end
         tmp = Vector{Complex{TR}}(undef, 2n)
-        vals = Vector{TR}(undef, n)
+        vals = Vector{Complex{TR}}(undef, n)
+        real_vals = Vector{TR}(undef, n)
         fft_plan = plan_fft_measure!(tmp)
-        return new{TR}(w, tmp, vals, fft_plan)
+        return new{TR}(w, tmp, vals, real_vals, fft_plan)
     end
 
     function Cheb1Coeffs2ValsOp(n::Integer)
@@ -46,11 +48,18 @@ struct Cheb1Coeffs2ValsOp{TR<:AbstractFloat}
     end
 end
 
-function (op::Cheb1Coeffs2ValsOp{TR})(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat}
+function (op::Cheb1Coeffs2ValsOp{TR})(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
+    type_is_float = typeisfloat(TR)
+
     n = length(coeffs)
     if n <= 1
-        op.vals .= coeffs
-        return op.vals
+        if type_is_float
+            op.real_vals .= coeffs
+            return op.real_vals
+        else
+            op.vals .= coeffs
+            return op.vals
+        end
     end
 
     w = op.w
@@ -86,9 +95,9 @@ function (op::Cheb1Coeffs2ValsOp{TR})(coeffs::AbstractVector{TR}) where {TR<:Abs
         fft_plan * tmp
     end
 
-    # Extract real values
+    # Extract values
     @inbounds for i in 1:n
-        vals[i] = real(tmp[n - i + 1])
+        vals[i] = tmp[n - i + 1]
     end
 
     # Enforce symmetry if needed
@@ -108,16 +117,24 @@ function (op::Cheb1Coeffs2ValsOp{TR})(coeffs::AbstractVector{TR}) where {TR<:Abs
         end
     end
 
-    return vals
+    if type_is_float
+        @inbounds for k in 1:n
+            op.real_vals[k] = real(op.vals[k])
+        end
+        return op.real_vals
+    else
+        return op.vals
+    end
 end
 
-function cheb1_coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat}
+function cheb1_coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
     n = length(coeffs)
+
     if n <= 1
         return deepcopy(coeffs)
     end
 
-    op = Cheb1Coeffs2ValsOp{TR}(n)
+    op = Cheb1Coeffs2ValsOp{real(TR)}(n)
     return op(coeffs)
 end
 

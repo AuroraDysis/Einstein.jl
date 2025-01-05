@@ -14,28 +14,18 @@ values = op(coeffs)
 # References
 - [chebfun/@chebtech2/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/coeffs2vals.m)
 """
-function cheb2_coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat}
-    n = length(coeffs)
-
-    # Trivial case (constant or empty)
-    if n <= 1
-        return deepcopy(coeffs)
-    end
-
-    op = Cheb2Coeffs2ValsOp{TR}(n)
-    return op(coeffs)
-end
-
 struct Cheb2Coeffs2ValsOp{TR<:AbstractFloat}
     tmp::Vector{Complex{TR}}
-    vals::Vector{TR}
+    vals::Vector{Complex{TR}}
+    real_vals::Vector{TR}
     fft_plan::Plan{Complex{TR}}
 
     function Cheb2Coeffs2ValsOp{TR}(n::Integer) where {TR<:AbstractFloat}
         tmp = zeros(Complex{TR}, 2n - 2)
-        vals = zeros(TR, n)
+        vals = zeros(Complex{TR}, n)
+        real_vals = zeros(TR, n)
         fft_plan = plan_fft_measure!(tmp)
-        return new{TR}(tmp, vals, fft_plan)
+        return new{TR}(tmp, vals, real_vals, fft_plan)
     end
 
     function Cheb2Coeffs2ValsOp(n::Integer)
@@ -43,11 +33,18 @@ struct Cheb2Coeffs2ValsOp{TR<:AbstractFloat}
     end
 end
 
-function (op::Cheb2Coeffs2ValsOp{TR})(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat}
+function (op::Cheb2Coeffs2ValsOp{TR})(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
+    type_is_float = typeisfloat(TR)
+
     n = length(coeffs)
     if n <= 1
-        op.vals .= coeffs
-        return op.vals
+        if type_is_float
+            op.real_vals .= coeffs
+            return op.real_vals
+        else
+            op.vals .= coeffs
+            return op.vals
+        end
     end
 
     vals = op.vals
@@ -73,7 +70,7 @@ function (op::Cheb2Coeffs2ValsOp{TR})(coeffs::AbstractVector{TR}) where {TR<:Abs
 
         # Flip/truncate inside vals
         for i in 1:n
-            vals[i] = real(tmp[n - i + 1])
+            vals[i] = tmp[n - i + 1]
         end
     end
 
@@ -94,7 +91,25 @@ function (op::Cheb2Coeffs2ValsOp{TR})(coeffs::AbstractVector{TR}) where {TR<:Abs
         end
     end
 
-    return vals
+    if type_is_float
+        @inbounds for k in 1:n
+            op.real_vals[k] = real(op.vals[k])
+        end
+        return op.real_vals
+    else
+        return op.vals
+    end
+end
+
+function cheb2_coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat}
+    n = length(coeffs)
+
+    if n <= 1
+        return deepcopy(coeffs)
+    end
+
+    op = Cheb2Coeffs2ValsOp{real(TR)}(n)
+    return op(coeffs)
 end
 
 export cheb2_coeffs2vals, Cheb2Coeffs2ValsOp

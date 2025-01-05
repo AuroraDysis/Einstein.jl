@@ -26,7 +26,7 @@ function ultra_diffmat(::Type{TR}, m::TI, n::TI) where {TR<:AbstractFloat,TI<:In
     return D
 end
 
-function ultra_diffmat(m::TI, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+function ultra_diffmat(m::TI, n::TI) where {TI<:Integer}
     return ultra_diffmat(Float64, m, n)
 end
 
