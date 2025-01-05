@@ -227,4 +227,19 @@ function cheb_rectdiff_rec(m::Integer, n::Integer, p::Integer, kind::Integer)
     return cheb_rectdiff_rec(Float64, m, n, p, kind)
 end
 
+function cheb_rectdiff_rec(
+    ::Type{TR}, m::Integer, n::Integer, p::Integer, kind::Integer, x_min::TR, x_max::TR
+)::Matrix{TR} where {TR<:AbstractFloat}
+    D = cheb_rectdiff_rec(TR, m, n, p, kind)
+    scale = (2 / (x_max - x_min))^p
+    D .*= scale
+    return D
+end
+
+function cheb_rectdiff_rec(
+    m::Integer, n::Integer, p::Integer, kind::Integer, x_min::Float64, x_max::Float64
+)
+    return cheb_rectdiff_rec(Float64, m, n, p, kind, x_min, x_max)
+end
+
 export cheb_rectdiff1, cheb_rectdiff2, cheb_rectdiff_rec
