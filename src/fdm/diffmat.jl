@@ -27,7 +27,7 @@ function fdm_diffmat(
     n = round(Int, (x_max - x_min) / dx) + 1
 
     x_grid_end = x_min + (n - 1) * dx
-    @argcheck (x_max - x_grid_end) < 10 * eps(T) "Grid endpoint mismatch: |x_max - x_grid_end| = $(abs(x_max - x_grid_end)) exceeds tolerance ($(10 * eps(T))). Consider adjusting dx to ensure x_max is reached precisely."
+    @argcheck (x_max - x_grid_end) < 10 * eps(TR) "Grid endpoint mismatch: |x_max - x_grid_end| = $(abs(x_max - x_grid_end)) exceeds tolerance ($(10 * eps(TR))). Consider adjusting dx to ensure x_max is reached precisely."
 
     num_coeffs = fdm_centralnum(der_order, acc_order)
     num_side = div(num_coeffs - 1, 2)
