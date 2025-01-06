@@ -71,6 +71,7 @@ This package is inspired by the following projects, and some of the algorithms a
 - [SciML/MethodOfLines.jl](https://github.com/SciML/MethodOfLines.jl)
 - [Neal/xsum](https://gitlab.com/radfordneal/xsum)
 - [JuliaMath/KahanSummation.jl](https://github.com/JuliaMath/KahanSummation.jl)
+- [tomtrogdon/URCMethod.jl](https://github.com/tomtrogdon/URCMethod.jl)
 
 The author would like to thank the developers of these projects for their contributions to the scientific computing community.
 
