@@ -36,6 +36,8 @@ When solving GR PDEs in spherical symmetry or even axisymmetry, the requirements
   - [ ] Compute quasinormal modes for the Schwarzschild black hole using the Regge-Wheeler-Zerilli equation.
     - [ ] Continued fraction method to determine the eigenvalue
     - [x] Ultraspherical spectral method in hyperboloidal coordinates to determine the eigenfunction.
+    - [x] Dolan and Ottewill Regge poles expansion method
+    - [ ] WKB approximation
   - [x] Compute quasinormal modes for the Teukolsky equation using the continued fraction method. Apply the Cook-Zalutskiy spectral approach for the angular sector to determine the eigenvalue and the ultraspherical spectral method in hyperboloidal coordinates to determine the eigenfunction.
     - [x] Continued fraction method to solve the radial equation
     - [x] Ultraspherical spectral method in hyperboloidal coordinates to determine the eigenfunction.
@@ -52,6 +54,7 @@ When solving GR PDEs in spherical symmetry or even axisymmetry, the requirements
   - [ ] Ultraspherical rectangular collocation
 - **Quasinormal Mode Computation**
   - [x] Modified Lentz method for continued fractions
+  - [ ] WKB approximation for general potentials
 - **General Utilities**
   - [x] Correctly rounded floating-point dot/sum using [xsum](https://arxiv.org/abs/1505.05571) or [Kahan summation](https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
   - [x] Spin-weighted spheroidal harmonics using the Cook-Zalutskiy spectral method

@@ -24,15 +24,32 @@ SOFTWARE.
 """
 
 @doc raw"""
-    leaver_cf_inv_lentz(cache::KerrCache{TR,TI}, A::Complex{TR}, ω::Complex{TR}) where {TR<:AbstractFloat,TI<:Integer}
+    qnm_kerr_radial(
+        ::Type{TR},
+        a::TR,
+        s::Integer,
+        m::Integer,
+        A::Complex{TR},
+        ω::Complex{TR};
+        n_inv::Integer=0,
+        cf_tol::TR=typetol(TR),
+        cf_N_min::Integer=300,
+        cf_N_max::Integer=100000,
+    ) where {TR<:AbstractFloat}
 
 Calculate the radial function using the Leaver scheme [Cook:2014cta](@cite).
 
 ## Arguments
+- `TR`: Type of the floating-point number.
 - a::TR: Black hole spin.
 - s::Integer: spin weight of the field.
 - m::Integer: Azimuthal number.
-- n_inv
+- A::Complex{TR}: Angular separation constant.
+- ω::Complex{TR}: QNM frequency.
+- n_inv::Integer: Number of inversions.
+- cf_tol::TR: Tolerance for convergence.
+- cf_N_min::Integer: Minimum number of iterations.
+- cf_N_max::Integer: Maximum number of iterations.
 
 ## Returns
 
@@ -83,7 +100,7 @@ with $\operatorname{Cf}(0 ; \mathrm{N}) \equiv \operatorname{Cf}(\mathrm{N})$ an
 - [Cook:2014cta](@citet*)
 - [qnm/qnm/radial.py at master · duetosymmetry/qnm](https://github.com/duetosymmetry/qnm/blob/master/qnm/radial.py)
 """
-function qnm_kerrrad(
+function qnm_kerr_radial(
     ::Type{TR},
     a::TR,
     s::Integer,
@@ -155,4 +172,4 @@ function qnm_kerrrad(
     return inv_cf, error, iter
 end
 
-export qnm_kerrrad
+export qnm_kerr_radial

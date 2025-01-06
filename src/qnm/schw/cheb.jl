@@ -1,7 +1,7 @@
 @enumx SchwPType ReggeWheeler Zerilli
 
 @doc raw"""
-    qnm_schwnep(::Type{TR}, s::Integer, ℓ::Integer, n::Integer, potential::SchwPType.T; σ_min::TR=zero(TR), σ_max::TR=one(TR), lo_bc::BCType.T=Natural, hi_bc::BCType.T=Natural)
+    qnm_schw_chebnep(::Type{TR}, s::Integer, ℓ::Integer, n::Integer, potential::SchwPType.T; σ_min::TR=zero(TR), σ_max::TR=one(TR), lo_bc::BCType.T=Natural, hi_bc::BCType.T=Natural)
 
 Construct a polynomial eigenvalue problem for the Schwarzschild spacetime using the hyperboloidal coordinates and the ultraspherical spectral method.
 The coordinate transformation from standard Schwarzschild coordinates to hyperboloidal coordinates is given by (we use $M = 1$ in the code):
@@ -29,7 +29,7 @@ Polynomial eigenvalue problem, can be solved using solvers from the [NonlinearEi
 # References
 - [Jaramillo:2020tuu, PanossoMacedo:2023qzp](@citet*)
 """
-function qnm_schwnep(
+function qnm_schw_chebnep(
     ::Type{TR},
     s::Integer,
     ℓ::Integer,
@@ -110,4 +110,4 @@ function qnm_schwnep(
     return nep
 end
 
-export SchwPType, qnm_schwnep
+export SchwPType, qnm_schw_chebnep
