@@ -53,8 +53,9 @@ When solving GR PDEs in spherical symmetry or even axisymmetry, the requirements
     - [x] Dolan and Ottewill Regge poles expansion method
     - [ ] WKB approximation
     - [ ] Direct integration method
-  - [x] Compute quasinormal modes for the Teukolsky equation using the continued fraction method. Apply the Cook-Zalutskiy spectral approach for the angular sector to determine the eigenvalue and the ultraspherical spectral method in hyperboloidal coordinates to determine the eigenfunction.
-    - [x] Continued fraction method for the radial equation
+  - [x] Compute quasinormal modes for the Kerr black hole using the Teukolsky equation.
+    - [x] Continued fraction method for the radial equation (translated from [duetosymmetry/qnm](https://github.com/duetosymmetry/qnm))
+    - [x] Cook-Zalutskiy spectral method for the angular sector (translated from [duetosymmetry/qnm](https://github.com/duetosymmetry/qnm))
     - [ ] Direct integration method for the radial equation
     - [x] Ultraspherical spectral method in hyperboloidal coordinates to determine the eigenfunction.
 
