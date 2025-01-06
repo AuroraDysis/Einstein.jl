@@ -52,6 +52,16 @@ function qnm_kerrnepδ(
     return SA[real(supp_err), imag(supp_err)]
 end
 
+"""
+    qnm_kerr(params::QNMKerrParams{TR}; alg=RobustMultiNewton(autodiff=AutoFiniteDiff()), kwargs...)
+
+Find the Kerr QNM using the Leaver's method for the radial equation and the Cook-Zalutskiy approach for the angular sector.
+
+# Arguments
+- `params`: QNMKerrParams object containing the Kerr parameters and initial guess
+- `alg`: Nonlinear algorithm to use for the eigenvalue search (default: RobustMultiNewton with AutoFiniteDiff)
+- `kwargs`: Additional keyword arguments to pass to the nonlinear solver
+"""
 function qnm_kerr(
     params::QNMKerrParams{TR},
     alg::Union{AbstractNonlinearAlgorithm,Nothing}=RobustMultiNewton(;

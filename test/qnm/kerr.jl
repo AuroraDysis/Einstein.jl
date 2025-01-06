@@ -9,8 +9,8 @@
     ω = 0.532600243551018 - 0.08079287315500905im
     tol = 1e-12
 
-    cache = qnm_kerrchebnep_cache(Float64, a, s, m, n)
-    δ = qnm_kerrchebnep_step!(cache, ω, l)
+    cache = qnm_kerr_chebnep_cache(Float64, a, s, m, n)
+    δ = qnm_kerr_chebnep_step!(cache, ω, l)
 
     @test abs(δ) < tol
 end

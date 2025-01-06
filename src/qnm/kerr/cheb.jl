@@ -10,7 +10,7 @@
 end
 
 """
-    qnm_kerrchebnep_cache(::Type{TR}, a, s, m, n; ρ_min=0, ρ_max=1, lo_bc=BCType.Natural, hi_bc=BCType.Natural)
+    qnm_kerr_chebnep_cache(::Type{TR}, a, s, m, n; ρ_min=0, ρ_max=1, lo_bc=BCType.Natural, hi_bc=BCType.Natural)
 
 Initialize the cache for Kerr QNM nonlinear eigenvalue problem using Ultraspherical spectral method.
 
@@ -31,7 +31,7 @@ Initialize the cache for Kerr QNM nonlinear eigenvalue problem using Ultraspheri
 # References
 - [Ripley:2022ypi](@citet*)
 """
-function qnm_kerrchebnep_cache(
+function qnm_kerr_chebnep_cache(
     ::Type{TR},
     a::TR,
     s::Integer,
@@ -92,7 +92,7 @@ function qnm_kerrchebnep_cache(
 end
 
 """
-    qnm_kerrchebnep_step!(cache, ω, l; l_max=20)
+    qnm_kerr_chebnep_step!(cache, ω, l; l_max=20)
 
 Perform one iteration step in the QNM eigenvalue search.
 
@@ -105,7 +105,7 @@ Perform one iteration step in the QNM eigenvalue search.
 # Returns
 - Difference between the seperation constant between the radial and angular equations
 """
-function qnm_kerrchebnep_step!(
+function qnm_kerr_chebnep_step!(
     cache::QNMKerrChebNEPCache{TR}, ω::Complex{TR}, l::Integer; l_max::Integer=20
 ) where {TR<:AbstractFloat}
     @unpack_QNMKerrChebNEPCache cache
@@ -124,4 +124,4 @@ function qnm_kerrchebnep_step!(
 end
 
 export QNMKerrChebNEPCache, @unpack_QNMKerrChebNEPCache
-export qnm_kerrchebnep_cache, qnm_kerrchebnep_step!
+export qnm_kerr_chebnep_cache, qnm_kerr_chebnep_step!
