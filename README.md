@@ -23,14 +23,28 @@ When solving GR PDEs in spherical symmetry or even axisymmetry, the requirements
 
 - **Spherical Symmetry**
 
-  - [ ] Regge-Wheeler-Zerilli equation in hyperboloidal, Kerr-Schild, and tortoise coordinates
-  - [ ] Klein-Gordon equation in hyperboloidal, Kerr-Schild, and tortoise coordinates
-  - [ ] Einstein equations with a scalar field using the Z4 formulation
+  - [ ] Regge-Wheeler-Zerilli equation
+    - [ ] Hyperboloidal coordinates
+    - [ ] Kerr-Schild coordinates
+    - [ ] Tortoise coordinates
+  - [ ] Klein-Gordon equation
+    - [ ] Hyperboloidal coordinates
+    - [ ] Kerr-Schild coordinates
+    - [ ] Tortoise coordinates
+  - [ ] Einstein equations with a scalar field
+    - [ ] Z4 formulation
+    - [ ] Hyperboloidal coordinates
 
 - **Axisymmetry**
 
-  - [ ] Teukolsky equation in hyperboloidal, Kerr-Schild, and tortoise coordinates
-  - [ ] Klein-Gordon equation in hyperboloidal, Kerr-Schild, and tortoise coordinates
+  - [ ] Teukolsky equation
+    - [ ] Hyperboloidal coordinates
+    - [ ] Kerr-Schild coordinates
+    - [ ] Tortoise coordinates
+  - [ ] Klein-Gordon equation
+    - [ ] Hyperboloidal coordinates
+    - [ ] Kerr-Schild coordinates
+    - [ ] Tortoise coordinates
 
 - **Quasinormal Modes**
   - [ ] Compute quasinormal modes for the Schwarzschild black hole using the Regge-Wheeler-Zerilli equation.

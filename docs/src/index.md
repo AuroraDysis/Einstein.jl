@@ -22,20 +22,40 @@ When solving GR PDEs in spherical symmetry or even axisymmetry, the requirements
 
 - **Spherical Symmetry**
 
-  - [ ] Regge-Wheeler-Zerilli equation in hyperboloidal, Kerr-Schild, and tortoise coordinates
-  - [ ] Klein-Gordon equation in hyperboloidal, Kerr-Schild, and tortoise coordinates
-  - [ ] Einstein equations with a scalar field using the Z4 formulation
+  - [ ] Regge-Wheeler-Zerilli equation
+    - [ ] Hyperboloidal coordinates
+    - [ ] Kerr-Schild coordinates
+    - [ ] Tortoise coordinates
+  - [ ] Klein-Gordon equation
+    - [ ] Hyperboloidal coordinates
+    - [ ] Kerr-Schild coordinates
+    - [ ] Tortoise coordinates
+  - [ ] Einstein equations with a scalar field
+    - [ ] Z4 formulation
+    - [ ] Hyperboloidal coordinates
 
 - **Axisymmetry**
 
-  - [ ] Teukolsky equation in hyperboloidal, Kerr-Schild, and tortoise coordinates
-  - [ ] Klein-Gordon equation in hyperboloidal, Kerr-Schild, and tortoise coordinates
+  - [ ] Teukolsky equation
+    - [ ] Hyperboloidal coordinates
+    - [ ] Kerr-Schild coordinates
+    - [ ] Tortoise coordinates
+  - [ ] Klein-Gordon equation
+    - [ ] Hyperboloidal coordinates
+    - [ ] Kerr-Schild coordinates
+    - [ ] Tortoise coordinates
 
 - **Quasinormal Modes**
   - [ ] Compute quasinormal modes for the Schwarzschild black hole using the Regge-Wheeler-Zerilli equation.
     - [ ] Continued fraction method to determine the eigenvalue
     - [x] Ultraspherical spectral method in hyperboloidal coordinates to determine the eigenfunction.
-  - [ ] Compute quasinormal modes for the Teukolsky equation using the continued fraction method. Apply the Cook-Zalutskiy spectral approach for the angular sector to determine the eigenvalue and the ultraspherical spectral method in hyperboloidal coordinates to determine the eigenfunction.
+    - [x] Dolan and Ottewill Regge poles expansion method
+    - [ ] WKB approximation
+    - [ ] Direct integration method
+  - [x] Compute quasinormal modes for the Teukolsky equation using the continued fraction method. Apply the Cook-Zalutskiy spectral approach for the angular sector to determine the eigenvalue and the ultraspherical spectral method in hyperboloidal coordinates to determine the eigenfunction.
+    - [x] Continued fraction method for the radial equation
+    - [ ] Direct integration method for the radial equation
+    - [x] Ultraspherical spectral method in hyperboloidal coordinates to determine the eigenfunction.
 
 `GRSuite.jl` currently includes utilities for the following numerical methods:
 
@@ -49,6 +69,7 @@ When solving GR PDEs in spherical symmetry or even axisymmetry, the requirements
   - [ ] Ultraspherical rectangular collocation
 - **Quasinormal Mode Computation**
   - [x] Modified Lentz method for continued fractions
+  - [ ] WKB approximation for general potentials
 - **General Utilities**
   - [x] Correctly rounded floating-point dot/sum using [xsum](https://arxiv.org/abs/1505.05571) or [Kahan summation](https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
   - [x] Spin-weighted spheroidal harmonics using the Cook-Zalutskiy spectral method
@@ -65,8 +86,14 @@ This package is inspired by the following projects, and some of the algorithms a
 - [SciML/MethodOfLines.jl](https://github.com/SciML/MethodOfLines.jl)
 - [Neal/xsum](https://gitlab.com/radfordneal/xsum)
 - [JuliaMath/KahanSummation.jl](https://github.com/JuliaMath/KahanSummation.jl)
+- [tomtrogdon/URCMethod.jl](https://github.com/tomtrogdon/URCMethod.jl)
 
 The author would like to thank the developers of these projects for their contributions to the scientific computing community.
+
+## Other Related Projects
+
+- [lucass-carneiro/QuasinormalModes.jl: A Julia package for computing discrete eigenvalues of second-order ODEs](https://github.com/lucass-carneiro/QuasinormalModes.jl): This package focuses on computing quasinormal modes using the `Asymptotic Iteration Method`. However, as far as I know, no one has proven that the `Asymptotic Iteration Method` is guaranteed to converge. So why not use more reliable methods? In any case, it is good to have one more method to compare against.
+- [JLRipley314/TeukolskyQNMFunctions.jl: Computes quasinormal modes and eigenfunctions of the Teukolsky equation in HPHC coordinates.](https://github.com/JLRipley314/TeukolskyQNMFunctions.jl): Justin Ripley has developed a package that computes the quasinormal modes of the Teukolsky equation based on his own paper. We also follow his paper for the Teukolsky equation in hyperboloidal coordinates.
 
 ```@index
 ```
