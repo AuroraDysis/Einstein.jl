@@ -45,21 +45,19 @@ function qnm_kerr_chebnep_cache(
     # use M = 1 unit
     M = one(TR)
 
-    dom = zero(TR) .. one(TR)
+    dom = ρ_min .. ρ_max
     chebSpace = Chebyshev(dom)
     ultraSpace = Ultraspherical(2, dom)
     conversion = Conversion(chebSpace, ultraSpace)
     conversionA1 = Conversion(Ultraspherical(1, dom), ultraSpace)
 
-    ρn = Fun(chebSpace)
-    ρ = ρn * (ρ_max - ρ_min) + ρ_min
-    c02 = -ρ^2 * (1 - 2 * M * ρ + a^2 * ρ^2) / (ρ_max - ρ_min)^2
-    c01 =
-        -2 * ρ * (1 + s - (1im * a * m + M * (3 + s)) * ρ + 2 * a^2 * ρ^2) / (ρ_max - ρ_min)
+    ρ = Fun(chebSpace)
+    c02 = -ρ^2 * (1 - 2 * M * ρ + a^2 * ρ^2)
+    c01 = -2 * ρ * (1 + s - (1im * a * m + M * (3 + s)) * ρ + 2 * a^2 * ρ^2)
     c00 = 2 * ρ * (1im * a * m + M * (1 + s) - a^2 * ρ)
     A0c = (c02 * 𝒟^2 + c01 * 𝒟 + c00):chebSpace
 
-    c11 = 2im * (1 + ρ^2 * (-8 * M^2 + a^2 * (1 + 4 * M * ρ))) / (ρ_max - ρ_min)
+    c11 = 2im * (1 + ρ^2 * (-8 * M^2 + a^2 * (1 + 4 * M * ρ)))
     c10 =
         2im * a^2 * ρ * (1 + 6 * M * ρ) +
         2 * a * m * (1 + 4 * M * ρ) +
