@@ -73,3 +73,8 @@ This package is inspired by the following projects, and some of the algorithms a
 - [JuliaMath/KahanSummation.jl](https://github.com/JuliaMath/KahanSummation.jl)
 
 The author would like to thank the developers of these projects for their contributions to the scientific computing community.
+
+## Other Related Projects
+
+- [lucass-carneiro/QuasinormalModes.jl: A Julia package for computing discrete eigenvalues of second-order ODEs](https://github.com/lucass-carneiro/QuasinormalModes.jl): This package focuses on computing quasinormal modes using the `Asymptotic Iteration Method`. However, as far as I know, no one has proven that the `Asymptotic Iteration Method` is guaranteed to converge. So why not use more reliable methods? In any case, it is good to have one more method to compare against.
+- [JLRipley314/TeukolskyQNMFunctions.jl: Computes quasinormal modes and eigenfunctions of the Teukolsky equation in HPHC coordinates.](https://github.com/JLRipley314/TeukolskyQNMFunctions.jl): Justin Ripley has developed a package that computes the quasinormal modes of the Teukolsky equation based on his own paper. We also follow his paper for the Teukolsky equation in hyperboloidal coordinates.
