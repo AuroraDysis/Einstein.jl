@@ -1,5 +1,5 @@
 @testitem "qnm_schw_chebnep" begin
-    using GRSuite, Test, NonlinearEigenproblems
+    using LinearAlgebra, GRSuite, Test
 
     s = ℓ = 2
     n = 80
@@ -7,14 +7,19 @@
     tol = 1e-14
 
     @testset "ReggeWheeler" begin
-        nep = qnm_schw_chebnep(Float64, s, ℓ, n, SchwPType.ReggeWheeler)
-        λ, v = polyeig(nep)
-        @test isapprox(λ[1], ω, atol=tol)
+        pep = qnm_schw_chebnep(Float64, s, ℓ, n, SchwPType.ReggeWheeler)
+        A, E = qnm_polyeig(ComplexF64, pep)
+        # Ax = λEx
+        λ = eigvals!(A, E; sortby=abs)
+        λclosest = argmin(x -> abs(x - ω), λ)
+        @test isapprox(λclosest, ω, atol=tol)
     end
 
     @testset "Zerilli" begin
-        nep = qnm_schw_chebnep(Float64, s, ℓ, n, SchwPType.Zerilli)
-        λ, v = polyeig(nep)
-        @test isapprox(λ[1], ω, atol=tol)
+        pep = qnm_schw_chebnep(Float64, s, ℓ, n, SchwPType.Zerilli)
+        A, E = qnm_polyeig(ComplexF64, pep)
+        λ = eigvals!(A, E; sortby=abs)
+        λclosest = argmin(x -> abs(x - ω), λ)
+        @test isapprox(λclosest, ω, atol=tol)
     end
 end

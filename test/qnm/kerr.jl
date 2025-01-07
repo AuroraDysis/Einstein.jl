@@ -1,4 +1,4 @@
-@testitem "qnm_kerrchebnep" begin
+@testitem "qnm_kerr_chebnep" begin
     using GRSuite, Test
 
     a = 0.7
@@ -13,6 +13,26 @@
     δ = qnm_kerr_chebnep_step!(cache, ω, l)
 
     @test abs(δ) < tol
+end
+
+@testitem "qnm_kerr_di" begin
+    using StaticArrays, GRSuite, Test
+
+    a = 0.7
+    s = 2
+    l = 2
+    m = 2
+    ω = 0.532600243551018 - 0.08079287315500905im
+    A = 1.096833018126064 - 0.18315825271747035im
+    tol = 1e-12
+    T = Float64
+
+    params = QNMKerrDIParams{T}(a=a, s=s, m=m, ω_guess=ω)
+    cache = QNMKerrDICache{T}(params, ω, A)
+    δ = qnm_kerr_di_δ(SA[real(ω), imag(ω)], cache)
+
+    @test abs(δ[1]) < tol
+    @test abs(δ[2]) < tol
 end
 
 @testitem "qnm_kerr" begin

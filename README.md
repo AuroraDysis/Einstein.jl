@@ -56,7 +56,7 @@ When solving GR PDEs in spherical symmetry or even axisymmetry, the requirements
   - [x] Compute quasinormal modes for the Kerr black hole using the Teukolsky equation.
     - [x] Continued fraction method for the radial equation (translated from [duetosymmetry/qnm](https://github.com/duetosymmetry/qnm))
     - [x] Cook-Zalutskiy spectral method for the angular sector (translated from [duetosymmetry/qnm](https://github.com/duetosymmetry/qnm))
-    - [ ] Direct integration method for the radial equation
+    - [x] Direct integration method for the radial equation
     - [x] Ultraspherical spectral method in hyperboloidal coordinates to determine the eigenfunction.
 
 `GRSuite.jl` currently includes utilities for the following numerical methods:

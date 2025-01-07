@@ -114,9 +114,9 @@ function qnm_kerr_chebnep_step!(
     evals = eigvals!(Lm, An; sortby=abs)
 
     Ac_idx = sws_eigvalidx(s, l, m)
-    Ac = sws_eigvals(TR, s, c, m, l_max)[Ac_idx]
+    Ac = -sws_eigvals(TR, s, c, m, l_max)[Ac_idx]
 
-    δ = -argmin(vi -> abs(-vi - Ac), evals) - Ac
+    δ = argmin(vi -> abs(vi - Ac), evals) - Ac
 
     return δ
 end

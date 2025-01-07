@@ -1,5 +1,6 @@
 include("radial.jl")
 include("cheb.jl")
+include("di.jl")
 
 @with_kw struct QNMKerrParams{TR<:AbstractFloat}
     a::TR
@@ -13,7 +14,7 @@ include("cheb.jl")
     l_max::Integer = l + 20
     cf_N_min::Integer = 300
     cf_N_max::Integer = 100000
-    cf_tol::TR = typetol(typeof(a))
+    cf_tol::TR = typetol(TR)
 end
 
 struct QNMKerrCache{TR<:AbstractFloat}
@@ -30,7 +31,7 @@ struct QNMKerrCache{TR<:AbstractFloat}
     end
 end
 
-function qnm_kerrnepδ(
+function qnm_kerrnep_δ(
     x::SVector{2,TR}, cache::QNMKerrCache{TR}
 )::SVector{2,TR} where {TR<:AbstractFloat}
     @unpack_QNMKerrParams cache.params
@@ -73,11 +74,11 @@ function qnm_kerr(
 
     cache = QNMKerrCache{TR}(params)
     ω0 = SA[real(ω_guess), imag(ω_guess)]
-    prob = NonlinearProblem(qnm_kerrnepδ, ω0, cache)
+    prob = NonlinearProblem(qnm_kerrnep_δ, ω0, cache)
 
     sol = solve(prob, alg, kwargs...)
     ω = sol.u[1] + im * sol.u[2]
     return ω
 end
 
-export QNMKerrParams, QNMKerrCache, qnm_kerrnepδ, qnm_kerr
+export QNMKerrParams, QNMKerrCache, qnm_kerrnep_δ, qnm_kerr, @unpack_QNMKerrParams
