@@ -1,4 +1,4 @@
-@with_kw struct QNMKerrChebNEPCache{TR<:AbstractFloat}
+@with_kw struct QNMKerrRadialChebCache{TR<:AbstractFloat}
     a::TR # black hole spin
     s::Integer # spin weight of the field
     m::Integer # azimuthal mode number
@@ -10,7 +10,7 @@
 end
 
 """
-    qnm_kerr_chebnep_cache(::Type{TR}, a, s, m, n; ρ_min=0, ρ_max=1, lo_bc=BCType.Natural, hi_bc=BCType.Natural)
+    qnm_kerr_radial_cheb_cache(::Type{TR}, a, s, m, n; ρ_min=0, ρ_max=1, lo_bc=BCType.Natural, hi_bc=BCType.Natural)
 
 Initialize the cache for Kerr QNM nonlinear eigenvalue problem using Ultraspherical spectral method.
 
@@ -26,12 +26,12 @@ Initialize the cache for Kerr QNM nonlinear eigenvalue problem using Ultraspheri
 - `hi_bc`: Boundary condition at ρ_max (default: Natural) - not implemented yet
 
 # Returns
-- `QNMKerrChebNEPCache` object containing pre-computed matrices
+- `QNMKerrRadialChebCache` object containing pre-computed matrices
 
 # References
 - [Ripley:2022ypi](@citet*)
 """
-function qnm_kerr_chebnep_cache(
+function qnm_kerr_radial_cheb_cache(
     ::Type{TR},
     a::TR,
     s::Integer,
@@ -84,18 +84,18 @@ function qnm_kerr_chebnep_cache(
         throw(ArgumentError("hi_bc not implemented yet"))
     end
 
-    return QNMKerrChebNEPCache{TR}(;
+    return QNMKerrRadialChebCache{TR}(;
         a=a, s=s, m=m, A0=A0m, A1=A1m, A2=A2m, An=Anm, Lm=Matrix{Complex{TR}}(undef, n, n)
     )
 end
 
 """
-    qnm_kerr_chebnep_step!(cache, ω, l; l_max=20)
+    qnm_kerr_radial_cheb_step!(cache, ω, l; l_max=20)
 
 Perform one iteration step in the QNM eigenvalue search.
 
 # Arguments
-- `cache`: Pre-computed QNMKerrChebNEPCache object
+- `cache`: Pre-computed QNMKerrRadialChebCache object
 - `ω`: Current frequency guess
 - `l`: Angular mode number
 - `l_max`: Maximum l value for angular eigenvalue calculation (default: 20)
@@ -103,10 +103,10 @@ Perform one iteration step in the QNM eigenvalue search.
 # Returns
 - Difference between the seperation constant between the radial and angular equations
 """
-function qnm_kerr_chebnep_step!(
-    cache::QNMKerrChebNEPCache{TR}, ω::Complex{TR}, l::Integer; l_max::Integer=20
+function qnm_kerr_radial_cheb_step!(
+    cache::QNMKerrRadialChebCache{TR}, ω::Complex{TR}, l::Integer; l_max::Integer=20
 ) where {TR<:AbstractFloat}
-    @unpack_QNMKerrChebNEPCache cache
+    @unpack_QNMKerrRadialChebCache cache
 
     c = a * ω
     ω2 = ω^2
@@ -121,5 +121,5 @@ function qnm_kerr_chebnep_step!(
     return δ
 end
 
-export QNMKerrChebNEPCache, @unpack_QNMKerrChebNEPCache
-export qnm_kerr_chebnep_cache, qnm_kerr_chebnep_step!
+export QNMKerrRadialChebCache, @unpack_QNMKerrRadialChebCache
+export qnm_kerr_radial_cheb_cache, qnm_kerr_radial_cheb_step!

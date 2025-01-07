@@ -1,4 +1,4 @@
-function qnm_kerr_di_horizon_series(
+function qnm_kerr_radial_di_horizon_series(
     s::Integer, ρ::T, a::T, m::Integer, ω::Complex{T}, A::Complex{T}, series_order::Integer
 ) where {T<:AbstractFloat}
     # h[0] = 1, h[-1] (ρ - ρh) = 0, h[-2] (ρ - ρh)^2 = 0
@@ -67,7 +67,7 @@ function qnm_kerr_di_horizon_series(
     return SA[R0, dR0]
 end
 
-function qnm_kerr_di_inf_series(
+function qnm_kerr_radial_di_inf_series(
     s::Integer, ρ::T, a::T, m::Integer, ω::Complex{T}, A::Complex{T}, series_order::Integer
 ) where {T<:AbstractFloat}
     # h[0] = 1, h[-1] ρ = 0, h[-2] ρ^2 = 0
@@ -110,7 +110,7 @@ function qnm_kerr_di_inf_series(
     return SA[R0, dR0]
 end
 
-@with_kw struct QNMKerrDIParams{T<:AbstractFloat}
+@with_kw struct QNMKerrRadialDIParams{T<:AbstractFloat}
     a::T
     s::Integer
     m::Integer
@@ -126,16 +126,16 @@ end
     reltol = typetol(T)
 end
 
-mutable struct QNMKerrDICache{T<:AbstractFloat}
-    params::QNMKerrDIParams{T}
+mutable struct QNMKerrRadialDICache{T<:AbstractFloat}
+    params::QNMKerrRadialDIParams{T}
     ω::Complex{T}
     A::Complex{T}
 end
 
-function qnm_kerr_di_rhs(
-    u::SVector{2,Complex{T}}, cache::QNMKerrDICache{T}, ρ::T
+function qnm_kerr_radial_di_rhs(
+    u::SVector{2,Complex{T}}, cache::QNMKerrRadialDICache{T}, ρ::T
 ) where {T<:AbstractFloat}
-    @unpack_QNMKerrDIParams cache.params
+    @unpack_QNMKerrRadialDIParams cache.params
 
     ω = cache.ω
     A = cache.A
@@ -161,18 +161,18 @@ function qnm_kerr_di_rhs(
     return SA[dR, ddR]
 end
 
-function qnm_kerr_di_δ(
-    x::SVector{2,TR}, cache::QNMKerrDICache{TR}
+function qnm_kerr_radial_di_δ(
+    x::SVector{2,TR}, cache::QNMKerrRadialDICache{TR}
 )::SVector{2,Complex{TR}} where {TR<:AbstractFloat}
-    @unpack_QNMKerrDIParams cache.params
+    @unpack_QNMKerrRadialDIParams cache.params
 
     ω = Complex{TR}(x[1], x[2])
     cache.ω = ω
     A = cache.A
 
-    u0 = qnm_kerr_di_inf_series(s, ρ_min, a, m, ω, A, series_order)
+    u0 = qnm_kerr_radial_di_inf_series(s, ρ_min, a, m, ω, A, series_order)
     tspan = (ρ_min, ρ_max)
-    prob = ODEProblem(qnm_kerr_di_rhs, u0, tspan, cache)
+    prob = ODEProblem(qnm_kerr_radial_di_rhs, u0, tspan, cache)
 
     sol = solve(
         prob,
@@ -192,7 +192,7 @@ function qnm_kerr_di_δ(
             return sol_end
         else
             sol_end = sol.u[end]
-            sol_end_match = qnm_kerr_di_horizon_series(s, ρ_max, a, m, ω, A, series_order)
+            sol_end_match = qnm_kerr_radial_di_horizon_series(s, ρ_max, a, m, ω, A, series_order)
             δ = sol_end ./ sol_end[1] .- sol_end_match ./ sol_end_match[1]
             return δ
         end
@@ -203,10 +203,10 @@ function qnm_kerr_di_δ(
     end
 end
 
-export qnm_kerr_di_horizon_series,
-    qnm_kerr_di_inf_series,
-    qnm_kerr_di_rhs,
-    QNMKerrDICache,
-    QNMKerrDIParams,
-    @unpack_QNMKerrDIParams,
-    qnm_kerr_di_δ
+export qnm_kerr_radial_di_horizon_series,
+    qnm_kerr_radial_di_inf_series,
+    qnm_kerr_radial_di_rhs,
+    QNMKerrRadialDICache,
+    QNMKerrRadialDIParams,
+    @unpack_QNMKerrRadialDIParams,
+    qnm_kerr_radial_di_δ

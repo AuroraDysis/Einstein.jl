@@ -1,4 +1,4 @@
-@testitem "qnm_schw_chebnep" begin
+@testitem "qnm_schw_cheb" begin
     using LinearAlgebra, GRSuite, Test
 
     s = ℓ = 2
@@ -7,7 +7,7 @@
     tol = 1e-14
 
     @testset "ReggeWheeler" begin
-        pep = qnm_schw_chebnep(Float64, s, ℓ, n, SchwPType.ReggeWheeler)
+        pep = qnm_schw_cheb(Float64, s, ℓ, n, SchwPType.ReggeWheeler)
         A, E = qnm_polyeig(ComplexF64, pep)
         # Ax = λEx
         λ = eigvals!(A, E; sortby=abs)
@@ -16,7 +16,7 @@
     end
 
     @testset "Zerilli" begin
-        pep = qnm_schw_chebnep(Float64, s, ℓ, n, SchwPType.Zerilli)
+        pep = qnm_schw_cheb(Float64, s, ℓ, n, SchwPType.Zerilli)
         A, E = qnm_polyeig(ComplexF64, pep)
         λ = eigvals!(A, E; sortby=abs)
         λclosest = argmin(x -> abs(x - ω), λ)

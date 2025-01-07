@@ -45,7 +45,7 @@ function qnm_kerrnep_δ(
     evals_idx = sws_eigvalidx(s, l, m)
     A = evals[evals_idx]
 
-    inv_cf, cf_error, cf_iter = qnm_kerr_radial(TR, a, s, m, A, ω)
+    inv_cf, cf_error, cf_iter = qnm_kerr_radial_cf(TR, a, s, m, A, ω)
 
     pole_factors = prod(ω .- poles)
     supp_err = inv_cf / pole_factors

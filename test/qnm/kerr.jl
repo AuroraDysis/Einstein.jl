@@ -1,4 +1,4 @@
-@testitem "qnm_kerr_chebnep" begin
+@testitem "qnm_kerr_radial_cheb" begin
     using GRSuite, Test
 
     a = 0.7
@@ -9,13 +9,13 @@
     ω = 0.532600243551018 - 0.08079287315500905im
     tol = 1e-12
 
-    cache = qnm_kerr_chebnep_cache(Float64, a, s, m, n)
-    δ = qnm_kerr_chebnep_step!(cache, ω, l)
+    cache = qnm_kerr_radial_cheb_cache(Float64, a, s, m, n)
+    δ = qnm_kerr_radial_cheb_step!(cache, ω, l)
 
     @test abs(δ) < tol
 end
 
-@testitem "qnm_kerr_di" begin
+@testitem "qnm_kerr_radial_di" begin
     using StaticArrays, GRSuite, Test
 
     a = 0.7
@@ -27,9 +27,9 @@ end
     tol = 1e-12
     T = Float64
 
-    params = QNMKerrDIParams{T}(a=a, s=s, m=m, ω_guess=ω)
-    cache = QNMKerrDICache{T}(params, ω, A)
-    δ = qnm_kerr_di_δ(SA[real(ω), imag(ω)], cache)
+    params = QNMKerrRadialDIParams{T}(a=a, s=s, m=m, ω_guess=ω)
+    cache = QNMKerrRadialDICache{T}(params, ω, A)
+    δ = qnm_kerr_radial_di_δ(SA[real(ω), imag(ω)], cache)
 
     @test abs(δ[1]) < tol
     @test abs(δ[2]) < tol

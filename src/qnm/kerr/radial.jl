@@ -24,7 +24,7 @@ SOFTWARE.
 """
 
 @doc raw"""
-    qnm_kerr_radial(
+    qnm_kerr_radial_cf(
         ::Type{TR},
         a::TR,
         s::Integer,
@@ -100,7 +100,7 @@ with $\operatorname{Cf}(0 ; \mathrm{N}) \equiv \operatorname{Cf}(\mathrm{N})$ an
 - [Cook:2014cta](@citet*)
 - [qnm/qnm/radial.py at master · duetosymmetry/qnm](https://github.com/duetosymmetry/qnm/blob/master/qnm/radial.py)
 """
-function qnm_kerr_radial(
+function qnm_kerr_radial_cf(
     ::Type{TR},
     a::TR,
     s::Integer,
@@ -172,4 +172,4 @@ function qnm_kerr_radial(
     return inv_cf, error, iter
 end
 
-export qnm_kerr_radial
+export qnm_kerr_radial_cf
