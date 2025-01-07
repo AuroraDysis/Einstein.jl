@@ -79,27 +79,20 @@ function qnm_schw_cheb(
     A2m = Matrix(@view(A2[1:n, 1:n]))
 
     if lo_bc == BCType.Dirichlet && hi_bc == BCType.Dirichlet
-        # not test yet
-        # A0m[end - 1, 1:2:end] .= 1
-        # A0m[end - 1, 2:2:end] .= -1
-        # A0m[end, :] .= 1
-        # A1m[(end - 1):end, :] .= 0
-        # A2m[(end - 1):end, :] .= 0
-        throw(
-            ArgumentError(
-                "lo_bc is Dirichlet and hi_bc is Dirichlet is not implemented yet"
-            ),
-        )
+        # TODO: add tests for this case
+        A0m[end - 1, 1:2:end] .= 1
+        A0m[end - 1, 2:2:end] .= -1
+        A0m[end, :] .= 1
+        A1m[(end - 1):end, :] .= 0
+        A2m[(end - 1):end, :] .= 0
     elseif lo_bc == BCType.Dirichlet && hi_bc == BCType.Natural
-        # not test yet
-        # A0m[end, 1:2:end] .= 1
-        # A0m[end, 2:2:end] .= -1
-        # A1m[end, :] .= 0
-        # A2m[end, :] .= 0
-        throw(
-            ArgumentError("lo_bc is Dirichlet and hi_bc is Natural is not implemented yet")
-        )
+        # TODO: add tests for this case
+        A0m[end, 1:2:end] .= 1
+        A0m[end, 2:2:end] .= -1
+        A1m[end, :] .= 0
+        A2m[end, :] .= 0
     elseif lo_bc == BCType.Natural && hi_bc == BCType.Dirichlet
+        # TODO: add tests for this case
         A0m[end, :] .= 1
         A1m[end, :] .= 0
         A2m[end, :] .= 0
