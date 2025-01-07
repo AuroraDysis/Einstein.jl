@@ -5,7 +5,7 @@
     m::Integer
     n::Integer = 0
     ω_guess::Complex{TR}
-    A_guess::Complex{TR} = sws_A0(s, l)
+    A_guess::Union{Complex{TR},Nothing} = nothing
     poles::Vector{Complex{TR}} = []
     l_max::Integer = l + 20
     cf_N_min::Integer = 300
@@ -205,15 +205,19 @@ function qnm_kerr_cf_δ!(
     ωvec::SVector{2,TR}, cache::QNMKerrCFCache{TR}
 )::SVector{2,TR} where {TR<:AbstractFloat}
     @unpack_QNMKerrCFParams cache.params
-    M = cache.M
 
     ω = ωvec[1] + im * ωvec[2]
-    c = a * ω
 
+    M = cache.M
+    c = a * ω
     sws_eigM!(M, s, c, m, l_max)
     A_vals = eigvals!(M; sortby=abs)
-    A_idx = sws_eigvalidx(s, l, m)
-    A = A_vals[A_idx]
+    if isnothing(A_guess)
+        A_idx = sws_eigvalidx(s, l, m)
+        A = A_vals[A_idx]
+    else
+        A = argmin(vi -> abs(vi - A_guess), A_vals)
+    end
 
     inv_cf, cf_error, cf_iter = qnm_kerr_radial_cf(TR, a, s, m, A, ω)
 

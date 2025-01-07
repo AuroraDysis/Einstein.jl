@@ -1,29 +1,29 @@
-@with_kw struct QNMKerrDIParams{T<:AbstractFloat}
-    a::T
+@with_kw struct QNMKerrDIParams{TR<:AbstractFloat}
+    a::TR
     s::Integer
     l::Integer
     m::Integer
     n::Integer
-    ω_guess::Complex{T}
-    A_guess::Complex{T} = sws_A0(s, m)
-    ρ_min::T = T(1//100)
-    ρ_max::T = one(T) / (1 + sqrt(1 - a^2)) - T(1//100)
+    ω_guess::Complex{TR}
+    A_guess::Union{Complex{TR},Nothing} = nothing
+    ρ_min::TR = TR(1//100)
+    ρ_max::TR = one(TR) / (1 + sqrt(1 - a^2)) - TR(1//100)
     odealg::AbstractODEAlgorithm = Vern9()
     lo_bc::BCType.T = BCType.Natural
     hi_bc::BCType.T = BCType.Natural
     series_order::Integer = 200
-    abstol = typetol(T)
-    reltol = typetol(T)
+    abstol = typetol(TR)
+    reltol = typetol(TR)
     l_max::Integer = l + 20
 end
 
-struct QNMKerrDICache{T<:AbstractFloat}
-    params::QNMKerrDIParams{T}
-    ω::Base.RefValue{Complex{T}}
-    Λ::Base.RefValue{Complex{T}}
-    M::AbstractMatrix{Complex{T}}
+struct QNMKerrDICache{TR<:AbstractFloat}
+    params::QNMKerrDIParams{TR}
+    ω::Base.RefValue{Complex{TR}}
+    Λ::Base.RefValue{Complex{TR}}
+    M::AbstractMatrix{Complex{TR}}
 
-    function QNMKerrDICache{T}(params::QNMKerrDIParams{T}) where {T<:AbstractFloat}
+    function QNMKerrDICache{TR}(params::QNMKerrDIParams{TR}) where {TR<:AbstractFloat}
         @unpack_QNMKerrDIParams params
 
         ω = Ref{ComplexF64}()
@@ -31,53 +31,53 @@ struct QNMKerrDICache{T<:AbstractFloat}
 
         l_min = sws_l_min(s, m)
         l_size = l_max - l_min + 1
-        M = zeros(Complex{T}, l_size, l_size)
+        M = zeros(Complex{TR}, l_size, l_size)
 
-        return new{T}(params, ω, Λ, M)
+        return new{TR}(params, ω, Λ, M)
     end
 end
 
 @doc raw"""
     qnm_kerr_radial_di_horizon_series(
         s::Integer,
-        ρ::T,
-        a::T,
+        ρ::TR,
+        a::TR,
         m::Integer,
-        ω::Complex{T},
-        Λ::Complex{T},
+        ω::Complex{TR},
+        Λ::Complex{TR},
         series_order::Integer,
-    ) where {T<:AbstractFloat}
+    ) where {TR<:AbstractFloat}
 
 Calculate the series expansion of the radial equation at the horizon.
 
 # Arguments
 - `s::Integer`: spin weight of the field.
-- `ρ::T`: compactified radial coordinate.
-- `a::T`: black hole spin parameter.
+- `ρ::TR`: compactified radial coordinate.
+- `a::TR`: black hole spin parameter.
 - `m::Integer`: azimuthal mode number.
-- `ω::Complex{T}`: QNM frequency.
-- `Λ::Complex{T}`: separation constant.
+- `ω::Complex{TR}`: QNM frequency.
+- `Λ::Complex{TR}`: separation constant.
 - `series_order::Integer`: order of the series expansion.
 
 # Returns
-- `R0::Complex{T}`: value of the radial function.
-- `dR0::Complex{T}`: value of the radial derivative.
+- `R0::Complex{TR}`: value of the radial function.
+- `dR0::Complex{TR}`: value of the radial derivative.
 
 # References
 - [Ripley:2022ypi](@citet*)
 """
 function qnm_kerr_radial_di_horizon_series(
-    s::Integer, ρ::T, a::T, m::Integer, ω::Complex{T}, Λ::Complex{T}, series_order::Integer
-) where {T<:AbstractFloat}
+    s::Integer, ρ::TR, a::TR, m::Integer, ω::Complex{TR}, Λ::Complex{TR}, series_order::Integer
+) where {TR<:AbstractFloat}
     # h[0] = 1, h[-1] (ρ - ρh) = 0, h[-2] (ρ - ρh)^2 = 0
-    series_R_im1 = one(Complex{T})
-    series_R_im2 = zero(Complex{T})
-    series_R_im3 = zero(Complex{T})
+    series_R_im1 = one(Complex{TR})
+    series_R_im2 = zero(Complex{TR})
+    series_R_im3 = zero(Complex{TR})
 
-    R0 = one(Complex{T})
-    dR0 = zero(Complex{T})
+    R0 = one(Complex{TR})
+    dR0 = zero(Complex{TR})
 
-    ρh = one(T) / (1 + sqrt(1 - a^2))
+    ρh = one(TR) / (1 + sqrt(1 - a^2))
 
     ρmρh = ρ - ρh
     ρmρh2 = ρmρh * ρmρh
@@ -138,42 +138,42 @@ end
 @doc raw"""
     qnm_kerr_radial_di_inf_series(
         s::Integer,
-        ρ::T,
-        a::T,
+        ρ::TR,
+        a::TR,
         m::Integer,
-        ω::Complex{T},
-        Λ::Complex{T},
+        ω::Complex{TR},
+        Λ::Complex{TR},
         series_order::Integer,
-    ) where {T<:AbstractFloat}
+    ) where {TR<:AbstractFloat}
 
 Calculate the series expansion of the radial equation at the horizon.
 
 # Arguments
 - `s::Integer`: spin weight of the field.
-- `ρ::T`: compactified radial coordinate.
-- `a::T`: black hole spin parameter.
+- `ρ::TR`: compactified radial coordinate.
+- `a::TR`: black hole spin parameter.
 - `m::Integer`: azimuthal mode number.
-- `ω::Complex{T}`: QNM frequency.
-- `Λ::Complex{T}`: separation constant.
+- `ω::Complex{TR}`: QNM frequency.
+- `Λ::Complex{TR}`: separation constant.
 - `series_order::Integer`: order of the series expansion.
 
 # Returns
-- `R0::Complex{T}`: value of the radial function.
-- `dR0::Complex{T}`: value of the radial derivative.
+- `R0::Complex{TR}`: value of the radial function.
+- `dR0::Complex{TR}`: value of the radial derivative.
 
 # References
 - [Ripley:2022ypi](@citet*)
 """
 function qnm_kerr_radial_di_inf_series(
-    s::Integer, ρ::T, a::T, m::Integer, ω::Complex{T}, Λ::Complex{T}, series_order::Integer
-) where {T<:AbstractFloat}
+    s::Integer, ρ::TR, a::TR, m::Integer, ω::Complex{TR}, Λ::Complex{TR}, series_order::Integer
+) where {TR<:AbstractFloat}
     # h[0] = 1, h[-1] ρ = 0, h[-2] ρ^2 = 0
-    series_R_im1 = one(Complex{T})
-    series_R_im2 = zero(Complex{T})
-    series_R_im3 = zero(Complex{T})
+    series_R_im1 = one(Complex{TR})
+    series_R_im2 = zero(Complex{TR})
+    series_R_im3 = zero(Complex{TR})
 
-    R0 = one(Complex{T})
-    dR0 = zero(Complex{T})
+    R0 = one(Complex{TR})
+    dR0 = zero(Complex{TR})
 
     ρ2 = ρ * ρ
     ρ3 = ρ2 * ρ
@@ -209,24 +209,24 @@ end
 
 @doc raw"""
     qnm_kerr_radial_di_rhs(
-        u::SVector{2,Complex{T}},
-        cache::QNMKerrDICache{T},
-        ρ::T,
-    ) where {T<:AbstractFloat}
+        u::SVector{2,Complex{TR}},
+        cache::QNMKerrDICache{TR},
+        ρ::TR,
+    ) where {TR<:AbstractFloat}
 
 Calculate the right-hand side of the radial equation in hyperboloidal coordinates.
 
 # Arguments
-- `u::SVector{2,Complex{T}}`: radial function and its derivative.
-- `cache::QNMKerrDICache{T}`: cache object.
-- `ρ::T`: compactified radial coordinate.
+- `u::SVector{2,Complex{TR}}`: radial function and its derivative.
+- `cache::QNMKerrDICache{TR}`: cache object.
+- `ρ::TR`: compactified radial coordinate.
 
 # References
 - [Ripley:2022ypi](@citet*)
 """
 function qnm_kerr_radial_di_rhs(
-    u::SVector{2,Complex{T}}, cache::QNMKerrDICache{T}, ρ::T
-) where {T<:AbstractFloat}
+    u::SVector{2,Complex{TR}}, cache::QNMKerrDICache{TR}, ρ::TR
+) where {TR<:AbstractFloat}
     @unpack_QNMKerrDIParams cache.params
 
     ω = cache.ω[]
@@ -321,15 +321,18 @@ function qnm_kerr_di_δ!(
 )::SVector{2,TR} where {TR<:AbstractFloat}
     @unpack_QNMKerrDIParams cache.params
 
-    M = cache.M
-
     ω = Complex{TR}(ωvec[1], ωvec[2])
 
+    M = cache.M
     c = a * ω
     sws_eigM!(M, s, c, m, l_max)
     A_vals = eigvals!(M; sortby=abs)
-    A_idx = sws_eigvalidx(s, l, m)
-    A = A_vals[A_idx]
+    if isnothing(A_guess)
+        A_idx = sws_eigvalidx(s, l, m)
+        A = A_vals[A_idx]
+    else
+        A = argmin(vi -> abs(vi - A_guess), A_vals)
+    end
 
     Λ = -A
 

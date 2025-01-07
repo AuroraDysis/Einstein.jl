@@ -6,7 +6,7 @@
     n::Integer
     cheb_n::Integer
     ω_guess::Complex{TR}
-    A_guess::Complex{TR} = sws_A0(s, l)
+    A_guess::Union{Complex{TR},Nothing} = nothing
     l_max::Integer = l + 20
     ρ_min::TR = zero(TR)
     ρ_max::TR = one(TR)
@@ -110,8 +110,12 @@ function qnm_kerr_cheb_δ!(
     c = a * ω
     sws_eigM!(M, s, c, m, l_max)
     A_vals = eigvals!(M; sortby=abs)
-    A_idx = sws_eigvalidx(s, l, m)
-    A = A_vals[A_idx]
+    if isnothing(A_guess)
+        A_idx = sws_eigvalidx(s, l, m)
+        A = A_vals[A_idx]
+    else
+        A = argmin(vi -> abs(vi - A_guess), A_vals)
+    end
 
     Λ = -A
     δ = argmin(vi -> abs(vi - Λ), Λ_vals) - Λ
