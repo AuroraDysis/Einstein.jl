@@ -51,7 +51,7 @@ function fdm_hermite(::Type{T}, der_order::Integer, acc_order::Integer) where {T
     num_coeffs = fdm_hermitenum(der_order, acc_order)
     num_side = div(num_coeffs - 1, 2)
     local_grid = collect(T, (-num_side):num_side)
-    return fdm_fornbergwts(der_order, zero(T), local_grid; dfdx=true)
+    return fdm_fornbergwts(der_order, zero(T), local_grid; hermite=true)
 end
 
 function fdm_hermite(der_order::TI, acc_order::TI) where {TI<:Integer}

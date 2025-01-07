@@ -33,7 +33,7 @@ using TestItems
     @testset "Hermite Finite Difference" begin
         # Test first derivative with function and derivative values
         x = [-1.0, 0.0, 1.0]
-        D, E = fdm_fornbergwts(1, 0.0, x; dfdx=true)
+        D, E = fdm_fornbergwts(1, 0.0, x; hermite=true)
 
         # Known weights for Hermite interpolation
         @test length(D) == length(x)  # Function value weights
@@ -41,7 +41,7 @@ using TestItems
         @test sum(D) ≈ 0.0 atol = 1e-14  # Consistency condition
 
         # Test second derivative with function and derivative values
-        D2, E2 = fdm_fornbergwts(2, 0.0, x; dfdx=true)
+        D2, E2 = fdm_fornbergwts(2, 0.0, x; hermite=true)
         @test sum(D2) ≈ 0.0 atol = 1e-14
     end
 
@@ -50,6 +50,6 @@ using TestItems
         @test_throws ArgumentError fdm_fornbergwts(2, 0.0, [0.0, 1.0])
 
         # Test insufficient points for Hermite interpolation
-        @test_throws ArgumentError fdm_fornbergwts(3, 0.0, [0.0, 1.0], dfdx=true)
+        @test_throws ArgumentError fdm_fornbergwts(3, 0.0, [0.0, 1.0], hermite=true)
     end
 end

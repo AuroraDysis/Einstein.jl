@@ -25,7 +25,7 @@ SOFTWARE.
 
 @doc raw"""
     fdm_fornbergwts([T=Float64], order::Integer, x0::Real, x::AbstractVector; 
-                             dfdx::Bool=false)
+                             hermite::Bool=false)
 
 Calculate finite difference weights for arbitrary-order derivatives using the Fornberg algorithm.
 Taken from [SciML/MethodOfLines.jl](https://github.com/SciML/MethodOfLines.jl).
@@ -35,27 +35,14 @@ Taken from [SciML/MethodOfLines.jl](https://github.com/SciML/MethodOfLines.jl).
 - `order`: Order of the derivative to approximate
 - `x0`: Point at which to approximate the derivative
 - `x`: Grid points to use in the approximation
-- `dfdx`: Whether to include first derivative values (Hermite finite differences)
+- `hermite`: Whether to include first derivative values (Hermite finite differences)
 
 # Returns
-If `dfdx == false`:
-- `Vector{T}`: Weights for function values
+If `hermite == false`:
+- `Vector{T}`: Weights for standard finite differences
 
-If `dfdx == true`:
-- `Tuple{Vector{T}, Vector{T}}`: Weights for (function values, derivative values)
-
-# Mathematical Background
-For a function f(x), the derivative approximation takes the form:
-
-If `dfdx == false` (standard finite differences):
-```math
-f^{(n)}(x_0) \approx \sum_{j=1}^N c_j f(x_j)
-```
-
-If `dfdx == true` (Hermite finite differences):
-```math
-f^{(n)}(x_0) \approx \sum_{j=1}^N [d_j f(x_j) + e_j f'(x_j)]
-```
+If `hermite == true`:
+- `Tuple{Vector{T}, Vector{T}}`: Weights for Hermite finite differences
 
 # Requirements
 - For standard finite differences: N > order
@@ -75,7 +62,7 @@ w = fdm_fornbergwts(2, 0.0, x)
 
 # Hermite finite difference for third derivative
 x = [-1.0, 0.0, 1.0]
-w_f, w_d = fdm_fornbergwts(3, 0.0, x, dfdx=true)
+w_f, w_d = fdm_fornbergwts(3, 0.0, x, hermite=true)
 ```
 
 # References
@@ -87,11 +74,11 @@ w_f, w_d = fdm_fornbergwts(3, 0.0, x, dfdx=true)
 - [precision - Numerical derivative and finite difference coefficients: any update of the Fornberg method? - Computational Science Stack Exchange](https://scicomp.stackexchange.com/questions/11249/numerical-derivative-and-finite-difference-coefficients-any-update-of-the-fornb)
 """
 function fdm_fornbergwts(
-    order::Integer, x0::T, x::AbstractVector{T}; dfdx::Bool=false
+    order::Integer, x0::T, x::AbstractVector{T}; hermite::Bool=false
 ) where {T<:Real}
     N = length(x)
-    @argcheck dfdx || N > order "Standard finite difference requires at least order + 1 points."
-    @argcheck !dfdx || N > div(order, 2) + 1 "Hermite finite difference requires at least order / 2 + 1 points."
+    @argcheck hermite || N > order "Standard finite difference requires at least order + 1 points."
+    @argcheck !hermite || N > div(order, 2) + 1 "Hermite finite difference requires at least order / 2 + 1 points."
 
     M = order
     c1 = one(T)
@@ -134,7 +121,7 @@ function fdm_fornbergwts(
     if order != 0
         _C[div(N, 2) + 1] -= sum(_C)
     end
-    if dfdx == false
+    if hermite == false
         return _C
     else
         A = x .- x'
