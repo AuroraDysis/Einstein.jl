@@ -119,6 +119,16 @@ function qnm_kerr_cheb_δ!(
     return SA[real(δ), imag(δ)]
 end
 
+"""
+    qnm_kerr_cheb(params::QNMKerrChebParams{TR}; alg=RobustMultiNewton(autodiff=AutoFiniteDiff()), kwargs...)
+
+Find the Kerr QNM using the Ultraspherical spectral method for the radial equation and the Cook-Zalutskiy approach for the angular sector.
+
+# Arguments
+- `params`: QNMKerrChebParams object containing the Kerr parameters and initial guess
+- `alg`: Nonlinear algorithm to use for the eigenvalue search (default: RobustMultiNewton with AutoFiniteDiff)
+- `kwargs`: Additional keyword arguments to pass to the nonlinear solver
+"""
 function qnm_kerr_cheb(
     params::QNMKerrChebParams{TR},
     alg::Union{AbstractNonlinearAlgorithm,Nothing}=RobustMultiNewton(;
