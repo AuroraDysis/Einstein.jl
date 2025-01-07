@@ -193,8 +193,8 @@ function sws_eigvals(
     ::Type{TR}, s::Integer, c::Complex{TR}, m::Integer, l_max::Integer
 ) where {TR<:AbstractFloat}
     M = sws_eigM(TR, s, c, m, l_max)
-    evals = eigvals!(M; sortby=abs)
-    return evals
+    A_vals = eigvals!(M; sortby=abs)
+    return A_vals
 end
 
 @inline function sws_eigvalidx(s::Integer, l::Integer, m::Integer)

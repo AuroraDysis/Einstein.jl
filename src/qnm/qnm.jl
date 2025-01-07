@@ -23,8 +23,11 @@ export BCType
 include("utils/contfrac.jl")
 include("utils/polyeig.jl")
 
-include("schw/schw.jl")
+include("schw/reggepole.jl")
+include("schw/cheb.jl")
 
-include("kerr/kerr.jl")
+include("kerr/cf.jl")
+include("kerr/cheb.jl")
+include("kerr/di.jl")
 
 end

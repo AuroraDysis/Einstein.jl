@@ -90,7 +90,7 @@ function qnm_kerr_radial_cheb_cache(
 end
 
 """
-    qnm_kerr_radial_cheb_step!(cache, ω, l; l_max=20)
+    qnm_kerr_cheb_δ!(cache, ω, l; l_max=20)
 
 Perform one iteration step in the QNM eigenvalue search.
 
@@ -103,7 +103,7 @@ Perform one iteration step in the QNM eigenvalue search.
 # Returns
 - Difference between the seperation constant between the radial and angular equations
 """
-function qnm_kerr_radial_cheb_step!(
+function qnm_kerr_cheb_δ!(
     cache::QNMKerrRadialChebCache{TR}, ω::Complex{TR}, l::Integer; l_max::Integer=20
 ) where {TR<:AbstractFloat}
     @unpack_QNMKerrRadialChebCache cache
@@ -111,15 +111,16 @@ function qnm_kerr_radial_cheb_step!(
     c = a * ω
     ω2 = ω^2
     @.. Lm = A0 + ω * A1 + ω2 * A2
-    evals = eigvals!(Lm, An; sortby=abs)
+    Λ_vals = eigvals!(Lm, An; sortby=abs)
 
-    Ac_idx = sws_eigvalidx(s, l, m)
-    Ac = -sws_eigvals(TR, s, c, m, l_max)[Ac_idx]
+    A_idx = sws_eigvalidx(s, l, m)
+    A = sws_eigvals(TR, s, c, m, l_max)[A_idx]
 
-    δ = argmin(vi -> abs(vi - Ac), evals) - Ac
+    Λ = -A
+    δ = argmin(vi -> abs(vi - Λ), Λ_vals) - Λ
 
     return δ
 end
 
 export QNMKerrRadialChebCache, @unpack_QNMKerrRadialChebCache
-export qnm_kerr_radial_cheb_cache, qnm_kerr_radial_cheb_step!
+export qnm_kerr_radial_cheb_cache, qnm_kerr_cheb_δ!

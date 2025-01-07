@@ -10,7 +10,7 @@
     tol = 1e-12
 
     cache = qnm_kerr_radial_cheb_cache(Float64, a, s, m, n)
-    δ = qnm_kerr_radial_cheb_step!(cache, ω, l)
+    δ = qnm_kerr_cheb_δ!(cache, ω, l)
 
     @test abs(δ) < tol
 end
@@ -23,19 +23,20 @@ end
     l = 2
     m = 2
     ω = 0.532600243551018 - 0.08079287315500905im
-    A = 1.096833018126064 - 0.18315825271747035im
+    A = -1.096833018126064 + 0.18315825271747035im
+    Λ = -A
     tol = 1e-12
     T = Float64
 
     params = QNMKerrRadialDIParams{T}(a=a, s=s, m=m, ω_guess=ω)
-    cache = QNMKerrRadialDICache{T}(params, ω, A)
+    cache = QNMKerrRadialDICache{T}(params, ω, Λ)
     δ = qnm_kerr_radial_di_δ(SA[real(ω), imag(ω)], cache)
 
     @test abs(δ[1]) < tol
     @test abs(δ[2]) < tol
 end
 
-@testitem "qnm_kerr" begin
+@testitem "qnm_kerr_cf" begin
     for TR in [Float64, BigFloat]
         a = parse(TR, "0.7")
         s = 2
@@ -83,9 +84,9 @@ end
         ]
         l_max = 20
         ω_pert = ω + rand(Complex{TR}) / 10
-        params = QNMKerrParams{TR}(; a=a, s=s, l=l, m=m, n=n, ω_guess=ω_pert, l_max=l_max)
+        params = QNMKerrCFParams{TR}(; a=a, s=s, l=l, m=m, n=n, ω_guess=ω_pert, l_max=l_max)
 
-        ωsol = qnm_kerr(params)
+        ωsol = qnm_kerr_cf(params)
 
         tol = typetol(TR)
         min_tol = 10^(-20)

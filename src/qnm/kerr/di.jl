@@ -1,5 +1,34 @@
+@doc raw"""
+    qnm_kerr_radial_di_horizon_series(
+        s::Integer,
+        ρ::T,
+        a::T,
+        m::Integer,
+        ω::Complex{T},
+        Λ::Complex{T},
+        series_order::Integer,
+    ) where {T<:AbstractFloat}
+
+Calculate the series expansion of the radial equation at the horizon.
+
+# Arguments
+- `s::Integer`: spin weight of the field.
+- `ρ::T`: compactified radial coordinate.
+- `a::T`: black hole spin parameter.
+- `m::Integer`: azimuthal mode number.
+- `ω::Complex{T}`: QNM frequency.
+- `Λ::Complex{T}`: separation constant.
+- `series_order::Integer`: order of the series expansion.
+
+# Returns
+- `R0::Complex{T}`: value of the radial function.
+- `dR0::Complex{T}`: value of the radial derivative.
+
+# References
+- [Ripley:2022ypi](@citet*)
+"""
 function qnm_kerr_radial_di_horizon_series(
-    s::Integer, ρ::T, a::T, m::Integer, ω::Complex{T}, A::Complex{T}, series_order::Integer
+    s::Integer, ρ::T, a::T, m::Integer, ω::Complex{T}, Λ::Complex{T}, series_order::Integer
 ) where {T<:AbstractFloat}
     # h[0] = 1, h[-1] (ρ - ρh) = 0, h[-2] (ρ - ρh)^2 = 0
     series_R_im1 = one(Complex{T})
@@ -18,8 +47,8 @@ function qnm_kerr_radial_di_horizon_series(
         coeff_im1 =
             (
                 2 * a * m + 4im * i * (-1 + i + 1im * a * m) -
-                1im * a^2 * (2 + i * (-5 + 5i - 2s) + 2s - A) * ρh +
-                2im * (1 + s - A + 8im * ω) +
+                1im * a^2 * (2 + i * (-5 + 5i - 2s) + 2s - Λ) * ρh +
+                2im * (1 + s - Λ + 8im * ω) +
                 2 *
                 (16i + a * (a - 2a * i + 6im * m + a * (6 - 12i - im * a * m + 2s) * ρh)) *
                 ω - im * (64 + a^4 * ρh - 2a^2 * (5 + 16ρh)) * ω^2
@@ -67,8 +96,37 @@ function qnm_kerr_radial_di_horizon_series(
     return SA[R0, dR0]
 end
 
+@doc raw"""
+    qnm_kerr_radial_di_inf_series(
+        s::Integer,
+        ρ::T,
+        a::T,
+        m::Integer,
+        ω::Complex{T},
+        Λ::Complex{T},
+        series_order::Integer,
+    ) where {T<:AbstractFloat}
+
+Calculate the series expansion of the radial equation at the horizon.
+
+# Arguments
+- `s::Integer`: spin weight of the field.
+- `ρ::T`: compactified radial coordinate.
+- `a::T`: black hole spin parameter.
+- `m::Integer`: azimuthal mode number.
+- `ω::Complex{T}`: QNM frequency.
+- `Λ::Complex{T}`: separation constant.
+- `series_order::Integer`: order of the series expansion.
+
+# Returns
+- `R0::Complex{T}`: value of the radial function.
+- `dR0::Complex{T}`: value of the radial derivative.
+
+# References
+- [Ripley:2022ypi](@citet*)
+"""
 function qnm_kerr_radial_di_inf_series(
-    s::Integer, ρ::T, a::T, m::Integer, ω::Complex{T}, A::Complex{T}, series_order::Integer
+    s::Integer, ρ::T, a::T, m::Integer, ω::Complex{T}, Λ::Complex{T}, series_order::Integer
 ) where {T<:AbstractFloat}
     # h[0] = 1, h[-1] ρ = 0, h[-2] ρ^2 = 0
     series_R_im1 = one(Complex{T})
@@ -83,7 +141,7 @@ function qnm_kerr_radial_di_inf_series(
     for i in 1:series_order
         coeff_im1 =
             im * (
-                2 * s - i * (-1 + i + 2s) - A +
+                2 * s - i * (-1 + i + 2s) - Λ +
                 2 * a * m * ω +
                 4im * s * ω +
                 (-16 + a^2) * ω^2
@@ -129,22 +187,39 @@ end
 mutable struct QNMKerrRadialDICache{T<:AbstractFloat}
     params::QNMKerrRadialDIParams{T}
     ω::Complex{T}
-    A::Complex{T}
+    Λ::Complex{T}
 end
 
+@doc raw"""
+    qnm_kerr_radial_di_rhs(
+        u::SVector{2,Complex{T}},
+        cache::QNMKerrRadialDICache{T},
+        ρ::T,
+    ) where {T<:AbstractFloat}
+
+Calculate the right-hand side of the radial equation in hyperboloidal coordinates.
+
+# Arguments
+- `u::SVector{2,Complex{T}}`: radial function and its derivative.
+- `cache::QNMKerrRadialDICache{T}`: cache object.
+- `ρ::T`: compactified radial coordinate.
+
+# References
+- [Ripley:2022ypi](@citet*)
+"""
 function qnm_kerr_radial_di_rhs(
     u::SVector{2,Complex{T}}, cache::QNMKerrRadialDICache{T}, ρ::T
 ) where {T<:AbstractFloat}
     @unpack_QNMKerrRadialDIParams cache.params
 
     ω = cache.ω
-    A = cache.A
+    Λ = cache.Λ
 
     R, dR = u
     ddR =
         (
             R * (
-                -A +
+                -Λ +
                 ω * (2a * m + 4im * s - 16ω + a^2 * ω) +
                 2a^2 * ρ^2 * (-1 + 6im * ω + 8ω^2) +
                 2ρ * (im + 4ω) * (-im * (1 + s) - 4ω + a * (m + a * ω))
@@ -161,16 +236,36 @@ function qnm_kerr_radial_di_rhs(
     return SA[dR, ddR]
 end
 
+@doc raw"""
+    qnm_kerr_radial_di_δ(
+        x::SVector{2,TR},
+        cache::QNMKerrRadialDICache{TR},
+    ) where {TR<:AbstractFloat}
+
+Integrate the radial equation from infinity (ρ_min) to the horizon (ρ_max) and calculate the difference compared to
+- series expansion at the horizon (Natural boundary condition)
+- 0 (Dirichlet boundary condition)
+
+# Arguments
+- `x::SVector{2,TR}`: real and imaginary parts of the QNM frequency.
+- `cache::QNMKerrRadialDICache{TR}`: cache object.
+
+# Returns
+- `δ::SVector{2,TR}`: real and imaginary parts of the difference.
+
+# References
+- [Ripley:2022ypi](@citet*)
+"""
 function qnm_kerr_radial_di_δ(
     x::SVector{2,TR}, cache::QNMKerrRadialDICache{TR}
-)::SVector{2,Complex{TR}} where {TR<:AbstractFloat}
+)::SVector{2,TR} where {TR<:AbstractFloat}
     @unpack_QNMKerrRadialDIParams cache.params
 
     ω = Complex{TR}(x[1], x[2])
     cache.ω = ω
-    A = cache.A
+    Λ = cache.Λ
 
-    u0 = qnm_kerr_radial_di_inf_series(s, ρ_min, a, m, ω, A, series_order)
+    u0 = qnm_kerr_radial_di_inf_series(s, ρ_min, a, m, ω, Λ, series_order)
     tspan = (ρ_min, ρ_max)
     prob = ODEProblem(qnm_kerr_radial_di_rhs, u0, tspan, cache)
 
@@ -188,13 +283,15 @@ function qnm_kerr_radial_di_δ(
         error("ODE solver failed")
     else
         if lo_bc == BCType.Dirichlet
-            sol_end = sol[end]
-            return sol_end
+            Rend = sol[end][1]
+            return SA[real(Rend), imag(Rend)]
         else
             sol_end = sol.u[end]
-            sol_end_match = qnm_kerr_radial_di_horizon_series(s, ρ_max, a, m, ω, A, series_order)
-            δ = sol_end ./ sol_end[1] .- sol_end_match ./ sol_end_match[1]
-            return δ
+            sol_end_match = qnm_kerr_radial_di_horizon_series(
+                s, ρ_max, a, m, ω, Λ, series_order
+            )
+            δ = sol_end[2] ./ sol_end[1] .- sol_end_match[2] ./ sol_end_match[1]
+            return SA[real(δ), imag(δ)]
         end
 
         if hi_bc != BCType.Natural
