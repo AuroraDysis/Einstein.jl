@@ -20,7 +20,7 @@ function fdm_integrate_simpson(f::AbstractVector{T}, dx::T) where {T<:AbstractFl
 end
 
 function fdm_integrate_trapezoidal(f::AbstractVector{T}, dx::T) where {T<:AbstractFloat}
-    @argcheck length(f) >= 2 "f must have at least 2 elements"
+    @argcheck length(f) >= 3 "f must have at least 3 elements"
 
     half = one(T) / 2
     @inbounds val = f[2]
