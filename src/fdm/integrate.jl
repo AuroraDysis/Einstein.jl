@@ -22,12 +22,11 @@ end
 function fdm_integrate_trapezoidal(f::AbstractVector{T}, dx::T) where {T<:AbstractFloat}
     @argcheck length(f) >= 3 "f must have at least 3 elements"
 
-    half = one(T) / 2
     @inbounds val = f[2]
     @inbounds @simd for i in 3:(length(f) - 1)
         val += f[i]
     end
-    @inbounds return dx * (val + half * (f[1] + f[end]))
+    @inbounds return dx * (val + (f[1] + f[end]) / 2)
 end
 
 export fdm_integrate_simpson, fdm_integrate_trapezoidal
