@@ -4,7 +4,9 @@
 Integrate a function `f` using Simpson's rule, given the grid spacing `dx`.
 """
 function fdm_integrate_simpson(f::AbstractVector{T}, dx::T) where {T<:AbstractFloat}
-    @inbounds retval =
+    @argcheck length(f) >= 4 "f must have at least 4 elements"
+
+    @inbounds val =
         (
             17 * (f[1] + f[end]) +
             59 * (f[2] + f[end - 1]) +
@@ -12,9 +14,20 @@ function fdm_integrate_simpson(f::AbstractVector{T}, dx::T) where {T<:AbstractFl
             49 * (f[4] + f[end - 3])
         ) / 48
     @inbounds @simd for i in 5:(length(f) - 4)
-        retval += f[i]
+        val += f[i]
     end
-    @inbounds return retval * dx
+    @inbounds return val * dx
 end
 
-export fdm_integrate_simpson
+function fdm_integrate_trapezoidal(f::AbstractVector{T}, dx::T) where {T<:AbstractFloat}
+    @argcheck length(f) >= 2 "f must have at least 2 elements"
+
+    half = one(T) / 2
+    @inbounds val = f[2]
+    @inbounds @simd for i in 3:(length(f) - 1)
+        val += f[i]
+    end
+    @inbounds return dx * (val + half * (f[1] + f[end]))
+end
+
+export fdm_integrate_simpson, fdm_integrate_trapezoidal
