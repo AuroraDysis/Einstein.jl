@@ -32,12 +32,14 @@ struct Cheb2InterpOp{TR<:AbstractFloat}
 end
 
 function (op::Cheb2InterpOp{TR})(
-    values::AbstractVector{TR}, x::TR
-) where {TR<:AbstractFloat}
+    values::AbstractVector{TRC}, x::TR
+) where {TR<:AbstractFloat,TRC<:Union{TR,Complex{TR}}}
     return bary(op.weights, op.nodes, values, x)
 end
 
-function cheb2_interp(values::AbstractVector{TR}, x::TR) where {TR<:AbstractFloat}
+function cheb2_interp(
+    values::AbstractVector{TRC}, x::TR
+) where {TR<:AbstractFloat,TRC<:Union{TR,Complex{TR}}}
     n = length(values)
     op = Cheb2InterpOp{TR}(n)
     return op(values, x)

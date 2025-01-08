@@ -15,10 +15,8 @@ Evaluate a polynomial interpolant using the barycentric interpolation formula.
 - [chebfun/@chebtech2/bary.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/bary.m)
 """
 function bary(
-    w::AbstractVector{TR}, x::AbstractVector{TR}, f::AbstractVector{TR}, x0::TR
-) where {
-    TR<:AbstractFloat,
-}
+    w::AbstractVector{TR}, x::AbstractVector{TR}, f::AbstractVector{TRC}, x0::TR
+) where {TR<:AbstractFloat,TRC<:Union{TR,Complex{TR}}}
     p = zero(TR)
     q = zero(TR)
 

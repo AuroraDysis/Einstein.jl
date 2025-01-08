@@ -1,35 +1,37 @@
-using TestItems
-
 @testitem "cheb1_interp" begin
     using GRSuite.ChebSuite, Test
 
-    tol = 100 * eps()
+    @testset "real" begin
+        tol = 100 * eps()
+        n = 40
+        x = cheb1_pts(n)
+        v = sin.(x)
+        op = Cheb1InterpOp(n)
+    
+        for i in 1:n
+            @test op(v, x[i]) ≈ v[i]
+        end
 
-    n = 5
-    x = cheb1_pts(n)
-    v = sin.(x)
-    op = Cheb1InterpOp(n)
-
-    for i in 1:n
-        @test op(v, x[i]) ≈ v[i]
+        for i in 1:n-1
+            x0 = (x[i] + x[i+1]) / 2
+            @test isapprox(op(v, x0), sin(x0), atol=tol)
+        end
     end
-end
 
-@testitem "Interpolation accuracy" begin
-    using GRSuite.ChebSuite, Test
+    @testset "complex" begin
+        tol = 100 * eps()
+        n = 30
+        x = cheb1_pts(n)
+        v = sin.(x) + im * cos.(x)
+        op = Cheb1InterpOp(n)
+    
+        for i in 1:n
+            @test op(v, x[i]) ≈ v[i]
+        end
 
-    tol = 100 * eps()
-
-    n = 32
-    op = Cheb1InterpOp(n)
-    x = cheb1_pts(n)
-    v = cos.(x)
-
-    # Test at intermediate points
-    test_points = [-0.9, -0.5, 0.0, 0.5, 0.9]
-    for xi in test_points
-        y_interp = op(v, xi)
-        y_exact = cos(xi)
-        @test abs(y_interp - y_exact) < tol
+        for i in 1:n-1
+            x0 = (x[i] + x[i+1]) / 2
+            @test isapprox(op(v, x0), sin(x0) + im * cos(x0), atol=tol)
+        end
     end
 end
