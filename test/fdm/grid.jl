@@ -1,4 +1,4 @@
-@testitem "fdm_grid tests" begin
+@testitem "fdm_grid" begin
     using GRSuite.FDMSuite, Test
 
     @testset "Basic functionality" begin
