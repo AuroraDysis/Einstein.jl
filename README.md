@@ -1,7 +1,6 @@
 # GRSuite
 
-<!-- [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://AuroraDysis.github.io/GRSuite.jl/stable/) -->
-
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://AuroraDysis.github.io/GRSuite.jl/stable/)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://AuroraDysis.github.io/GRSuite.jl/dev/)
 [![Build Status](https://github.com/AuroraDysis/GRSuite.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/AuroraDysis/GRSuite.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/AuroraDysis/GRSuite.jl/graph/badge.svg?token=C99DVUUULL)](https://codecov.io/gh/AuroraDysis/GRSuite.jl)
