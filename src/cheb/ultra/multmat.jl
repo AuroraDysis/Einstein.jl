@@ -19,14 +19,14 @@ function ultra_multmat(
     coeffs = deepcopy(coeffs)
 
     if λ == 0 # λ == 0 case (Chebyshev T)
-        half = one(TRC) / 2
+        half = one(real(TRC)) / 2
         @inbounds coeffs[2:end] .*= half
         M = Matrix(Toeplitz(coeffs, coeffs))
         H = ultra_sphankel(@view(coeffs[2:end]))
         M[2:n, 1:(n - 1)] .+= H
         return M
     elseif λ == 1 # λ == 1 case (Chebyshev U)
-        half = one(TRC) / 2
+        half = one(real(TRC)) / 2
         @inbounds coeffs[2:end] .*= half
         M = Matrix(Toeplitz(coeffs, coeffs))
         M[1:(n - 2), 1:(n - 2)] .-= ultra_sphankel(@view(coeffs[3:end]))
