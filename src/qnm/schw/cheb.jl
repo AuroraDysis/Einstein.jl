@@ -1,5 +1,3 @@
-@enumx SchwPType ReggeWheeler Zerilli
-
 @doc raw"""
     qnm_schw_cheb(::Type{TR}, s::Integer, ℓ::Integer, n::Integer, potential::SchwPType.T; σ_min::TR=zero(TR), σ_max::TR=one(TR), lo_bc::BCType.T=Natural, hi_bc::BCType.T=Natural)
 
@@ -103,4 +101,4 @@ function qnm_schw_cheb(
     return nep
 end
 
-export SchwPType, qnm_schw_cheb
+export qnm_schw_cheb

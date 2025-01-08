@@ -23,8 +23,12 @@ export BCType
 include("utils/contfrac.jl")
 include("utils/polyeig.jl")
 
+@enumx SchwPType ReggeWheeler Zerilli
+export SchwPType
+
 include("schw/reggepole.jl")
 include("schw/cheb.jl")
+include("schw/di.jl")
 
 include("kerr/cf.jl")
 include("kerr/cheb.jl")
