@@ -1,8 +1,9 @@
 @doc raw"""
     ultra_multmat(coeffs::AbstractVector{TRC}, λ::Integer) where {TRC<:Union{AbstractFloat,Complex{<:AbstractFloat}}
+    ultra_multmat!(coeffs::AbstractVector{TRC}, λ::Integer) where {TRC<:Union{AbstractFloat,Complex{<:AbstractFloat}}
 
-Construct nxn multiplication matrix
-representing the multiplication of F in the $C^{(\lambda)}$ basis.
+Construct nxn multiplication matrix representing the multiplication of F in the $C^{(\lambda)}$ basis.
+`ultra_multmat!` will overwrite the input vector `coeffs`.
 
 # Arguments
 - `coeffs::AbstractVector{TRC}` : Vector of Chebyshev coefficients
@@ -11,12 +12,10 @@ representing the multiplication of F in the $C^{(\lambda)}$ basis.
 # References
 - [chebfun/@ultraS/multmat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40ultraS/multmat.m)
 """
-function ultra_multmat(
+function ultra_multmat!(
     coeffs::AbstractVector{TRC}, λ::Integer
 ) where {TRC<:AbstractFloatOrComplex}
     n = length(coeffs)
-
-    coeffs = deepcopy(coeffs)
 
     if λ == 0 # λ == 0 case (Chebyshev T)
         half = one(real(TRC)) / 2
@@ -59,4 +58,10 @@ function ultra_multmat(
     end
 end
 
-export ultra_multmat
+function ultra_multmat(
+    coeffs::AbstractVector{TRC}, λ::Integer
+) where {TRC<:AbstractFloatOrComplex}
+    return ultra_multmat!(deepcopy(coeffs), λ)
+end
+
+export ultra_multmat, ultra_multmat!
