@@ -48,8 +48,10 @@ struct Cheb1Coeffs2ValsOp{TR<:AbstractFloat}
     end
 end
 
-function (op::Cheb1Coeffs2ValsOp{TR})(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
-    type_is_float = typeisfloat(TR)
+function (op::Cheb1Coeffs2ValsOp{TR})(
+    coeffs::AbstractVector{TRC}
+) where {TR<:AbstractFloat,TRC<:Union{TR,Complex{TR}}}
+    type_is_float = typeisfloat(TRC)
 
     n = length(coeffs)
     if n <= 1
@@ -127,14 +129,14 @@ function (op::Cheb1Coeffs2ValsOp{TR})(coeffs::AbstractVector{TR}) where {TR<:Abs
     end
 end
 
-function cheb1_coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
+function cheb1_coeffs2vals(coeffs::AbstractVector{TRC}) where {TRC<:AbstractFloatOrComplex}
     n = length(coeffs)
 
     if n <= 1
         return deepcopy(coeffs)
     end
 
-    op = Cheb1Coeffs2ValsOp{real(TR)}(n)
+    op = Cheb1Coeffs2ValsOp{real(TRC)}(n)
     return op(coeffs)
 end
 

@@ -22,7 +22,7 @@ SOFTWARE.
 """
 
 """
-    A, E = qnm_polyeig(T, pep::AbstractVector{<:AbstractMatrix}) where T <: Union{AbstractFloat, Complex{<:AbstractFloat}}
+    A, E = qnm_polyeig(TRC, pep::AbstractVector{<:AbstractMatrix}) where TRC <: Union{AbstractFloat, Complex{<:AbstractFloat}}
 
 Linearizes a polynomial eigenvalue problem (PEP) a to the companion form, , as in the paper by Mehrmann and Voss.
 More precisely, for a k-th degree PEP with n-by-n coefficient matrices,
@@ -35,16 +35,16 @@ Ax = λEx
 - [mehrmann2004nonlinear](@citet*)
 """
 function qnm_polyeig(
-    ::Type{T}, pep::AbstractVector{<:AbstractMatrix}
-) where {T<:AbstractFloatOrComplex}
+    ::Type{TRC}, pep::AbstractVector{<:AbstractMatrix}
+) where {TRC<:AbstractFloatOrComplex}
     # Size of coefficient matrices
     n = size(pep[1], 1)
 
     # Degree of pep
     d = length(pep) - 1
 
-    E = zeros(T, d * n, d * n)
-    A = zeros(T, n * d, n * d)
+    E = zeros(TRC, d * n, d * n)
+    A = zeros(TRC, n * d, n * d)
 
     Iblock = kron(Eye{Int}(d - 1), Eye{Int}(n))
 
