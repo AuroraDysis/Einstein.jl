@@ -111,7 +111,7 @@ function fdm_boundwts(::Type{T}, der_order::Integer, acc_order::Integer) where {
     D_right = zeros(T, num_coeffs, num_side)
 
     local_grid = zeros(T, num_coeffs)
-    for i in 1:num_side
+    @inbounds for i in 1:num_side
         for j in 1:num_coeffs
             local_grid[j] = -(i - 1) + (j - 1)
         end
