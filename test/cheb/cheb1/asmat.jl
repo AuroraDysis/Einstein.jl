@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb1_amat, cheb1_smat" begin
-    using ApproxFun, GRSuite.ChebSuite, Test
+    using ApproxFun, Einstein.ChebSuite, Test
 
     for type in [Float64, BigFloat]
         tol = 1000 * eps(type)

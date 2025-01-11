@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb_rectint" begin
-    using GRSuite.ChebSuite, Test
+    using Einstein.ChebSuite, Test
 
     n = 4
     intmat = cheb_rectint(n)
@@ -41,7 +41,7 @@ using TestItems
 end
 
 @testitem "cheb_rectint - analytical" begin
-    using GRSuite.ChebSuite, Test
+    using Einstein.ChebSuite, Test
 
     @testset "Standard domain [-1,1]" begin
         n = 32

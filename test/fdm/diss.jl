@@ -1,5 +1,5 @@
 @testitem "fdm_dissorder" begin
-    using GRSuite.FDMSuite, Test
+    using Einstein.FDMSuite, Test
     # Test even accuracy orders
     @test fdm_dissorder(2) == 4
     @test fdm_dissorder(4) == 6
@@ -10,7 +10,7 @@
 end
 
 @testitem "fdm_disswts" begin
-    using GRSuite.FDMSuite, Test
+    using Einstein.FDMSuite, Test
 
     # Test 2nd order dissipation
     wts2 = fdm_disswts(2)

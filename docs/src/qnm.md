@@ -1,9 +1,9 @@
 # QNM Suite
 
 ```@index
-Modules = [GRSuite.QNMSuite]
+Modules = [Einstein.QNMSuite]
 ```
 
 ```@autodocs
-Modules = [GRSuite.QNMSuite]
+Modules = [Einstein.QNMSuite]
 ```

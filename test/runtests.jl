@@ -2,9 +2,9 @@ using TestItems
 using TestItemRunner
 
 @testitem "Code quality (Aqua.jl)" begin
-    using Aqua, GRSuite
+    using Aqua, Einstein
 
-    Aqua.test_all(GRSuite)
+    Aqua.test_all(Einstein)
 end
 
 @run_package_tests

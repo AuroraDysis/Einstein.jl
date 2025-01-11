@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb2_barywts" begin
-    using GRSuite.ChebSuite, Test
+    using Einstein.ChebSuite, Test
 
     # Test n=1 case
     w1 = cheb2_barywts(Float64, 1)

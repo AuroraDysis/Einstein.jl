@@ -1,5 +1,5 @@
 @testitem "fdm_integrate_simpson" begin
-    using GRSuite.FDMSuite, Test
+    using Einstein.FDMSuite, Test
 
     dx = 0.01
     x = fdm_grid(0.0, 1.0, dx)
@@ -9,7 +9,7 @@
 end
 
 @testitem "fdm_integrate_trapezoidal" begin
-    using GRSuite.FDMSuite, Test
+    using Einstein.FDMSuite, Test
 
     dx = 0.01
     x = fdm_grid(0.0, 1.0, dx)

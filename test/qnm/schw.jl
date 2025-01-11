@@ -1,5 +1,5 @@
 @testitem "qnm_schw_cheb" begin
-    using LinearAlgebra, GRSuite, Test
+    using LinearAlgebra, Einstein, Test
 
     s = ℓ = 2
     n = 80

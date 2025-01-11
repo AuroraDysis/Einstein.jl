@@ -1,5 +1,5 @@
 @testitem "fdm_centralop" begin
-    using LinearAlgebra, GRSuite.FDMSuite, Test
+    using LinearAlgebra, Einstein.FDMSuite, Test
 
     @testset "Constructor Tests" begin
         dx = 0.1
@@ -38,7 +38,7 @@
 end
 
 @testitem "fdm_hermiteop" begin
-    using LinearAlgebra, GRSuite.FDMSuite, Test
+    using LinearAlgebra, Einstein.FDMSuite, Test
 
     @testset "Constructor Tests" begin
         dx = 0.1

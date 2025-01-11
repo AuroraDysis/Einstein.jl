@@ -1,9 +1,9 @@
 # Chebyshev Suite
 
 ```@index
-Modules = [GRSuite.ChebSuite]
+Modules = [Einstein.ChebSuite]
 ```
 
 ```@autodocs
-Modules = [GRSuite.ChebSuite]
+Modules = [Einstein.ChebSuite]
 ```

@@ -1,5 +1,5 @@
 @testitem "sws_eigvals" begin
-    using GRSuite, Test
+    using Einstein, Test
 
     # QNM
     a = 0.7
@@ -14,7 +14,7 @@
 end
 
 @testitem "SWSFun" begin
-    using Integrals, GRSuite, Test
+    using Integrals, Einstein, Test
 
     a = 0.7
     s = 2

@@ -1,5 +1,5 @@
 @testitem "dot_xsum" begin
-    using GRSuite.Utils, Test
+    using Einstein.Utils, Test
 
     x = rand(10)
     y = rand(10)
@@ -11,7 +11,7 @@
 end
 
 @testitem "dot_kahan" begin
-    using GRSuite.Utils, Test
+    using Einstein.Utils, Test
 
     x = rand(10)
     y = rand(10)
@@ -23,7 +23,7 @@ end
 end
 
 @testitem "dot_kahan_neumaier" begin
-    using GRSuite.Utils, Test
+    using Einstein.Utils, Test
 
     x = rand(10)
     y = rand(10)

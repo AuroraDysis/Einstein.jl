@@ -1,5 +1,5 @@
 @testitem "fdm_grid" begin
-    using GRSuite.FDMSuite, Test
+    using Einstein.FDMSuite, Test
 
     @testset "Basic functionality" begin
         # Integer-spaced grid

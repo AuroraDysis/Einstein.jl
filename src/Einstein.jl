@@ -1,4 +1,4 @@
-module GRSuite
+module Einstein
 
 using Reexport
 

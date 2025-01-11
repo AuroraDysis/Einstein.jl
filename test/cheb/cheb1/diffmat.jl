@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb1_diffmat" begin
-    using GRSuite.ChebSuite, Test
+    using Einstein.ChebSuite, Test
 
     # n = 5
     expected5 = [

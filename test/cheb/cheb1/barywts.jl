@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb1_barywts" begin
-    using GRSuite.ChebSuite, Test
+    using Einstein.ChebSuite, Test
 
     # Test n=0 case
     @test cheb1_barywts(0) == Float64[]

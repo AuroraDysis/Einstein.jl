@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb1_quadwts" begin
-    using LinearAlgebra, GRSuite.ChebSuite, Test
+    using LinearAlgebra, Einstein.ChebSuite, Test
 
     @testset "coefficients" begin
         # Test n=0 case

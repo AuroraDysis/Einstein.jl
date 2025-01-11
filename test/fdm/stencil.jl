@@ -1,5 +1,5 @@
 @testitem "fdm_central" begin
-    using GRSuite.FDMSuite, Test
+    using Einstein.FDMSuite, Test
 
     # Test 1st derivative, 2nd order accuracy
     stencil = [-1//2, 0//1, 1//2]
@@ -43,7 +43,7 @@
 end
 
 @testitem "fdm_hermite" begin
-    using GRSuite.FDMSuite, Test
+    using Einstein.FDMSuite, Test
 
     # Test 2nd derivative, 4th order accuracy
     D2, E2 = fdm_hermite(2, 4)
@@ -57,7 +57,7 @@ end
 end
 
 @testitem "fdm_extrapwts" begin
-    using GRSuite.FDMSuite, Test
+    using Einstein.FDMSuite, Test
 
     @test fdm_extrapwts_left(4) == [4, -6, 4, -1]
     @test fdm_extrapwts_right(4) == [-1, 4, -6, 4]
@@ -67,7 +67,7 @@ end
 end
 
 @testitem "fdm_boundwts" begin
-    using GRSuite.FDMSuite, Test
+    using Einstein.FDMSuite, Test
 
     Dl14, Dr14 = fdm_boundwts(1, 4)
     @test Dl14[:, 1] == [-25//12, 4//1, -3//1, 4//3, -1//4]

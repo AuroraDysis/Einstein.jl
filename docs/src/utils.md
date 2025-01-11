@@ -1,9 +1,9 @@
 # General Utilities
 
 ```@index
-Modules = [GRSuite.Utils]
+Modules = [Einstein.Utils]
 ```
 
 ```@autodocs
-Modules = [GRSuite.Utils]
+Modules = [Einstein.Utils]
 ```

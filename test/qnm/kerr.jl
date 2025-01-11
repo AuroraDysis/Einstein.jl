@@ -1,5 +1,5 @@
 @testitem "qnm_kerr_cf" begin
-    using GRSuite, Test
+    using Einstein, Test
 
     a = 0.7
     s = 2
@@ -23,7 +23,7 @@
 end
 
 @testitem "qnm_kerr_cheb" begin
-    using GRSuite, Test
+    using Einstein, Test
 
     a = 0.7
     s = 2
@@ -47,7 +47,7 @@ end
 end
 
 @testitem "qnm_kerr_di" begin
-    using GRSuite, Test
+    using Einstein, Test
 
     a = 0.7
     s = 2

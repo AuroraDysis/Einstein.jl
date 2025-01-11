@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb2_interp" begin
-    using GRSuite.ChebSuite, Test
+    using Einstein.ChebSuite, Test
 
     @testset "real" begin
         tol = 100 * eps()

@@ -1,10 +1,10 @@
 ```@meta
-CurrentModule = GRSuite
+CurrentModule = Einstein
 ```
 
-# GRSuite
+# Einstein
 
-Documentation for [GRSuite](https://github.com/AuroraDysis/GRSuite.jl).
+Documentation for [Einstein](https://github.com/AuroraDysis/Einstein.jl).
 
 
 !!! warning
@@ -12,13 +12,13 @@ Documentation for [GRSuite](https://github.com/AuroraDysis/GRSuite.jl).
 
 ## Motivation and Purpose
 
-After developing hundreds of PDE solvers for various projects, I decided to create `GRSuite.jl` because I couldn't find a library that was both highly convenient and effective for solving partial differential equations (PDEs) in the context of general relativity (GR).
+After developing hundreds of PDE solvers for various projects, I decided to create `Einstein.jl` because I couldn't find a library that was both highly convenient and effective for solving partial differential equations (PDEs) in the context of general relativity (GR).
 
 When solving GR PDEs in spherical symmetry or even axisymmetry, the requirements are often far more demanding than in 3+1 cases. These include the need for very long-time simulations, conservation of quantities, highly accurate late-time behavior, and precise computation of quasinormal modes. While I have addressed these challenges individually in the past, I grew tired of copying and pasting solutions from old repositories. Instead, I decided to develop a comprehensive, feature-rich, and highly efficient library. This is my answer to those challenges.
 
 ## Description
 
-**GRSuite.jl** is a **high-performance** suite designed to compute **arbitrary-precision solutions** of PDEs in GR. It is planned to support solving the following built-in equations (some of which were developed for previous projects and will be ported to this library):
+**Einstein.jl** is a **high-performance** suite designed to compute **arbitrary-precision solutions** of PDEs in GR. It is planned to support solving the following built-in equations (some of which were developed for previous projects and will be ported to this library):
 
 - **Spatial Discretization**
   - [x] Chebyshev collocation at Chebyshev points of the first and second kinds (Most of algorithms are translated from Chebfun)
@@ -103,5 +103,5 @@ The author would like to thank the developers of these projects for their contri
 ```
 
 ```@autodocs
-Modules = [GRSuite]
+Modules = [Einstein]
 ```

@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb_cumsum" begin
-    using LinearAlgebra, GRSuite.ChebSuite, Test
+    using LinearAlgebra, Einstein.ChebSuite, Test
 
     tol = 100 * eps()
 
