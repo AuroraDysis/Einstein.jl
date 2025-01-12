@@ -20,7 +20,7 @@ function fdm_grid(x_min::T, x_max::T, dx::T) where {T<:AbstractFloat}
     x_grid_end = x_min + (n - 1) * dx
     @argcheck (x_max - x_grid_end) < 10 * eps(T) "Grid endpoint mismatch: |x_max - x_grid_end| = $(abs(x_max - x_grid_end)) exceeds tolerance ($(10 * eps(T))). Consider adjusting dx to ensure x_max is reached precisely."
 
-    x_grid = zeros(T, n)
+    x_grid = Vector{T}(undef, n)
     @inbounds for i in 1:n
         x_grid[i] = x_min + (i - 1) * dx
     end
