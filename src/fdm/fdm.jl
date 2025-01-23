@@ -5,6 +5,7 @@ using ..Utils
 using ArgCheck: @argcheck
 
 using FillArrays
+using FastBroadcast
 using LinearAlgebra
 using BandedMatrices
 
@@ -16,5 +17,6 @@ include("diss.jl")
 include("fdmop.jl")
 include("diffmat.jl")
 include("integrate.jl")
+# include("interp.jl")
 
 end
