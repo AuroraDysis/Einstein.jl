@@ -11,17 +11,21 @@ function fdm_dissorder(acc_order::Integer)
 end
 
 """
-    fdm_disswts(diss_order::Integer)
+    fdm_disswts([TR=Rational{Int}], diss_order::Integer)
 
 Calculate the weights for Kreiss-Oliger dissipation of given order [Babiuc:2007vr](@cite).
 """
-function fdm_disswts(diss_order::TI) where {TI<:Integer}
+function fdm_disswts(::Type{TR}, diss_order::TI) where {TR<:Real,TI<:Integer}
     @argcheck iseven(diss_order) "Only even orders are supported."
     r = div(diss_order, 2)
-    local_grid = collect(Rational{TI}, (-r):r)
-    wts = fdm_fornbergwts(2r, zero(Rational{TI}), local_grid)
-    wts = (-1)^(r + 1) * wts//2^(2 * r)
+    local_grid = collect(TR, (-r):r)
+    wts = fdm_fornbergwts(2r, zero(TR), local_grid)
+    @.. wts = (-1)^(r + 1) * wts / 2^(2 * r)
     return wts
+end
+
+function fdm_disswts(diss_order::TI) where {TI<:Integer}
+    return fdm_disswts(Rational{Int}, diss_order)
 end
 
 export fdm_dissorder, fdm_disswts
