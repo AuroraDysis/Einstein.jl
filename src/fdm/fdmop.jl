@@ -140,16 +140,16 @@ end
 end
 
 """
-    fdm_dissop(diss_order::Integer, dx::TR) where {TR<:AbstractFloat}
+    fdm_dissop(diss_order::Integer, σ::TR, dx::TR) where {TR<:AbstractFloat}
 
 Create a finite difference dissipation operator with specified order.
 
 # Arguments
 - `diss_order::Integer`: The order of the dissipation operator
-- `dx::TR`: Grid spacing
 - `σ::TR`: Dissipation strength
+- `dx::TR`: Grid spacing
 """
-function fdm_dissop(diss_order::Integer, dx::TR, σ::TR) where {TR<:AbstractFloat}
+function fdm_dissop(diss_order::Integer, σ::TR, dx::TR) where {TR<:AbstractFloat}
     wts = fdm_disswts(diss_order)
     num_coeffs = length(wts)
     num_side = div(num_coeffs - 1, 2)
