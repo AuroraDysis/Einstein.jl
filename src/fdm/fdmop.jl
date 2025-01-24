@@ -36,6 +36,48 @@ function fdm_centralop(
     )
 end
 
+struct FDMBoundOp{TR<:Real}
+    der_order::Integer
+    acc_order::Integer
+    num_coeffs::Integer
+    num_points::Integer
+    wts::Matrix{TR}
+    one_over_dxn::TR
+end
+
+# TODO: benchmark this and implement a more efficient version
+@inline function (op::FDMBoundOp{TR})(
+    v::StridedVector{TRC}, point_idx::Integer
+) where {TR<:AbstractFloat,TRC<:Union{TR,Complex{TR}}}
+    return dot(@view(op.wts[:, point_idx]), v) * op.one_over_dxn
+end
+
+"""
+    fdm_boundop(der_order::Integer, acc_order::Integer, dx::TR) where {TR<:AbstractFloat}
+
+Create a shifted finite difference operator with specified derivative order and accuracy for boundary.
+
+# Arguments
+- `der_order::Integer`: The order of the derivative to approximate
+- `acc_order::Integer`: The desired order of accuracy (must be even)
+- `dx::TR`: Grid spacing
+```
+"""
+function fdm_boundop(
+    der_order::Integer, acc_order::Integer, dx::TR
+) where {TR<:AbstractFloat}
+    wts_left, wts_right = fdm_boundwts(TR, der_order, acc_order)
+    num_coeffs = size(wts_left, 1)
+    num_points = size(wts_left, 2)
+    op_left = FDMBoundOp{TR}(
+        der_order, acc_order, num_coeffs, num_points, wts_left, one(TR) / dx^der_order
+    )
+    op_right = FDMBoundOp{TR}(
+        der_order, acc_order, num_coeffs, num_points, wts_right, one(TR) / dx^der_order
+    )
+    return op_left, op_right
+end
+
 struct FDMHermiteOp{TR<:Real}
     der_order::Integer
     acc_order::Integer
@@ -114,5 +156,6 @@ function fdm_dissop(diss_order::Integer, dx::TR) where {TR<:AbstractFloat}
 end
 
 export FDMCentralOp, fdm_centralop
+export FDMBoundOp, fdm_boundop
 export FDMHermiteOp, fdm_hermiteop
 export FDMDissOp, fdm_dissop
