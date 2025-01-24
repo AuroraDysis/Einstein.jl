@@ -129,14 +129,14 @@ struct FDMDissOp{TR<:Real}
     num_coeffs::Integer
     num_side::Integer
     wts::Vector{TR}
-    one_over_dx::TR
+    σ_over_dx::TR
 end
 
 # TODO: benchmark this and implement a more efficient version
 @inline function (op::FDMDissOp{TR})(
     v::StridedVector{TRC}
 ) where {TR<:AbstractFloat,TRC<:Union{TR,Complex{TR}}}
-    return dot(op.wts, v) * op.one_over_dx
+    return dot(op.wts, v) * op.σ_over_dx
 end
 
 """
@@ -147,12 +147,13 @@ Create a finite difference dissipation operator with specified order.
 # Arguments
 - `diss_order::Integer`: The order of the dissipation operator
 - `dx::TR`: Grid spacing
+- `σ::TR`: Dissipation strength
 """
-function fdm_dissop(diss_order::Integer, dx::TR) where {TR<:AbstractFloat}
+function fdm_dissop(diss_order::Integer, dx::TR, σ::TR) where {TR<:AbstractFloat}
     wts = fdm_disswts(diss_order)
     num_coeffs = length(wts)
     num_side = div(num_coeffs - 1, 2)
-    return FDMDissOp{TR}(diss_order, num_coeffs, num_side, wts, one(TR) / dx)
+    return FDMDissOp{TR}(diss_order, num_coeffs, num_side, wts, σ / dx)
 end
 
 export FDMCentralOp, fdm_centralop
