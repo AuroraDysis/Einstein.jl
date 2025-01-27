@@ -28,7 +28,7 @@ Create a central finite difference operator with specified derivative order and 
 function fdm_centralop(
     der_order::Integer, acc_order::Integer, dx::TR
 ) where {TR<:AbstractFloat}
-    wts = fdm_central(TR, der_order, acc_order)
+    wts = fdm_centralwts(TR, der_order, acc_order)
     num_coeffs = length(wts)
     num_side = div(num_coeffs - 1, 2)
     return FDMCentralOp{TR}(
@@ -109,7 +109,7 @@ Create a Hermite finite difference operator with specified derivative order and 
 function fdm_hermiteop(
     der_order::Integer, acc_order::Integer, dx::TR
 ) where {TR<:AbstractFloat}
-    Dwts, Ewts = fdm_hermite(TR, der_order, acc_order)
+    Dwts, Ewts = fdm_hermitewts(TR, der_order, acc_order)
     num_coeffs = length(Dwts)
     num_side = div(num_coeffs - 1, 2)
     return FDMHermiteOp{TR}(

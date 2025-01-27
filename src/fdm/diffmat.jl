@@ -35,7 +35,7 @@ function fdm_diffmat(
 
     diffmat = BandedMatrix(Zeros{TR}(n, n), (num_boundcoeffs, num_boundcoeffs))
 
-    D = fdm_central(TR, der_order, acc_order)
+    D = fdm_centralwts(TR, der_order, acc_order)
     D_left, D_right = fdm_boundwts(TR, der_order, acc_order)
 
     @inbounds for i in 1:num_side
