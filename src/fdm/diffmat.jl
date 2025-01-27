@@ -21,12 +21,25 @@ Construct a finite difference matrix for numerical differentiation.
 - The resulting matrix has dimensions n×n where n = round(Int, (x_max - x_min) / dx) + 1
 """
 function fdm_diffmat(
-    ::Type{TR}, der_order::Integer, acc_order::Integer, n::Integer; with_bound::Bool=true
+    ::Type{TR},
+    der_order::Integer,
+    acc_order::Integer,
+    n::Integer;
+    with_bound::Bool=true,
+    transpose::Bool=false,
 ) where {TR<:Real}
     if with_bound
-        return fdm_diffmat_bound(TR, der_order, acc_order, n)
+        diffmat = fdm_diffmat_bound(TR, der_order, acc_order, n)
     else
-        return fdm_diffmat_central(TR, der_order, acc_order, n)
+        diffmat = fdm_diffmat_central(TR, der_order, acc_order, n)
+    end
+
+    if transpose
+        diffmat_T = similar(diffmat)
+        transpose!(diffmat_T, diffmat)
+        return diffmat_T
+    else
+        return diffmat
     end
 end
 
