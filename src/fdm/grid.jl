@@ -17,8 +17,6 @@ function fdm_grid(x_min::T, x_max::T, dx::T) where {T<:AbstractFloat}
     @argcheck dx > 0 "Spacing must be positive"
 
     n = round(Int, (x_max - x_min) / dx) + 1
-    @argcheck length(x_grid) == n "Grid vector length mismatch"
-
     x_grid_end = x_min + (n - 1) * dx
     @argcheck (x_max - x_grid_end) < 10 * eps(T) "Grid endpoint mismatch: |x_max - x_grid_end| = $(abs(x_max - x_grid_end)) exceeds tolerance ($(10 * eps(T))). Consider adjusting dx to ensure x_max is reached precisely."
 
