@@ -1,5 +1,5 @@
 """
-    fdm_diffmat(::Type{TR}, der_order::Integer, acc_order::Integer, x_min::TR, x_max::TR, dx::TR) where {TR<:Real}
+    fdm_diffmat(::Type{TR}, der_order::Integer, acc_order::Integer, n::Integer) where {TR<:Real}
 
 Construct a finite difference matrix for numerical differentiation.
 
@@ -7,9 +7,7 @@ Construct a finite difference matrix for numerical differentiation.
 - `TR`: Type parameter for the real number type to be used
 - `der_order`: Order of the derivative to approximate
 - `acc_order`: Order of accuracy for the approximation
-- `x_min`: Minimum value of the domain
-- `x_max`: Maximum value of the domain
-- `dx`: Grid spacing
+- `n`: Number of grid points
 
 # Returns
 - A banded matrix representing the finite difference operator with the specified derivative
@@ -22,13 +20,8 @@ Construct a finite difference matrix for numerical differentiation.
 - The resulting matrix has dimensions n×n where n = round(Int, (x_max - x_min) / dx) + 1
 """
 function fdm_diffmat(
-    ::Type{TR}, der_order::Integer, acc_order::Integer, x_min::TR, x_max::TR, dx::TR;
+    ::Type{TR}, der_order::Integer, acc_order::Integer, n::Integer;
 ) where {TR<:Real}
-    n = round(Int, (x_max - x_min) / dx) + 1
-
-    x_grid_end = x_min + (n - 1) * dx
-    @argcheck (x_max - x_grid_end) < 10 * eps(TR) "Grid endpoint mismatch: |x_max - x_grid_end| = $(abs(x_max - x_grid_end)) exceeds tolerance ($(10 * eps(TR))). Consider adjusting dx to ensure x_max is reached precisely."
-
     num_coeffs = fdm_centralnum(der_order, acc_order)
     num_side = div(num_coeffs - 1, 2)
     num_boundcoeffs = fdm_boundnum(der_order, acc_order)
