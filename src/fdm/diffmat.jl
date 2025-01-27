@@ -8,7 +8,8 @@ Construct a finite difference matrix for numerical differentiation.
 - `der_order`: Order of the derivative to approximate
 - `acc_order`: Order of accuracy for the approximation
 - `n`: Number of grid points
-- `with_bound`: Flag to indicate if the matrix should include shifted boundary finite difference coefficients
+- `with_bound`: Flag to indicate if the matrix should include shifted boundary finite difference coefficients (default: `false`)
+- `transpose`: Flag to indicate if the matrix should be transposed (default: `false`)
 
 # Returns
 - A banded matrix representing the finite difference operator with the specified derivative
