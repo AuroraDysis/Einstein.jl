@@ -30,3 +30,5 @@ function fdm_dissmat(
         return dissmat
     end
 end
+
+export fdm_dissmat
