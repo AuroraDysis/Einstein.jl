@@ -16,6 +16,7 @@ include("stencil.jl")
 include("diss.jl")
 include("fdmop.jl")
 include("diffmat.jl")
+include("dissmat.jl")
 include("integrate.jl")
 # include("interp.jl")
 

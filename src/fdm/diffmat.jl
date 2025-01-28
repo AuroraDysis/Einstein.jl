@@ -47,8 +47,9 @@ end
 function fdm_diffmat_central(
     ::Type{TR}, der_order::Integer, acc_order::Integer, n::Integer
 ) where {TR<:Real}
-    num_coeffs = fdm_centralnum(der_order, acc_order)
-    num_side = div(num_coeffs - 1, 2)
+    op = fdm_centralop(der_order, acc_order, one(TR))
+    num_side = op.num_side
+    wts = op.wts
 
     diffmat = BandedMatrix(Zeros{TR}(n, n), (num_side, num_side))
     wts = fdm_centralwts(TR, der_order, acc_order)
@@ -63,9 +64,14 @@ end
 function fdm_diffmat_bound(
     ::Type{TR}, der_order::Integer, acc_order::Integer, n::Integer
 ) where {TR<:Real}
-    num_coeffs = fdm_centralnum(der_order, acc_order)
-    num_side = div(num_coeffs - 1, 2)
-    num_boundcoeffs = fdm_boundnum(der_order, acc_order)
+    op = fdm_centralop(der_order, acc_order, one(TR))
+    num_side = op.num_side
+    wts = op.wts
+
+    op_left, op_right = fdm_boundop(der_order, acc_order, one(TR))
+    num_boundcoeffs = op_left.num_coeffs
+    wts_left = op_left.wts
+    wts_right = op_right.wts
 
     diffmat = BandedMatrix(Zeros{TR}(n, n), (num_boundcoeffs, num_boundcoeffs))
 
