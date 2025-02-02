@@ -45,4 +45,22 @@ function fdm_boundnum(der_order::Integer, acc_order::Integer)
     return der_order + acc_order
 end
 
-export fdm_centralnum, fdm_hermitenum, fdm_boundnum
+"""
+    fdm_dissnum(diss_order::Integer)
+
+Calculate the number of coefficients needed for Kreiss-Oliger dissipation (interior).
+"""
+function fdm_dissnum(diss_order::Integer)
+    return fdm_centralnum(diss_order, 2)
+end
+
+"""
+    fdm_dissnum_bound(diss_order::Integer)
+
+Calculate the number of coefficients needed for Kreiss-Oliger dissipation (boundary).
+"""
+function fdm_dissnum_bound(diss_order::Integer)
+    return fdm_boundnum(diss_order, 2)
+end
+
+export fdm_centralnum, fdm_hermitenum, fdm_boundnum, fdm_dissnum, fdm_dissnum_bound
