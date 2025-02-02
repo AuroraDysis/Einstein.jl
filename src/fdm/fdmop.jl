@@ -161,7 +161,7 @@ struct FDMDissBoundOp{TR<:Real}
     num_coeffs::Integer
     num_points::Integer
     wts::Matrix{TR}
-    one_over_dxn::TR
+    σ_over_dx::TR
 end
 
 # TODO: benchmark this and implement a more efficient version
@@ -182,11 +182,12 @@ Create a finite difference dissipation operator with specified order (boundary).
 - `dx::TR`: Grid spacing
 """
 function fdm_dissop_bound(diss_order::Integer, σ::TR, dx::TR) where {TR<:AbstractFloat}
-    wts_left, wts_right = fdm_disswts_bound(diss_order)
+    wts_left, wts_right = fdm_disswts_bound(TR, diss_order)
     num_coeffs = size(wts_left, 1)
     num_points = size(wts_left, 2)
-    op_left = FDMDissBoundOp{TR}(diss_order, num_coeffs, num_points, wts_left, σ / dx)
-    op_right = FDMDissBoundOp{TR}(diss_order, num_coeffs, num_points, wts_right, σ / dx)
+    σ_over_dx = σ / dx
+    op_left = FDMDissBoundOp{TR}(diss_order, num_coeffs, num_points, wts_left, σ_over_dx)
+    op_right = FDMDissBoundOp{TR}(diss_order, num_coeffs, num_points, wts_right, σ_over_dx)
     return op_left, op_right
 end
 
