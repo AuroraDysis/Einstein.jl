@@ -168,7 +168,7 @@ end
 @inline function (op::FDMDissBoundOp{TR})(
     v::StridedVector{TRC}, point_idx::Integer
 ) where {TR<:AbstractFloat,TRC<:Union{TR,Complex{TR}}}
-    return dot(@view(op.wts[:, point_idx]), v) * op.one_over_dxn
+    return dot(@view(op.wts[:, point_idx]), v) * op.σ_over_dx
 end
 
 """
