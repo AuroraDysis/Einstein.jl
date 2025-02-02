@@ -142,7 +142,7 @@ end
 """
     fdm_dissop(diss_order::Integer, σ::TR, dx::TR) where {TR<:AbstractFloat}
 
-Create a finite difference dissipation operator with specified order.
+Create a finite difference dissipation operator with specified order (interior).
 
 # Arguments
 - `diss_order::Integer`: The order of the dissipation operator
@@ -156,7 +156,42 @@ function fdm_dissop(diss_order::Integer, σ::TR, dx::TR) where {TR<:AbstractFloa
     return FDMDissOp{TR}(diss_order, num_coeffs, num_side, wts, σ / dx)
 end
 
+struct FDMDissBoundOp{TR<:Real}
+    diss_order::Integer
+    num_coeffs::Integer
+    num_points::Integer
+    wts::Matrix{TR}
+    one_over_dxn::TR
+end
+
+# TODO: benchmark this and implement a more efficient version
+@inline function (op::FDMDissBoundOp{TR})(
+    v::StridedVector{TRC}, point_idx::Integer
+) where {TR<:AbstractFloat,TRC<:Union{TR,Complex{TR}}}
+    return dot(@view(op.wts[:, point_idx]), v) * op.one_over_dxn
+end
+
+"""
+    fdm_dissop_bound(diss_order::Integer, σ::TR, dx::TR) where {TR<:AbstractFloat}
+
+Create a finite difference dissipation operator with specified order (boundary).
+
+# Arguments
+- `diss_order::Integer`: The order of the dissipation operator
+- `σ::TR`: Dissipation strength
+- `dx::TR`: Grid spacing
+"""
+function fdm_dissop_bound(diss_order::Integer, σ::TR, dx::TR) where {TR<:AbstractFloat}
+    wts_left, wts_right = fdm_disswts_bound(diss_order)
+    num_coeffs = size(wts_left, 1)
+    num_points = size(wts_left, 2)
+    op_left = FDMDissBoundOp{TR}(diss_order, num_coeffs, num_points, wts_left, σ / dx)
+    op_right = FDMDissBoundOp{TR}(diss_order, num_coeffs, num_points, wts_right, σ / dx)
+    return op_left, op_right
+end
+
 export FDMCentralOp, fdm_centralop
 export FDMBoundOp, fdm_boundop
 export FDMHermiteOp, fdm_hermiteop
 export FDMDissOp, fdm_dissop
+export FDMDissBoundOp, fdm_dissop_bound
