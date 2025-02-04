@@ -15,7 +15,7 @@ end
 
 Calculate the weights for Kreiss-Oliger dissipation of given order [Babiuc:2007vr](@cite).
 """
-function fdm_disswts(::Type{TR}, diss_order::TI) where {TR<:Real,TI<:Integer}
+function fdm_disswts(::Type{TR}, diss_order::Integer) where {TR<:Real}
     @argcheck iseven(diss_order) "Only even orders are supported."
     r = div(diss_order, 2)
     wts = fdm_centralwts(TR, diss_order, 2)
@@ -24,7 +24,7 @@ function fdm_disswts(::Type{TR}, diss_order::TI) where {TR<:Real,TI<:Integer}
 end
 
 function fdm_disswts(diss_order::TI) where {TI<:Integer}
-    return fdm_disswts(Rational{Int}, diss_order)
+    return fdm_disswts(Rational{TI}, diss_order)
 end
 
 """
@@ -32,7 +32,7 @@ end
 
 Calculate the weights for Kreiss-Oliger dissipation of given order at the boundary [Babiuc:2007vr](@cite).
 """
-function fdm_disswts_bound(::Type{TR}, diss_order::TI) where {TR<:Real,TI<:Integer}
+function fdm_disswts_bound(::Type{TR}, diss_order::Integer) where {TR<:Real}
     @argcheck iseven(diss_order) "Only even orders are supported."
     r = div(diss_order, 2)
     wts_left, wts_right = fdm_boundwts(TR, diss_order, 2)
@@ -43,7 +43,7 @@ function fdm_disswts_bound(::Type{TR}, diss_order::TI) where {TR<:Real,TI<:Integ
 end
 
 function fdm_disswts_bound(diss_order::TI) where {TI<:Integer}
-    return fdm_disswts_bound(Rational{Int}, diss_order)
+    return fdm_disswts_bound(Rational{TI}, diss_order)
 end
 
 export fdm_dissorder, fdm_disswts, fdm_disswts_bound
