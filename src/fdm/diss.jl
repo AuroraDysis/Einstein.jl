@@ -34,11 +34,7 @@ Calculate the weights for Kreiss-Oliger dissipation of given order at the bounda
 """
 function fdm_disswts_bound(::Type{TR}, diss_order::TI) where {TR<:Real,TI<:Integer}
     @argcheck iseven(diss_order) "Only even orders are supported."
-    num_coeffs = diss_order + 2
     r = div(diss_order, 2)
-    wts_left = zeros(TR, num_coeffs, r)
-    wts_right = zeros(TR, num_coeffs, r)
-
     wts_left, wts_right = fdm_boundwts(TR, diss_order, 2)
     @.. wts_left = (-1)^(r + 1) * wts_left / 2^(2 * r)
     @.. wts_right = (-1)^(r + 1) * wts_right / 2^(2 * r)
