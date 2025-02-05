@@ -14,4 +14,18 @@ include("fdm/fdm.jl")
 include("qnm/qnm.jl")
 @reexport using .QNMSuite
 
+using PrecompileTools: PrecompileTools
+
+PrecompileTools.@compile_workload begin
+    using .ChebSuite
+
+    cheb1_pts(Float64, 5)
+    cheb2_pts(Float64, 5)
+
+    cheb1_angles(Float64, 5)
+    cheb2_angles(Float64, 5)
+
+    # TODO: implement the rest of the precompiles
+end
+
 end
