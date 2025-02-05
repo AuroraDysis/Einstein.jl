@@ -14,7 +14,7 @@ include("fdm/fdm.jl")
 include("qnm/qnm.jl")
 @reexport using .QNMSuite
 
-using PrecompileTools: PrecompileTools
+using PrecompileTools
 
 PrecompileTools.@compile_workload begin
     using .ChebSuite
