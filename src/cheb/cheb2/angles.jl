@@ -44,6 +44,7 @@ end
 
 function angles(grid::ChebyshevGrid{TF,ChebyshevSecondKindNode}) where {TF}
     if !haskey(grid.cached, :angles)
+        resize!(grid.angles, grid.n)
         cheb2_angles!(grid.angles, grid.n)
         grid.cached[:angles] = true
     end
