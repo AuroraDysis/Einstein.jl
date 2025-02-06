@@ -29,14 +29,14 @@ Base.@kwdef struct ChebyshevGrid{TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
     cached::Dict{Symbol,Bool} = Dict{Symbol,Bool}()
     points::Vector{TF} = TF[] # Grid points
     angles::Vector{TF} = TF[] # Angles for the grid points
+end
 
-    function ChebyshevGrid(
-        ::Type{TNode}, x_min::TF, x_max::TF, n::Integer
-    ) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
-        @argcheck n >= 0 "n must be nonnegative"
-        @argcheck x_max > x_min "x_max must be greater than x_min"
-        return new{TF,TNode}(; x_min=x_min, x_max=x_max, n=n)
-    end
+function cheb_grid(
+    ::Type{TNode}, x_min::TF, x_max::TF, n::Integer
+) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
+    @argcheck n >= 0 "n must be nonnegative"
+    @argcheck x_max > x_min "x_max must be greater than x_min"
+    return ChebyshevGrid{TF,TNode}(; x_min=x_min, x_max=x_max, n=n)
 end
 
 Base.length(grid::ChebyshevGrid) = grid.n
