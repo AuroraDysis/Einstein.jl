@@ -12,6 +12,8 @@ using SparseArrays
 using BandedMatrices
 using ToeplitzMatrices: Toeplitz, Hankel
 
+include("grid.jl")
+
 include("utils/bary.jl")
 include("utils/clenshaw.jl")
 include("utils/feval.jl")
@@ -22,7 +24,7 @@ include("utils/bary_diffmat.jl")
 include("utils/cumsummat.jl")
 include("utils/dissipation.jl")
 
-include("cheb1/grid.jl")
+include("cheb1/points.jl")
 include("cheb1/angles.jl")
 include("cheb1/coeffs2vals.jl")
 include("cheb1/vals2coeffs.jl")
@@ -33,7 +35,7 @@ include("cheb1/diffmat.jl")
 include("cheb1/asmat.jl")
 include("cheb1/cumsummat.jl")
 
-include("cheb2/grid.jl")
+include("cheb2/points.jl")
 include("cheb2/angles.jl")
 include("cheb2/coeffs2vals.jl")
 include("cheb2/vals2coeffs.jl")

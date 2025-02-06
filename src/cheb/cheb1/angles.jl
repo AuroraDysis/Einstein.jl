@@ -1,5 +1,6 @@
 @doc raw"""
     cheb1_angles([TF=Float64], n::Integer) where {TF<:AbstractFloat}
+    cheb1_angles!(θ::Vector{TF}, n::Integer) where {TF<:AbstractFloat}
 
 Compute angles for Chebyshev points of the 1st kind:
 ```math
@@ -13,18 +14,8 @@ Compute angles for Chebyshev points of the 1st kind:
 function cheb1_angles(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     @argcheck n >= 0 "n must be nonnegative"
 
-    if n == 0
-        return TF[]
-    elseif n == 1
-        return TF[convert(TF, π) / 2]
-    end
-
     θ = Array{TF}(undef, n)
-
-    pi_over_2n = convert(TF, pi) / (2 * n)
-    @inbounds for k in 0:(n - 1)
-        θ[n - k] = (2 * k + 1) * pi_over_2n
-    end
+    cheb1_angles!(θ, n)
 
     return θ
 end
@@ -33,8 +24,28 @@ function cheb1_angles(n::Integer)
     return cheb1_angles(Float64, n)
 end
 
-function angles(grid::ChebyshevGaussGrid{TF}) where {TF<:AbstractFloat}
-    return cheb1_angles(TF, grid.n)
+function cheb1_angles!(θ::Vector{TF}, n::Integer) where {TF<:AbstractFloat}
+    @argcheck length(θ) == n "length(θ) must be equal to n"
+
+    if n == 1
+        θ[1] = convert(TF, π) / 2
+        return nothing
+    end
+
+    pi_over_2n = convert(TF, pi) / (2 * n)
+    @inbounds for k in 0:(n - 1)
+        θ[n - k] = (2 * k + 1) * pi_over_2n
+    end
+
+    return nothing
 end
 
-export cheb1_angles, angles
+function angles(grid::ChebyshevGrid{TF,ChebyshevFirstKindNode}) where {TF<:AbstractFloat}
+    if !haskey(grid.cached, :angles)
+        cheb1_angles!(grid.angles, grid.n)
+        grid.cached[:angles] = true
+    end
+    return grid.angles
+end
+
+export cheb1_angles, cheb1_angles!, angles
