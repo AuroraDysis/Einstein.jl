@@ -20,6 +20,6 @@ end
 
 Base.length(grid::ChebyshevGaussGrid) = grid.n
 Base.size(grid::ChebyshevGaussGrid) = (grid.n,)
-@propagate_inbounds Base.getindex(grid::ChebyshevGaussGrid, i::Integer) = grid.grid[i]
+Base.@propagate_inbounds Base.getindex(grid::ChebyshevGaussGrid, i::Integer) = grid.grid[i]
 
 export ChebyshevGaussGrid

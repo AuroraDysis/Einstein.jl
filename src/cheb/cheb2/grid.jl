@@ -22,6 +22,6 @@ end
 
 Base.length(grid::ChebyshevLobattoGrid) = grid.n
 Base.size(grid::ChebyshevLobattoGrid) = (grid.n,)
-@propagate_inbounds Base.getindex(grid::ChebyshevLobattoGrid, i::Integer) = grid.grid[i]
+Base.@propagate_inbounds Base.getindex(grid::ChebyshevLobattoGrid, i::Integer) = grid.grid[i]
 
 export ChebyshevLobattoGrid
