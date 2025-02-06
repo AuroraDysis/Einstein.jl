@@ -1,9 +1,9 @@
 """
-    ChebyshevGaussGrid{TF} <: AbstractGrid{TF}
+    ChebyshevGaussGrid{TF <: AbstractFloat} <: AbstractGrid{TF}
 
 The zeros of Chebyshev polynomials are called Chebyshev points of the first kind, Chebyshev nodes, or, more formally, Chebyshev–Gauss points.
 """
-struct ChebyshevGaussGrid{TF} <: AbstractGrid{TF} where {TF<:AbstractFloat}
+struct ChebyshevGaussGrid{TF<:AbstractFloat} <: AbstractGrid{TF}
     x_min::TF # Lower bound of the interval
     x_max::TF # Upper bound of the interval
     n::Integer # Number of grid points

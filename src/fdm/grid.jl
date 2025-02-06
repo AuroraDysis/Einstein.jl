@@ -3,7 +3,7 @@
 
 Uniform grid with constant spacing.
 """
-struct UniformGrid{TF} <: AbstractGrid{TF} where {TF<:AbstractFloat}
+struct UniformGrid{TF<:AbstractFloat} <: AbstractGrid{TF}
     x_min::TF # lower bound of the grid
     x_max::TF # upper bound of the grid
     Δx::TF # Grid spacing

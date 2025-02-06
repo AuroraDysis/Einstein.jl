@@ -3,7 +3,7 @@
 
 The extrema of Chebyshev polynomials are called the Chebyshev points of the second kind, or Chebyshev extreme points, or Chebyshev–Lobatto points.
 """
-struct ChebyshevLobattoGrid{TF} <: AbstractGrid{TF} where {TF<:AbstractFloat}
+struct ChebyshevLobattoGrid{TF<:AbstractFloat} <: AbstractGrid{TF}
     x_min::TF # Lower bound of the interval
     x_max::TF # Upper bound of the interval
     n::Integer # Number of grid points
