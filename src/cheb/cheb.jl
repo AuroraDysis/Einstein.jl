@@ -34,7 +34,7 @@ include("cheb1/diffmat.jl")
 include("cheb1/asmat.jl")
 include("cheb1/cumsummat.jl")
 
-include("cheb1/grid.jl")
+include("cheb2/grid.jl")
 include("cheb2/angles.jl")
 include("cheb2/pts.jl")
 include("cheb2/coeffs2vals.jl")
