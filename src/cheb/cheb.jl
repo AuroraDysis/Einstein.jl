@@ -32,6 +32,10 @@ struct ChebyshevGaussGrid{TF} <: AbstractGrid{TF} where {TF<:AbstractFloat}
     end
 end
 
+Base.length(grid::ChebyshevGaussGrid) = grid.n
+Base.size(grid::ChebyshevGaussGrid) = (grid.n,)
+@propagate_inbounds Base.getindex(grid::ChebyshevGaussGrid, i::Integer) = grid.grid[i]
+
 """
     ChebyshevLobattoGrid{TF} <: AbstractGrid{TF}
 
@@ -53,6 +57,10 @@ struct ChebyshevLobattoGrid{TF} <: AbstractGrid{TF} where {TF<:AbstractFloat}
         return new{TF}(x_min, x_max, n, grid)
     end
 end
+
+Base.length(grid::ChebyshevLobattoGrid) = grid.n
+Base.size(grid::ChebyshevLobattoGrid) = (grid.n,)
+@propagate_inbounds Base.getindex(grid::ChebyshevLobattoGrid, i::Integer) = grid.grid[i]
 
 export ChebyshevGaussGrid, ChebyshevLobattoGrid
 

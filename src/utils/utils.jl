@@ -6,6 +6,7 @@ using Xsum
 using LinearAlgebra
 
 include("type.jl")
+include("grid.jl")
 include("errors.jl")
 include("sum.jl")
 include("dot.jl")

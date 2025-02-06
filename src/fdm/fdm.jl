@@ -33,6 +33,12 @@ struct UniformGrid{TF} <: AbstractGrid{TF} where {TF<:AbstractFloat}
     end
 end
 
+Base.length(grid::UniformGrid) = grid.n
+Base.step(grid::UniformGrid) = grid.Δx
+Base.size(grid::UniformGrid) = (grid.n,)
+
+@propagate_inbounds Base.getindex(grid::UniformGrid, i::Integer) = grid.grid[i]
+
 export UniformGrid
 
 include("utils.jl")
