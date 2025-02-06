@@ -65,4 +65,8 @@ function cheb1_pts(n::Integer, x_min::Float64, x_max::Float64)
     return cheb1_pts(Float64, n, x_min, x_max)
 end
 
+function points(grid::ChebyshevGaussGrid{TF}) where {TF<:AbstractFloat}
+    return cheb1_pts(TF, grid.n, grid.x_min, grid.x_max)
+end
+
 export cheb1_pts

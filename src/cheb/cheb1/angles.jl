@@ -33,8 +33,8 @@ function cheb1_angles(n::Integer)
     return cheb1_angles(Float64, n)
 end
 
-function angles(::Type{ChebyshevGaussGrid{TF}}, n::Integer) where {TF<:AbstractFloat}
-    return cheb1_angles(TF, n)
+function angles(grid::ChebyshevGaussGrid{TF}) where {TF<:AbstractFloat}
+    return cheb1_angles(TF, grid.n)
 end
 
 export cheb1_angles, angles
