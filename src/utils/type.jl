@@ -10,3 +10,5 @@ end
 
 export typeisfloat, AbstractFloatOrComplex
 export typetol
+
+abstract type AbstractGrid{TF<:AbstractFloat} end

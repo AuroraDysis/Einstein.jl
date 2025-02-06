@@ -12,6 +12,50 @@ using SparseArrays
 using BandedMatrices
 using ToeplitzMatrices: Toeplitz, Hankel
 
+"""
+    ChebyshevGaussGrid{TF} <: AbstractGrid{TF}
+
+The zeros of Chebyshev polynomials are called Chebyshev points of the first kind, Chebyshev nodes, or, more formally, Chebyshev–Gauss points.
+"""
+struct ChebyshevGaussGrid{TF} <: AbstractGrid{TF} where {TF<:AbstractFloat}
+    x_min::TF # Lower bound of the interval
+    x_max::TF # Upper bound of the interval
+    n::Integer # Number of grid points
+    grid::Vector{TF} # Grid points
+
+    function ChebyshevGaussGrid(x_min::TF, x_max::TF, n::Integer) where {TF<:AbstractFloat}
+        @argcheck n >= 0 "n must be nonnegative"
+        @argcheck x_max > x_min "x_max must be greater than x_min"
+
+        grid = cheb1_pts(TF, n, x_min, x_max)
+        return new{TF}(x_min, x_max, n, grid)
+    end
+end
+
+"""
+    ChebyshevLobattoGrid{TF} <: AbstractGrid{TF}
+
+The extrema of Chebyshev polynomials are called the Chebyshev points of the second kind, or Chebyshev extreme points, or Chebyshev–Lobatto points.
+"""
+struct ChebyshevLobattoGrid{TF} <: AbstractGrid{TF} where {TF<:AbstractFloat}
+    x_min::TF # Lower bound of the interval
+    x_max::TF # Upper bound of the interval
+    n::Integer # Number of grid points
+    grid::Vector{TF} # Grid points
+
+    function ChebyshevLobattoGrid(
+        x_min::TF, x_max::TF, n::Integer
+    ) where {TF<:AbstractFloat}
+        @argcheck n >= 0 "n must be nonnegative"
+        @argcheck x_max > x_min "x_max must be greater than x_min"
+
+        grid = cheb2_pts(TF, n, x_min, x_max)
+        return new{TF}(x_min, x_max, n, grid)
+    end
+end
+
+export ChebyshevGaussGrid, ChebyshevLobattoGrid
+
 include("utils/bary.jl")
 include("utils/clenshaw.jl")
 include("utils/feval.jl")
