@@ -42,13 +42,10 @@ function cheb2_angles!(θ::Vector{TF}, n::Integer) where {TF<:AbstractFloat}
     return nothing
 end
 
-function angles(grid::ChebyshevGrid{TF,ChebyshevSecondKindNode}) where {TF}
-    if !haskey(grid.cached, :angles)
-        resize!(grid.angles, grid.n)
-        cheb2_angles!(grid.angles, grid.n)
-        grid.cached[:angles] = true
-    end
-    return grid.angles
+function cheb_angles(
+    grid::ChebyshevGrid{TF,ChebyshevSecondKindNode}
+) where {TF<:AbstractFloat}
+    return cheb2_angles(TF, grid.n)
 end
 
-export cheb2_angles, cheb2_angles!, angles
+export cheb2_angles, cheb2_angles!, cheb_angles

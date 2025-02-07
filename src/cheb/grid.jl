@@ -19,16 +19,11 @@ struct ChebyshevSecondKindNode <: AbstractChebyshevNode end
 
 The zeros of Chebyshev polynomials are called Chebyshev points of the first kind, Chebyshev nodes, or, more formally, Chebyshev–Gauss points.
 """
-Base.@kwdef struct ChebyshevGrid{TF<:AbstractFloat,TNode<:AbstractChebyshevNode} <:
-                   AbstractGrid{TF}
+struct ChebyshevGrid{TF<:AbstractFloat,TNode<:AbstractChebyshevNode} <: AbstractGrid{TF}
     x_min::TF # Lower bound of the interval
     x_max::TF # Upper bound of the interval
     n::Integer # Number of grid points
-
-    # cache
-    cached::Dict{Symbol,Bool} = Dict{Symbol,Bool}()
-    points::Vector{TF} = TF[] # Grid points
-    angles::Vector{TF} = TF[] # Angles for the grid points
+    x::Vector{TF} # Grid points
 end
 
 function cheb_grid(
@@ -41,5 +36,6 @@ end
 
 Base.length(grid::ChebyshevGrid) = grid.n
 Base.size(grid::ChebyshevGrid) = (grid.n,)
+Base.@propagate_inbounds Base.getindex(grid::ChebyshevGrid, i::Integer) = grid.x[i]
 
 export ChebyshevGrid
