@@ -8,17 +8,17 @@ struct UniformGrid{TF<:AbstractFloat} <: AbstractGrid{TF}
     x_max::TF # upper bound of the grid
     Δx::TF # Grid spacing
     n::Integer # Number of grid points
-    grid::StepRangeLen{TF}
+    data::StepRangeLen{TF}
 
     function UniformGrid(x_min::TF, x_max::TF, n::Integer) where {TF<:AbstractFloat}
         @argcheck n >= 0 "n must be nonnegative"
         @argcheck x_max > x_min "x_max must be greater than x_min"
 
-        grid = range(x_min; stop=x_max, length=n)
-        dx = step(grid)
-        n = length(grid)
+        data = range(x_min; stop=x_max, length=n)
+        dx = step(data)
+        n = length(data)
 
-        return new{TF}(x_min, x_max, dx, n, grid)
+        return new{TF}(x_min, x_max, dx, n, data)
     end
 end
 
@@ -26,7 +26,9 @@ Base.length(grid::UniformGrid) = grid.n
 Base.step(grid::UniformGrid) = grid.Δx
 Base.size(grid::UniformGrid) = (grid.n,)
 
-Base.@propagate_inbounds Base.getindex(grid::UniformGrid, i::Integer) = grid.grid[i]
+Base.@propagate_inbounds Base.getindex(grid::UniformGrid, i::Integer) = grid.data[i]
+Base.keys(grid::UniformGrid) = keys(grid.data)
+Base.iterate(grid::UniformGrid, state=(eachindex(grid.data),)) = iterate(grid.data, state)
 
 """
     fdm_grid(x_min::TF, x_max::TF, n::Integer) where {TF<:AbstractFloat}
