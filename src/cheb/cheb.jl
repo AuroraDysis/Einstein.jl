@@ -13,6 +13,8 @@ using SparseArrays
 using BandedMatrices
 using ToeplitzMatrices: Toeplitz, Hankel
 
+include("grid.jl")
+
 include("utils/bary.jl")
 include("utils/clenshaw.jl")
 include("utils/feval.jl")
@@ -54,7 +56,5 @@ include("ultra/diffmat.jl")
 include("ultra/convertmat.jl")
 include("ultra/sphankel.jl")
 include("ultra/multmat.jl")
-
-include("grid.jl")
 
 end
