@@ -25,7 +25,7 @@ end
 Base.length(grid::UniformGrid) = grid.n
 Base.step(grid::UniformGrid) = grid.Δx
 Base.size(grid::UniformGrid) = (grid.n,)
-Base.@propagate_inbounds Base.getindex(grid::UniformGrid, i::Integer) = grid.data[i]
+Base.@propagate_inbounds Base.getindex(grid::UniformGrid, i) = grid.data[i]
 Base.keys(grid::UniformGrid) = keys(grid.data)
 Base.iterate(grid::UniformGrid, state=(eachindex(grid.data),)) = iterate(grid.data, state)
 Base.firstindex(grid::UniformGrid) = firstindex(grid.data)

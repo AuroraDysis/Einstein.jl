@@ -43,6 +43,6 @@ end
 
 Base.length(grid::ChebyshevGrid) = grid.n
 Base.size(grid::ChebyshevGrid) = (grid.n,)
-Base.@propagate_inbounds Base.getindex(grid::ChebyshevGrid, i::Integer) = grid.x[i]
+Base.@propagate_inbounds Base.getindex(grid::ChebyshevGrid, i) = grid.x[i]
 
 export ChebyshevNode, ChebyshevGrid, cheb_grid
