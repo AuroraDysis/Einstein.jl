@@ -1,10 +1,10 @@
 """
-    cheb1_barywts([T=Float64], n::Integer) where {T<:AbstractFloat}
+    cheb1_barywts([TF=Float64], n::Integer) where {TF<:AbstractFloat}
 
 Compute the barycentric weights for Chebyshev points of the 1st kind.
 
 # Arguments
-- `T`: Type parameter for the weights (e.g., Float64)
+- `TF`: Type parameter for the weights (e.g., Float64)
 - `n`: Number of points
 
 # References
@@ -14,16 +14,16 @@ Compute the barycentric weights for Chebyshev points of the 1st kind.
 
 See also: [`bary`](@ref), [`cheb1_pts`](@ref)
 """
-function cheb1_barywts(::Type{T}, n::Integer) where {T<:AbstractFloat}
+function cheb1_barywts(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     if n == 0
-        return T[]
+        return TF[]
     elseif n == 1
-        return T[one(T)]
+        return TF[one(TF)]
     end
 
-    half = one(T) / 2
-    pi_over_n = convert(T, π) / n
-    v = Vector{T}(undef, n)
+    half = one(TF) / 2
+    pi_over_n = convert(TF, π) / n
+    v = Vector{TF}(undef, n)
     @inbounds for j in 0:(n - 1)
         θ = (n - j - half) * pi_over_n
         v[j + 1] = sin(θ)
