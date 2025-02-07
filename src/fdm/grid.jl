@@ -31,7 +31,6 @@ Base.keys(grid::UniformGrid) = keys(grid.data)
 Base.iterate(grid::UniformGrid, state=(eachindex(grid.data),)) = iterate(grid.data, state)
 
 """
-    fdm_grid(x_min::TF, x_max::TF, n::Integer) where {TF<:AbstractFloat}
     fdm_grid(x_min::TF, x_max::TF, dx::TF) where {TF<:AbstractFloat}
 
 Create a uniform grid for finite difference methods (FDM).
@@ -39,16 +38,8 @@ Create a uniform grid for finite difference methods (FDM).
 # Arguments
 - `x_min::TF`: Lower bound of the grid
 - `x_max::TF`: Upper bound of the grid
-- `n::Integer`: Number of grid points
 - `dx::TF`: Grid spacing
 """
-function fdm_grid(x_min::TF, x_max::TF, n::Integer) where {TF<:AbstractFloat}
-    @argcheck x_max > x_min "Invalid interval"
-    @argcheck n > 0 "Number of grid points must be positive"
-
-    return UniformGrid{TF}(x_min, x_max, n)
-end
-
 function fdm_grid(x_min::TF, x_max::TF, dx::TF) where {TF<:AbstractFloat}
     @argcheck x_max > x_min "Invalid interval"
     @argcheck dx > 0 "Spacing must be positive"
