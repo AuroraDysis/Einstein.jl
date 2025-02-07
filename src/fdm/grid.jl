@@ -27,7 +27,9 @@ Base.step(grid::UniformGrid) = grid.Δx
 Base.size(grid::UniformGrid) = (grid.n,)
 Base.@propagate_inbounds Base.getindex(grid::UniformGrid, i) = grid.x_data[i]
 Base.keys(grid::UniformGrid) = keys(grid.x_data)
-Base.iterate(grid::UniformGrid, state=(eachindex(grid.x_data),)) = iterate(grid.x_data, state)
+function Base.iterate(grid::UniformGrid, state=(eachindex(grid.x_data),))
+    return iterate(grid.x_data, state)
+end
 Base.firstindex(grid::UniformGrid) = firstindex(grid.x_data)
 Base.lastindex(grid::UniformGrid) = lastindex(grid.x_data)
 Base.eltype(::Type{UniformGrid{TF}}) where {TF<:AbstractFloat} = TF
