@@ -29,6 +29,7 @@ Base.size(grid::UniformGrid) = (grid.n,)
 Base.@propagate_inbounds Base.getindex(grid::UniformGrid, i::Integer) = grid.data[i]
 Base.keys(grid::UniformGrid) = keys(grid.data)
 Base.iterate(grid::UniformGrid, state=(eachindex(grid.data),)) = iterate(grid.data, state)
+Base.lastindex(grid::UniformGrid) = lastindex(grid.data)
 
 """
     fdm_grid(x_min::TF, x_max::TF, dx::TF) where {TF<:AbstractFloat}
