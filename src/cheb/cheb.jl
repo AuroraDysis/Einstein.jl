@@ -3,6 +3,7 @@ module ChebSuite
 import AbstractFFTs: Plan
 using ..Utils
 using FFTW
+using EnumX
 using FastTransforms
 using ArgCheck: @argcheck
 using FastBroadcast: @..
