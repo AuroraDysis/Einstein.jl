@@ -14,6 +14,8 @@ The Chebyshev nodes of the second kind are also referred to as Chebyshev-Lobatto
 """
 struct ChebyshevSecondKindNode <: AbstractChebyshevNode end
 
+@enumx ChebyshevNode ChebyshevFirstKind ChebyshevSecondKind
+
 """
     ChebyshevGrid{TF <: AbstractFloat} <: AbstractGrid{TF}
 
@@ -27,11 +29,21 @@ struct ChebyshevGrid{TF<:AbstractFloat,TNode<:AbstractChebyshevNode} <: Abstract
 end
 
 function cheb_grid(
-    ::Type{TNode}, x_min::TF, x_max::TF, n::Integer
+    x_min::TF,
+    x_max::TF,
+    n::Integer;
+    node::ChebyshevNode.T=ChebyshevNode.ChebyshevSecondKind,
 ) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
     @argcheck n >= 0 "n must be nonnegative"
     @argcheck x_max > x_min "x_max must be greater than x_min"
-    return ChebyshevGrid{TF,TNode}(; x_min=x_min, x_max=x_max, n=n)
+    if node == ChebyshevNode.ChebyshevFirstKind
+        x = cheb1_pts(TF, n, x_min, x_max)
+    elseif node == ChebyshevNode.ChebyshevSecondKind
+        x = cheb2_pts(TF, n, x_min, x_max)
+    else
+        throw(ArgumentError("Invalid Chebyshev node type: $node"))
+    end
+    return ChebyshevGrid{TF,TNode}(; x_min=x_min, x_max=x_max, n=n, x=x)
 end
 
 Base.length(grid::ChebyshevGrid) = grid.n
