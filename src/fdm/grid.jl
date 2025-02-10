@@ -6,7 +6,6 @@ Uniform grid with constant spacing.
 struct UniformGrid{TF<:AbstractFloat} <: AbstractGrid{TF}
     lower_bound::TF # lower bound of the grid
     upper_bound::TF # upper bound of the grid
-    dx::TF # Grid spacing
     data::StepRangeLen{TF}
 
     function UniformGrid(
@@ -16,14 +15,13 @@ struct UniformGrid{TF<:AbstractFloat} <: AbstractGrid{TF}
         @argcheck upper_bound > lower_bound "upper_bound must be greater than lower_bound"
 
         data = range(lower_bound; stop=upper_bound, length=n)
-        dx = step(data)
 
-        return new{TF}(lower_bound, upper_bound, dx, data)
+        return new{TF}(lower_bound, upper_bound, data)
     end
 end
 
 Base.length(grid::UniformGrid) = length(grid.data)
-Base.step(grid::UniformGrid) = grid.dx
+Base.step(grid::UniformGrid) = step(grid.data)
 Base.size(grid::UniformGrid) = size(grid.data)
 Base.@propagate_inbounds Base.getindex(grid::UniformGrid, i) = grid.data[i]
 Base.keys(grid::UniformGrid) = keys(grid.data)
@@ -34,7 +32,7 @@ Base.firstindex(grid::UniformGrid) = firstindex(grid.data)
 Base.lastindex(grid::UniformGrid) = lastindex(grid.data)
 Base.eltype(::Type{UniformGrid{TF}}) where {TF<:AbstractFloat} = TF
 Base.IndexStyle(::Type{UniformGrid}) = IndexLinear()
-Base.diff(grid::UniformGrid) = Fill(grid.dx, length(grid.data) - 1)
+Base.diff(grid::UniformGrid) = Fill(step(grid.data), length(grid.data) - 1)
 
 """
     fdm_grid(lower_bound::TF, upper_bound::TF, dx::TF) where {TF<:AbstractFloat}
