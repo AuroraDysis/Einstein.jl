@@ -1,7 +1,7 @@
 @testitem "cheb1_interp" begin
     using Einstein.ChebSuite, Test
 
-    for kind in [ChebyshevNode.FirstKind, ChebyshevNode.SecondKind]
+    for kind in [ChebNode.FirstKind, ChebNode.SecondKind]
         @testset "kind = $kind, real" begin
             tol = 100 * eps()
             n = 40

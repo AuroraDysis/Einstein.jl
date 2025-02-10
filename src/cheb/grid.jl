@@ -14,7 +14,7 @@ The Chebyshev nodes of the second kind are also referred to as Chebyshev–Lobat
 """
 struct ChebyshevSecondKindNode <: AbstractChebyshevNode end
 
-module ChebyshevNode
+module ChebNode
 using ..ChebSuite: ChebyshevFirstKindNode, ChebyshevSecondKindNode
 
 const FirstKind = ChebyshevFirstKindNode
@@ -28,12 +28,12 @@ struct ChebyshevGrid{TF<:AbstractFloat,TNode<:AbstractChebyshevNode} <: Abstract
 end
 
 """
-    cheb_grid([TNode=ChebyshevNode.SecondKind], n, lower_bound, upper_bound)
+    cheb_grid([TNode=ChebNode.SecondKind], n, lower_bound, upper_bound)
 
 Build a Chebyshev grid of size `n` in the interval `[lower_bound, upper_bound]`.
 
 # Arguments
-- `TNode`: Type of Chebyshev nodes, either `ChebyshevNode.FirstKind` or `ChebyshevNode.SecondKind`
+- `TNode`: Type of Chebyshev nodes, either `ChebNode.FirstKind` or `ChebNode.SecondKind`
 - `n::Integer`: Number of grid points
 - `lower_bound::TF`: Lower bound of the interval
 - `upper_bound::TF`: Upper bound of the interval
@@ -44,9 +44,9 @@ function cheb_grid(
     @argcheck n >= 0 "n must be nonnegative"
     @argcheck upper_bound > lower_bound "upper_bound must be greater than lower_bound"
 
-    if TNode == ChebyshevNode.FirstKind
+    if TNode == ChebNode.FirstKind
         data = cheb1_pts(TF, n, lower_bound, upper_bound)
-    elseif TNode == ChebyshevNode.SecondKind
+    elseif TNode == ChebNode.SecondKind
         data = cheb2_pts(TF, n, lower_bound, upper_bound)
     else
         throw(ArgumentError("Invalid Chebyshev node type: $TNode"))
@@ -56,7 +56,7 @@ function cheb_grid(
 end
 
 function cheb_grid(n::Integer, lower_bound::TF, upper_bound::TF) where {TF<:AbstractFloat}
-    return cheb_grid(ChebyshevNode.SecondKind, n, lower_bound, upper_bound)
+    return cheb_grid(ChebNode.SecondKind, n, lower_bound, upper_bound)
 end
 
 # Overloads for ChebyshevGrid
@@ -78,4 +78,4 @@ Base.lastindex(grid::ChebyshevGrid) = lastindex(grid.data)
 Base.eltype(::Type{ChebyshevGrid{TF}}) where {TF<:AbstractFloat} = TF
 Base.IndexStyle(::Type{ChebyshevGrid}) = IndexLinear()
 
-export ChebyshevNode, ChebyshevGrid, cheb_grid
+export ChebNode, ChebyshevGrid, cheb_grid
