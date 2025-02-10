@@ -68,8 +68,8 @@ Base.@propagate_inbounds function Base.getindex(grid::ChebyshevGrid, i)
 end
 
 # Additional Base overload: iteration
-function Base.iterate(grid::ChebyshevGrid, i=firstindex(grid.data))
-    return iterate(grid.data, i)
+Base.@propagate_inbounds function Base.iterate(grid::ChebyshevGrid, state...)
+    return iterate(grid.data, state...)
 end
 
 Base.keys(grid::ChebyshevGrid) = keys(grid.data)
