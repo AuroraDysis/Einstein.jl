@@ -34,7 +34,7 @@ Base.firstindex(grid::UniformGrid) = firstindex(grid.data)
 Base.lastindex(grid::UniformGrid) = lastindex(grid.data)
 Base.eltype(::Type{UniformGrid{TF}}) where {TF<:AbstractFloat} = TF
 Base.IndexStyle(::Type{UniformGrid}) = IndexLinear()
-Base.diff(grid::UniformGrid) = Fill(grid.dx, grid.n - 1)
+Base.diff(grid::UniformGrid) = Fill(grid.dx, length(grid.data) - 1)
 
 """
     fdm_grid(lower_bound::TF, upper_bound::TF, dx::TF) where {TF<:AbstractFloat}
