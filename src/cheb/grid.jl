@@ -27,27 +27,28 @@ end
 Build a Chebyshev grid of size `n` in the interval `[lower_bound, upper_bound]`.
 
 # Arguments
-- `TNode`: Type of Chebyshev nodes, either `ChebyshevFirstKindNode` or `ChebyshevSecondKindNode`
+- `type`: Type of Chebyshev nodes, either `ChebyshevFirstKindNode()` or `ChebyshevSecondKindNode()`
 - `n::Integer`: Number of grid points
 - `lower_bound::TF`: Lower bound of the interval
 - `upper_bound::TF`: Upper bound of the interval
 """
 function cheb_grid(
-    type::ChebyshevFirstKindNode, n::Integer, lower_bound::TF, upper_bound::TF
-) where {TF<:AbstractFloat}
+    type::TNode, n::Integer, lower_bound::TF, upper_bound::TF
+) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
     @argcheck n >= 0 "n must be nonnegative"
     @argcheck upper_bound > lower_bound "upper_bound must be greater than lower_bound"
-    data = cheb1_pts(TF, n, lower_bound, upper_bound)
+    if TNode == ChebyshevFirstKindNode
+        data = cheb1_pts(TF, n, lower_bound, upper_bound)
+    elseif TNode == ChebyshevSecondKindNode
+        data = cheb2_pts(TF, n, lower_bound, upper_bound)
+    else
+        throw(
+            ArgumentError(
+                "type must be either ChebyshevFirstKindNode() or ChebyshevSecondKindNode()"
+            ),
+        )
+    end
     return ChebyshevGrid{TF,ChebyshevFirstKindNode}(lower_bound, upper_bound, data, type)
-end
-
-function cheb_grid(
-    type::ChebyshevSecondKindNode, n::Integer, lower_bound::TF, upper_bound::TF
-) where {TF<:AbstractFloat}
-    @argcheck n >= 0 "n must be nonnegative"
-    @argcheck upper_bound > lower_bound "upper_bound must be greater than lower_bound"
-    data = cheb2_pts(TF, n, lower_bound, upper_bound)
-    return ChebyshevGrid{TF,ChebyshevSecondKindNode}(lower_bound, upper_bound, data, type)
 end
 
 function cheb_grid(n::Integer, lower_bound::TF, upper_bound::TF) where {TF<:AbstractFloat}
