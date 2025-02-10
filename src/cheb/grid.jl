@@ -22,7 +22,7 @@ struct ChebyshevGrid{TF<:AbstractFloat,TNode<:AbstractChebyshevNode} <: Abstract
 end
 
 """
-    cheb_grid([node=ChebyshevSecondKindNode()], n, lower_bound, upper_bound)
+    cheb_grid([type=ChebyshevSecondKindNode()], n, lower_bound, upper_bound)
 
 Build a Chebyshev grid of size `n` in the interval `[lower_bound, upper_bound]`.
 
