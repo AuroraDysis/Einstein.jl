@@ -14,6 +14,7 @@ using BandedMatrices
 using ToeplitzMatrices: Toeplitz, Hankel
 
 include("grid.jl")
+include("interp.jl")
 
 include("utils/bary.jl")
 include("utils/clenshaw.jl")
@@ -30,7 +31,6 @@ include("cheb1/angles.jl")
 include("cheb1/coeffs2vals.jl")
 include("cheb1/vals2coeffs.jl")
 include("cheb1/barywts.jl")
-include("cheb1/interp.jl")
 include("cheb1/quad.jl")
 include("cheb1/diffmat.jl")
 include("cheb1/asmat.jl")
@@ -41,7 +41,6 @@ include("cheb2/angles.jl")
 include("cheb2/coeffs2vals.jl")
 include("cheb2/vals2coeffs.jl")
 include("cheb2/barywts.jl")
-include("cheb2/interp.jl")
 include("cheb2/quad.jl")
 include("cheb2/diffmat.jl")
 include("cheb2/asmat.jl")

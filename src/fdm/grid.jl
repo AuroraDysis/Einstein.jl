@@ -25,7 +25,7 @@ Base.step(grid::UniformGrid) = step(grid.data)
 Base.size(grid::UniformGrid) = size(grid.data)
 Base.@propagate_inbounds Base.getindex(grid::UniformGrid, i) = grid.data[i]
 Base.keys(grid::UniformGrid) = keys(grid.data)
-function Base.iterate(grid::UniformGrid, state=(eachindex(grid.data),))
+function Base.iterate(grid::UniformGrid, state=firstindex(grid.data))
     return iterate(grid.data, state)
 end
 Base.firstindex(grid::UniformGrid) = firstindex(grid.data)
@@ -49,8 +49,8 @@ function fdm_grid(lower_bound::TF, upper_bound::TF, dx::TF) where {TF<:AbstractF
     @argcheck dx > 0 "Spacing must be positive"
 
     n = round(Int, (upper_bound - lower_bound) / dx) + 1
-    x_grid_end = lower_bound + (n - 1) * dx
-    @argcheck (upper_bound - x_grid_end) < 10 * eps(TF) "Grid endpoint mismatch: |upper_bound - x_grid_end| = $(abs(upper_bound - x_grid_end)) exceeds tolerance ($(10 * eps(TF))). Consider adjusting dx to ensure upper_bound is reached precisely."
+    rounded_upper_bound = lower_bound + (n - 1) * dx
+    @argcheck (upper_bound - rounded_upper_bound) < 10 * eps(TF) "Grid endpoint mismatch: |upper_bound - rounded_upper_bound| = $(abs(upper_bound - x_grid_end)) exceeds tolerance ($(10 * eps(TF))). Consider adjusting dx to ensure upper_bound is reached precisely."
 
     return UniformGrid(lower_bound, upper_bound, n)
 end
