@@ -45,7 +45,7 @@ end
 function cheb_angles(
     grid::ChebyshevGrid{TF,ChebyshevSecondKindNode}
 ) where {TF<:AbstractFloat}
-    return cheb2_angles(TF, grid.n)
+    return cheb2_angles(TF, length(grid))
 end
 
 export cheb2_angles, cheb2_angles!, cheb_angles
