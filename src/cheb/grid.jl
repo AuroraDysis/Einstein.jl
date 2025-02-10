@@ -14,13 +14,6 @@ The Chebyshev nodes of the second kind are also referred to as Chebyshev–Lobat
 """
 struct ChebyshevSecondKindNode <: AbstractChebyshevNode end
 
-module ChebNode
-using ..ChebSuite: ChebyshevFirstKindNode, ChebyshevSecondKindNode
-
-const FirstKind = ChebyshevFirstKindNode
-const SecondKind = ChebyshevSecondKindNode
-end
-
 struct ChebyshevGrid{TF<:AbstractFloat,TNode<:AbstractChebyshevNode} <: AbstractGrid{TF}
     lower_bound::TF  # Lower bound of the interval
     upper_bound::TF  # Upper bound of the interval
@@ -28,12 +21,12 @@ struct ChebyshevGrid{TF<:AbstractFloat,TNode<:AbstractChebyshevNode} <: Abstract
 end
 
 """
-    cheb_grid([TNode=ChebNode.SecondKind], n, lower_bound, upper_bound)
+    cheb_grid([TNode=ChebyshevSecondKindNode], n, lower_bound, upper_bound)
 
 Build a Chebyshev grid of size `n` in the interval `[lower_bound, upper_bound]`.
 
 # Arguments
-- `TNode`: Type of Chebyshev nodes, either `ChebNode.FirstKind` or `ChebNode.SecondKind`
+- `TNode`: Type of Chebyshev nodes, either `ChebyshevFirstKindNode` or `ChebyshevSecondKindNode`
 - `n::Integer`: Number of grid points
 - `lower_bound::TF`: Lower bound of the interval
 - `upper_bound::TF`: Upper bound of the interval
@@ -44,9 +37,9 @@ function cheb_grid(
     @argcheck n >= 0 "n must be nonnegative"
     @argcheck upper_bound > lower_bound "upper_bound must be greater than lower_bound"
 
-    if TNode == ChebNode.FirstKind
+    if TNode == ChebyshevFirstKindNode
         data = cheb1_pts(TF, n, lower_bound, upper_bound)
-    elseif TNode == ChebNode.SecondKind
+    elseif TNode == ChebyshevSecondKindNode
         data = cheb2_pts(TF, n, lower_bound, upper_bound)
     else
         throw(ArgumentError("Invalid Chebyshev node type: $TNode"))
@@ -56,7 +49,7 @@ function cheb_grid(
 end
 
 function cheb_grid(n::Integer, lower_bound::TF, upper_bound::TF) where {TF<:AbstractFloat}
-    return cheb_grid(ChebNode.SecondKind, n, lower_bound, upper_bound)
+    return cheb_grid(ChebyshevSecondKindNode, n, lower_bound, upper_bound)
 end
 
 # Overloads for ChebyshevGrid

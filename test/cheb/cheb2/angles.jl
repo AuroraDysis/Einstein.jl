@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb2_angles" begin
-    using Einstein.ChebSuite, Test
+    using Einstein.ChebyshevSuite, Test
 
     @testset "n = 5" begin
         n = 5

@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb1_barywts" begin
-    using Einstein.ChebSuite, Test
+    using Einstein.ChebyshevSuite, Test
 
     # Test n=0 case
     @test cheb1_barywts(0) == Float64[]

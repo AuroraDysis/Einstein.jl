@@ -1,5 +1,5 @@
 @testitem "fdm_integrate_simpson" begin
-    using Einstein.FDMSuite, Test
+    using Einstein.FiniteDifferenceSuite, Test
 
     dx = 0.01
     x = fdm_grid(0.0, 1.0, dx)
@@ -9,7 +9,7 @@
 end
 
 @testitem "fdm_integrate_trapezoidal" begin
-    using Einstein.FDMSuite, Test
+    using Einstein.FiniteDifferenceSuite, Test
 
     dx = 0.01
     x = fdm_grid(0.0, 1.0, dx)

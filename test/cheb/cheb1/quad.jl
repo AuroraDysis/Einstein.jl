@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb1_quadwts" begin
-    using LinearAlgebra, Einstein.ChebSuite, Test
+    using LinearAlgebra, Einstein.ChebyshevSuite, Test
 
     @testset "coefficients" begin
         # Test n=0 case

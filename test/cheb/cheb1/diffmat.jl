@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb1_diffmat" begin
-    using Einstein.ChebSuite, Test
+    using Einstein.ChebyshevSuite, Test
 
     # n = 5
     expected5 = [

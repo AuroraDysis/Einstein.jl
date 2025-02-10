@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "fdm_fornbergwts" begin
-    using Einstein.FDMSuite, Test
+    using Einstein.FiniteDifferenceSuite, Test
 
     @testset "Standard First Derivatives" begin
         # Test forward difference (first derivative)

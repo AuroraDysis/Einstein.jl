@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb_diff!" begin
-    using Einstein.ChebSuite, Test
+    using Einstein.ChebyshevSuite, Test
 
     @testset "Basic functionality" begin
         # Test case 1: Simple polynomial

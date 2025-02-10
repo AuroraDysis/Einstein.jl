@@ -12,9 +12,9 @@ end
 function cheb_interp(
     grid::ChebyshevGrid{TF,TNode}
 ) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
-    if TNode == ChebNode.FirstKind
+    if TNode == ChebyshevFirstKindNode
         bary_weights = cheb1_barywts(TF, length(grid))
-    elseif TNode == ChebNode.SecondKind
+    elseif TNode == ChebyshevSecondKindNode
         bary_weights = cheb2_barywts(TF, length(grid))
     else
         throw(ArgumentError("Invalid Chebyshev node type: $TNode"))

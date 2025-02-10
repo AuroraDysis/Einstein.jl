@@ -1,5 +1,5 @@
 @testitem "fdm_centralnum" begin
-    using Einstein.FDMSuite, Test
+    using Einstein.FiniteDifferenceSuite, Test
 
     # Basic derivative orders with 2nd order accuracy
     @test fdm_centralnum(1, 2) == 3
@@ -18,7 +18,7 @@
 end
 
 @testitem "fdm_hermitenum" begin
-    using Einstein.FDMSuite, Test
+    using Einstein.FiniteDifferenceSuite, Test
 
     @test fdm_hermitenum(2, 4) == 3
     @test fdm_hermitenum(2, 8) == 5

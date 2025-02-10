@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb2_amat, cheb2_smat" begin
-    using Einstein.ChebSuite, Test
+    using Einstein.ChebyshevSuite, Test
 
     n = 32  # Enough points for good accuracy
     x = cheb2_pts(Float64, n)

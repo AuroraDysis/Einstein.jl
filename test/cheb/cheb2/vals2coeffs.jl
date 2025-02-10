@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb2_vals2coeffs" begin
-    using Einstein.ChebSuite, Test
+    using Einstein.ChebyshevSuite, Test
 
     # Set tolerance
     tol = 100 * eps()

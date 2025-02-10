@@ -1,4 +1,4 @@
-module FDMSuite
+module FiniteDifferenceSuite
 
 using ..Utils
 

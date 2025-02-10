@@ -6,10 +6,10 @@ include("utils/utils.jl")
 @reexport using .Utils
 
 include("cheb/cheb.jl")
-@reexport using .ChebSuite
+@reexport using .ChebyshevSuite
 
 include("fdm/fdm.jl")
-@reexport using .FDMSuite
+@reexport using .FiniteDifferenceSuite
 
 include("qnm/qnm.jl")
 @reexport using .QNMSuite
@@ -17,7 +17,7 @@ include("qnm/qnm.jl")
 using PrecompileTools
 
 PrecompileTools.@compile_workload begin
-    using .ChebSuite
+    using .ChebyshevSuite
 
     cheb1_pts(Float64, 5)
     cheb2_pts(Float64, 5)

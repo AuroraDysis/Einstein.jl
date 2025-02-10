@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb2_diffmat" begin
-    using Einstein.ChebSuite, Test
+    using Einstein.ChebyshevSuite, Test
 
     tol = 100 * eps()
     # Test case for n=5

@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb1_coeffs2vals" begin
-    using LinearAlgebra, Einstein.ChebSuite, Test
+    using LinearAlgebra, Einstein.ChebyshevSuite, Test
 
     # Set tolerance
     tol = 100 * eps()

@@ -1,9 +1,9 @@
 # Chebyshev Suite
 
 ```@index
-Modules = [Einstein.ChebSuite]
+Modules = [Einstein.ChebyshevSuite]
 ```
 
 ```@autodocs
-Modules = [Einstein.ChebSuite]
+Modules = [Einstein.ChebyshevSuite]
 ```

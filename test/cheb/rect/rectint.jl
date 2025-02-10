@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb_rectint" begin
-    using Einstein.ChebSuite, Test
+    using Einstein.ChebyshevSuite, Test
 
     n = 4
     intmat = cheb_rectint(n)
@@ -41,7 +41,7 @@ using TestItems
 end
 
 @testitem "cheb_rectint - analytical" begin
-    using Einstein.ChebSuite, Test
+    using Einstein.ChebyshevSuite, Test
 
     @testset "Standard domain [-1,1]" begin
         n = 32

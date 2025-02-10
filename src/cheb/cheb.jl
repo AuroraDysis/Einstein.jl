@@ -1,4 +1,4 @@
-module ChebSuite
+module ChebyshevSuite
 
 import AbstractFFTs: Plan
 using ..Utils

@@ -1,9 +1,9 @@
 # Finite Difference Suite
 
 ```@index
-Modules = [Einstein.FDMSuite]
+Modules = [Einstein.FiniteDifferenceSuite]
 ```
 
 ```@autodocs
-Modules = [Einstein.FDMSuite]
+Modules = [Einstein.FiniteDifferenceSuite]
 ```

@@ -49,8 +49,8 @@ function fdm_grid(lower_bound::TF, upper_bound::TF, dx::TF) where {TF<:AbstractF
     @argcheck dx > 0 "Spacing must be positive"
 
     n = round(Int, (upper_bound - lower_bound) / dx) + 1
-    rounded_upper_bound = lower_bound + (n - 1) * dx
-    @argcheck (upper_bound - rounded_upper_bound) < 10 * eps(TF) "Grid endpoint mismatch: |upper_bound - rounded_upper_bound| = $(abs(upper_bound - rounded_upper_bound)) exceeds tolerance ($(10 * eps(TF))). Consider adjusting dx to ensure upper_bound is reached precisely."
+    precise_upper_bound = lower_bound + (n - 1) * dx
+    @argcheck (upper_bound - precise_upper_bound) < 10 * eps(TF) "Grid endpoint mismatch: |upper_bound - precise_upper_bound| = $(abs(upper_bound - precise_upper_bound)) exceeds tolerance ($(10 * eps(TF))). Consider adjusting dx to ensure upper_bound is reached precisely."
 
     return UniformGrid(lower_bound, upper_bound, n)
 end

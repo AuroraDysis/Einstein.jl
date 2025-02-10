@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb_clenshaw" begin
-    using LinearAlgebra, Einstein.ChebSuite, Test
+    using LinearAlgebra, Einstein.ChebyshevSuite, Test
 
     tol = 10 * eps()
 

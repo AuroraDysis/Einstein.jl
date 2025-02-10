@@ -1,5 +1,5 @@
 @testitem "fdm_grid" begin
-    using Einstein.FDMSuite, Test
+    using Einstein.FiniteDifferenceSuite, Test
 
     @testset "Basic functionality" begin
         # Integer-spaced grid

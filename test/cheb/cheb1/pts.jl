@@ -1,7 +1,7 @@
 using TestItems
 
 @testitem "cheb1_pts" begin
-    using ApproxFun, Einstein.ChebSuite, Test
+    using ApproxFun, Einstein.ChebyshevSuite, Test
 
     for TR in [Float64, BigFloat]
         tol = 10 * eps(TR)
