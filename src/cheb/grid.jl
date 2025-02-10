@@ -23,20 +23,20 @@ struct ChebyshevGrid{TF<:AbstractFloat,TNode<:AbstractChebyshevNode} <: Abstract
 end
 
 """
-    cheb_grid(lower_bound::TF, upper_bound::TF, n::Integer; node::ChebyshevNode.T=ChebyshevNode.SecondKind)
+    cheb_grid(n::Integer, lower_bound::TF, upper_bound::TF; node::ChebyshevNode.T=ChebyshevNode.SecondKind)
 
 Build a Chebyshev grid of size `n` in the interval `[lower_bound, upper_bound]`.
 
 # Arguments
+- `n::Integer`: Number of grid points
 - `lower_bound::TF`: Lower bound of the interval
 - `upper_bound::TF`: Upper bound of the interval
-- `n::Integer`: Number of grid points
 - `node::ChebyshevNode.T`: Specifies the Chebyshev node type (FirstKind or SecondKind)
 """
 function cheb_grid(
+    n::Integer,
     lower_bound::TF,
-    upper_bound::TF,
-    n::Integer;
+    upper_bound::TF;
     node::ChebyshevNode.T=ChebyshevNode.SecondKind,
 ) where {TF<:AbstractFloat}
     @argcheck n >= 0 "n must be nonnegative"

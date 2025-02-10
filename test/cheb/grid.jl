@@ -8,11 +8,11 @@ using TestItems
         x_max = one(TR)
         @testset "$TR" begin
             for n in 0:10
-                grid = cheb_grid(x_min, x_max, n; node=ChebyshevNode.FirstKind)
+                grid = cheb_grid(n, x_min, x_max; node=ChebyshevNode.FirstKind)
                 @test isapprox(grid.data, cheb1_pts(TR, n, x_min, x_max), atol=10 * eps(TR))
             end
             for n in 0:10
-                grid = cheb_grid(x_min, x_max, n; node=ChebyshevNode.SecondKind)
+                grid = cheb_grid(n, x_min, x_max; node=ChebyshevNode.SecondKind)
                 @test isapprox(grid.data, cheb2_pts(TR, n, x_min, x_max), atol=10 * eps(TR))
             end
         end
