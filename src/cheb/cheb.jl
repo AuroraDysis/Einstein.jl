@@ -3,6 +3,7 @@ module ChebyshevSuite
 import AbstractFFTs: Plan
 using ..Utils
 using FFTW
+using EnumX
 using FastTransforms
 using ArgCheck: @argcheck
 using FastBroadcast: @..
@@ -13,6 +14,7 @@ using BandedMatrices
 using ToeplitzMatrices: Toeplitz, Hankel
 
 include("grid.jl")
+include("angles.jl")
 include("interp.jl")
 
 include("utils/bary.jl")

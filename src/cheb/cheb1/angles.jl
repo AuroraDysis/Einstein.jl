@@ -1,6 +1,5 @@
 @doc raw"""
-    cheb1_angles([TF=Float64], n::Integer) where {TF<:AbstractFloat}
-    cheb1_angles!(θ::Vector{TF}, n::Integer) where {TF<:AbstractFloat}
+    cheb1_angles(TF, n) where {TF<:AbstractFloat}
 
 Compute angles for Chebyshev points of the 1st kind:
 ```math
@@ -14,8 +13,17 @@ Compute angles for Chebyshev points of the 1st kind:
 function cheb1_angles(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     @argcheck n >= 0 "n must be nonnegative"
 
-    θ = Array{TF}(undef, n)
-    cheb1_angles!(θ, n)
+    if n == 0
+        return []
+    elseif n == 1
+        return [convert(TF, π) / 2]
+    end
+
+    θ = Vector{TF}(undef, n)
+    pi_over_2n = convert(TF, pi) / (2 * n)
+    @inbounds for k in 0:(n - 1)
+        θ[n - k] = (2 * k + 1) * pi_over_2n
+    end
 
     return θ
 end
@@ -24,20 +32,4 @@ function cheb1_angles(n::Integer)
     return cheb1_angles(Float64, n)
 end
 
-function cheb1_angles!(θ::Vector{TF}, n::Integer) where {TF<:AbstractFloat}
-    @argcheck length(θ) == n "length(θ) must be equal to n"
-
-    if n == 1
-        θ[1] = convert(TF, π) / 2
-        return nothing
-    end
-
-    pi_over_2n = convert(TF, pi) / (2 * n)
-    @inbounds for k in 0:(n - 1)
-        θ[n - k] = (2 * k + 1) * pi_over_2n
-    end
-
-    return nothing
-end
-
-export cheb1_angles, cheb1_angles!
+export cheb1_angles
