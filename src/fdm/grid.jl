@@ -4,57 +4,57 @@
 Uniform grid with constant spacing.
 """
 struct UniformGrid{TF<:AbstractFloat} <: AbstractGrid{TF}
-    x_min::TF # lower bound of the grid
-    x_max::TF # upper bound of the grid
-    Δx::TF # Grid spacing
-    n::Integer # Number of grid points
-    x_data::StepRangeLen{TF}
+    lower_bound::TF # lower bound of the grid
+    upper_bound::TF # upper bound of the grid
+    dx::TF # Grid spacing
+    data::StepRangeLen{TF}
 
-    function UniformGrid(x_min::TF, x_max::TF, n::Integer) where {TF<:AbstractFloat}
+    function UniformGrid(
+        lower_bound::TF, upper_bound::TF, n::Integer
+    ) where {TF<:AbstractFloat}
         @argcheck n >= 0 "n must be nonnegative"
-        @argcheck x_max > x_min "x_max must be greater than x_min"
+        @argcheck upper_bound > lower_bound "upper_bound must be greater than lower_bound"
 
-        x_data = range(x_min; stop=x_max, length=n)
-        dx = step(x_data)
-        n = length(x_data)
+        data = range(lower_bound; stop=upper_bound, length=n)
+        dx = step(data)
 
-        return new{TF}(x_min, x_max, dx, n, x_data)
+        return new{TF}(lower_bound, upper_bound, dx, data)
     end
 end
 
-Base.length(grid::UniformGrid) = grid.n
-Base.step(grid::UniformGrid) = grid.Δx
-Base.size(grid::UniformGrid) = (grid.n,)
-Base.@propagate_inbounds Base.getindex(grid::UniformGrid, i) = grid.x_data[i]
-Base.keys(grid::UniformGrid) = keys(grid.x_data)
-function Base.iterate(grid::UniformGrid, state=(eachindex(grid.x_data),))
-    return iterate(grid.x_data, state)
+Base.length(grid::UniformGrid) = length(grid.data)
+Base.step(grid::UniformGrid) = grid.dx
+Base.size(grid::UniformGrid) = size(grid.data)
+Base.@propagate_inbounds Base.getindex(grid::UniformGrid, i) = grid.data[i]
+Base.keys(grid::UniformGrid) = keys(grid.data)
+function Base.iterate(grid::UniformGrid, state=(eachindex(grid.data),))
+    return iterate(grid.data, state)
 end
-Base.firstindex(grid::UniformGrid) = firstindex(grid.x_data)
-Base.lastindex(grid::UniformGrid) = lastindex(grid.x_data)
+Base.firstindex(grid::UniformGrid) = firstindex(grid.data)
+Base.lastindex(grid::UniformGrid) = lastindex(grid.data)
 Base.eltype(::Type{UniformGrid{TF}}) where {TF<:AbstractFloat} = TF
 Base.IndexStyle(::Type{UniformGrid}) = IndexLinear()
-Base.diff(grid::UniformGrid) = Fill(grid.Δx, grid.n - 1)
+Base.diff(grid::UniformGrid) = Fill(grid.dx, grid.n - 1)
 
 """
-    fdm_grid(x_min::TF, x_max::TF, dx::TF) where {TF<:AbstractFloat}
+    fdm_grid(lower_bound::TF, upper_bound::TF, dx::TF) where {TF<:AbstractFloat}
 
 Create a uniform grid for finite difference methods (FDM).
 
 # Arguments
-- `x_min::TF`: Lower bound of the grid
-- `x_max::TF`: Upper bound of the grid
+- `lower_bound::TF`: Lower bound of the grid
+- `upper_bound::TF`: Upper bound of the grid
 - `dx::TF`: Grid spacing
 """
-function fdm_grid(x_min::TF, x_max::TF, dx::TF) where {TF<:AbstractFloat}
-    @argcheck x_max > x_min "Invalid interval"
+function fdm_grid(lower_bound::TF, upper_bound::TF, dx::TF) where {TF<:AbstractFloat}
+    @argcheck upper_bound > lower_bound "Invalid interval"
     @argcheck dx > 0 "Spacing must be positive"
 
-    n = round(Int, (x_max - x_min) / dx) + 1
-    x_grid_end = x_min + (n - 1) * dx
-    @argcheck (x_max - x_grid_end) < 10 * eps(TF) "Grid endpoint mismatch: |x_max - x_grid_end| = $(abs(x_max - x_grid_end)) exceeds tolerance ($(10 * eps(TF))). Consider adjusting dx to ensure x_max is reached precisely."
+    n = round(Int, (upper_bound - lower_bound) / dx) + 1
+    x_grid_end = lower_bound + (n - 1) * dx
+    @argcheck (upper_bound - x_grid_end) < 10 * eps(TF) "Grid endpoint mismatch: |upper_bound - x_grid_end| = $(abs(upper_bound - x_grid_end)) exceeds tolerance ($(10 * eps(TF))). Consider adjusting dx to ensure upper_bound is reached precisely."
 
-    return UniformGrid(x_min, x_max, n)
+    return UniformGrid(lower_bound, upper_bound, n)
 end
 
 export fdm_grid, UniformGrid
