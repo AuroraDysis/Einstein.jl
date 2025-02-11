@@ -22,7 +22,9 @@ function cheb2_integration_matrix(n::Integer)
     return cheb2_integration_matrix(Float64, n)
 end
 
-function cheb2_integration_matrix(::Type{TF}, n::Integer, x_min::TF, x_max::TF) where {TF<:AbstractFloat}
+function cheb2_integration_matrix(
+    ::Type{TF}, n::Integer, x_min::TF, x_max::TF
+) where {TF<:AbstractFloat}
     Q = cheb2_integration_matrix(TF, n)
     scale = (x_max - x_min) / 2
     Q .*= scale
@@ -31,6 +33,12 @@ end
 
 function cheb2_integration_matrix(n::Integer, x_min::Float64, x_max::Float64)
     return cheb2_integration_matrix(Float64, n, x_min, x_max)
+end
+
+function cheb_integration_matrix(
+    ::ChebyshevSecondKindNode, ::Type{TR}, n::Integer, x_min::TR, x_max::TR
+) where {TR<:AbstractFloat}
+    return cheb2_integration_matrix(TR, n, x_min, x_max)
 end
 
 export cheb2_integration_matrix

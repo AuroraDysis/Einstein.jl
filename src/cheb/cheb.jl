@@ -20,6 +20,8 @@ include("analysis.jl")
 include("synthesis.jl")
 include("analysis_matrix.jl")
 include("synthesis_matrix.jl")
+include("differentiation_matrix.jl")
+include("integration_matrix.jl")
 
 include("utils/clenshaw.jl")
 include("utils/feval.jl")
