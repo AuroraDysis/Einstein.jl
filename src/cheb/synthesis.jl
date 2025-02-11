@@ -1,4 +1,4 @@
-abstract type AbstractChebyshevSynthesisImplementationementation end
+abstract type AbstractChebyshevSynthesisImplementation end
 
 struct ChebyshevSynthesis{
     TF<:AbstractFloat,TSynthesisImpl<:AbstractChebyshevSynthesisImplementation
