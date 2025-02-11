@@ -1,6 +1,6 @@
 """
-    cheb2_coeffs2vals(coeffs::AbstractVector{TF}) where {TF<:AbstractFloat}
-    op::ChebyshevSecondKindSynthesis{[TF=Float64]}(n::Integer)(coeffs::AbstractVector{TF}) where {TF<:AbstractFloat}
+    cheb2_coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
+    ChebyshevSecondKindSynthesis{[TF=Float64]}(n::Integer)(coeffs::AbstractVector{TR})
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 2nd kind.
 
@@ -34,9 +34,9 @@ struct ChebyshevSecondKindSynthesis{TF<:AbstractFloat} <: AbstractChebyshevSynth
 end
 
 function (op::ChebyshevSecondKindSynthesis{TF})(
-    coeffs::AbstractVector{TRC}
-) where {TF<:AbstractFloat,TRC<:Union{TF,Complex{TF}}}
-    type_is_float = typeisfloat(TRC)
+    coeffs::AbstractVector{TR}
+) where {TF<:AbstractFloat,TR<:Union{TF,Complex{TF}}}
+    type_is_float = typeisfloat(TR)
 
     n = length(coeffs)
     if n <= 1
@@ -103,14 +103,14 @@ function (op::ChebyshevSecondKindSynthesis{TF})(
     end
 end
 
-function cheb2_coeffs2vals(coeffs::AbstractVector{TRC}) where {TRC<:AbstractFloatOrComplex}
+function cheb2_coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
     n = length(coeffs)
 
     if n <= 1
         return deepcopy(coeffs)
     end
 
-    op = ChebyshevSecondKindSynthesis{real(TRC)}(n)
+    op = ChebyshevSecondKindSynthesis{real(TR)}(n)
     return op(coeffs)
 end
 
