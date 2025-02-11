@@ -1,5 +1,5 @@
 """
-    cheb1_synthesis(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
+    cheb1_coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
     ChebyshevFirstKindSynthesis{[TF=Float64]}(n::Integer)(coeffs::AbstractVector{TR})
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 1st kind.

@@ -1,5 +1,5 @@
 """
-    cheb2_analysis(vals::AbstractVector{TF}) where {TF<:AbstractFloat}
+    cheb2_vals2coeffs(vals::AbstractVector{TF}) where {TF<:AbstractFloat}
     ChebyshevSecondKindAnalysis{[TF=Float64]}(n::Integer)(vals::AbstractVector{TF}) where {TF<:AbstractFloat}
 
 Convert values at Chebyshev points of the 2nd kind into Chebyshev coefficients.
@@ -14,7 +14,8 @@ values = op(coeffs)
 # References
 - [chebfun/@chebtech2/vals2coeffs.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/vals2coeffs.m)
 """
-struct ChebyshevSecondKindAnalysis{TF<:AbstractFloat}
+struct ChebyshevSecondKindAnalysis{TF<:AbstractFloat} <:
+       AbstractChebyshevAnalysisImplementation
     tmp::Vector{Complex{TF}}
     coeffs::Vector{Complex{TF}}
     real_coeffs::Vector{TF}

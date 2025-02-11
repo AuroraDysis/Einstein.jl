@@ -1,5 +1,5 @@
 """
-    cheb2_synthesis(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
+    cheb2_coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
     ChebyshevSecondKindSynthesis{[TF=Float64]}(n::Integer)(coeffs::AbstractVector{TR})
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 2nd kind.

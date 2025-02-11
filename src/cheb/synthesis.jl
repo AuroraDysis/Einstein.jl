@@ -1,7 +1,7 @@
 abstract type AbstractChebyshevSynthesisImplementation end
 
 """
-    ChebyshevSynthesis(grid::ChebyshevGrid{TF}) where {TF<:AbstractFloat}
+    ChebyshevSynthesis(grid::ChebyshevGrid)
 
 Construct a Chebyshev synthesis operator for the given grid, converting from coefficients to values.
 """
