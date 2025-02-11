@@ -1,5 +1,5 @@
 @doc raw"""
-    cheb_disswts([T=Float64], n::Integer, a::Integer, p::Integer) where {T<:AbstractFloat}
+    cheb_dissipation_weights([T=Float64], n::Integer, a::Integer, p::Integer) where {T<:AbstractFloat}
 
 Compute exponential dissipation weights for Chebyshev spectral methods [Szilagyi:2009qz](@cite).
 ```math
@@ -16,7 +16,7 @@ w_k = e^{-\alpha\left(k / n\right)^{2 p}}, \quad k = 0, \ldots, n-1
 - $\alpha = 36$ and $p = 32$ for weak dissipation [Szilagyi:2009qz, Hilditch:2015aba](@cite)
 - $\alpha = 40$ and $p = 8$ for strong dissipation [justin_ripley_2023_8215577](@cite)
 """
-function cheb_disswts(
+function cheb_dissipation_weights(
     ::Type{T}, n::Integer, α::Integer, p::Integer
 ) where {T<:AbstractFloat}
     wts = zeros(T, n)
@@ -28,12 +28,12 @@ function cheb_disswts(
     return wts
 end
 
-function cheb_disswts(n::Integer, α::Integer, p::Integer)
-    return cheb_disswts(Float64, n, α, p)
+function cheb_dissipation_weights(n::Integer, α::Integer, p::Integer)
+    return cheb_dissipation_weights(Float64, n, α, p)
 end
 
 """
-    cheb_dissmat(wts::AbstractVector{T}, S::AbstractMatrix{T}, A::AbstractMatrix{T}; negsum::Bool=true) where T<:AbstractFloat
+    cheb_dissipation_matrix(wts::AbstractVector{T}, S::AbstractMatrix{T}, A::AbstractMatrix{T}; negsum::Bool=true) where T<:AbstractFloat
 
 Construct a dissipation matrix using precomputed weights and operators,
 optionally applying the 'negative sum trick', which seems make the simulation more stable
@@ -48,7 +48,7 @@ according to my tests.
 The function applies the weights through diagonal scaling and implements
 the negative sum trick for diagonal elements when negsum is true.
 """
-function cheb_dissmat(
+function cheb_dissipation_matrix(
     wts::AbstractVector{T}, S::AbstractMatrix{T}, A::AbstractMatrix{T}; negsum::Bool=true
 ) where {T<:AbstractFloat}
     F = S * Diagonal(wts) * A
