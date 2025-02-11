@@ -1,6 +1,6 @@
 """
-    cheb_rect_differentiation_matrix_kind1([TR=Float64], m::Integer, n::Integer) where {TR<:AbstractFloat}
-    cheb_rect_differentiation_matrix_kind1([TR=Float64], m::Integer, n::Integer, x_min::TR, x_max::TR) where {TR<:AbstractFloat}
+    cheb_rect_differentiation_matrix_kind1([TF=Float64], m::Integer, n::Integer) where {TF<:AbstractFloat}
+    cheb_rect_differentiation_matrix_kind1([TF=Float64], m::Integer, n::Integer, x_min::TF, x_max::TF) where {TF<:AbstractFloat}
 
 Constructing a 1st-order rectangular differentiation matrix mapping from a 1st-kind grid
 
@@ -11,19 +11,19 @@ Constructing a 1st-order rectangular differentiation matrix mapping from a 1st-k
 # References
 - [chebfun/diffmat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/diffmat.m)
 """
-function cheb_rect_differentiation_matrix_kind1(::Type{TR}, m::Integer, n::Integer) where {TR<:AbstractFloat}
+function cheb_rect_differentiation_matrix_kind1(::Type{TF}, m::Integer, n::Integer) where {TF<:AbstractFloat}
     # mapping-from grid (angles):
     T = cheb1_angles(n)'        # Row vector of length n
     # difference between dimensions:
     c = n - m
     # mapping-to grid (angles):
-    TAU = cheb1_angles(TR, m)       # Column vector of length m
+    TAU = cheb1_angles(TF, m)       # Column vector of length m
 
     # Denominator term
     denom = @. 2 * sin((T + TAU) / 2) * sin((TAU - T) / 2)
 
     # Sign matrix
-    sgn = ones(TR, m, n)
+    sgn = ones(TF, m, n)
     if isodd(c)
         sgn[1:2:m, 2:2:n] .= -1
         sgn[2:2:m, 1:2:n] .= -1
@@ -58,9 +58,9 @@ function cheb_rect_differentiation_matrix_kind1(m::Integer, n::Integer)
 end
 
 function cheb_rect_differentiation_matrix_kind1(
-    ::Type{TR}, m::Integer, n::Integer, x_min::TR, x_max::TR
-) where {TR<:AbstractFloat}
-    D = cheb_rect_differentiation_matrix_kind1(TR, m, n)
+    ::Type{TF}, m::Integer, n::Integer, x_min::TF, x_max::TF
+) where {TF<:AbstractFloat}
+    D = cheb_rect_differentiation_matrix_kind1(TF, m, n)
     D .*= 2 / (x_max - x_min)
     return D
 end
@@ -70,8 +70,8 @@ function cheb_rect_differentiation_matrix_kind1(m::Integer, n::Integer, x_min::F
 end
 
 """
-    cheb_rect_differentiation_matrix_kind2([TR=Float64], m::Integer, n::Integer) where {TR<:AbstractFloat}
-    cheb_rect_differentiation_matrix_kind2([TR=Float64], m::Integer, n::Integer, x_min::TR, x_max::TR) where {TR<:AbstractFloat}
+    cheb_rect_differentiation_matrix_kind2([TF=Float64], m::Integer, n::Integer) where {TF<:AbstractFloat}
+    cheb_rect_differentiation_matrix_kind2([TF=Float64], m::Integer, n::Integer, x_min::TF, x_max::TF) where {TF<:AbstractFloat}
 
 Construct a 1st-order rectangular differentiation matrix mapping from a 2nd-kind grid.
 
@@ -82,13 +82,13 @@ Construct a 1st-order rectangular differentiation matrix mapping from a 2nd-kind
 # References
 - [chebfun/diffmat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/diffmat.m)
 """
-function cheb_rect_differentiation_matrix_kind2(::Type{TR}, m::Integer, n::Integer) where {TR<:AbstractFloat}
+function cheb_rect_differentiation_matrix_kind2(::Type{TF}, m::Integer, n::Integer) where {TF<:AbstractFloat}
     nm1 = n - 1                     # For convenience
     cm1 = nm1 - m                   # Difference between dimensions
-    t = cheb2_points(TR, n)            # Second-kind grid
-    tau = cheb1_points(TR, m)          # First-kind grid
-    T = cheb2_angles(TR, n)         # Second-kind grid (angles)
-    TAU = cheb1_angles(TR, m)       # First-kind grid (angles)
+    t = cheb2_points(TF, n)            # Second-kind grid
+    tau = cheb1_points(TF, m)          # First-kind grid
+    T = cheb2_angles(TF, n)         # Second-kind grid (angles)
+    TAU = cheb1_angles(TF, m)       # First-kind grid (angles)
 
     # Denominator term (explicit expression)
     denom = [2 * sin((t + tau) / 2) * sin((tau - t) / 2) for tau in TAU, t in T]
@@ -102,12 +102,12 @@ function cheb_rect_differentiation_matrix_kind2(::Type{TR}, m::Integer, n::Integ
     if cm1 == 0
         D = numer ./ (denom .^ 2) ./ nm1
     else
-        D = (sin.(cm1 .* TAU) .* ones(TR, 1, n)) ./ denom .+ numer ./ (denom .^ 2) ./ nm1
+        D = (sin.(cm1 .* TAU) .* ones(TF, 1, n)) ./ denom .+ numer ./ (denom .^ 2) ./ nm1
         D .*= sgn
     end
 
     # Scale first and last columns
-    half = one(TR) / 2
+    half = one(TF) / 2
     D[:, [1, n]] .*= half
 
     # Flipping trick for cm1 == 0
@@ -130,7 +130,7 @@ function cheb_rect_differentiation_matrix_kind2(::Type{TR}, m::Integer, n::Integ
 
     # Fix corner values for cm1 == 0
     if cm1 == 0
-        neg_quarter = -one(TR) / 4
+        neg_quarter = -one(TF) / 4
         cornerVal = neg_quarter / (nm1 * sin(π / (2 * m)) * sin(π / (4 * m))^2)
         D[1, 1] = cornerVal
         D[end, end] = -cornerVal
@@ -150,9 +150,9 @@ function cheb_rect_differentiation_matrix_kind2(m::Integer, n::Integer)
 end
 
 function cheb_rect_differentiation_matrix_kind2(
-    ::Type{TR}, m::Integer, n::Integer, x_min::TR, x_max::TR
-) where {TR<:AbstractFloat}
-    D = cheb_rect_differentiation_matrix_kind2(TR, m, n)
+    ::Type{TF}, m::Integer, n::Integer, x_min::TF, x_max::TF
+) where {TF<:AbstractFloat}
+    D = cheb_rect_differentiation_matrix_kind2(TF, m, n)
     D .*= 2 / (x_max - x_min)
     return D
 end
@@ -162,7 +162,7 @@ function cheb_rect_differentiation_matrix_kind2(m::Integer, n::Integer, x_min::F
 end
 
 """
-    cheb_rectdiff([TR=Float64], m::Integer, n::Integer, p::Integer, kind::Integer) where {TR<:AbstractFloat}
+    cheb_rect_differentiation_matrix([TF=Float64], m::Integer, n::Integer, p::Integer, kind::Integer) where {TF<:AbstractFloat}
 
 Construct a p-th order rectangular differentiation matrix mapping between Chebyshev grids.
 
@@ -173,34 +173,34 @@ Construct a p-th order rectangular differentiation matrix mapping between Chebys
 - `kind` : Kind of Chebyshev grid (1 or 2)
 """
 function cheb_rect_differentiation_matrix(
-    ::Type{TR}, m::Integer, n::Integer, p::Integer, kind::Integer
-)::Matrix{TR} where {TR<:AbstractFloat}
+    ::Type{TF}, m::Integer, n::Integer, p::Integer, kind::Integer
+)::Matrix{TF} where {TF<:AbstractFloat}
     @argcheck p >= 2 "p must be at least 2"
     @argcheck kind == 1 || kind == 2 "kind must be 1 or 2"
 
     # Initialize sign vector
-    sgn = ones(TR, n)
+    sgn = ones(TF, n)
     sgn[1:2:n] .= -1
 
     if kind == 1
         # First-kind grid
-        T = cheb1_angles(TR, n)
-        D = cheb_rect_differentiation_matrix_kind1(TR, m, n)
-        a = vcat(zeros(TR, n), one(TR))
-        sgn_coeff = (-1)^(n - 1) / TR(n)
+        T = cheb1_angles(TF, n)
+        D = cheb_rect_differentiation_matrix_kind1(TF, m, n)
+        a = vcat(zeros(TF, n), one(TF))
+        sgn_coeff = (-1)^(n - 1) / TF(n)
         @. sgn = sgn_coeff * sgn * sin(T)
     else
         # Second-kind grid
-        T = cheb2_angles(TR, n)
-        D = cheb_rect_differentiation_matrix_kind2(TR, m, n)
-        a = vcat(zeros(TR, n - 2), -one(TR), zero(TR), one(TR))
-        sgn .*= (-1)^(n - 1) / TR(2 * (n - 1))
-        sgn[[1, n]] .*= one(TR) / 2
+        T = cheb2_angles(TF, n)
+        D = cheb_rect_differentiation_matrix_kind2(TF, m, n)
+        a = vcat(zeros(TF, n - 2), -one(TF), zero(TF), one(TF))
+        sgn .*= (-1)^(n - 1) / TF(2 * (n - 1))
+        sgn[[1, n]] .*= one(TF) / 2
     end
 
     # Setup grids
-    tau = cheb1_points(TR, m)
-    TAU = cheb1_angles(TR, m)
+    tau = cheb1_points(TF, m)
+    TAU = cheb1_angles(TF, m)
     a = cheb_diff(a)
 
     # Compute denominator matrix
@@ -228,9 +228,9 @@ function cheb_rect_differentiation_matrix(m::Integer, n::Integer, p::Integer, ki
 end
 
 function cheb_rect_differentiation_matrix(
-    ::Type{TR}, m::Integer, n::Integer, p::Integer, kind::Integer, x_min::TR, x_max::TR
-)::Matrix{TR} where {TR<:AbstractFloat}
-    D = cheb_rect_differentiation_matrix(TR, m, n, p, kind)
+    ::Type{TF}, m::Integer, n::Integer, p::Integer, kind::Integer, x_min::TF, x_max::TF
+)::Matrix{TF} where {TF<:AbstractFloat}
+    D = cheb_rect_differentiation_matrix(TF, m, n, p, kind)
     scale = (2 / (x_max - x_min))^p
     D .*= scale
     return D
