@@ -6,25 +6,18 @@ abstract type AbstractChebyshevSynthesisImplementation end
 Construct a Chebyshev synthesis operator for the given grid, converting from coefficients to values.
 """
 struct ChebyshevSynthesis{
-    TF<:AbstractFloat,TSynthesisImpl<:AbstractChebyshevSynthesisImplementation
+    TF<:AbstractFloat,
+    TNode<:AbstractChebyshevNode,
+    TSynthesisImpl<:AbstractChebyshevSynthesisImplementation,
 }
-    grid::ChebyshevGrid{TF}
+    grid::ChebyshevGrid{TF,TNode}
     impl::TSynthesisImpl
 
-    function ChebyshevSynthesis(grid::ChebyshevGrid{TF}) where {TF<:AbstractFloat}
-        if grid.type == ChebyshevNode.FirstKind
-            synthesis = ChebyshevFirstKindSynthesis{TF}(length(grid))
-        elseif grid.type == ChebyshevNode.SecondKind
-            synthesis = ChebyshevSecondKindSynthesis{TF}(length(grid))
-        else
-            throw(
-                ArgumentError(
-                    "kind must be either ChebyshevNode.FirstKind or ChebyshevNode.SecondKind",
-                ),
-            )
-        end
-
-        return new{TF,typeof(synthesis)}(grid, synthesis)
+    function ChebyshevSynthesis(
+        grid::ChebyshevGrid{TF,TNode}
+    ) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
+        synthesis = cheb_synthesis(grid.node, TF, length(grid))
+        return new{TF,TNode,typeof(synthesis)}(grid, synthesis)
     end
 end
 

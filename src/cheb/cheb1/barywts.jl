@@ -50,4 +50,10 @@ function cheb1_barycentric_weights(n::Integer)
     return cheb1_barycentric_weights(Float64, n)
 end
 
+function cheb_barycentric_weights(
+    ::ChebyshevFirstKindNode, ::Type{TF}, n::Integer
+) where {TF<:AbstractFloat}
+    return cheb1_barycentric_weightss(TF, n)
+end
+
 export cheb1_barycentric_weights

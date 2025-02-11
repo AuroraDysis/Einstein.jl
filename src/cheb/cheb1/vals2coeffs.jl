@@ -1,6 +1,6 @@
 """
-    cheb1_analysis(vals::AbstractVector{TR}) where {TR<:AbstractFloat}
-    ChebyshevFirstKindAnalysis{[TR=Float64]}(n::Integer)(vals::VT) where {TR<:AbstractFloat}
+    cheb1_analysis(vals::AbstractVector{TF}) where {TF<:AbstractFloat}
+    ChebyshevFirstKindAnalysis{[TF=Float64]}(n::Integer)(vals::VT) where {TF<:AbstractFloat}
 
 Convert values at Chebyshev points of the 1st kind into Chebyshev coefficients.
 
@@ -14,18 +14,18 @@ values = op(coeffs)
 # References
 - [chebfun/@chebtech1/vals2coeffs.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/vals2coeffs.m)
 """
-struct ChebyshevFirstKindAnalysis{TR<:AbstractFloat}
-    w::Vector{Complex{TR}}
-    tmp::Vector{Complex{TR}}
-    coeffs::Vector{Complex{TR}}
-    real_coeffs::Vector{TR}
-    ifft_plan::Plan{Complex{TR}}
+struct ChebyshevFirstKindAnalysis{TF<:AbstractFloat}
+    w::Vector{Complex{TF}}
+    tmp::Vector{Complex{TF}}
+    coeffs::Vector{Complex{TF}}
+    real_coeffs::Vector{TF}
+    ifft_plan::Plan{Complex{TF}}
 
-    function ChebyshevFirstKindAnalysis{TR}(n::Integer) where {TR<:AbstractFloat}
+    function ChebyshevFirstKindAnalysis{TF}(n::Integer) where {TF<:AbstractFloat}
         # Precompute weights
-        w = Vector{Complex{TR}}(undef, n)
+        w = Vector{Complex{TF}}(undef, n)
         @inbounds begin
-            im_pi_over_2n = im * convert(TR, π) / (2n)
+            im_pi_over_2n = im * convert(TF, π) / (2n)
             for k in 0:(n - 1)
                 w[k + 1] = 2 * exp(k * im_pi_over_2n)
             end
@@ -33,14 +33,14 @@ struct ChebyshevFirstKindAnalysis{TR<:AbstractFloat}
         end
 
         # Prepare temporary array for FFT
-        tmp = Vector{Complex{TR}}(undef, 2n)
-        coeffs = Vector{Complex{TR}}(undef, n)
-        real_coeffs = Vector{TR}(undef, n)
+        tmp = Vector{Complex{TF}}(undef, 2n)
+        coeffs = Vector{Complex{TF}}(undef, n)
+        real_coeffs = Vector{TF}(undef, n)
 
         # Create an inverse FFT plan with MEASURE flag for better performance
         ifft_plan = plan_ifft_measure!(tmp)
 
-        return new{TR}(w, tmp, coeffs, real_coeffs, ifft_plan)
+        return new{TF}(w, tmp, coeffs, real_coeffs, ifft_plan)
     end
 
     function ChebyshevFirstKindAnalysis(n::Integer)
@@ -48,10 +48,10 @@ struct ChebyshevFirstKindAnalysis{TR<:AbstractFloat}
     end
 end
 
-function (op::ChebyshevFirstKindAnalysis{TR})(
-    vals::AbstractVector{TRC}
-) where {TR<:AbstractFloat,TRC<:Union{TR,Complex{TR}}}
-    type_is_float = typeisfloat(TRC)
+function (op::ChebyshevFirstKindAnalysis{TF})(
+    vals::AbstractVector{TFC}
+) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
+    type_is_float = typeisfloat(TFC)
 
     n = length(vals)
     if n <= 1
@@ -65,7 +65,7 @@ function (op::ChebyshevFirstKindAnalysis{TR})(
     end
 
     # Check for symmetry with tolerance
-    atol = type_is_float ? 10 * eps(TR) : 10 * eps(real(TR))
+    atol = type_is_float ? 10 * eps(TF) : 10 * eps(real(TF))
     isEven = true
     isOdd = true
     @inbounds for i in 1:(n ÷ 2)
@@ -118,14 +118,20 @@ function (op::ChebyshevFirstKindAnalysis{TR})(
     end
 end
 
-function cheb1_analysis(vals::AbstractVector{TRC}) where {TRC<:AbstractFloatOrComplex}
+function cheb_analysis(
+    ::ChebyshevFirstKindNode, ::Type{TF}, n::Integer
+) where {TF<:AbstractFloat}
+    return ChebyshevFirstKindAnalysis{TF}(n)
+end
+
+function cheb1_vals2coeffs(vals::AbstractVector{TFC}) where {TFC<:AbstractFloatOrComplex}
     n = length(vals)
     if n <= 1
         return deepcopy(vals)
     end
 
-    op = ChebyshevFirstKindAnalysis{real(TRC)}(n)
+    op = ChebyshevFirstKindAnalysis{real(TFC)}(n)
     return op(vals)
 end
 
-export cheb1_analysis, ChebyshevFirstKindAnalysis
+export ChebyshevFirstKindAnalysis, cheb1_vals2coeffs

@@ -1,6 +1,6 @@
 """
-    cheb2_analysis(vals::AbstractVector{TR}) where {TR<:AbstractFloat}
-    ChebyshevSecondKindAnalysis{[TR=Float64]}(n::Integer)(vals::AbstractVector{TR}) where {TR<:AbstractFloat}
+    cheb2_analysis(vals::AbstractVector{TF}) where {TF<:AbstractFloat}
+    ChebyshevSecondKindAnalysis{[TF=Float64]}(n::Integer)(vals::AbstractVector{TF}) where {TF<:AbstractFloat}
 
 Convert values at Chebyshev points of the 2nd kind into Chebyshev coefficients.
 
@@ -14,18 +14,18 @@ values = op(coeffs)
 # References
 - [chebfun/@chebtech2/vals2coeffs.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/vals2coeffs.m)
 """
-struct ChebyshevSecondKindAnalysis{TR<:AbstractFloat}
-    tmp::Vector{Complex{TR}}
-    coeffs::Vector{Complex{TR}}
-    real_coeffs::Vector{TR}
-    ifft_plan::Plan{Complex{TR}}
+struct ChebyshevSecondKindAnalysis{TF<:AbstractFloat}
+    tmp::Vector{Complex{TF}}
+    coeffs::Vector{Complex{TF}}
+    real_coeffs::Vector{TF}
+    ifft_plan::Plan{Complex{TF}}
 
-    function ChebyshevSecondKindAnalysis{TR}(n::Integer) where {TR<:AbstractFloat}
-        tmp = zeros(Complex{TR}, 2n - 2)
-        coeffs = zeros(Complex{TR}, n)
-        real_coeffs = zeros(TR, n)
+    function ChebyshevSecondKindAnalysis{TF}(n::Integer) where {TF<:AbstractFloat}
+        tmp = zeros(Complex{TF}, 2n - 2)
+        coeffs = zeros(Complex{TF}, n)
+        real_coeffs = zeros(TF, n)
         ifft_plan = plan_ifft_measure!(tmp)
-        return new{TR}(tmp, coeffs, real_coeffs, ifft_plan)
+        return new{TF}(tmp, coeffs, real_coeffs, ifft_plan)
     end
 
     function ChebyshevSecondKindAnalysis(n::Integer)
@@ -33,10 +33,10 @@ struct ChebyshevSecondKindAnalysis{TR<:AbstractFloat}
     end
 end
 
-function (op::ChebyshevSecondKindAnalysis{TR})(
-    vals::AbstractVector{TRC}
-) where {TR<:AbstractFloat,TRC<:Union{TR,Complex{TR}}}
-    type_is_float = typeisfloat(TRC)
+function (op::ChebyshevSecondKindAnalysis{TF})(
+    vals::AbstractVector{TR}
+) where {TF<:AbstractFloat,TR<:Union{TF,Complex{TF}}}
+    type_is_float = typeisfloat(TR)
 
     n = length(vals)
 
@@ -107,13 +107,19 @@ function (op::ChebyshevSecondKindAnalysis{TR})(
     end
 end
 
-function cheb2_analysis(vals::AbstractVector{TRC}) where {TRC<:AbstractFloatOrComplex}
+function cheb_analysis(
+    ::ChebyshevSecondKindNode, ::Type{TF}, n::Integer
+) where {TF<:AbstractFloat}
+    return ChebyshevSecondKindAnalysis{TF}(n)
+end
+
+function cheb2_vals2coeffs(vals::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
     n = length(vals)
     if n <= 1
         return deepcopy(vals)
     end
-    op = ChebyshevSecondKindAnalysis{real(TRC)}(n)
+    op = ChebyshevSecondKindAnalysis{real(TR)}(n)
     return op(vals)
 end
 
-export cheb2_analysis, ChebyshevSecondKindAnalysis
+export ChebyshevSecondKindAnalysis, cheb2_vals2coeffs

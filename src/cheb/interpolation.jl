@@ -3,20 +3,15 @@
 
 Construct a barycentric interpolation with precomputed weights for a Chebyshev grid.
 """
-struct ChebyshevInterpolation{TF<:AbstractFloat}
-    grid::ChebyshevGrid{TF}
+struct ChebyshevInterpolation{TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
+    grid::ChebyshevGrid{TF,TNode}
     bary_itp::BarycentricInterpolation{TF}
 
-    function ChebyshevInterpolation(grid::ChebyshevGrid{TF}) where {TF<:AbstractFloat}
-        if grid.type == ChebyshevNode.FirstKind
-            weights = cheb1_barycentric_weights(TF, length(grid))
-        elseif grid.type == ChebyshevNode.SecondKind
-            weights = cheb2_barycentric_weights(TF, length(grid))
-        else
-            throw(ArgumentError("Invalid Chebyshev node type: $(grid.type)"))
-        end
-
-        return new{TF}(grid, BarycentricInterpolation(grid.data, weights))
+    function ChebyshevInterpolation(
+        grid::ChebyshevGrid{TF,TNode}
+    ) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
+        weights = cheb_barycentric_weights(grid.node, TF, length(grid))
+        return new{TF,TNode}(grid, BarycentricInterpolation(grid.data, weights))
     end
 end
 

@@ -1,3 +1,8 @@
+abstract type AbstractChebyshevNode end
+
+struct ChebyshevFirstKindNode <: AbstractChebyshevNode end
+struct ChebyshevSecondKindNode <: AbstractChebyshevNode end
+
 @enumx ChebyshevNode FirstKind = 1 SecondKind = 2
 
 """
@@ -15,11 +20,11 @@ Build a Chebyshev grid of size `n` in the interval `[lower_bound, upper_bound]`.
 - `upper_bound::TF`: Upper bound of the interval
 - `kind::ChebyshevNode.T = ChebyshevNode.SecondKind`: Kind of Chebyshev nodes
 """
-struct ChebyshevGrid{TF<:AbstractFloat} <: AbstractGrid{TF}
+struct ChebyshevGrid{TF<:AbstractFloat,TNode<:AbstractChebyshevNode} <: AbstractGrid{TF}
     lower_bound::TF  # Lower bound of the interval
     upper_bound::TF  # Upper bound of the interval
     data::Vector{TF} # Grid points
-    type::ChebyshevNode.T
+    node::TNode      # Node type
 
     function ChebyshevGrid(
         n::Integer,
@@ -31,9 +36,9 @@ struct ChebyshevGrid{TF<:AbstractFloat} <: AbstractGrid{TF}
         @argcheck upper_bound > lower_bound "upper_bound must be greater than lower_bound"
 
         if kind == ChebyshevNode.FirstKind
-            data = cheb1_points(TF, n, lower_bound, upper_bound)
+            TNode = ChebyshevFirstKindNode
         elseif kind == ChebyshevNode.SecondKind
-            data = cheb2_points(TF, n, lower_bound, upper_bound)
+            TNode = ChebyshevSecondKindNode
         else
             throw(
                 ArgumentError(
@@ -42,7 +47,9 @@ struct ChebyshevGrid{TF<:AbstractFloat} <: AbstractGrid{TF}
             )
         end
 
-        return new{TF}(lower_bound, upper_bound, data, kind)
+        node = TNode()
+        data = cheb_points(node, TF, n, lower_bound, upper_bound)
+        return new{TF,TNode}(lower_bound, upper_bound, data, node)
     end
 end
 

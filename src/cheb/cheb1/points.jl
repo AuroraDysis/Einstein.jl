@@ -1,6 +1,6 @@
 @doc raw"""
-    cheb1_points([T=Float64], n::Integer) where {T<:AbstractFloat}
-    cheb1_points([T=Float64], n::Integer, x_min::T, x_max::T) where {T<:AbstractFloat}
+    cheb1_points([TF=Float64], n::Integer) where {TF<:AbstractFloat}
+    cheb1_points([TF=Float64], n::Integer, x_min::TF, x_max::TF) where {TF<:AbstractFloat}
 
 Generate Chebyshev points of the 2nd kind.
 
@@ -15,7 +15,7 @@ x_{\mathrm{mapped}} = \frac{x_{\mathrm{max}} + x_{\mathrm{min}}}{2} + \frac{x_{\
 ```
 
 # Arguments
-- `T`: Type parameter for the grid points (e.g., Float64)
+- `TF`: Type parameter for the grid points (e.g., Float64)
 - `n`: Number of points
 - `x_min`: (Optional) Lower bound of the mapped interval
 - `x_max`: (Optional) Upper bound of the mapped interval
@@ -23,19 +23,19 @@ x_{\mathrm{mapped}} = \frac{x_{\mathrm{max}} + x_{\mathrm{min}}}{2} + \frac{x_{\
 # References
 - [chebfun/@chebtech1/chebpts.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/chebpts.m)
 """
-function cheb1_points(::Type{T}, n::Integer) where {T<:AbstractFloat}
+function cheb1_points(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     @argcheck n >= 0 "n must be nonnegative"
 
     if n == 0
-        return T[]
+        return TF[]
     elseif n == 1
-        return [zero(T)]
+        return [zero(TF)]
     end
 
-    x_grid = Vector{T}(undef, n)
+    x_grid = Vector{TF}(undef, n)
 
     # Use symmetric indexing for better numerical properties
-    pi_over_2n = convert(T, π) / (2 * n)
+    pi_over_2n = convert(TF, π) / (2 * n)
     @inbounds begin
         for i in 1:n
             k = -n + 2i - 1
@@ -51,8 +51,10 @@ function cheb1_points(n::Integer)
 end
 
 # Mapped version
-function cheb1_points(::Type{T}, n::Integer, x_min::T, x_max::T) where {T<:AbstractFloat}
-    x_grid = cheb1_points(T, n)
+function cheb1_points(
+    ::Type{TF}, n::Integer, x_min::TF, x_max::TF
+) where {TF<:AbstractFloat}
+    x_grid = cheb1_points(TF, n)
 
     a = (x_max + x_min) / 2
     b = (x_max - x_min) / 2
@@ -63,6 +65,12 @@ end
 
 function cheb1_points(n::Integer, x_min::Float64, x_max::Float64)
     return cheb1_points(Float64, n, x_min, x_max)
+end
+
+function cheb_points(
+    ::ChebyshevFirstKindNode, ::Type{TF}, n::Integer, x_min::TF, x_max::TF
+) where {TF<:AbstractFloat}
+    return cheb1_points(TF, n, x_min, x_max)
 end
 
 export cheb1_points

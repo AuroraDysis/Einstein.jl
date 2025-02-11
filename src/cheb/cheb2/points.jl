@@ -50,7 +50,9 @@ function cheb2_points(n::Integer)
 end
 
 # Mapped version documentation is inherited from the main docstring
-function cheb2_points(::Type{TF}, n::Integer, x_min::TF, x_max::TF) where {TF<:AbstractFloat}
+function cheb2_points(
+    ::Type{TF}, n::Integer, x_min::TF, x_max::TF
+) where {TF<:AbstractFloat}
     x_grid = cheb2_points(TF, n)
 
     a = (x_max + x_min) / 2
@@ -62,6 +64,12 @@ end
 
 function cheb2_points(n::Integer, x_min::Float64, x_max::Float64)
     return cheb2_points(Float64, n, x_min, x_max)
+end
+
+function cheb_points(
+    ::ChebyshevFirstKindNode, ::Type{TF}, n::Integer, x_min::TF, x_max::TF
+) where {TF<:AbstractFloat}
+    return cheb2_points(TF, n, x_min, x_max)
 end
 
 export cheb2_points

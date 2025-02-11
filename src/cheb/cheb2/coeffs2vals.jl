@@ -14,7 +14,8 @@ values = op(coeffs)
 # References
 - [chebfun/@chebtech2/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/coeffs2vals.m)
 """
-struct ChebyshevSecondKindSynthesis{TF<:AbstractFloat} <: AbstractChebyshevSynthesisImplementation
+struct ChebyshevSecondKindSynthesis{TF<:AbstractFloat} <:
+       AbstractChebyshevSynthesisImplementation
     tmp::Vector{Complex{TF}}
     vals::Vector{Complex{TF}}
     real_vals::Vector{TF}
@@ -103,7 +104,13 @@ function (op::ChebyshevSecondKindSynthesis{TF})(
     end
 end
 
-function cheb2_synthesis(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
+function cheb_synthesis(
+    ::ChebyshevSecondKindNode, ::Type{TF}, n::Integer
+) where {TF<:AbstractFloat}
+    return ChebyshevSecondKindSynthesis{TR}(n)
+end
+
+function cheb2_coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
     n = length(coeffs)
 
     if n <= 1
@@ -114,4 +121,4 @@ function cheb2_synthesis(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrC
     return op(coeffs)
 end
 
-export cheb2_synthesis, ChebyshevSecondKindSynthesis
+export ChebyshevSecondKindSynthesis, cheb2_coeffs2vals

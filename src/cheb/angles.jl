@@ -3,14 +3,10 @@
 
 Compute angles for Chebyshev grid of given type.
 """
-function cheb_angles(grid::ChebyshevGrid{TF}) where {TF<:AbstractFloat}
-    if grid.type == ChebyshevNode.FirstKind
-        return cheb1_angles(TF, length(grid))
-    elseif grid.type == ChebyshevNode.SecondKind
-        return cheb2_angles(TF, length(grid))
-    else
-        throw(ArgumentError("Invalid Chebyshev node type: $(grid.type)"))
-    end
+function cheb_angles(
+    grid::ChebyshevGrid{TF,TNode}
+) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
+    return cheb_angles(grid.node, TF, length(grid))
 end
 
 export cheb_angles
