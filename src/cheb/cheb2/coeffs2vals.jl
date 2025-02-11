@@ -114,4 +114,4 @@ function cheb2_synthesis(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrC
     return op(coeffs)
 end
 
-export cheb2_synthesis, cheb2_synthesis, ChebyshevSecondKindSynthesis
+export cheb2_synthesis, ChebyshevSecondKindSynthesis
