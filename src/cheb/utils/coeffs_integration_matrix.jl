@@ -1,7 +1,7 @@
 
 """
-    cheb_coefficients_integration_matrix([TR=Float64], n::Integer) where {TR<:AbstractFloat}
-    cheb_coefficients_integration_matrix([TR=Float64], n::Integer, x_min::TR, x_max::TR) where {TR<:AbstractFloat}
+    cheb_coeffs_integration_matrix([TR=Float64], n::Integer) where {TR<:AbstractFloat}
+    cheb_coeffs_integration_matrix([TR=Float64], n::Integer, x_min::TR, x_max::TR) where {TR<:AbstractFloat}
 
 Generate the Chebyshev coefficient integration matrix
 that maps Chebyshev coefficients to the coefficients
@@ -17,7 +17,7 @@ of the integral of the interpolating polynomial.
 - [chebfun/@chebcolloc1/chebcolloc1.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc1/chebcolloc1.m)
 - [chebfun/@chebcolloc2/chebcolloc2.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc2/chebcolloc2.m)
 """
-function cheb_coefficients_integration_matrix(::Type{TR}, n::Integer) where {TR<:AbstractFloat}
+function cheb_coeffs_integration_matrix(::Type{TR}, n::Integer) where {TR<:AbstractFloat}
     nm1 = n - 1
 
     B = zeros(TR, n, n)
@@ -49,19 +49,19 @@ function cheb_coefficients_integration_matrix(::Type{TR}, n::Integer) where {TR<
     return B
 end
 
-function cheb_coefficients_integration_matrix(n::Integer)
-    return cheb_coefficients_integration_matrix(Float64, n)
+function cheb_coeffs_integration_matrix(n::Integer)
+    return cheb_coeffs_integration_matrix(Float64, n)
 end
 
 # Second method documentation is inherited from the main docstring
-function cheb_coefficients_integration_matrix(
+function cheb_coeffs_integration_matrix(
     ::Type{TR}, n::Integer, x_min::TR, x_max::TR
 ) where {TR<:AbstractFloat}
-    B = cheb_coefficients_integration_matrix(TR, n)
+    B = cheb_coeffs_integration_matrix(TR, n)
     B .*= (x_max - x_min) / 2
     return B
 end
 
-function cheb_coefficients_integration_matrix(n::Integer, x_min::Float64, x_max::Float64)
-    return cheb_coefficients_integration_matrix(Float64, n, x_min, x_max)
+function cheb_coeffs_integration_matrix(n::Integer, x_min::Float64, x_max::Float64)
+    return cheb_coeffs_integration_matrix(Float64, n, x_min, x_max)
 end

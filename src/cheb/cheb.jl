@@ -29,7 +29,7 @@ include("utils/fft.jl")
 include("utils/diff.jl")
 include("utils/cumsum.jl")
 include("utils/bary_diffmat.jl")
-include("utils/coefficients_integration_matrix.jl")
+include("utils/coeffs_integration_matrix.jl")
 include("utils/dissipation.jl")
 
 include("cheb1/points.jl")
