@@ -1,6 +1,6 @@
 """
-    cheb1_coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
-    ChebyshevFirstKindSynthesis{[TF=Float64]}(n::Integer)(coeffs::AbstractVector{TR})
+    cheb1_coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:AbstractFloatOrComplex}
+    ChebyshevFirstKindSynthesis{[TF=Float64]}(n::Integer)(coeffs::AbstractVector{TFC})
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 1st kind.
 
@@ -50,9 +50,9 @@ struct ChebyshevFirstKindSynthesis{TF<:AbstractFloat} <:
 end
 
 function (op::ChebyshevFirstKindSynthesis{TF})(
-    coeffs::AbstractVector{TR}
-) where {TF<:AbstractFloat,TR<:Union{TF,Complex{TF}}}
-    type_is_float = typeisfloat(TR)
+    coeffs::AbstractVector{TFC}
+) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
+    type_is_float = typeisfloat(TFC)
 
     n = length(coeffs)
     if n <= 1
@@ -133,17 +133,17 @@ end
 function cheb_synthesis(
     ::ChebyshevFirstKindNode, ::Type{TF}, n::Integer
 ) where {TF<:AbstractFloat}
-    return ChebyshevFirstKindSynthesis{TR}(n)
+    return ChebyshevFirstKindSynthesis{TF}(n)
 end
 
-function cheb1_coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
+function cheb1_coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:AbstractFloatOrComplex}
     n = length(coeffs)
 
     if n <= 1
         return deepcopy(coeffs)
     end
 
-    op = ChebyshevFirstKindSynthesis{real(TR)}(n)
+    op = ChebyshevFirstKindSynthesis{real(TFC)}(n)
     return op(coeffs)
 end
 

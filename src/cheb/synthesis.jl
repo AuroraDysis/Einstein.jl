@@ -16,19 +16,20 @@ struct ChebyshevSynthesis{
     function ChebyshevSynthesis(
         grid::ChebyshevGrid{TF,TNode}
     ) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
-        synthesis = cheb_synthesis(grid.node, TF, length(grid))
-        return new{TF,TNode,typeof(synthesis)}(grid, synthesis)
+        impl = cheb_synthesis(grid.node, TF, length(grid))
+        return new{TF,TNode,typeof(impl)}(grid, impl)
     end
 end
 
-function (syn::ChebyshevSynthesis{TF,TSynthesisImpl})(
-    coeffs::AbstractVector{TRC}
+function (syn::ChebyshevSynthesis{TF,TNode,TSynthesisImpl})(
+    coeffs::AbstractVector{TFC}
 ) where {
     TF<:AbstractFloat,
-    TRC<:Union{TF,Complex{TF}},
+    TNode<:AbstractChebyshevNode,
     TSynthesisImpl<:AbstractChebyshevSynthesisImplementation,
+    TFC<:Union{TF,Complex{TF}},
 }
-    return impl.synthesis(coeffs)
+    return syn.impl(coeffs)
 end
 
 export ChebyshevSynthesis

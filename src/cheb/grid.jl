@@ -6,7 +6,7 @@ struct ChebyshevSecondKindNode <: AbstractChebyshevNode end
 @enumx ChebyshevNode FirstKind = 1 SecondKind = 2
 
 """
-    ChebyshevGrid{TF}(n::Integer, lower_bound::TF, upper_bound::TF, kind::ChebyshevNode.T=ChebyshevNode.SecondKind) where {TF<:AbstractFloat}
+    ChebyshevGrid{TF,TNode}(n, lower_bound, upper_bound, kind=ChebyshevNode.SecondKind) where TF<:AbstractFloat
 
 Build a Chebyshev grid of size `n` in the interval `[lower_bound, upper_bound]`. The grid can be of the first or second kind.
 
@@ -69,7 +69,7 @@ end
 Base.keys(grid::ChebyshevGrid) = keys(grid.data)
 Base.firstindex(grid::ChebyshevGrid) = firstindex(grid.data)
 Base.lastindex(grid::ChebyshevGrid) = lastindex(grid.data)
-Base.eltype(::Type{ChebyshevGrid{TF}}) where {TF<:AbstractFloat} = TF
+Base.eltype(::Type{ChebyshevGrid{TF,TNode}}) where {TF,TNode} = TF
 Base.IndexStyle(::Type{ChebyshevGrid}) = IndexLinear()
 
 export ChebyshevGrid, ChebyshevNode

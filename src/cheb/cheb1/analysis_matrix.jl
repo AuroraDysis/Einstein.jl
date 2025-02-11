@@ -19,3 +19,11 @@ end
 function cheb1_analysis_matrix(n::Integer)
     return cheb1_analysis_matrix(Float64, n)
 end
+
+function cheb_analysis_matrix(
+    ::ChebyshevFirstKindNode, ::Type{TF}, n::Integer
+) where {TF<:AbstractFloat}
+    return cheb1_analysis_matrix(TF, n)
+end
+
+export cheb1_analysis_matrix

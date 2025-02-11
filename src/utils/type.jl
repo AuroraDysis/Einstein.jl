@@ -4,8 +4,8 @@ function typeisfloat(::Type{T}) where {T<:Number}
     return T <: AbstractFloat
 end
 
-function typetol(TR::Type{<:AbstractFloat})
-    return real(oneunit(TR)) * (eps(real(one(TR))))^(4//5)
+function typetol(TF::Type{<:AbstractFloat})
+    return real(oneunit(TF)) * (eps(real(one(TF))))^(4//5)
 end
 
 export typeisfloat, AbstractFloatOrComplex

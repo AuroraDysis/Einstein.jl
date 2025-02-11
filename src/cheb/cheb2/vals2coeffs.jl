@@ -35,9 +35,9 @@ struct ChebyshevSecondKindAnalysis{TF<:AbstractFloat} <:
 end
 
 function (op::ChebyshevSecondKindAnalysis{TF})(
-    vals::AbstractVector{TR}
-) where {TF<:AbstractFloat,TR<:Union{TF,Complex{TF}}}
-    type_is_float = typeisfloat(TR)
+    vals::AbstractVector{TFC}
+) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
+    type_is_float = typeisfloat(TFC)
 
     n = length(vals)
 
@@ -114,12 +114,12 @@ function cheb_analysis(
     return ChebyshevSecondKindAnalysis{TF}(n)
 end
 
-function cheb2_vals2coeffs(vals::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
+function cheb2_vals2coeffs(vals::AbstractVector{TFC}) where {TFC<:AbstractFloatOrComplex}
     n = length(vals)
     if n <= 1
         return deepcopy(vals)
     end
-    op = ChebyshevSecondKindAnalysis{real(TR)}(n)
+    op = ChebyshevSecondKindAnalysis{real(TFC)}(n)
     return op(vals)
 end
 

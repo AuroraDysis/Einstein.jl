@@ -9,8 +9,8 @@ end
 
 # TODO: benchmark this and implement a more efficient version
 @inline function (op::FDMCentralOp{TR})(
-    v::StridedVector{TRC}
-) where {TR<:AbstractFloat,TRC<:Union{TR,Complex{TR}}}
+    v::StridedVector{TFC}
+) where {TR<:AbstractFloat,TFC<:Union{TR,Complex{TR}}}
     return dot(op.wts, v) * op.one_over_dxn
 end
 
@@ -47,8 +47,8 @@ end
 
 # TODO: benchmark this and implement a more efficient version
 @inline function (op::FDMBoundOp{TR})(
-    v::StridedVector{TRC}, point_idx::Integer
-) where {TR<:AbstractFloat,TRC<:Union{TR,Complex{TR}}}
+    v::StridedVector{TFC}, point_idx::Integer
+) where {TR<:AbstractFloat,TFC<:Union{TR,Complex{TR}}}
     return dot(@view(op.wts[:, point_idx]), v) * op.one_over_dxn
 end
 
@@ -91,8 +91,8 @@ end
 
 # TODO: benchmark this and implement a more efficient version
 function (op::FDMHermiteOp{TR})(
-    f::StridedVector{TRC}, df::StridedVector{TRC}
-) where {TR<:AbstractFloat,TRC<:Union{TR,Complex{TR}}}
+    f::StridedVector{TFC}, df::StridedVector{TFC}
+) where {TR<:AbstractFloat,TFC<:Union{TR,Complex{TR}}}
     return dot(op.Dwts, f) * op.one_over_dxn + dot(op.Ewts, df) * op.one_over_dxnm1
 end
 
@@ -134,8 +134,8 @@ end
 
 # TODO: benchmark this and implement a more efficient version
 @inline function (op::FDMDissOp{TR})(
-    v::StridedVector{TRC}
-) where {TR<:AbstractFloat,TRC<:Union{TR,Complex{TR}}}
+    v::StridedVector{TFC}
+) where {TR<:AbstractFloat,TFC<:Union{TR,Complex{TR}}}
     return dot(op.wts, v) * op.σ_over_dx
 end
 
@@ -166,8 +166,8 @@ end
 
 # TODO: benchmark this and implement a more efficient version
 @inline function (op::FDMDissBoundOp{TR})(
-    v::StridedVector{TRC}, point_idx::Integer
-) where {TR<:AbstractFloat,TRC<:Union{TR,Complex{TR}}}
+    v::StridedVector{TFC}, point_idx::Integer
+) where {TR<:AbstractFloat,TFC<:Union{TR,Complex{TR}}}
     return dot(@view(op.wts[:, point_idx]), v) * op.σ_over_dx
 end
 

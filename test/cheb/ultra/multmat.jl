@@ -3,11 +3,11 @@ using TestItems
 @testitem "ultra_multmat" begin
     using ApproxFun, Einstein.ChebyshevSuite, Test
 
-    for TR in [Float64, BigFloat]
-        tol = 1000 * eps(TR)
+    for TF in [Float64, BigFloat]
+        tol = 1000 * eps(TF)
         for n in 5:10
-            dom = -one(TR) .. one(TR)
-            coeffs = collect(TR, 1:n)
+            dom = -one(TF) .. one(TF)
+            coeffs = collect(TF, 1:n)
             f = Fun(Chebyshev(dom), coeffs)
             for λ in 0:3
                 t1 = ultra_multmat(coeffs, λ)

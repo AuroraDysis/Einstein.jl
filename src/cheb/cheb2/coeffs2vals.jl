@@ -107,7 +107,7 @@ end
 function cheb_synthesis(
     ::ChebyshevSecondKindNode, ::Type{TF}, n::Integer
 ) where {TF<:AbstractFloat}
-    return ChebyshevSecondKindSynthesis{TR}(n)
+    return ChebyshevSecondKindSynthesis{TF}(n)
 end
 
 function cheb2_coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}

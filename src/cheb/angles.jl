@@ -1,5 +1,5 @@
 @doc raw"""
-    cheb_angles(grid::ChebyshevGrid{TF}) where {TF<:AbstractFloat}
+    cheb_angles(grid::ChebyshevGrid{TF,TNode}) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
 
 Compute angles for Chebyshev grid of given type.
 """

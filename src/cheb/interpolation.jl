@@ -1,5 +1,5 @@
 """
-    ChebyshevInterpolation(grid::ChebyshevGrid{TF}) where {TF<:AbstractFloat}
+    ChebyshevInterpolation(grid::ChebyshevGrid{TF,TNode}) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
 
 Construct a barycentric interpolation with precomputed weights for a Chebyshev grid.
 """
@@ -16,8 +16,8 @@ struct ChebyshevInterpolation{TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
 end
 
 function (itp::ChebyshevInterpolation{TF})(
-    f::AbstractVector{TR}, x0::TF
-) where {TF<:AbstractFloat,TR<:Union{TF,Complex{TF}}}
+    f::AbstractVector{TFC}, x0::TF
+) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
     return itp.bary_itp(f, x0)
 end
 
