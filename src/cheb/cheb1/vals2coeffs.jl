@@ -1,27 +1,27 @@
 """
-    cheb1_vals2coeffs(vals::AbstractVector{TR}) where {TR<:AbstractFloat}
-    Cheb1Vals2CoeffsOp{[TR=Float64]}(n::Integer)(vals::VT) where {TR<:AbstractFloat}
+    cheb1_analysis(vals::AbstractVector{TR}) where {TR<:AbstractFloat}
+    ChebyshevFirstKindAnalysis{[TR=Float64]}(n::Integer)(vals::VT) where {TR<:AbstractFloat}
 
 Convert values at Chebyshev points of the 1st kind into Chebyshev coefficients.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-op = Cheb1Vals2CoeffsOp{Float64}(n)
+op = ChebyshevFirstKindAnalysis{Float64}(n)
 values = op(coeffs)
 ```
 
 # References
 - [chebfun/@chebtech1/vals2coeffs.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/vals2coeffs.m)
 """
-struct Cheb1Vals2CoeffsOp{TR<:AbstractFloat}
+struct ChebyshevFirstKindAnalysis{TR<:AbstractFloat}
     w::Vector{Complex{TR}}
     tmp::Vector{Complex{TR}}
     coeffs::Vector{Complex{TR}}
     real_coeffs::Vector{TR}
     ifft_plan::Plan{Complex{TR}}
 
-    function Cheb1Vals2CoeffsOp{TR}(n::Integer) where {TR<:AbstractFloat}
+    function ChebyshevFirstKindAnalysis{TR}(n::Integer) where {TR<:AbstractFloat}
         # Precompute weights
         w = Vector{Complex{TR}}(undef, n)
         @inbounds begin
@@ -43,12 +43,12 @@ struct Cheb1Vals2CoeffsOp{TR<:AbstractFloat}
         return new{TR}(w, tmp, coeffs, real_coeffs, ifft_plan)
     end
 
-    function Cheb1Vals2CoeffsOp(n::Integer)
-        return Cheb1Vals2CoeffsOp{Float64}(n)
+    function ChebyshevFirstKindAnalysis(n::Integer)
+        return ChebyshevFirstKindAnalysis{Float64}(n)
     end
 end
 
-function (op::Cheb1Vals2CoeffsOp{TR})(
+function (op::ChebyshevFirstKindAnalysis{TR})(
     vals::AbstractVector{TRC}
 ) where {TR<:AbstractFloat,TRC<:Union{TR,Complex{TR}}}
     type_is_float = typeisfloat(TRC)
@@ -118,14 +118,14 @@ function (op::Cheb1Vals2CoeffsOp{TR})(
     end
 end
 
-function cheb1_vals2coeffs(vals::AbstractVector{TRC}) where {TRC<:AbstractFloatOrComplex}
+function cheb1_analysis(vals::AbstractVector{TRC}) where {TRC<:AbstractFloatOrComplex}
     n = length(vals)
     if n <= 1
         return deepcopy(vals)
     end
 
-    op = Cheb1Vals2CoeffsOp{real(TRC)}(n)
+    op = ChebyshevFirstKindAnalysis{real(TRC)}(n)
     return op(vals)
 end
 
-export cheb1_vals2coeffs, Cheb1Vals2CoeffsOp
+export cheb1_analysis, ChebyshevFirstKindAnalysis

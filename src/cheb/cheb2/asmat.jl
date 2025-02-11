@@ -9,7 +9,7 @@ Construct the analysis matrix A that transforms function values at Chebyshev poi
 """
 function cheb2_amat(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     A = Array{TF,2}(undef, n, n)
-    op = Cheb2Vals2CoeffsOp{TF}(n)
+    op = ChebyshevSecondKindAnalysis{TF}(n)
     @inbounds for i in 1:n
         A[:, i] = op(OneElement(one(TF), i, n))
     end

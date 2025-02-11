@@ -1,26 +1,26 @@
 """
-    cheb2_vals2coeffs(vals::AbstractVector{TR}) where {TR<:AbstractFloat}
-    Cheb2Vals2CoeffsOp{[TR=Float64]}(n::Integer)(vals::AbstractVector{TR}) where {TR<:AbstractFloat}
+    cheb2_analysis(vals::AbstractVector{TR}) where {TR<:AbstractFloat}
+    ChebyshevSecondKindAnalysis{[TR=Float64]}(n::Integer)(vals::AbstractVector{TR}) where {TR<:AbstractFloat}
 
 Convert values at Chebyshev points of the 2nd kind into Chebyshev coefficients.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-op = Cheb2Vals2CoeffsOp{Float64}(n)
+op = ChebyshevSecondKindAnalysis{Float64}(n)
 values = op(coeffs)
 ```
 
 # References
 - [chebfun/@chebtech2/vals2coeffs.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/vals2coeffs.m)
 """
-struct Cheb2Vals2CoeffsOp{TR<:AbstractFloat}
+struct ChebyshevSecondKindAnalysis{TR<:AbstractFloat}
     tmp::Vector{Complex{TR}}
     coeffs::Vector{Complex{TR}}
     real_coeffs::Vector{TR}
     ifft_plan::Plan{Complex{TR}}
 
-    function Cheb2Vals2CoeffsOp{TR}(n::Integer) where {TR<:AbstractFloat}
+    function ChebyshevSecondKindAnalysis{TR}(n::Integer) where {TR<:AbstractFloat}
         tmp = zeros(Complex{TR}, 2n - 2)
         coeffs = zeros(Complex{TR}, n)
         real_coeffs = zeros(TR, n)
@@ -28,12 +28,12 @@ struct Cheb2Vals2CoeffsOp{TR<:AbstractFloat}
         return new{TR}(tmp, coeffs, real_coeffs, ifft_plan)
     end
 
-    function Cheb2Vals2CoeffsOp(n::Integer)
-        return Cheb2Vals2CoeffsOp{Float64}(n)
+    function ChebyshevSecondKindAnalysis(n::Integer)
+        return ChebyshevSecondKindAnalysis{Float64}(n)
     end
 end
 
-function (op::Cheb2Vals2CoeffsOp{TR})(
+function (op::ChebyshevSecondKindAnalysis{TR})(
     vals::AbstractVector{TRC}
 ) where {TR<:AbstractFloat,TRC<:Union{TR,Complex{TR}}}
     type_is_float = typeisfloat(TRC)
@@ -107,13 +107,13 @@ function (op::Cheb2Vals2CoeffsOp{TR})(
     end
 end
 
-function cheb2_vals2coeffs(vals::AbstractVector{TRC}) where {TRC<:AbstractFloatOrComplex}
+function cheb2_analysis(vals::AbstractVector{TRC}) where {TRC<:AbstractFloatOrComplex}
     n = length(vals)
     if n <= 1
         return deepcopy(vals)
     end
-    op = Cheb2Vals2CoeffsOp{real(TRC)}(n)
+    op = ChebyshevSecondKindAnalysis{real(TRC)}(n)
     return op(vals)
 end
 
-export cheb2_vals2coeffs, Cheb2Vals2CoeffsOp
+export cheb2_analysis, ChebyshevSecondKindAnalysis
