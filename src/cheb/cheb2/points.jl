@@ -67,7 +67,7 @@ function cheb2_points(n::Integer, x_min::Float64, x_max::Float64)
 end
 
 function cheb_points(
-    ::ChebyshevFirstKindNode, ::Type{TF}, n::Integer, x_min::TF, x_max::TF
+    ::ChebyshevSecondKindNode, ::Type{TF}, n::Integer, x_min::TF, x_max::TF
 ) where {TF<:AbstractFloat}
     return cheb2_points(TF, n, x_min, x_max)
 end

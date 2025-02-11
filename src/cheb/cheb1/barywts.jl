@@ -53,7 +53,7 @@ end
 function cheb_barycentric_weights(
     ::ChebyshevFirstKindNode, ::Type{TF}, n::Integer
 ) where {TF<:AbstractFloat}
-    return cheb1_barycentric_weightss(TF, n)
+    return cheb1_barycentric_weights(TF, n)
 end
 
 export cheb1_barycentric_weights
