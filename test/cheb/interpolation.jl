@@ -1,4 +1,4 @@
-@testitem "cheb1_interp" begin
+@testitem "ChebyshevGrid BarycentricInterpolation" begin
     using Einstein.ChebyshevSuite, Test
 
     for kind in [ChebyshevNode.FirstKind, ChebyshevNode.SecondKind]
@@ -7,16 +7,16 @@
             n = 40
 
             grid = ChebyshevGrid(n, -1.0, 1.0, kind)
-            op = cheb_interp(grid)
+            itp = ChebyshevInterpolation(grid)
             v = sin.(grid)
 
             for i in 1:n
-                @test op(v, grid[i]) ≈ v[i]
+                @test itp(v, grid[i]) ≈ v[i]
             end
 
             for i in 1:(n - 1)
                 x0 = (grid[i] + grid[i + 1]) / 2
-                @test isapprox(op(v, x0), sin(x0), atol=tol)
+                @test isapprox(itp(v, x0), sin(x0), atol=tol)
             end
         end
 
@@ -24,16 +24,16 @@
             tol = 100 * eps()
             n = 30
             grid = ChebyshevGrid(n, -1.0, 1.0, kind)
-            op = cheb_interp(grid)
+            itp = ChebyshevInterpolation(grid)
             v = sin.(grid) + im * cos.(grid)
 
             for i in 1:n
-                @test op(v, grid[i]) ≈ v[i]
+                @test itp(v, grid[i]) ≈ v[i]
             end
 
             for i in 1:(n - 1)
                 x0 = (grid[i] + grid[i + 1]) / 2
-                @test isapprox(op(v, x0), sin(x0) + im * cos(x0), atol=tol)
+                @test isapprox(itp(v, x0), sin(x0) + im * cos(x0), atol=tol)
             end
         end
     end

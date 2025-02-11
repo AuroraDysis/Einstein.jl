@@ -17,7 +17,6 @@ include("grid.jl")
 include("angles.jl")
 include("interpolation.jl")
 
-include("utils/bary.jl")
 include("utils/clenshaw.jl")
 include("utils/feval.jl")
 include("utils/fft.jl")

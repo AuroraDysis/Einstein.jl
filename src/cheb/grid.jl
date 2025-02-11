@@ -13,7 +13,7 @@ Build a Chebyshev grid of size `n` in the interval `[lower_bound, upper_bound]`.
 - `n::Integer`: Number of grid points
 - `lower_bound::TF`: Lower bound of the interval
 - `upper_bound::TF`: Upper bound of the interval
-- `kind::ChebyshevNode.T=ChebyshevNode.SecondKind`: Kind of Chebyshev nodes
+- `kind::ChebyshevNode.T = ChebyshevNode.SecondKind`: Kind of Chebyshev nodes
 """
 struct ChebyshevGrid{TF<:AbstractFloat} <: AbstractGrid{TF}
     lower_bound::TF  # Lower bound of the interval
@@ -41,7 +41,8 @@ struct ChebyshevGrid{TF<:AbstractFloat} <: AbstractGrid{TF}
                 ),
             )
         end
-        return ChebyshevGrid{TF}(lower_bound, upper_bound, data, kind)
+
+        return new{TF}(lower_bound, upper_bound, data, kind)
     end
 end
 
