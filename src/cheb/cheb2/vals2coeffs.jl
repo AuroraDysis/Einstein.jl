@@ -79,12 +79,13 @@ function (op::ChebyshevSecondKindAnalysis{TF})(
     # Perform inverse FFT on the mirrored data
     op.ifft_plan * op.tmp
 
+    # Scale the interior coefficients
     @inbounds begin
-        op.coeffs[1] = real(op.tmp[1])
+        op.coeffs[1] = op.tmp[1]
         for i in 2:(n - 1)
-            op.coeffs[i] = 2 * real(op.tmp[i])
+            op.coeffs[i] = 2 * op.tmp[i]
         end
-        op.coeffs[n] = real(op.tmp[n])
+        op.coeffs[n] = op.tmp[n]
     end
 
     # Enforce exact symmetries
