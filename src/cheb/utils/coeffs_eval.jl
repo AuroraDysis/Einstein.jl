@@ -42,9 +42,9 @@ end
 
 # TODO: Implement the vectorized version of cheb_clenshaw
 function cheb_clenshaw(
-    coeffs::AbstractVector{TF}, x::AbstractVector{TFC}
+    coeffs::AbstractVector{TFC}, x::AbstractArray{TF}
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
-    return @inbounds [cheb_clenshaw(coeffs, x[i]) for i in eachindex(x)]
+    return map(xi -> cheb_clenshaw(coeffs, xi), x)
 end
 
 """
@@ -67,9 +67,9 @@ function cheb_coeffs_eval(
 end
 
 function cheb_coeffs_eval(
-    coeffs::AbstractVector{TF}, x::AbstractVector{TFC}
+    coeffs::AbstractVector{TFC}, x::AbstractVector{TF}
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
     return cheb_clenshaw(coeffs, x)
 end
 
-export cheb_coeffs_eval
+export cheb_clenshaw, cheb_coeffs_eval
