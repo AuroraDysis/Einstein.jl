@@ -25,7 +25,7 @@ function bary_diffmat(
 
     # If k=0, return identity:
     if k == 0
-        return Matrix{TR}(I, n, n)
+        return Eye{TR}(n)
     end
 
     # Prepare pairwise difference matrix Dx and pairwise weight ratio Dw:
