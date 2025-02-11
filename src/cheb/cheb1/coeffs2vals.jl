@@ -1,6 +1,6 @@
 """
-    cheb1_coeffs2vals(coeffs::AbstractVector{TR})
-    Cheb1Coeffs2ValsOp{[TR=Float64]}(n::Integer)(coeffs::AbstractVector{TR})
+    cheb1_coeffs2vals(coeffs::AbstractVector{TF})
+    Cheb1Coeffs2ValsOp{[TF=Float64]}(n::Integer)(coeffs::AbstractVector{TF})
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 1st kind.
 
@@ -14,19 +14,19 @@ values = op(coeffs)
 # References
 - [chebfun/@chebtech1/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/coeffs2vals.m)
 """
-struct Cheb1Coeffs2ValsOp{TR<:AbstractFloat}
-    w::Vector{Complex{TR}}    # Weight vector
-    tmp::Vector{Complex{TR}}  # Temporary storage
-    vals::Vector{Complex{TR}} # values
-    real_vals::Vector{TR} # values
-    fft_plan::Plan{Complex{TR}}        # fft plan
+struct Cheb1Coeffs2ValsOp{TF<:AbstractFloat}
+    w::Vector{Complex{TF}}    # Weight vector
+    tmp::Vector{Complex{TF}}  # Temporary storage
+    vals::Vector{Complex{TF}} # values
+    real_vals::Vector{TF} # values
+    fft_plan::Plan{Complex{TF}}        # fft plan
 
-    function Cheb1Coeffs2ValsOp{TR}(n::Integer) where {TR<:AbstractFloat}
+    function Cheb1Coeffs2ValsOp{TF}(n::Integer) where {TF<:AbstractFloat}
         # Precompute weights
-        w = Vector{Complex{TR}}(undef, 2n)
+        w = Vector{Complex{TF}}(undef, 2n)
         @inbounds begin
-            half = one(TR) / 2
-            m_im_pi_over_2n = -im * convert(TR, π) / (2n)
+            half = one(TF) / 2
+            m_im_pi_over_2n = -im * convert(TF, π) / (2n)
             for k in 0:(n - 1)
                 w[k + 1] = exp(k * m_im_pi_over_2n) * half
             end
@@ -36,11 +36,11 @@ struct Cheb1Coeffs2ValsOp{TR<:AbstractFloat}
                 w[k + 1] = -exp(k * m_im_pi_over_2n) * half
             end
         end
-        tmp = Vector{Complex{TR}}(undef, 2n)
-        vals = Vector{Complex{TR}}(undef, n)
-        real_vals = Vector{TR}(undef, n)
+        tmp = Vector{Complex{TF}}(undef, 2n)
+        vals = Vector{Complex{TF}}(undef, n)
+        real_vals = Vector{TF}(undef, n)
         fft_plan = plan_fft_measure!(tmp)
-        return new{TR}(w, tmp, vals, real_vals, fft_plan)
+        return new{TF}(w, tmp, vals, real_vals, fft_plan)
     end
 
     function Cheb1Coeffs2ValsOp(n::Integer)
@@ -48,9 +48,9 @@ struct Cheb1Coeffs2ValsOp{TR<:AbstractFloat}
     end
 end
 
-function (op::Cheb1Coeffs2ValsOp{TR})(
+function (op::Cheb1Coeffs2ValsOp{TF})(
     coeffs::AbstractVector{TRC}
-) where {TR<:AbstractFloat,TRC<:Union{TR,Complex{TR}}}
+) where {TF<:AbstractFloat,TRC<:Union{TF,Complex{TF}}}
     type_is_float = typeisfloat(TRC)
 
     n = length(coeffs)
@@ -104,7 +104,7 @@ function (op::Cheb1Coeffs2ValsOp{TR})(
 
     # Enforce symmetry if needed
     if isEven || isOdd
-        half = one(TR) / 2
+        half = one(TF) / 2
         @inbounds for i in 1:div(n, 2)
             j = n - i + 1
             if isEven

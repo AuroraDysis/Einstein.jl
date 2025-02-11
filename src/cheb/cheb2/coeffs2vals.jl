@@ -1,6 +1,6 @@
 """
-    cheb2_coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat}
-    op::Cheb2Coeffs2ValsOp{[TR=Float64]}(n::Integer)(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat}
+    cheb2_coeffs2vals(coeffs::AbstractVector{TF}) where {TF<:AbstractFloat}
+    op::Cheb2Coeffs2ValsOp{[TF=Float64]}(n::Integer)(coeffs::AbstractVector{TF}) where {TF<:AbstractFloat}
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 2nd kind.
 
@@ -14,18 +14,18 @@ values = op(coeffs)
 # References
 - [chebfun/@chebtech2/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/coeffs2vals.m)
 """
-struct Cheb2Coeffs2ValsOp{TR<:AbstractFloat}
-    tmp::Vector{Complex{TR}}
-    vals::Vector{Complex{TR}}
-    real_vals::Vector{TR}
-    fft_plan::Plan{Complex{TR}}
+struct Cheb2Coeffs2ValsOp{TF<:AbstractFloat}
+    tmp::Vector{Complex{TF}}
+    vals::Vector{Complex{TF}}
+    real_vals::Vector{TF}
+    fft_plan::Plan{Complex{TF}}
 
-    function Cheb2Coeffs2ValsOp{TR}(n::Integer) where {TR<:AbstractFloat}
-        tmp = zeros(Complex{TR}, 2n - 2)
-        vals = zeros(Complex{TR}, n)
-        real_vals = zeros(TR, n)
+    function Cheb2Coeffs2ValsOp{TF}(n::Integer) where {TF<:AbstractFloat}
+        tmp = zeros(Complex{TF}, 2n - 2)
+        vals = zeros(Complex{TF}, n)
+        real_vals = zeros(TF, n)
         fft_plan = plan_fft_measure!(tmp)
-        return new{TR}(tmp, vals, real_vals, fft_plan)
+        return new{TF}(tmp, vals, real_vals, fft_plan)
     end
 
     function Cheb2Coeffs2ValsOp(n::Integer)
@@ -33,9 +33,9 @@ struct Cheb2Coeffs2ValsOp{TR<:AbstractFloat}
     end
 end
 
-function (op::Cheb2Coeffs2ValsOp{TR})(
+function (op::Cheb2Coeffs2ValsOp{TF})(
     coeffs::AbstractVector{TRC}
-) where {TR<:AbstractFloat,TRC<:Union{TR,Complex{TR}}}
+) where {TF<:AbstractFloat,TRC<:Union{TF,Complex{TF}}}
     type_is_float = typeisfloat(TRC)
 
     n = length(coeffs)
@@ -57,7 +57,7 @@ function (op::Cheb2Coeffs2ValsOp{TR})(
     isEven = all(x -> x ≈ 0, @view(coeffs[2:2:end]))
     isOdd = all(x -> x ≈ 0, @view(coeffs[1:2:end]))
 
-    half = one(TR) / 2
+    half = one(TF) / 2
     @inbounds begin
         tmp[1] = coeffs[1]
         for i in 2:(n - 1)
