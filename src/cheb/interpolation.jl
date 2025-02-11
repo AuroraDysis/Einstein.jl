@@ -9,7 +9,7 @@ struct ChebyshevInterpolation{TF<:AbstractFloat}
 
     function ChebyshevInterpolation(grid::ChebyshevGrid{TF}) where {TF<:AbstractFloat}
         if grid.type == ChebyshevNode.FirstKind
-            weights = cheb1_barywts(TF, length(grid))
+            weights = cheb1_barycentric_weights(TF, length(grid))
         elseif grid.type == ChebyshevNode.SecondKind
             weights = cheb2_barywts(TF, length(grid))
         else

@@ -14,7 +14,7 @@ to values of the `k`-th derivative of the interpolating polynomial at those poin
 """
 function cheb1_diffmat(::Type{TR}, n::Integer, k::Integer=1) where {TR<:AbstractFloat}
     x = cheb1_points(TR, n)               # First kind points.
-    w = cheb1_barywts(TR, n)           # Barycentric weights.
+    w = cheb1_barycentric_weights(TR, n)           # Barycentric weights.
     t = cheb1_angles(TR, n)            # acos(x).
     D = bary_diffmat(x, w, k, t)       # Construct matrix.
     return D
