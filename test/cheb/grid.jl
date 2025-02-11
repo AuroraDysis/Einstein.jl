@@ -1,6 +1,6 @@
 using TestItems
 
-@testitem "cheb_grid" begin
+@testitem "ChebyshevGrid" begin
     using ApproxFun, Einstein.ChebyshevSuite, Test
 
     for TR in [Float64, BigFloat]
@@ -8,14 +8,14 @@ using TestItems
         x_max = one(TR)
         @testset "$TR, FirstKind" begin
             for n in 0:10
-                grid = cheb_grid(n, x_min, x_max, ChebyshevNode.FirstKind)
+                grid = ChebyshevGrid(n, x_min, x_max, ChebyshevNode.FirstKind)
                 @test isapprox(grid.data, cheb1_points(TR, n, x_min, x_max), atol=10 * eps(TR))
             end
         end
 
         @testset "$TR, SecondKind" begin
             for n in 0:10
-                grid = cheb_grid(n, x_min, x_max, ChebyshevNode.SecondKind)
+                grid = ChebyshevGrid(n, x_min, x_max, ChebyshevNode.SecondKind)
                 @test isapprox(grid.data, cheb2_points(TR, n, x_min, x_max), atol=10 * eps(TR))
             end
         end

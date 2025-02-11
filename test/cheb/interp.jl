@@ -6,7 +6,7 @@
             tol = 100 * eps()
             n = 40
 
-            grid = cheb_grid(n, -1.0, 1.0, kind)
+            grid = ChebyshevGrid(n, -1.0, 1.0, kind)
             op = cheb_interp(grid)
             v = sin.(grid)
 
@@ -23,7 +23,7 @@
         @testset "kind = $kind, complex" begin
             tol = 100 * eps()
             n = 30
-            grid = cheb_grid(n, -1.0, 1.0, kind)
+            grid = ChebyshevGrid(n, -1.0, 1.0, kind)
             op = cheb_interp(grid)
             v = sin.(grid) + im * cos.(grid)
 

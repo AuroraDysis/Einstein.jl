@@ -15,7 +15,7 @@ using ToeplitzMatrices: Toeplitz, Hankel
 
 include("grid.jl")
 include("angles.jl")
-include("interp.jl")
+include("interpolation.jl")
 
 include("utils/bary.jl")
 include("utils/clenshaw.jl")
