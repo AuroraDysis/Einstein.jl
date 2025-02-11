@@ -1,16 +1,18 @@
 """
-    cheb_clenshaw(coeffs::AbstractVector{TFC}, x::TF) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}
+    cheb_coeffs_eval(coeffs::AbstractVector{TFC}, x::TF) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}
+    cheb_coeffs_eval(coeffs::AbstractVector{TFC}, x::AbstractVector{TF}) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}
 
-Evaluate Chebyshev coefficients at a point using Clenshaw's algorithm.
+Evaluate Chebyshev coefficients at point(s) using Clenshaw's algorithm.
 
-# Arguments
-- `coeffs`: Vector of Chebyshev coefficients ``[c_0, c_1, \\ldots, c_n]``
-- `x`: Evaluation point in [-1,1]
+# Performance Notes
+- Clenshaw's algorithm: O(n) operations per point
+- [TODO] NDCT: O(n log n) operations for many points simultaneously
 
 # References
 - [chebfun/@chebtech/clenshaw.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech/clenshaw.m)
+- [chebfun/@chebtech/feval.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech/feval.m)
 """
-function cheb_clenshaw(
+function cheb_coeffs_eval(
     coeffs::AbstractVector{TFC}, x::TF
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
     @argcheck length(coeffs) > 0 "coeffs must have at least one element"
@@ -40,36 +42,11 @@ function cheb_clenshaw(
     return y
 end
 
-# TODO: Implement the vectorized version of cheb_clenshaw
-function cheb_clenshaw(
+# TODO: Implement the vectorized version of cheb_coeffs_eval
+function cheb_coeffs_eval(
     coeffs::AbstractVector{TFC}, x::AbstractArray{TF}
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
-    return map(xi -> cheb_clenshaw(coeffs, xi), x)
+    return map(xi -> cheb_coeffs_eval(coeffs, xi), x)
 end
 
-"""
-    cheb_coeffs_eval(coeffs::AbstractVector{TFC}, x::TF) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}
-    cheb_coeffs_eval(coeffs::AbstractVector{TFC}, x::AbstractVector{TF}) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}
-
-Evaluate Chebyshev coefficients at a point.
-
-# Performance Notes
-- Clenshaw's algorithm: O(n) operations per point
-- (TODO) NDCT: O(n log n) operations for many points simultaneously
-
-# References
-- [chebfun/@chebtech/feval.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech/feval.m)
-"""
-function cheb_coeffs_eval(
-    coeffs::AbstractVector{TFC}, x::TF
-) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
-    return cheb_clenshaw(coeffs, x)
-end
-
-function cheb_coeffs_eval(
-    coeffs::AbstractVector{TFC}, x::AbstractVector{TF}
-) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
-    return cheb_clenshaw(coeffs, x)
-end
-
-export cheb_clenshaw, cheb_coeffs_eval
+export cheb_coeffs_eval
