@@ -23,7 +23,6 @@ include("synthesis_matrix.jl")
 include("differentiation_matrix.jl")
 include("integration_matrix.jl")
 
-include("utils/clenshaw.jl")
 include("utils/fft.jl")
 include("utils/diff.jl")
 include("utils/bary_diffmat.jl")
