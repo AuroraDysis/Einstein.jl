@@ -1,27 +1,27 @@
 """
     cheb1_coeffs2vals(coeffs::AbstractVector{TF})
-    Cheb1Synthesis{[TF=Float64]}(n::Integer)(coeffs::AbstractVector{TF})
+    ChebyshevFirstKindSynthesis{[TF=Float64]}(n::Integer)(coeffs::AbstractVector{TF})
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 1st kind.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-op = Cheb1Synthesis{Float64}(n)
+op = ChebyshevFirstKindSynthesis{Float64}(n)
 values = op(coeffs)
 ```
 
 # References
 - [chebfun/@chebtech1/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/coeffs2vals.m)
 """
-struct Cheb1Synthesis{TF<:AbstractFloat}
+struct ChebyshevFirstKindSynthesis{TF<:AbstractFloat} <: AbstractChebyshevSynthesisImplementation
     w::Vector{Complex{TF}}    # Weight vector
     tmp::Vector{Complex{TF}}  # Temporary storage
     vals::Vector{Complex{TF}} # values
     real_vals::Vector{TF} # values
     fft_plan::Plan{Complex{TF}}        # fft plan
 
-    function Cheb1Synthesis{TF}(n::Integer) where {TF<:AbstractFloat}
+    function ChebyshevFirstKindSynthesis{TF}(n::Integer) where {TF<:AbstractFloat}
         # Precompute weights
         w = Vector{Complex{TF}}(undef, 2n)
         @inbounds begin
@@ -43,12 +43,12 @@ struct Cheb1Synthesis{TF<:AbstractFloat}
         return new{TF}(w, tmp, vals, real_vals, fft_plan)
     end
 
-    function Cheb1Synthesis(n::Integer)
-        return Cheb1Synthesis{Float64}(n)
+    function ChebyshevFirstKindSynthesis(n::Integer)
+        return ChebyshevFirstKindSynthesis{Float64}(n)
     end
 end
 
-function (op::Cheb1Synthesis{TF})(
+function (op::ChebyshevFirstKindSynthesis{TF})(
     coeffs::AbstractVector{TRC}
 ) where {TF<:AbstractFloat,TRC<:Union{TF,Complex{TF}}}
     type_is_float = typeisfloat(TRC)
@@ -136,8 +136,8 @@ function cheb1_coeffs2vals(coeffs::AbstractVector{TRC}) where {TRC<:AbstractFloa
         return deepcopy(coeffs)
     end
 
-    op = Cheb1Synthesis{real(TRC)}(n)
+    op = ChebyshevFirstKindSynthesis{real(TRC)}(n)
     return op(coeffs)
 end
 
-export cheb1_coeffs2vals, Cheb1Synthesis
+export cheb1_coeffs2vals, ChebyshevFirstKindSynthesis

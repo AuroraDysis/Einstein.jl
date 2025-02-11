@@ -60,7 +60,7 @@ using TestItems
     @testset "Operator style" begin
         n = 100
         coeffs = rand(n)
-        op = Cheb1Synthesis{Float64}(n)
+        op = ChebyshevFirstKindSynthesis{Float64}(n)
 
         # Test operator call
         vals1 = op(coeffs)

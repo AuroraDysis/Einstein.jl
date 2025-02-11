@@ -1,26 +1,26 @@
 """
     cheb2_coeffs2vals(coeffs::AbstractVector{TF}) where {TF<:AbstractFloat}
-    op::Cheb2Synthesis{[TF=Float64]}(n::Integer)(coeffs::AbstractVector{TF}) where {TF<:AbstractFloat}
+    op::ChebyshevSecondKindSynthesis{[TF=Float64]}(n::Integer)(coeffs::AbstractVector{TF}) where {TF<:AbstractFloat}
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 2nd kind.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-op = Cheb2Synthesis{Float64}(n)
+op = ChebyshevSecondKindSynthesis{Float64}(n)
 values = op(coeffs)
 ```
 
 # References
 - [chebfun/@chebtech2/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/coeffs2vals.m)
 """
-struct Cheb2Synthesis{TF<:AbstractFloat}
+struct ChebyshevSecondKindSynthesis{TF<:AbstractFloat} <: AbstractChebyshevSynthesisImplementation
     tmp::Vector{Complex{TF}}
     vals::Vector{Complex{TF}}
     real_vals::Vector{TF}
     fft_plan::Plan{Complex{TF}}
 
-    function Cheb2Synthesis{TF}(n::Integer) where {TF<:AbstractFloat}
+    function ChebyshevSecondKindSynthesis{TF}(n::Integer) where {TF<:AbstractFloat}
         tmp = zeros(Complex{TF}, 2n - 2)
         vals = zeros(Complex{TF}, n)
         real_vals = zeros(TF, n)
@@ -28,12 +28,12 @@ struct Cheb2Synthesis{TF<:AbstractFloat}
         return new{TF}(tmp, vals, real_vals, fft_plan)
     end
 
-    function Cheb2Synthesis(n::Integer)
-        return Cheb2Synthesis{Float64}(n)
+    function ChebyshevSecondKindSynthesis(n::Integer)
+        return ChebyshevSecondKindSynthesis{Float64}(n)
     end
 end
 
-function (op::Cheb2Synthesis{TF})(
+function (op::ChebyshevSecondKindSynthesis{TF})(
     coeffs::AbstractVector{TRC}
 ) where {TF<:AbstractFloat,TRC<:Union{TF,Complex{TF}}}
     type_is_float = typeisfloat(TRC)
@@ -110,8 +110,8 @@ function cheb2_coeffs2vals(coeffs::AbstractVector{TRC}) where {TRC<:AbstractFloa
         return deepcopy(coeffs)
     end
 
-    op = Cheb2Synthesis{real(TRC)}(n)
+    op = ChebyshevSecondKindSynthesis{real(TRC)}(n)
     return op(coeffs)
 end
 
-export cheb2_coeffs2vals, Cheb2Synthesis
+export cheb2_coeffs2vals, ChebyshevSecondKindSynthesis

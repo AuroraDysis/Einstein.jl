@@ -31,7 +31,7 @@ Construct the synthesis matrix S that transforms Chebyshev coefficients to funct
 """
 function cheb1_smat(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     S = Array{TF,2}(undef, n, n)
-    op = Cheb1Synthesis{TF}(n)
+    op = ChebyshevFirstKindSynthesis{TF}(n)
     @inbounds for i in 1:n
         S[:, i] = op(OneElement(one(TF), i, n))
     end
