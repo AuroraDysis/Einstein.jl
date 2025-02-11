@@ -1,5 +1,5 @@
 """
-    cheb1_quadwts([TR=Float64], n::Integer) where {TR<:AbstractFloat}
+    cheb1_quadrature_weights([TR=Float64], n::Integer) where {TR<:AbstractFloat}
 
 Compute quadrature weights for Chebyshev points of the 1st kind.
 
@@ -10,7 +10,7 @@ Compute quadrature weights for Chebyshev points of the 1st kind.
 # References
 - [chebfun/@chebtech1/quadwts.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/quadwts.m)
 """
-function cheb1_quadwts(::Type{TR}, n::Integer) where {TR<:AbstractFloat}
+function cheb1_quadrature_weights(::Type{TR}, n::Integer) where {TR<:AbstractFloat}
     # Handle the special cases:
     if n == 0
         return TR[]
@@ -61,20 +61,20 @@ function cheb1_quadwts(::Type{TR}, n::Integer) where {TR<:AbstractFloat}
     return w
 end
 
-function cheb1_quadwts(n::Integer)
-    return cheb1_quadwts(Float64, n)
+function cheb1_quadrature_weights(n::Integer)
+    return cheb1_quadrature_weights(Float64, n)
 end
 
-function cheb1_quadwts(
+function cheb1_quadrature_weights(
     ::Type{TR}, n::Integer, x_min::TR, x_max::TR
 ) where {TR<:AbstractFloat}
-    w = cheb1_quadwts(TR, n)
+    w = cheb1_quadrature_weights(TR, n)
     w .*= (x_max - x_min) / 2
     return w
 end
 
-function cheb1_quadwts(n::Integer, x_min::Float64, x_max::Float64)
-    return cheb1_quadwts(Float64, n, x_min, x_max)
+function cheb1_quadrature_weights(n::Integer, x_min::Float64, x_max::Float64)
+    return cheb1_quadrature_weights(Float64, n, x_min, x_max)
 end
 
-export cheb1_quadwts
+export cheb1_quadrature_weights
