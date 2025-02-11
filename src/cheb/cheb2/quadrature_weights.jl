@@ -58,7 +58,8 @@ function cheb2_quadrature_weights(
     ::Type{TF}, n::Integer, x_min::TF, x_max::TF
 ) where {TF<:AbstractFloat}
     w = cheb2_quadrature_weights(TF, n)
-    w .*= (x_max - x_min) / 2
+    scale = (x_max - x_min) / 2
+    w .*= scale
     return w
 end
 
