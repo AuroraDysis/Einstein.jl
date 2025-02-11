@@ -29,12 +29,12 @@ using TestItems
         for n in [4, 8, 16, 32]
             # Test on standard domain [-1,1]
             I1 = cheb_rectint(n)
-            I2 = cheb2_cumsummat(Float64, n)
+            I2 = cheb2_integration_matrix(Float64, n)
             @test I1 ≈ I2 rtol = 1e-12
 
             # Test on mapped domain [0,π]
             I1 = cheb_rectint(n, 0.0, Float64(π))
-            I2 = cheb2_cumsummat(n, 0.0, Float64(π))
+            I2 = cheb2_integration_matrix(n, 0.0, Float64(π))
             @test I1 ≈ I2 rtol = 1e-12
         end
     end
