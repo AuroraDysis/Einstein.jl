@@ -31,7 +31,7 @@ function cheb_rectint(::Type{TR}, m::Integer, n::Integer) where {TR<:AbstractFlo
     xm = cheb2_points(m)
     intmat = Array{TR}(undef, m, n)
     @inbounds for j in 1:n, i in 1:n
-        intmat[i, j] = cheb_feval(@view(K[:, j]), xm[i])
+        intmat[i, j] = cheb_coeffs_eval(@view(K[:, j]), xm[i])
     end
 
     return intmat
