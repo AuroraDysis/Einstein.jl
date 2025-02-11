@@ -19,8 +19,8 @@ using PrecompileTools
 PrecompileTools.@compile_workload begin
     using .ChebyshevSuite
 
-    cheb1_pts(Float64, 5)
-    cheb2_pts(Float64, 5)
+    cheb1_points(Float64, 5)
+    cheb2_points(Float64, 5)
 
     cheb1_angles(Float64, 5)
     cheb2_angles(Float64, 5)

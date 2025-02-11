@@ -12,7 +12,7 @@ using TestItems
             f_coeffs = coefficients(f)
             n = ncoefficients(f)
 
-            x = cheb1_pts(type, n)
+            x = cheb1_points(type, n)
             f_vals = f.(x)
             A = cheb1_amat(type, n)
             S = cheb1_smat(type, n)
@@ -27,7 +27,7 @@ using TestItems
             f_coeffs = coefficients(f)
             n = ncoefficients(f)
 
-            x = cheb1_pts(type, n)
+            x = cheb1_points(type, n)
             f_vals = f.(x)
             A = cheb1_amat(type, n)
             S = cheb1_smat(type, n)

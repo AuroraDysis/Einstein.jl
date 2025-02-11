@@ -45,7 +45,7 @@ end
 
     @testset "Standard domain [-1,1]" begin
         n = 32
-        x = cheb2_pts(n)
+        x = cheb2_points(n)
         intmat = cheb_rectint(n)
 
         # Test 1: Polynomial integration
@@ -64,7 +64,7 @@ end
     @testset "Mapped domain [0,π]" begin
         n = 32
         intmat = cheb_rectint(n, 0.0, Float64(π))
-        x = cheb2_pts(Float64, n, 0.0, Float64(π))
+        x = cheb2_points(Float64, n, 0.0, Float64(π))
 
         # Test: Integration of sin(x) from 0 to x
         f = sin.(x)

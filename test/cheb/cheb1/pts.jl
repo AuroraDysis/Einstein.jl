@@ -1,6 +1,6 @@
 using TestItems
 
-@testitem "cheb1_pts" begin
+@testitem "cheb1_points" begin
     using ApproxFun, Einstein.ChebyshevSuite, Test
 
     for TR in [Float64, BigFloat]
@@ -11,7 +11,7 @@ using TestItems
             @testset "$TR, $intervals" begin
                 for n in 0:10
                     @test isapprox(
-                        cheb1_pts(TR, n, x_min, x_max),
+                        cheb1_points(TR, n, x_min, x_max),
                         reverse(points(Chebyshev(x_min .. x_max), n)),
                         atol=tol,
                     )

@@ -29,9 +29,9 @@ function cheb_grid(
     @argcheck n >= 0 "n must be nonnegative"
     @argcheck upper_bound > lower_bound "upper_bound must be greater than lower_bound"
     if kind == ChebyshevNode.FirstKind
-        data = cheb1_pts(TF, n, lower_bound, upper_bound)
+        data = cheb1_points(TF, n, lower_bound, upper_bound)
     elseif kind == ChebyshevNode.SecondKind
-        data = cheb2_pts(TF, n, lower_bound, upper_bound)
+        data = cheb2_points(TF, n, lower_bound, upper_bound)
     else
         throw(
             ArgumentError(

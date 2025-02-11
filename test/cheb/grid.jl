@@ -9,14 +9,14 @@ using TestItems
         @testset "$TR, FirstKind" begin
             for n in 0:10
                 grid = cheb_grid(n, x_min, x_max, ChebyshevNode.FirstKind)
-                @test isapprox(grid.data, cheb1_pts(TR, n, x_min, x_max), atol=10 * eps(TR))
+                @test isapprox(grid.data, cheb1_points(TR, n, x_min, x_max), atol=10 * eps(TR))
             end
         end
 
         @testset "$TR, SecondKind" begin
             for n in 0:10
                 grid = cheb_grid(n, x_min, x_max, ChebyshevNode.SecondKind)
-                @test isapprox(grid.data, cheb2_pts(TR, n, x_min, x_max), atol=10 * eps(TR))
+                @test isapprox(grid.data, cheb2_points(TR, n, x_min, x_max), atol=10 * eps(TR))
             end
         end
     end

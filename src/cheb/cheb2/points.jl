@@ -1,6 +1,6 @@
 @doc raw"""
-    cheb2_pts([TF=Float64], n::Integer) where {TF<:AbstractFloat}
-    cheb2_pts([TF=Float64], n::Integer, x_min::TF, x_max::TF) where {TF<:AbstractFloat}
+    cheb2_points([TF=Float64], n::Integer) where {TF<:AbstractFloat}
+    cheb2_points([TF=Float64], n::Integer, x_min::TF, x_max::TF) where {TF<:AbstractFloat}
 
 Generate Chebyshev points of the 1st kind.
 
@@ -23,7 +23,7 @@ x_{\mathrm{mapped}} = \frac{x_{\mathrm{max}} + x_{\mathrm{min}}}{2} + \frac{x_{\
 # References
 - [chebfun/@chebtech2/chebpts.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/chebpts.m)
 """
-function cheb2_pts(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function cheb2_points(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     @argcheck n >= 0 "n must be nonnegative"
 
     if n == 0
@@ -45,13 +45,13 @@ function cheb2_pts(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     return x_grid
 end
 
-function cheb2_pts(n::Integer)
-    return cheb2_pts(Float64, n)
+function cheb2_points(n::Integer)
+    return cheb2_points(Float64, n)
 end
 
 # Mapped version documentation is inherited from the main docstring
-function cheb2_pts(::Type{TF}, n::Integer, x_min::TF, x_max::TF) where {TF<:AbstractFloat}
-    x_grid = cheb2_pts(TF, n)
+function cheb2_points(::Type{TF}, n::Integer, x_min::TF, x_max::TF) where {TF<:AbstractFloat}
+    x_grid = cheb2_points(TF, n)
 
     a = (x_max + x_min) / 2
     b = (x_max - x_min) / 2
@@ -60,8 +60,8 @@ function cheb2_pts(::Type{TF}, n::Integer, x_min::TF, x_max::TF) where {TF<:Abst
     return x_grid
 end
 
-function cheb2_pts(n::Integer, x_min::Float64, x_max::Float64)
-    return cheb2_pts(Float64, n, x_min, x_max)
+function cheb2_points(n::Integer, x_min::Float64, x_max::Float64)
+    return cheb2_points(Float64, n, x_min, x_max)
 end
 
-export cheb2_pts
+export cheb2_points

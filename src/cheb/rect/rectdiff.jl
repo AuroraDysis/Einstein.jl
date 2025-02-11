@@ -85,8 +85,8 @@ Construct a 1st-order rectangular differentiation matrix mapping from a 2nd-kind
 function cheb_rectdiff2(::Type{TR}, m::Integer, n::Integer) where {TR<:AbstractFloat}
     nm1 = n - 1                     # For convenience
     cm1 = nm1 - m                   # Difference between dimensions
-    t = cheb2_pts(TR, n)            # Second-kind grid
-    tau = cheb1_pts(TR, m)          # First-kind grid
+    t = cheb2_points(TR, n)            # Second-kind grid
+    tau = cheb1_points(TR, m)          # First-kind grid
     T = cheb2_angles(TR, n)         # Second-kind grid (angles)
     TAU = cheb1_angles(TR, m)       # First-kind grid (angles)
 
@@ -199,7 +199,7 @@ function cheb_rectdiff_rec(
     end
 
     # Setup grids
-    tau = cheb1_pts(TR, m)
+    tau = cheb1_points(TR, m)
     TAU = cheb1_angles(TR, m)
     a = cheb_diff(a)
 

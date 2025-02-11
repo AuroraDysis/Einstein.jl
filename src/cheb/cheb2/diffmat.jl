@@ -13,7 +13,7 @@ to values of the `k`-th derivative of the interpolating polynomial at those poin
 - [chebfun/@chebcolloc2/chebcolloc2.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc2/chebcolloc2.m)
 """
 function cheb2_diffmat(::Type{TR}, n::Integer, k::Integer=1) where {TR<:AbstractFloat}
-    x = cheb2_pts(TR, n)               # First kind points.
+    x = cheb2_points(TR, n)               # First kind points.
     w = cheb2_barywts(TR, n)           # Barycentric weights.
     t = cheb2_angles(TR, n)            # acos(x).
     D = bary_diffmat(x, w, k, t)       # Construct matrix.

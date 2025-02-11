@@ -34,7 +34,7 @@ using TestItems
     @testset "functions" begin
         tol = 100 * eps(Float64)
         n = 32
-        x1 = cheb1_pts(n)
+        x1 = cheb1_points(n)
         w1 = cheb1_quadwts(n)
 
         f1 = @. sin(2π * x1)
@@ -42,7 +42,7 @@ using TestItems
 
         @test isapprox(If1, 0.0; atol=tol)
 
-        x2 = cheb1_pts(n, 0.0, 1.0)
+        x2 = cheb1_points(n, 0.0, 1.0)
         w2 = cheb1_quadwts(n, 0.0, 1.0)
 
         f2 = @. sin(2π * x2)
