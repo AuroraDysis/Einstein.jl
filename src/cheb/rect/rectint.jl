@@ -22,7 +22,7 @@ function cheb_rectint(::Type{TR}, m::Integer, n::Integer) where {TR<:AbstractFlo
     end
 
     # Integrate
-    cumsum_op = ChebyshevCoefficientsCumulativeIntegration{TR}(n)
+    cumsum_op = ChebyshevCoefficientsIntegration{TR}(n)
     @inbounds for i in 1:n
         K[:, i] = cumsum_op(@view(K[1:(end - 1), i]))
     end
