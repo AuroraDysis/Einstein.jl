@@ -1,6 +1,6 @@
 """
-    cheb_rectdiff1([TR=Float64], m::Integer, n::Integer) where {TR<:AbstractFloat}
-    cheb_rectdiff1([TR=Float64], m::Integer, n::Integer, x_min::TR, x_max::TR) where {TR<:AbstractFloat}
+    cheb_rect_differentiation_matrix_kind1([TR=Float64], m::Integer, n::Integer) where {TR<:AbstractFloat}
+    cheb_rect_differentiation_matrix_kind1([TR=Float64], m::Integer, n::Integer, x_min::TR, x_max::TR) where {TR<:AbstractFloat}
 
 Constructing a 1st-order rectangular differentiation matrix mapping from a 1st-kind grid
 
@@ -11,7 +11,7 @@ Constructing a 1st-order rectangular differentiation matrix mapping from a 1st-k
 # References
 - [chebfun/diffmat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/diffmat.m)
 """
-function cheb_rectdiff1(::Type{TR}, m::Integer, n::Integer) where {TR<:AbstractFloat}
+function cheb_rect_differentiation_matrix_kind1(::Type{TR}, m::Integer, n::Integer) where {TR<:AbstractFloat}
     # mapping-from grid (angles):
     T = cheb1_angles(n)'        # Row vector of length n
     # difference between dimensions:
@@ -53,25 +53,25 @@ function cheb_rectdiff1(::Type{TR}, m::Integer, n::Integer) where {TR<:AbstractF
     return D
 end
 
-function cheb_rectdiff1(m::Integer, n::Integer)
-    return cheb_rectdiff1(Float64, m, n)
+function cheb_rect_differentiation_matrix_kind1(m::Integer, n::Integer)
+    return cheb_rect_differentiation_matrix_kind1(Float64, m, n)
 end
 
-function cheb_rectdiff1(
+function cheb_rect_differentiation_matrix_kind1(
     ::Type{TR}, m::Integer, n::Integer, x_min::TR, x_max::TR
 ) where {TR<:AbstractFloat}
-    D = cheb_rectdiff1(TR, m, n)
+    D = cheb_rect_differentiation_matrix_kind1(TR, m, n)
     D .*= 2 / (x_max - x_min)
     return D
 end
 
-function cheb_rectdiff1(m::Integer, n::Integer, x_min::Float64, x_max::Float64)
-    return cheb_rectdiff1(Float64, m, n, x_min, x_max)
+function cheb_rect_differentiation_matrix_kind1(m::Integer, n::Integer, x_min::Float64, x_max::Float64)
+    return cheb_rect_differentiation_matrix_kind1(Float64, m, n, x_min, x_max)
 end
 
 """
-    cheb_rectdiff2([TR=Float64], m::Integer, n::Integer) where {TR<:AbstractFloat}
-    cheb_rectdiff2([TR=Float64], m::Integer, n::Integer, x_min::TR, x_max::TR) where {TR<:AbstractFloat}
+    cheb_rect_differentiation_matrix_kind2([TR=Float64], m::Integer, n::Integer) where {TR<:AbstractFloat}
+    cheb_rect_differentiation_matrix_kind2([TR=Float64], m::Integer, n::Integer, x_min::TR, x_max::TR) where {TR<:AbstractFloat}
 
 Construct a 1st-order rectangular differentiation matrix mapping from a 2nd-kind grid.
 
@@ -82,7 +82,7 @@ Construct a 1st-order rectangular differentiation matrix mapping from a 2nd-kind
 # References
 - [chebfun/diffmat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/diffmat.m)
 """
-function cheb_rectdiff2(::Type{TR}, m::Integer, n::Integer) where {TR<:AbstractFloat}
+function cheb_rect_differentiation_matrix_kind2(::Type{TR}, m::Integer, n::Integer) where {TR<:AbstractFloat}
     nm1 = n - 1                     # For convenience
     cm1 = nm1 - m                   # Difference between dimensions
     t = cheb2_points(TR, n)            # Second-kind grid
@@ -145,20 +145,20 @@ function cheb_rectdiff2(::Type{TR}, m::Integer, n::Integer) where {TR<:AbstractF
     return D
 end
 
-function cheb_rectdiff2(m::Integer, n::Integer)
-    return cheb_rectdiff2(Float64, m, n)
+function cheb_rect_differentiation_matrix_kind2(m::Integer, n::Integer)
+    return cheb_rect_differentiation_matrix_kind2(Float64, m, n)
 end
 
-function cheb_rectdiff2(
+function cheb_rect_differentiation_matrix_kind2(
     ::Type{TR}, m::Integer, n::Integer, x_min::TR, x_max::TR
 ) where {TR<:AbstractFloat}
-    D = cheb_rectdiff2(TR, m, n)
+    D = cheb_rect_differentiation_matrix_kind2(TR, m, n)
     D .*= 2 / (x_max - x_min)
     return D
 end
 
-function cheb_rectdiff2(m::Integer, n::Integer, x_min::Float64, x_max::Float64)
-    return cheb_rectdiff2(Float64, m, n, x_min, x_max)
+function cheb_rect_differentiation_matrix_kind2(m::Integer, n::Integer, x_min::Float64, x_max::Float64)
+    return cheb_rect_differentiation_matrix_kind2(Float64, m, n, x_min, x_max)
 end
 
 """
@@ -172,7 +172,7 @@ Construct a p-th order rectangular differentiation matrix mapping between Chebys
 - `p` : Order of differentiation
 - `kind` : Kind of Chebyshev grid (1 or 2)
 """
-function cheb_rectdiff_rec(
+function cheb_rect_differentiation_matrix(
     ::Type{TR}, m::Integer, n::Integer, p::Integer, kind::Integer
 )::Matrix{TR} where {TR<:AbstractFloat}
     @argcheck p >= 2 "p must be at least 2"
@@ -185,14 +185,14 @@ function cheb_rectdiff_rec(
     if kind == 1
         # First-kind grid
         T = cheb1_angles(TR, n)
-        D = cheb_rectdiff1(TR, m, n)
+        D = cheb_rect_differentiation_matrix_kind1(TR, m, n)
         a = vcat(zeros(TR, n), one(TR))
         sgn_coeff = (-1)^(n - 1) / TR(n)
         @. sgn = sgn_coeff * sgn * sin(T)
     else
         # Second-kind grid
         T = cheb2_angles(TR, n)
-        D = cheb_rectdiff2(TR, m, n)
+        D = cheb_rect_differentiation_matrix_kind2(TR, m, n)
         a = vcat(zeros(TR, n - 2), -one(TR), zero(TR), one(TR))
         sgn .*= (-1)^(n - 1) / TR(2 * (n - 1))
         sgn[[1, n]] .*= one(TR) / 2
@@ -223,23 +223,23 @@ function cheb_rectdiff_rec(
     return D
 end
 
-function cheb_rectdiff_rec(m::Integer, n::Integer, p::Integer, kind::Integer)
-    return cheb_rectdiff_rec(Float64, m, n, p, kind)
+function cheb_rect_differentiation_matrix(m::Integer, n::Integer, p::Integer, kind::Integer)
+    return cheb_rect_differentiation_matrix(Float64, m, n, p, kind)
 end
 
-function cheb_rectdiff_rec(
+function cheb_rect_differentiation_matrix(
     ::Type{TR}, m::Integer, n::Integer, p::Integer, kind::Integer, x_min::TR, x_max::TR
 )::Matrix{TR} where {TR<:AbstractFloat}
-    D = cheb_rectdiff_rec(TR, m, n, p, kind)
+    D = cheb_rect_differentiation_matrix(TR, m, n, p, kind)
     scale = (2 / (x_max - x_min))^p
     D .*= scale
     return D
 end
 
-function cheb_rectdiff_rec(
+function cheb_rect_differentiation_matrix(
     m::Integer, n::Integer, p::Integer, kind::Integer, x_min::Float64, x_max::Float64
 )
-    return cheb_rectdiff_rec(Float64, m, n, p, kind, x_min, x_max)
+    return cheb_rect_differentiation_matrix(Float64, m, n, p, kind, x_min, x_max)
 end
 
-export cheb_rectdiff1, cheb_rectdiff2, cheb_rectdiff_rec
+export cheb_rect_differentiation_matrix_kind1, cheb_rect_differentiation_matrix_kind2, cheb_rect_differentiation_matrix

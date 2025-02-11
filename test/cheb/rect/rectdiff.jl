@@ -1,12 +1,12 @@
 using TestItems
 
-@testitem "cheb_rectdiff1" begin
+@testitem "cheb_rect_differentiation_matrix_kind1" begin
     using Einstein.ChebyshevSuite, Test
 
     # TODO: check the correctness of the results, why 100 * eps(Float64)?
     tol = 100 * eps(Float64)
 
-    D45 = cheb_rectdiff1(Float64, 4, 5)
+    D45 = cheb_rect_differentiation_matrix_kind1(Float64, 4, 5)
     D45_res = [
         -4.57116486120251 6.35944256641146 -2.70279423558635 1.31914227171008 -0.404625741332680
         -0.0484519638509037 -1.91971151095453 2.34412101225198 -0.504026090801922 0.128068553355378
@@ -15,7 +15,7 @@ using TestItems
     ]
     @test isapprox(D45, D45_res; atol=tol)
 
-    D56 = cheb_rectdiff1(Float64, 5, 6)
+    D56 = cheb_rect_differentiation_matrix_kind1(Float64, 5, 6)
     D56_res = [
         -6.71910606480245 9.53284806144464 -4.39831637342411 2.49110926664733 -1.32569196231062 0.419157072445230
         -0.253223738073512 -2.39105495582767 3.33681201184053 -1.01065674661971 0.453608214480045 -0.135484785799679
@@ -26,13 +26,13 @@ using TestItems
     @test isapprox(D56, D56_res; atol=tol)
 end
 
-@testitem "cheb_rectdiff2" begin
+@testitem "cheb_rect_differentiation_matrix_kind2" begin
     using Einstein.ChebyshevSuite, Test
 
     # TODO: check the correctness of the results, why 100 * eps(Float64)?
     tol = 100 * eps(Float64)
 
-    D45 = cheb_rectdiff2(Float64, 4, 5)
+    D45 = cheb_rect_differentiation_matrix_kind2(Float64, 4, 5)
     D45_res = [
         -4.29110266916749 4.82023271093930 -0.765366864730180 0.406019148566206 -0.169782325607842
         0.219172839560929 -1.87528541910585 1.84775906502257 -0.289498981478942 0.0978524960012859
@@ -41,7 +41,7 @@ end
     ]
     @test isapprox(D45, D45_res; atol=tol)
 
-    D56 = cheb_rectdiff2(Float64, 5, 6)
+    D56 = cheb_rect_differentiation_matrix_kind2(Float64, 5, 6)
     D56_res = [
         -6.61184642477616 7.39689062697822 -1.10865099995204 0.527416977547751 -0.369672519021278 0.165862339223506
         0.299860202570142 -2.64910740362000 2.60334916729954 -0.363213978699957 0.186960573879793 -0.0778485614295215
@@ -52,14 +52,14 @@ end
     @test isapprox(D56, D56_res; atol=tol)
 end
 
-@testitem "cheb_rectdiff_rec" begin
+@testitem "cheb_rect_differentiation_matrix" begin
     using Einstein.ChebyshevSuite, Test
 
     # TODO: check the correctness of the results, why 1000 * eps(Float64)?
     tol = 1000 * eps(Float64)
 
-    @testset "cheb_rectdiff_rec(4, 5, 2, 1)" begin
-        D = cheb_rectdiff_rec(4, 5, 2, 1)
+    @testset "cheb_rect_differentiation_matrix(4, 5, 2, 1)" begin
+        D = cheb_rect_differentiation_matrix(4, 5, 2, 1)
         D_res = [
             14.6584090891159 -30.2685754898979 24.7764501987817 -13.3982718162996 4.23198801829994
             3.21387339156286 -3.36022007637824 -2.37645019878171 3.62768850657883 -1.10489162298173
@@ -69,8 +69,8 @@ end
         @test isapprox(D, D_res; atol=tol)
     end
 
-    @testset "cheb_rectdiff_rec(4, 5, 2, 2)" begin
-        D = cheb_rectdiff_rec(4, 5, 2, 2)
+    @testset "cheb_rect_differentiation_matrix(4, 5, 2, 2)" begin
+        D = cheb_rect_differentiation_matrix(4, 5, 2, 2)
         D_res = [
             14.7859178821870 -24.3246591634968 14.4852813742386 -8.64590358498031 3.69936349205157
             3.05345990707125 -2.76189522663861 -2.48528137423857 3.73245797511575 -1.53874128130982
@@ -80,8 +80,8 @@ end
         @test isapprox(D, D_res; atol=tol)
     end
 
-    @testset "cheb_rectdiff_rec(5, 6, 2, 1)" begin
-        D = cheb_rectdiff_rec(5, 6, 2, 1)
+    @testset "cheb_rect_differentiation_matrix(5, 6, 2, 1)" begin
+        D = cheb_rect_differentiation_matrix(5, 6, 2, 1)
         D_res = [
             32.2430199704970 -66.9742521583345 57.1569681882722 -35.8554306883649 19.7523750050029 -6.32268031707268
             6.86207307758548 -7.73919411761309 -3.40557514488634 6.81856882479535 -3.70559539572194 1.16972275584053
@@ -92,8 +92,8 @@ end
         @test isapprox(D, D_res; atol=tol)
     end
 
-    @testset "cheb_rectdiff_rec(5, 6, 2, 2)" begin
-        D = cheb_rectdiff_rec(5, 6, 2, 2)
+    @testset "cheb_rect_differentiation_matrix(5, 6, 2, 2)" begin
+        D = cheb_rect_differentiation_matrix(5, 6, 2, 2)
         D_res = [
             35.6465946380978 -57.4788431217660 32.3044702755421 -17.3824896015432 12.6237361557682 -5.71346834609887
             6.49977696215283 -5.69463419850918 -4.84757600092093 6.50268296691875 -4.42734647548965 1.96709674584819

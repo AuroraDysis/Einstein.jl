@@ -54,8 +54,8 @@ include("cheb2/synthesis_matrix.jl")
 include("cheb2/integration_matrix.jl")
 
 # Rectangular spectral collocation
-include("rect/rectint.jl")
-include("rect/rectdiff.jl")
+include("rect/differentiation_matrix.jl")
+include("rect/integration_matrix.jl")
 
 # Ultraspherical spectral method
 include("ultra/diffmat.jl")
