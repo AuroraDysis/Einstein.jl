@@ -5,6 +5,7 @@
 Constructing a 1st-order rectangular differentiation matrix mapping from a 1st-kind grid
 
 # Arguments:
+- `TF` : Type of the output matrix (default: Float64)
 - `m` : Size of the output grid (number of rows).
 - `n` : Size of the input grid (number of columns).
 
@@ -76,6 +77,7 @@ end
 Construct a 1st-order rectangular differentiation matrix mapping from a 2nd-kind grid.
 
 # Arguments:
+- `TF` : Type of the output matrix elements (e.g., Float64)
 - `m` : Size of the output grid (number of rows)
 - `n` : Size of the input grid (number of columns)
 
@@ -167,6 +169,7 @@ end
 Construct a p-th order rectangular differentiation matrix mapping between Chebyshev grids.
 
 # Arguments
+- `TF` : Type of the output matrix elements (e.g., Float64)
 - `m` : Size of the output grid (number of rows)
 - `n` : Size of the input grid (number of columns)
 - `p` : Order of differentiation
