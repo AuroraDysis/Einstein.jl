@@ -14,9 +14,9 @@ function cheb1_angles(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     @argcheck n >= 0 "n must be nonnegative"
 
     if n == 0
-        return []
+        return TF[]
     elseif n == 1
-        return [convert(TF, π) / 2]
+        return TF[convert(TF, π) / 2]
     end
 
     θ = Vector{TF}(undef, n)
