@@ -1,10 +1,10 @@
 using TestItems
 
-@testitem "cheb_rectint" begin
+@testitem "cheb_rect_integration_matrix" begin
     using Einstein.ChebyshevSuite, Test
 
     n = 4
-    intmat = cheb_rectint(n)
+    intmat = cheb_rect_integration_matrix(n)
     intmat_ana = [
         -1.73472347597681e-17 -2.08166817117217e-17 2.08166817117217e-17 3.46944695195361e-18
         0.204861111111111 0.326388888888889 -0.0486111111111111 0.0173611111111111
@@ -14,7 +14,7 @@ using TestItems
     @test intmat ≈ intmat_ana rtol = 1e-12
 
     n = 5
-    intmat = cheb_rectint(n)
+    intmat = cheb_rect_integration_matrix(n)
     intmat_ana = [
         -3.46944695195361e-18 1.38777878078145e-17 2.08166817117217e-17 -6.93889390390723e-18 0
         0.119403559372885 0.190063432038124 -0.0242640687119285 0.0132867367414871 -0.00559644062711508
@@ -28,25 +28,25 @@ using TestItems
     @testset "Compare direct vs coefficient-based integration" begin
         for n in [4, 8, 16, 32]
             # Test on standard domain [-1,1]
-            I1 = cheb_rectint(n)
+            I1 = cheb_rect_integration_matrix(n)
             I2 = cheb2_integration_matrix(Float64, n)
             @test I1 ≈ I2 rtol = 1e-12
 
             # Test on mapped domain [0,π]
-            I1 = cheb_rectint(n, 0.0, Float64(π))
+            I1 = cheb_rect_integration_matrix(n, 0.0, Float64(π))
             I2 = cheb2_integration_matrix(n, 0.0, Float64(π))
             @test I1 ≈ I2 rtol = 1e-12
         end
     end
 end
 
-@testitem "cheb_rectint - analytical" begin
+@testitem "cheb_rect_integration_matrix - analytical" begin
     using Einstein.ChebyshevSuite, Test
 
     @testset "Standard domain [-1,1]" begin
         n = 32
         x = cheb2_points(n)
-        intmat = cheb_rectint(n)
+        intmat = cheb_rect_integration_matrix(n)
 
         # Test 1: Polynomial integration
         f = @. x^3  # f(x) = x³
@@ -63,7 +63,7 @@ end
 
     @testset "Mapped domain [0,π]" begin
         n = 32
-        intmat = cheb_rectint(n, 0.0, Float64(π))
+        intmat = cheb_rect_integration_matrix(n, 0.0, Float64(π))
         x = cheb2_points(Float64, n, 0.0, Float64(π))
 
         # Test: Integration of sin(x) from 0 to x
