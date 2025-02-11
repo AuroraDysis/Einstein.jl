@@ -41,8 +41,8 @@ function cheb2_differentiation_matrix(
     return cheb2_differentiation_matrix(Float64, n, x_min, x_max, k)
 end
 
-function cheb_differentiation_matrix(
-    ::ChebyshevSecondKindNode, ::Type{TR}, n::Integer, x_min::TR, x_max::TR, k::Integer=1
+function _cheb_differentiation_matrix(
+    ::ChebyshevSecondKindNode, ::Type{TR}, n::Integer, x_min::TR, x_max::TR, k::Integer
 ) where {TR<:AbstractFloat}
     return cheb2_differentiation_matrix(TR, n, x_min, x_max, k)
 end

@@ -35,7 +35,7 @@ function cheb2_integration_matrix(n::Integer, x_min::Float64, x_max::Float64)
     return cheb2_integration_matrix(Float64, n, x_min, x_max)
 end
 
-function cheb_integration_matrix(
+function _cheb_integration_matrix(
     ::ChebyshevSecondKindNode, ::Type{TR}, n::Integer, x_min::TR, x_max::TR
 ) where {TR<:AbstractFloat}
     return cheb2_integration_matrix(TR, n, x_min, x_max)

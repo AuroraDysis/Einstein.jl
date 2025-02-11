@@ -20,7 +20,7 @@ function cheb2_synthesis_matrix(n::Integer)
     return cheb2_synthesis_matrix(Float64, n)
 end
 
-function cheb_synthesis_matrix(
+function _cheb_synthesis_matrix(
     ::ChebyshevSecondKindNode, ::Type{TF}, n::Integer
 ) where {TF<:AbstractFloat}
     return cheb2_synthesis_matrix(TF, n)

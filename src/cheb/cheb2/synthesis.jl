@@ -104,7 +104,7 @@ function (op::ChebyshevSecondKindSynthesis{TF})(
     end
 end
 
-function cheb_synthesis(
+function _cheb_synthesis(
     ::ChebyshevSecondKindNode, ::Type{TF}, n::Integer
 ) where {TF<:AbstractFloat}
     return ChebyshevSecondKindSynthesis{TF}(n)

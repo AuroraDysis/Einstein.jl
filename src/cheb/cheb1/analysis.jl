@@ -119,7 +119,7 @@ function (op::ChebyshevFirstKindAnalysis{TF})(
     end
 end
 
-function cheb_analysis(
+function _cheb_analysis(
     ::ChebyshevFirstKindNode, ::Type{TF}, n::Integer
 ) where {TF<:AbstractFloat}
     return ChebyshevFirstKindAnalysis{TF}(n)

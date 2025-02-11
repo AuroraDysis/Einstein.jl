@@ -10,7 +10,7 @@ struct ChebyshevInterpolation{TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
     function ChebyshevInterpolation(
         grid::ChebyshevGrid{TF,TNode}
     ) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
-        weights = cheb_barycentric_weights(grid.node, TF, length(grid))
+        weights = _cheb_barycentric_weights(grid.node, TF, length(grid))
         return new{TF,TNode}(grid, BarycentricInterpolation(grid.data, weights))
     end
 end

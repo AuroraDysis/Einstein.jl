@@ -36,7 +36,7 @@ function cheb2_barycentric_weights(n::Integer)
     return cheb2_barycentric_weights(Float64, n)
 end
 
-function cheb_barycentric_weights(
+function _cheb_barycentric_weights(
     ::ChebyshevSecondKindNode, ::Type{TF}, n::Integer
 ) where {TF<:AbstractFloat}
     return cheb2_barycentric_weights(TF, n)

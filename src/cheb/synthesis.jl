@@ -16,7 +16,7 @@ struct ChebyshevSynthesis{
     function ChebyshevSynthesis(
         grid::ChebyshevGrid{TF,TNode}
     ) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
-        impl = cheb_synthesis(grid.node, TF, length(grid))
+        impl = _cheb_synthesis(grid.node, TF, length(grid))
         return new{TF,TNode,typeof(impl)}(grid, impl)
     end
 end

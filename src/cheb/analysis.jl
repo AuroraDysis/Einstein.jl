@@ -16,7 +16,7 @@ struct ChebyshevAnalysis{
     function ChebyshevAnalysis(
         grid::ChebyshevGrid{TF,TNode}
     ) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
-        impl = cheb_analysis(grid.node, TF, length(grid))
+        impl = _cheb_analysis(grid.node, TF, length(grid))
         return new{TF,TNode,typeof(impl)}(grid, impl)
     end
 end

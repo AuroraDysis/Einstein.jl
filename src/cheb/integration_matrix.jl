@@ -6,7 +6,9 @@ Compute the Chebyshev integration matrix that maps function values at `n` Chebys
 function cheb_integration_matrix(
     grid::ChebyshevGrid{TF,TNode}
 ) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
-    return cheb_integration_matrix(grid.node, TF, length(grid))
+    return _cheb_integration_matrix(
+        grid.node, TF, length(grid), grid.lower_bound, grid.upper_bound
+    )
 end
 
 export cheb_integration_matrix

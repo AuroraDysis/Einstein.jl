@@ -130,7 +130,7 @@ function (op::ChebyshevFirstKindSynthesis{TF})(
     end
 end
 
-function cheb_synthesis(
+function _cheb_synthesis(
     ::ChebyshevFirstKindNode, ::Type{TF}, n::Integer
 ) where {TF<:AbstractFloat}
     return ChebyshevFirstKindSynthesis{TF}(n)

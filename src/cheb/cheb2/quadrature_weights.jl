@@ -1,30 +1,30 @@
 """
-    cheb2_quadrature_weights([TR=Float64], n::Integer) where {TR<:AbstractFloat}
+    cheb2_quadrature_weights([TF=Float64], n::Integer) where {TF<:AbstractFloat}
 
 Compute quadrature weights for Chebyshev points of the 2nd kind.
 
 # Arguments
-- `TR`: Type parameter for the weights (e.g., Float64)
+- `TF`: Type parameter for the weights (e.g., Float64)
 - `n`: Number of points
 
 # References
 - [chebfun/@chebtech2/quadwts.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/quadwts.m)
 """
-function cheb2_quadrature_weights(::Type{TR}, n::Integer) where {TR<:AbstractFloat}
+function cheb2_quadrature_weights(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     if n == 0
-        return TR[]
+        return TF[]
     elseif n == 1
-        return TR[2]
+        return TF[2]
     end
 
     nm1 = n - 1
 
     # Fill exact integrals of T_k (even k)
-    c = Array{Complex{TR}}(undef, nm1)
+    c = Array{Complex{TF}}(undef, nm1)
     @inbounds begin
-        c[1] = TR(2)  # k = 0 case
+        c[1] = TF(2)  # k = 0 case
         for k in 2:2:nm1
-            c[k ÷ 2 + 1] = 2 / (one(TR) - k^2)
+            c[k ÷ 2 + 1] = 2 / (one(TF) - k^2)
         end
 
         # Mirror for DCT via FFT (in-place)
@@ -38,7 +38,7 @@ function cheb2_quadrature_weights(::Type{TR}, n::Integer) where {TR<:AbstractFlo
     end
 
     # Adjust boundary weights (in-place)
-    w = Vector{TR}(undef, n)
+    w = Vector{TF}(undef, n)
     @inbounds begin
         w[1] = real(c[1]) / 2
         for i in 2:nm1
@@ -55,15 +55,21 @@ function cheb2_quadrature_weights(n::Integer)
 end
 
 function cheb2_quadrature_weights(
-    ::Type{TR}, n::Integer, x_min::TR, x_max::TR
-) where {TR<:AbstractFloat}
-    w = cheb2_quadrature_weights(TR, n)
+    ::Type{TF}, n::Integer, x_min::TF, x_max::TF
+) where {TF<:AbstractFloat}
+    w = cheb2_quadrature_weights(TF, n)
     w .*= (x_max - x_min) / 2
     return w
 end
 
 function cheb2_quadrature_weights(n::Integer, x_min::Float64, x_max::Float64)
     return cheb2_quadrature_weights(Float64, n, x_min, x_max)
+end
+
+function _cheb_quadrature_weights(
+    ::ChebyshevSecondKindNode, ::Type{TF}, n::Integer, x_min::TF, x_max::TF
+) where {TF<:AbstractFloat}
+    return cheb2_quadrature_weights(TF, n, x_min, x_max)
 end
 
 export cheb2_quadrature_weights

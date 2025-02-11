@@ -33,7 +33,7 @@ function cheb2_angles(n::Integer)
     return cheb2_angles(Float64, n)
 end
 
-function cheb_angles(
+function _cheb_angles(
     ::ChebyshevSecondKindNode, ::Type{TF}, n::Integer
 ) where {TF<:AbstractFloat}
     return cheb2_angles(TF, n)
