@@ -21,15 +21,15 @@ struct ChebyshevAnalysis{
     end
 end
 
-function (syn::ChebyshevAnalysis{TF,TNode,TAnalysisImpl})(
-    coeffs::AbstractVector{TFC}
+function (ana::ChebyshevAnalysis{TF,TNode,TAnalysisImpl})(
+    values::AbstractVector{TFC}
 ) where {
     TF<:AbstractFloat,
     TNode<:AbstractChebyshevNode,
     TAnalysisImpl<:AbstractChebyshevAnalysisImplementation,
     TFC<:Union{TF,Complex{TF}},
 }
-    return syn.impl(coeffs)
+    return ana.impl(values)
 end
 
 export ChebyshevAnalysis
