@@ -210,7 +210,7 @@ function cheb_rectdiff_rec(
     # Higher-order derivatives
     for l in 2:p
         a = cheb_diff(a)
-        Tt = cheb_clenshaw(a, tau)
+        Tt = cheb_coeffs_eval(a, tau)
         D .= (Tt .* sgn' .+ l .* D) ./ denom
     end
 

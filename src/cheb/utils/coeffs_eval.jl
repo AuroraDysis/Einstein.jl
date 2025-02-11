@@ -49,6 +49,7 @@ end
 
 """
     cheb_coeffs_eval(coeffs::AbstractVector{TFC}, x::TF) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}
+    cheb_coeffs_eval(coeffs::AbstractVector{TF}, x::AbstractVector{TFC}) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}
 
 Evaluate Chebyshev coefficients at a point.
 
@@ -61,6 +62,12 @@ Evaluate Chebyshev coefficients at a point.
 """
 function cheb_coeffs_eval(
     coeffs::AbstractVector{TFC}, x::TF
+) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
+    return cheb_clenshaw(coeffs, x)
+end
+
+function cheb_coeffs_eval(
+    coeffs::AbstractVector{TF}, x::AbstractVector{TFC}
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
     return cheb_clenshaw(coeffs, x)
 end
