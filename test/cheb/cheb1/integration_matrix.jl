@@ -8,9 +8,9 @@ using Einstein.ChebyshevSuite, Test
     @test size(Q) == (n, n)
 
     # Test scaling with interval change
-    x_min, x_max = -2.0, 3.0
-    Q_scaled = cheb1_integration_matrix(Float64, n, x_min, x_max)
-    scale = (x_max - x_min) / 2
+    lower_bound, upper_bound = -2.0, 3.0
+    Q_scaled = cheb1_integration_matrix(Float64, n, lower_bound, upper_bound)
+    scale = (upper_bound - lower_bound) / 2
     Q_default = cheb1_integration_matrix(n)
     @test isapprox(Q_scaled, Q_default .* scale, rtol=1e-12)
 

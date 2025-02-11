@@ -1,6 +1,6 @@
 """
     cheb_rect_differentiation_matrix_kind1([TF=Float64], m::Integer, n::Integer) where {TF<:AbstractFloat}
-    cheb_rect_differentiation_matrix_kind1([TF=Float64], m::Integer, n::Integer, x_min::TF, x_max::TF) where {TF<:AbstractFloat}
+    cheb_rect_differentiation_matrix_kind1([TF=Float64], m::Integer, n::Integer, lower_bound::TF, upper_bound::TF) where {TF<:AbstractFloat}
 
 Constructing a 1st-order rectangular differentiation matrix mapping from a 1st-kind grid
 
@@ -58,20 +58,20 @@ function cheb_rect_differentiation_matrix_kind1(m::Integer, n::Integer)
 end
 
 function cheb_rect_differentiation_matrix_kind1(
-    ::Type{TF}, m::Integer, n::Integer, x_min::TF, x_max::TF
+    ::Type{TF}, m::Integer, n::Integer, lower_bound::TF, upper_bound::TF
 ) where {TF<:AbstractFloat}
     D = cheb_rect_differentiation_matrix_kind1(TF, m, n)
-    D .*= 2 / (x_max - x_min)
+    D .*= 2 / (upper_bound - lower_bound)
     return D
 end
 
-function cheb_rect_differentiation_matrix_kind1(m::Integer, n::Integer, x_min::Float64, x_max::Float64)
-    return cheb_rect_differentiation_matrix_kind1(Float64, m, n, x_min, x_max)
+function cheb_rect_differentiation_matrix_kind1(m::Integer, n::Integer, lower_bound::Float64, upper_bound::Float64)
+    return cheb_rect_differentiation_matrix_kind1(Float64, m, n, lower_bound, upper_bound)
 end
 
 """
     cheb_rect_differentiation_matrix_kind2([TF=Float64], m::Integer, n::Integer) where {TF<:AbstractFloat}
-    cheb_rect_differentiation_matrix_kind2([TF=Float64], m::Integer, n::Integer, x_min::TF, x_max::TF) where {TF<:AbstractFloat}
+    cheb_rect_differentiation_matrix_kind2([TF=Float64], m::Integer, n::Integer, lower_bound::TF, upper_bound::TF) where {TF<:AbstractFloat}
 
 Construct a 1st-order rectangular differentiation matrix mapping from a 2nd-kind grid.
 
@@ -150,15 +150,15 @@ function cheb_rect_differentiation_matrix_kind2(m::Integer, n::Integer)
 end
 
 function cheb_rect_differentiation_matrix_kind2(
-    ::Type{TF}, m::Integer, n::Integer, x_min::TF, x_max::TF
+    ::Type{TF}, m::Integer, n::Integer, lower_bound::TF, upper_bound::TF
 ) where {TF<:AbstractFloat}
     D = cheb_rect_differentiation_matrix_kind2(TF, m, n)
-    D .*= 2 / (x_max - x_min)
+    D .*= 2 / (upper_bound - lower_bound)
     return D
 end
 
-function cheb_rect_differentiation_matrix_kind2(m::Integer, n::Integer, x_min::Float64, x_max::Float64)
-    return cheb_rect_differentiation_matrix_kind2(Float64, m, n, x_min, x_max)
+function cheb_rect_differentiation_matrix_kind2(m::Integer, n::Integer, lower_bound::Float64, upper_bound::Float64)
+    return cheb_rect_differentiation_matrix_kind2(Float64, m, n, lower_bound, upper_bound)
 end
 
 """
@@ -228,18 +228,18 @@ function cheb_rect_differentiation_matrix(m::Integer, n::Integer, p::Integer, ki
 end
 
 function cheb_rect_differentiation_matrix(
-    ::Type{TF}, m::Integer, n::Integer, p::Integer, kind::Integer, x_min::TF, x_max::TF
+    ::Type{TF}, m::Integer, n::Integer, p::Integer, kind::Integer, lower_bound::TF, upper_bound::TF
 )::Matrix{TF} where {TF<:AbstractFloat}
     D = cheb_rect_differentiation_matrix(TF, m, n, p, kind)
-    scale = (2 / (x_max - x_min))^p
+    scale = (2 / (upper_bound - lower_bound))^p
     D .*= scale
     return D
 end
 
 function cheb_rect_differentiation_matrix(
-    m::Integer, n::Integer, p::Integer, kind::Integer, x_min::Float64, x_max::Float64
+    m::Integer, n::Integer, p::Integer, kind::Integer, lower_bound::Float64, upper_bound::Float64
 )
-    return cheb_rect_differentiation_matrix(Float64, m, n, p, kind, x_min, x_max)
+    return cheb_rect_differentiation_matrix(Float64, m, n, p, kind, lower_bound, upper_bound)
 end
 
 export cheb_rect_differentiation_matrix_kind1, cheb_rect_differentiation_matrix_kind2, cheb_rect_differentiation_matrix

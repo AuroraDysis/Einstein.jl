@@ -27,24 +27,24 @@ function cheb1_differentiation_matrix(n::Integer, k::Integer=1)
 end
 
 function cheb1_differentiation_matrix(
-    ::Type{TR}, n::Integer, x_min::TR, x_max::TR, k::Integer=1
+    ::Type{TR}, n::Integer, lower_bound::TR, upper_bound::TR, k::Integer=1
 ) where {TR<:AbstractFloat}
     D = cheb1_differentiation_matrix(TR, n, k)
-    scale = (2 / (x_max - x_min))^k
+    scale = (2 / (upper_bound - lower_bound))^k
     D .*= scale
     return D
 end
 
 function cheb1_differentiation_matrix(
-    n::Integer, x_min::Float64, x_max::Float64, k::Integer=1
+    n::Integer, lower_bound::Float64, upper_bound::Float64, k::Integer=1
 )
-    return cheb1_differentiation_matrix(Float64, n, x_min, x_max, k)
+    return cheb1_differentiation_matrix(Float64, n, lower_bound, upper_bound, k)
 end
 
 function _cheb_differentiation_matrix(
-    ::ChebyshevFirstKindNode, ::Type{TR}, n::Integer, x_min::TR, x_max::TR, k::Integer
+    ::ChebyshevFirstKindNode, ::Type{TR}, n::Integer, lower_bound::TR, upper_bound::TR, k::Integer
 ) where {TR<:AbstractFloat}
-    return cheb1_differentiation_matrix(TR, n, x_min, x_max, k)
+    return cheb1_differentiation_matrix(TR, n, lower_bound, upper_bound, k)
 end
 
 export cheb1_differentiation_matrix

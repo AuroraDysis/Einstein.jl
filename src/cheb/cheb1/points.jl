@@ -1,6 +1,6 @@
 @doc raw"""
     cheb1_points([TF=Float64], n::Integer) where {TF<:AbstractFloat}
-    cheb1_points([TF=Float64], n::Integer, x_min::TF, x_max::TF) where {TF<:AbstractFloat}
+    cheb1_points([TF=Float64], n::Integer, lower_bound::TF, upper_bound::TF) where {TF<:AbstractFloat}
 
 Generate Chebyshev points of the 2nd kind.
 
@@ -9,7 +9,7 @@ For the standard interval [-1,1]:
 x_k = -\cos\left(\frac{(2k + 1)\pi}{2n}\right), \quad k = 0,1,\ldots,n-1
 ```
 
-For mapped interval [x_min,x_max]:
+For mapped interval [lower_bound,upper_bound]:
 ```math
 x_{\mathrm{mapped}} = \frac{x_{\mathrm{max}} + x_{\mathrm{min}}}{2} + \frac{x_{\mathrm{min}} - x_{\mathrm{max}}}{2}x_k
 ```
@@ -17,8 +17,8 @@ x_{\mathrm{mapped}} = \frac{x_{\mathrm{max}} + x_{\mathrm{min}}}{2} + \frac{x_{\
 # Arguments
 - `TF`: Type parameter for the grid points (e.g., Float64)
 - `n`: Number of points
-- `x_min`: (Optional) Lower bound of the mapped interval
-- `x_max`: (Optional) Upper bound of the mapped interval
+- `lower_bound`: (Optional) Lower bound of the mapped interval
+- `upper_bound`: (Optional) Upper bound of the mapped interval
 
 # References
 - [chebfun/@chebtech1/chebpts.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/chebpts.m)
@@ -52,25 +52,25 @@ end
 
 # Mapped version
 function cheb1_points(
-    ::Type{TF}, n::Integer, x_min::TF, x_max::TF
+    ::Type{TF}, n::Integer, lower_bound::TF, upper_bound::TF
 ) where {TF<:AbstractFloat}
     x_grid = cheb1_points(TF, n)
 
-    a = (x_max + x_min) / 2
-    b = (x_max - x_min) / 2
+    a = (upper_bound + lower_bound) / 2
+    b = (upper_bound - lower_bound) / 2
     @.. x_grid = a + b * x_grid
 
     return x_grid
 end
 
-function cheb1_points(n::Integer, x_min::Float64, x_max::Float64)
-    return cheb1_points(Float64, n, x_min, x_max)
+function cheb1_points(n::Integer, lower_bound::Float64, upper_bound::Float64)
+    return cheb1_points(Float64, n, lower_bound, upper_bound)
 end
 
 function _cheb_points(
-    ::ChebyshevFirstKindNode, ::Type{TF}, n::Integer, x_min::TF, x_max::TF
+    ::ChebyshevFirstKindNode, ::Type{TF}, n::Integer, lower_bound::TF, upper_bound::TF
 ) where {TF<:AbstractFloat}
-    return cheb1_points(TF, n, x_min, x_max)
+    return cheb1_points(TF, n, lower_bound, upper_bound)
 end
 
 export cheb1_points

@@ -1,6 +1,6 @@
 """
     cheb_rect_integration_matrix([TR=Float64], m::Integer, n::Integer) -> Matrix{TR}
-    cheb_rect_integration_matrix([TR=Float64], m::Integer, n::Integer, x_min::TR, x_max::TR) -> Matrix{TR}
+    cheb_rect_integration_matrix([TR=Float64], m::Integer, n::Integer, lower_bound::TR, upper_bound::TR) -> Matrix{TR}
 
 returns the m x n first-order rectangular integration matrix which maps from an n-point Chebyshev grid of the second kind to an m-point Chebyshev grid of the same kind.
 
@@ -8,8 +8,8 @@ returns the m x n first-order rectangular integration matrix which maps from an 
 - `TR`: Type parameter for the matrix elements (e.g., Float64)
 - `m`: Size of the matrix (number of rows)
 - `n`: Size of the matrix (number of columns)
-- `x_min`: (Optional) Lower bound of the integration interval
-- `x_max`: (Optional) Upper bound of the integration interval
+- `lower_bound`: (Optional) Lower bound of the integration interval
+- `upper_bound`: (Optional) Upper bound of the integration interval
 
 # References
 - [chebfun/intmat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/intmat.m)
@@ -45,22 +45,22 @@ function cheb_rect_integration_matrix(n::Integer)
 end
 
 function cheb_rect_integration_matrix(
-    ::Type{TR}, m::Integer, n::Integer, x_min::TR, x_max::TR
+    ::Type{TR}, m::Integer, n::Integer, lower_bound::TR, upper_bound::TR
 ) where {TR<:AbstractFloat}
     intmat = cheb_rect_integration_matrix(TR, m, n)
-    scale = (x_max - x_min) / 2
+    scale = (upper_bound - lower_bound) / 2
     intmat .*= scale
     return intmat
 end
 
 function cheb_rect_integration_matrix(
-    m::Integer, n::Integer, x_min::Float64, x_max::Float64
+    m::Integer, n::Integer, lower_bound::Float64, upper_bound::Float64
 )
-    return cheb_rect_integration_matrix(Float64, m, n, x_min, x_max)
+    return cheb_rect_integration_matrix(Float64, m, n, lower_bound, upper_bound)
 end
 
-function cheb_rect_integration_matrix(n::Integer, x_min::Float64, x_max::Float64)
-    return cheb_rect_integration_matrix(Float64, n, n, x_min, x_max)
+function cheb_rect_integration_matrix(n::Integer, lower_bound::Float64, upper_bound::Float64)
+    return cheb_rect_integration_matrix(Float64, n, n, lower_bound, upper_bound)
 end
 
 export cheb_rect_integration_matrix

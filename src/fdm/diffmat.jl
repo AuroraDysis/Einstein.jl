@@ -19,7 +19,7 @@ Construct a finite difference matrix for numerical differentiation.
 # Notes
 - Uses central difference schemes in the interior points
 - Employs one-sided differences near boundaries
-- The resulting matrix has dimensions n×n where n = round(Int, (x_max - x_min) / dx) + 1
+- The resulting matrix has dimensions n×n where n = round(Int, (upper_bound - lower_bound) / dx) + 1
 """
 function fdm_diffmat(
     ::Type{TR},
