@@ -48,7 +48,7 @@ struct ChebyshevGrid{TF<:AbstractFloat,TNode<:AbstractChebyshevNode} <: Abstract
         end
 
         node = TNode()
-        data = cheb_points(node, TF, n, lower_bound, upper_bound)
+        data = _cheb_points(node, TF, n, lower_bound, upper_bound)
         return new{TF,TNode}(lower_bound, upper_bound, data, node)
     end
 end
