@@ -10,8 +10,8 @@ polynomial at those points, with the convention that the first value is zero.
 - [chebfun/@chebcolloc1/chebcolloc1.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc1/chebcolloc1.m)
 """
 function cheb1_cumsummat(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
-    A = cheb1_amat(TF, n)
-    S = cheb1_smat(TF, n)
+    A = cheb1_analysis_matrix(TF, n)
+    S = cheb1_synthesis_matrix(TF, n)
     B = cheb_coeffs_cumsummat(TF, n)
     Q = S * B * A
     return Q

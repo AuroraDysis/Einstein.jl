@@ -1,12 +1,12 @@
 using TestItems
 
-@testitem "cheb2_amat, cheb2_smat" begin
+@testitem "cheb2_analysis_matrix, cheb2_synthesis_matrix" begin
     using Einstein.ChebyshevSuite, Test
 
     n = 32  # Enough points for good accuracy
     x = cheb2_points(Float64, n)
-    A = cheb2_amat(Float64, n)
-    S = cheb2_smat(Float64, n)
+    A = cheb2_analysis_matrix(Float64, n)
+    S = cheb2_synthesis_matrix(Float64, n)
 
     @testset "Transform and recover" begin
         # Test with polynomial that should be exactly represented

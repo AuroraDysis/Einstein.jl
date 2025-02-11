@@ -1,5 +1,5 @@
 """
-    cheb1_amat([TF=Float64], n::Integer) where {TF<:AbstractFloat}
+    cheb1_analysis_matrix([TF=Float64], n::Integer) where {TF<:AbstractFloat}
 
 Construct the analysis matrix A that transforms function values at Chebyshev points of the 1st kind to Chebyshev coefficients.
 
@@ -7,7 +7,7 @@ Construct the analysis matrix A that transforms function values at Chebyshev poi
 - `TF`: Element type (defaults to Float64)
 - `n`: Number of points/coefficients
 """
-function cheb1_amat(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function cheb1_analysis_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     A = Array{TF,2}(undef, n, n)
     op = ChebyshevFirstKindAnalysis{TF}(n)
     @inbounds for i in 1:n
@@ -16,12 +16,12 @@ function cheb1_amat(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     return A
 end
 
-function cheb1_amat(n::Integer)
-    return cheb1_amat(Float64, n)
+function cheb1_analysis_matrix(n::Integer)
+    return cheb1_analysis_matrix(Float64, n)
 end
 
 """
-    cheb1_smat([TF=Float64], n::Integer) where {TF<:AbstractFloat}
+    cheb1_synthesis_matrix([TF=Float64], n::Integer) where {TF<:AbstractFloat}
 
 Construct the synthesis matrix S that transforms Chebyshev coefficients to function values at Chebyshev points of the 1st kind.
 
@@ -29,7 +29,7 @@ Construct the synthesis matrix S that transforms Chebyshev coefficients to funct
 - `TF`: Element type (defaults to Float64)
 - `n`: Number of points/coefficients
 """
-function cheb1_smat(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function cheb1_synthesis_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     S = Array{TF,2}(undef, n, n)
     op = ChebyshevFirstKindSynthesis{TF}(n)
     @inbounds for i in 1:n
@@ -38,8 +38,8 @@ function cheb1_smat(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     return S
 end
 
-function cheb1_smat(n::Integer)
-    return cheb1_smat(Float64, n)
+function cheb1_synthesis_matrix(n::Integer)
+    return cheb1_synthesis_matrix(Float64, n)
 end
 
-export cheb1_amat, cheb1_smat
+export cheb1_analysis_matrix, cheb1_synthesis_matrix
