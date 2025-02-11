@@ -1,5 +1,5 @@
 """
-    cheb2_barywts([TF=Float64], n::Integer) where {TF<:AbstractFloat}
+    cheb2_barycentric_weights([TF=Float64], n::Integer) where {TF<:AbstractFloat}
 
 Compute the barycentric weights for Chebyshev points of the 2nd kind.
 
@@ -13,7 +13,7 @@ Compute the barycentric weights for Chebyshev points of the 2nd kind.
 
 See also: [`BarycentricInterpolation`](@ref), [`cheb2_points`](@ref)
 """
-function cheb2_barywts(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function cheb2_barycentric_weights(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     if n == 0
         return TF[]
     elseif n == 1
@@ -32,8 +32,8 @@ function cheb2_barywts(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     return w
 end
 
-function cheb2_barywts(n::Integer)
-    return cheb2_barywts(Float64, n)
+function cheb2_barycentric_weights(n::Integer)
+    return cheb2_barycentric_weights(Float64, n)
 end
 
-export cheb2_barywts
+export cheb2_barycentric_weights
