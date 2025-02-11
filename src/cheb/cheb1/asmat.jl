@@ -1,17 +1,17 @@
 """
-    cheb1_amat([T=Float64], n::Integer) where {T<:AbstractFloat}
+    cheb1_amat([TF=Float64], n::Integer) where {TF<:AbstractFloat}
 
 Construct the analysis matrix A that transforms function values at Chebyshev points of the 1st kind to Chebyshev coefficients.
 
 # Arguments
-- `T`: Element type (defaults to Float64)
+- `TF`: Element type (defaults to Float64)
 - `n`: Number of points/coefficients
 """
-function cheb1_amat(::Type{T}, n::Integer) where {T<:AbstractFloat}
-    A = Array{T,2}(undef, n, n)
-    op = Cheb1Vals2CoeffsOp{T}(n)
+function cheb1_amat(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+    A = Array{TF,2}(undef, n, n)
+    op = Cheb1Vals2CoeffsOp{TF}(n)
     @inbounds for i in 1:n
-        A[:, i] = op(OneElement(one(T), i, n))
+        A[:, i] = op(OneElement(one(TF), i, n))
     end
     return A
 end
@@ -21,19 +21,19 @@ function cheb1_amat(n::Integer)
 end
 
 """
-    cheb1_smat([T=Float64], n::Integer)
+    cheb1_smat([TF=Float64], n::Integer) where {TF<:AbstractFloat}
 
 Construct the synthesis matrix S that transforms Chebyshev coefficients to function values at Chebyshev points of the 1st kind.
 
 # Arguments
-- `T`: Element type (defaults to Float64)
+- `TF`: Element type (defaults to Float64)
 - `n`: Number of points/coefficients
 """
-function cheb1_smat(::Type{T}, n::Integer) where {T<:AbstractFloat}
-    S = Array{T,2}(undef, n, n)
-    op = Cheb1Coeffs2ValsOp{T}(n)
+function cheb1_smat(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+    S = Array{TF,2}(undef, n, n)
+    op = Cheb1Coeffs2ValsOp{TF}(n)
     @inbounds for i in 1:n
-        S[:, i] = op(OneElement(one(T), i, n))
+        S[:, i] = op(OneElement(one(TF), i, n))
     end
     return S
 end

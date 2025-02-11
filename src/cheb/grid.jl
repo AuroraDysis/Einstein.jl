@@ -1,9 +1,3 @@
-"""
-    ChebyshevNode
-
-FirstKind=1, The Chebyshev nodes of the first kind, also called the Chebyshev zeros, are the zeros of the Chebyshev polynomials of the first kind.
-SecondKind=2, The Chebyshev nodes of the second kind are also referred to as Chebyshev–Lobatto points or Chebyshev extreme points.
-"""
 @enumx ChebyshevNode FirstKind = 1 SecondKind = 2
 
 struct ChebyshevGrid{TF<:AbstractFloat} <: AbstractGrid{TF}
@@ -16,12 +10,15 @@ end
 """
     cheb_grid(n, lower_bound, upper_bound, kind=ChebyshevNode.SecondKind)
 
-Build a Chebyshev grid of size `n` in the interval `[lower_bound, upper_bound]`.
+Build a Chebyshev grid of size `n` in the interval `[lower_bound, upper_bound]`. The grid can be of the first or second kind.
+ChebyshevNode.FirstKind=1, The Chebyshev nodes of the first kind, also called the Chebyshev zeros, are the zeros of the Chebyshev polynomials of the first kind.
+ChebyshevNode.SecondKind=2, The Chebyshev nodes of the second kind are also referred to as Chebyshev–Lobatto points or Chebyshev extreme points.
 
 # Arguments
 - `n::Integer`: Number of grid points
 - `lower_bound::TF`: Lower bound of the interval
 - `upper_bound::TF`: Upper bound of the interval
+- `kind::ChebyshevNode.T=ChebyshevNode.SecondKind`: Kind of Chebyshev nodes
 """
 function cheb_grid(
     n::Integer,
