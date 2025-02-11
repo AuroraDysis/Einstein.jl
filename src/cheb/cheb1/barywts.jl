@@ -12,7 +12,7 @@ Compute the barycentric weights for Chebyshev points of the 1st kind.
 - [berrut2004barycentric](@citet*)
 - [chebfun/@chebtech1/barywts.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/barywts.m)
 
-See also: [`bary`](@ref), [`cheb1_points`](@ref)
+See also: [`BarycentricInterpolation`](@ref), [`cheb1_points`](@ref)
 """
 function cheb1_barywts(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     if n == 0

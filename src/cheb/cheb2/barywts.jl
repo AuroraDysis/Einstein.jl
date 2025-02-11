@@ -11,7 +11,7 @@ Compute the barycentric weights for Chebyshev points of the 2nd kind.
 
 - [chebfun/@chebtech2/barywts.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/barywts.m)
 
-See also: [`bary`](@ref), [`cheb2_points`](@ref)
+See also: [`BarycentricInterpolation`](@ref), [`cheb2_points`](@ref)
 """
 function cheb2_barywts(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     if n == 0
