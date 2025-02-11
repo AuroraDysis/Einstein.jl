@@ -2,7 +2,7 @@
     cheb_rect_differentiation_matrix_kind1([TF=Float64], m::Integer, n::Integer) where {TF<:AbstractFloat}
     cheb_rect_differentiation_matrix_kind1([TF=Float64], m::Integer, n::Integer, lower_bound::TF, upper_bound::TF) where {TF<:AbstractFloat}
 
-Constructing a 1st-order rectangular differentiation matrix mapping from a 1st-kind grid
+Constructing a 1st-order rectangular differentiation matrix mapping from a 1st-kind grid to another 1st-kind grid.
 
 # Arguments:
 - `TF` : Type of the output matrix (default: Float64)
@@ -74,7 +74,7 @@ end
     cheb_rect_differentiation_matrix_kind2([TF=Float64], m::Integer, n::Integer) where {TF<:AbstractFloat}
     cheb_rect_differentiation_matrix_kind2([TF=Float64], m::Integer, n::Integer, lower_bound::TF, upper_bound::TF) where {TF<:AbstractFloat}
 
-Construct a 1st-order rectangular differentiation matrix mapping from a 2nd-kind grid.
+Construct a 1st-order rectangular differentiation matrix mapping from a 2nd-kind grid to another 1st-kind grid.
 
 # Arguments:
 - `TF` : Type of the output matrix elements (e.g., Float64)
@@ -166,7 +166,7 @@ end
 """
     cheb_rect_differentiation_matrix([TF=Float64], m::Integer, n::Integer, p::Integer, kind::Integer) where {TF<:AbstractFloat}
 
-Construct a p-th order rectangular differentiation matrix mapping between Chebyshev grids.
+Construct a p-th order rectangular differentiation matrix mapping from kind 1 or 2 Chebyshev grids to another 1st-kind grid.
 
 # Arguments
 - `TF` : Type of the output matrix elements (e.g., Float64)
