@@ -3,22 +3,16 @@ abstract type AbstractChebyshevNode end
 struct ChebyshevFirstKindNode <: AbstractChebyshevNode end
 struct ChebyshevSecondKindNode <: AbstractChebyshevNode end
 
-@enumx ChebyshevNode FirstKind = 1 SecondKind = 2
-
 """
-    ChebyshevGrid{TF,TNode}(n, lower_bound, upper_bound, kind=ChebyshevNode.SecondKind) where TF<:AbstractFloat
+    ChebyshevGrid{TF,TNode}(n, lower_bound, upper_bound, kind=2) where TF<:AbstractFloat
 
 Build a Chebyshev grid of size `n` in the interval `[lower_bound, upper_bound]`. The grid can be of the first or second kind.
-
-# Node Types
-- `ChebyshevNode.FirstKind`: The Chebyshev nodes of the first kind (zeros of the Chebyshev polynomials)
-- `ChebyshevNode.SecondKind`: The Chebyshev nodes of the second kind (Chebyshev–Lobatto points)
 
 # Arguments
 - `n::Integer`: Number of grid points
 - `lower_bound::TF`: Lower bound of the interval
 - `upper_bound::TF`: Upper bound of the interval
-- `kind::ChebyshevNode.T = ChebyshevNode.SecondKind`: Kind of Chebyshev nodes
+- `kind::Integer`: Kind of Chebyshev grid (1 or 2)
 """
 struct ChebyshevGrid{TF<:AbstractFloat,TNode<:AbstractChebyshevNode} <: AbstractGrid{TF}
     lower_bound::TF  # Lower bound of the interval
@@ -27,24 +21,16 @@ struct ChebyshevGrid{TF<:AbstractFloat,TNode<:AbstractChebyshevNode} <: Abstract
     node::TNode      # Node type
 
     function ChebyshevGrid(
-        n::Integer,
-        lower_bound::TF,
-        upper_bound::TF,
-        kind::ChebyshevNode.T=ChebyshevNode.SecondKind,
+        n::Integer, lower_bound::TF, upper_bound::TF; kind::Integer=2
     ) where {TF<:AbstractFloat}
         @argcheck n >= 0 "n must be nonnegative"
         @argcheck upper_bound > lower_bound "upper_bound must be greater than lower_bound"
+        @argcheck kind == 1 || kind == 2 "kind must be either 1 or 2"
 
-        if kind == ChebyshevNode.FirstKind
+        if kind == 1
             TNode = ChebyshevFirstKindNode
-        elseif kind == ChebyshevNode.SecondKind
+        elseif kind == 2
             TNode = ChebyshevSecondKindNode
-        else
-            throw(
-                ArgumentError(
-                    "kind must be either ChebyshevNode.FirstKind or ChebyshevNode.SecondKind",
-                ),
-            )
         end
 
         node = TNode()
@@ -72,4 +58,4 @@ Base.lastindex(grid::ChebyshevGrid) = lastindex(grid.data)
 Base.eltype(::Type{ChebyshevGrid{TF,TNode}}) where {TF,TNode} = TF
 Base.IndexStyle(::Type{ChebyshevGrid}) = IndexLinear()
 
-export ChebyshevGrid, ChebyshevNode
+export ChebyshevGrid

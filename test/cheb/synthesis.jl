@@ -3,12 +3,12 @@ using TestItems
 @testitem "ChebyshevSynthesis and ChebyshevAnalysis" begin
     using LinearAlgebra, Einstein.ChebyshevSuite, Test
 
-    for kind in [ChebyshevNode.FirstKind, ChebyshevNode.SecondKind]
+    for kind in [1, 2]
         @testset "kind = $kind, real" begin
             tol = 100 * eps()
             n = 40
 
-            grid = ChebyshevGrid(n, 0.0, 1.0, kind)
+            grid = ChebyshevGrid(n, 0.0, 1.0; kind=kind)
             syn = ChebyshevSynthesis(grid)
             ana = ChebyshevAnalysis(grid)
             v = sin.(grid)
@@ -21,7 +21,7 @@ using TestItems
         @testset "kind = $kind, complex" begin
             tol = 100 * eps()
             n = 40
-            grid = ChebyshevGrid(n, 0.0, 1.0, kind)
+            grid = ChebyshevGrid(n, 0.0, 1.0; kind=kind)
             syn = ChebyshevSynthesis(grid)
             ana = ChebyshevAnalysis(grid)
             v = sin.(grid) + im * cos.(grid)

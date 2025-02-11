@@ -1,12 +1,12 @@
 @testitem "ChebyshevGrid BarycentricInterpolation" begin
     using Einstein.ChebyshevSuite, Test
 
-    for kind in [ChebyshevNode.FirstKind, ChebyshevNode.SecondKind]
+    for kind in [1, 2]
         @testset "kind = $kind, real" begin
             tol = 100 * eps()
             n = 40
 
-            grid = ChebyshevGrid(n, -1.0, 1.0, kind)
+            grid = ChebyshevGrid(n, -1.0, 1.0; kind=kind)
             itp = ChebyshevInterpolation(grid)
             v = sin.(grid)
 
@@ -23,7 +23,7 @@
         @testset "kind = $kind, complex" begin
             tol = 100 * eps()
             n = 30
-            grid = ChebyshevGrid(n, -1.0, 1.0, kind)
+            grid = ChebyshevGrid(n, -1.0, 1.0; kind=kind)
             itp = ChebyshevInterpolation(grid)
             v = sin.(grid) + im * cos.(grid)
 

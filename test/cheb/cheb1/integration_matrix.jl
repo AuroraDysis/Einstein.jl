@@ -3,7 +3,7 @@ using Einstein.ChebyshevSuite, Test
 
 @testitem "cheb1_integration_matrix" begin
     n = 10
-    grid = ChebyshevGrid(n, 0.0, 1.0, ChebyshevNode.FirstKind)
+    grid = ChebyshevGrid(n, 0.0, 1.0; kind=1)
     Q = cheb1_integration_matrix(n, 0.0, 1.0)
     @test size(Q) == (n, n)
 
