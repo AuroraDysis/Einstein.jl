@@ -1,6 +1,6 @@
 using TestItems
 
-@testitem "cheb1_diffmat" begin
+@testitem "cheb1_differentiation_matrix" begin
     using Einstein.ChebyshevSuite, Test
 
     # n = 5
@@ -11,7 +11,7 @@ using TestItems
         -0.248216560693358 0.850650808352040 -2.10292444847654 0.449027976579586 1.05146222423827
         0.525731112119134 -1.70130161670408 3.40260323340816 -7.20682929858878 4.97979656976556
     ]
-    result5 = cheb1_diffmat(Float64, 5)
+    result5 = cheb1_differentiation_matrix(Float64, 5)
     @test isapprox(result5, expected5, rtol=1e-12)
 
     # n = 6
@@ -23,10 +23,10 @@ using TestItems
         0.218779599482357 -0.707106781186548 1.41421356237310 -3.04720672422855 0.707106781186547 1.41421356237310
         -0.517638090205042 1.63299316185545 -3.04720672422855 5.27791686752937 -10.5558337350587 7.20976852010751
     ]
-    result5 = cheb1_diffmat(Float64, 6)
+    result5 = cheb1_differentiation_matrix(Float64, 6)
     @test isapprox(result5, expected6, rtol=1e-12)
 
     # Type tests
-    @test eltype(cheb1_diffmat(Float32, 5)) == Float32
-    @test eltype(cheb1_diffmat(Float64, 5)) == Float64
+    @test eltype(cheb1_differentiation_matrix(Float32, 5)) == Float32
+    @test eltype(cheb1_differentiation_matrix(Float64, 5)) == Float64
 end
