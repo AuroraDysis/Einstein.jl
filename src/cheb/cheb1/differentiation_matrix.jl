@@ -18,7 +18,7 @@ function cheb1_differentiation_matrix(
     x = cheb1_points(TR, n)               # First kind points.
     w = cheb1_barycentric_weights(TR, n)           # Barycentric weights.
     t = cheb1_angles(TR, n)            # acos(x).
-    D = bary_diffmat(x, w, k, t)       # Construct matrix.
+    D = barycentric_differentiation_matrix(x, w, k, t)       # Construct matrix.
     return D
 end
 

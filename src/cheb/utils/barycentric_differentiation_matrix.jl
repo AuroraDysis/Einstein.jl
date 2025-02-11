@@ -1,13 +1,19 @@
 """
-    bary_diffmat(x; w=nothing, k=1, t=nothing)
+    barycentric_differentiation_matrix(x, w, k, t)
 
 Compute the barycentric differentiation matrix.
+
+# Arguments
+- `x::AbstractVector{TR}` : Vector of interpolation points
+- `w::AbstractVector{TR}` : Barycentric weights of the interpolation points
+- `k::Integer` : Order of the derivative (default: 1)
+- `t::AbstractVector{TR}` : Vector of angles (default: empty)
 
 # References:
 - [chebfun/@chebcolloc/baryDiffMat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc/baryDiffMat.m)
 """
-function bary_diffmat(
-    x::AbstractVector{TR}, w::AbstractVector{TR}, k::Integer, t::AbstractVector{TR}
+function barycentric_differentiation_matrix(
+    x::AbstractVector{TR}, w::AbstractVector{TR}, k::Integer=1, t::AbstractVector{TR}=TR[]
 ) where {TR<:AbstractFloat}
     n = length(x)
 
@@ -160,4 +166,4 @@ function bary_diffmat(
     return D_current
 end
 
-export bary_diffmat
+export barycentric_differentiation_matrix

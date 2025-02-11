@@ -24,7 +24,7 @@ include("differentiation_matrix.jl")
 include("integration_matrix.jl")
 
 include("utils/fft.jl")
-include("utils/bary_diffmat.jl")
+include("utils/barycentric_differentiation_matrix.jl")
 include("utils/coeffs_diff.jl")
 include("utils/coeffs_eval.jl")
 include("utils/coeffs_integrate.jl")
