@@ -61,3 +61,5 @@ function cheb_dissipation_matrix(
     F[diagind(F)] .= 0
     return F[diagind(F)] .+= one(T) .- sum(F; dims=2)
 end
+
+export cheb_dissipation_weights, cheb_dissipation_matrix
