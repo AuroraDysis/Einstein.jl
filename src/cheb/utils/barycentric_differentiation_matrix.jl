@@ -19,9 +19,10 @@ function barycentric_differentiation_matrix(
 
     # Handle trivial cases:
     if n == 0
-        return Matrix{TR}(undef, 0, 0)
+        return zeros(TR, 0, 0)
     elseif n == 1
-        return [zero(TR)]  # Single point -> derivative matrix is [0]
+        # Single point -> derivative matrix is [0]
+        return zeros(TR, 1, 1)
     end
 
     # Check for length agreement:
