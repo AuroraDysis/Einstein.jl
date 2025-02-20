@@ -42,9 +42,19 @@ the equation transforms to:
 
 $$f(r)\phi''(r) + \left[f'(r) - 2i\omega\right]\phi'(r) - \frac{V(r)}{f(r)}\phi(r) = 0.$$  
 
-For numerical computation, compactify the radial coordinate using:  
+To make coefficients of the equation finite for $r \in [0, +\infty)$, we define a new function:
 
-$$x \equiv 1 - \frac{r_+}{r}.$$ 
+$$F = \frac{\Delta}{r^4}$$
+
+Then, we have:
+
+$$F(r) \phi''(r) + \left( F'(r) + \frac{2 (r F - i \omega)}{r^2} \right) \phi'(r) - \left[ \frac{r F'(r)+2 F}{r^2} + \frac{l (l+1)}{r^4} \right] \phi = 0 $$
+
+For numerical computation, compactify the radial coordinate using:
+
+$$x \equiv 1 - \frac{r_+}{r}.$$
+
+Here, $x \in [0, 1]$.
 
 ## References
 
@@ -72,6 +82,10 @@ M = (r₊ + r₊^3 / R^2 + Q^2 / r₊) / 2
 # ╔═╡ 9006db87-f4fb-42c5-b3ab-46e1434e3b42
 l = 0
 
+# ╔═╡ 3a1ad375-c718-4465-95c6-d2f5bb9093df
+# degree of the polynomial
+n = 100
+
 # ╔═╡ d9c28ff1-8b86-4027-9ff3-0557d9565f79
 λ = begin
 	x_min = zero(TF)
@@ -83,20 +97,19 @@ l = 0
 	conversionA1 = Conversion(Ultraspherical(1, dom), ultraSpace)
 	
 	x = Fun(chebSpace)
-	f2 = (r₊ * (r₊^3 / R^2 + r₊ * (x - 1)^2 + 2 * M * (x - 1)^3) + Q^2 * (x - 1)^4) / r₊^4
-	df2 = f2'
+	F = (r₊ * (r₊^3 / R^2 + r₊ * (x - 1)^2 + 2 * M * (x - 1)^3) + Q^2 * (x - 1)^4) / r₊^4
+	dF = F'
 	
-	c02 = (x - 1)^2 * f2
-	c01 = (x - 1)^2 * df2
-	c00 = -2 * f2 + (x - 1) * (- l * (l + 1) * (x - 1) / r₊^2 + df2)
+	c02 = (x - 1)^2 * F
+	c01 = (x - 1)^2 * dF
+	c00 = -2 * F + (x - 1) * (- l * (l + 1) * (x - 1) / r₊^2 + dF)
 	
 	c11 = -2im * (x - 1)^2 / r₊
 	
 	A0 = (c02 * 𝒟^2 + c01 * 𝒟 + c00):chebSpace
 	A1 = (-c11 * 𝒟):chebSpace
 	A1c = conversionA1 * A1
-	
-	n = 100
+
 	A0m = complex(Matrix(@view(A0[1:n, 1:n])))
 	A1m = Matrix(@view(A1c[1:n, 1:n]))
 	
@@ -824,6 +837,7 @@ version = "17.4.0+2"
 # ╠═4d0cd86e-8cb4-4c40-a202-6513b6257892
 # ╠═a5dc2c36-0c26-4cfe-a03a-137aabb47467
 # ╠═9006db87-f4fb-42c5-b3ab-46e1434e3b42
+# ╠═3a1ad375-c718-4465-95c6-d2f5bb9093df
 # ╠═d9c28ff1-8b86-4027-9ff3-0557d9565f79
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
