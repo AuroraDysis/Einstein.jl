@@ -11,6 +11,41 @@ using ApproxFun, FillArrays, LinearAlgebra
 md"""
 # Calculate scalar QNMs of RN AdS black hole using the ultraspherical spectral method
 
+We are interested in scalar perturbations of a Reissner-Nordström-AdS (RNAdS) black hole metric:
+
+$$ds^2 = f(r)dt^2 - \frac{dr^2}{f(r)} - r^2(d\theta^2 + \sin^2\theta d\phi^2),$$ 
+
+where $f(r) = \Delta/r^2$ and $\Delta = r^2 - 2Mr + Q^2 + r^4/R^2$. Here, $M$ denotes the black hole mass, $Q$ the charge, and $R$ the AdS radius. The black hole mass relates to its charge $Q$ and horizon radius $r_+$ via:  
+
+$$M = \frac{1}{2}\left(r_+ + \frac{r_+^3}{R^2} + \frac{Q^2}{r_+}\right).$$  
+
+The radial part of scalar perturbations satisfies the wave equation:  
+
+$$\frac{d^2 \psi}{dr_*^2} + \left(\omega^2 - V\right)\psi = 0,$$  
+
+with potential:
+
+$$V = f(r)\left[\frac{l(l+1)}{r^2} + \frac{f'(r)}{r}\right].$$  
+
+Boundary conditions enforce ingoing waves at the horizon and no outgoing waves at infinity:
+
+$$\psi(r) \approx \begin{cases}  
+e^{-i\omega r_*} & \text{as } r \to r_+, \\  
+0 & \text{as } r \to \infty.  
+\end{cases}$$
+
+Introducing $\phi(r)$ as the smooth part of $\psi(r)$:  
+
+$$\psi(r) = e^{-i\omega r_*} \phi(r),$$
+
+the equation transforms to:
+
+$$f(r)\phi''(r) + \left[f'(r) - 2i\omega\right]\phi'(r) - \frac{V(r)}{f(r)}\phi(r) = 0.$$  
+
+For numerical computation, compactify the radial coordinate using:  
+
+$$x \equiv 1 - \frac{r_+}{r}.$$ 
+
 ## References
 
 - [[gr-qc/0301052] Quasinormal modes of Reissner-Nordström-anti-de Sitter black holes: scalar, electromagnetic and gravitational perturbations](https://arxiv.org/abs/gr-qc/0301052)
@@ -19,6 +54,7 @@ md"""
 """
 
 # ╔═╡ 6327b564-6066-45b4-b188-095e3761b96d
+# type used for qnm computing
 const TF = Float64
 
 # ╔═╡ b766f294-5c18-40ce-8f92-696c1dcaaacb
