@@ -15,7 +15,7 @@ md"""
 
 - [[gr-qc/0301052] Quasinormal modes of Reissner-Nordström-anti-de Sitter black holes: scalar, electromagnetic and gravitational perturbations](https://arxiv.org/abs/gr-qc/0301052)
 - [[2209.09324] Calculating quasinormal modes of Schwarzschild anti-de Sitter black holes using the continued fraction method](https://arxiv.org/abs/2209.09324)
-- [[hep-th/0003295] Quasinormal modes of Reissner-Nordstr$\ddot{o}$m Anti-de Sitter Black Holes](https://arxiv.org/abs/hep-th/0003295)
+- [[hep-th/0003295] Quasinormal modes of Reissner-Nordström Anti-de Sitter Black Holes](https://arxiv.org/abs/hep-th/0003295)
 """
 
 # ╔═╡ 6327b564-6066-45b4-b188-095e3761b96d
