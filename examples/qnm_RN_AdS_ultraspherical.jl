@@ -17,10 +17,7 @@ macro bind(def, element)
 end
 
 # ╔═╡ fdf0edd0-efbc-11ef-1dea-e32569d65705
-using ApproxFun, LinearAlgebra, PlutoUI, LaTeXStrings
-
-# ╔═╡ 64dcba7b-daea-488c-bc89-e729cc7537e7
-wrong(text) = Markdown.MD(Markdown.Admonition("danger", "Input is out of range!", [text]));
+using ApproxFun, LinearAlgebra, PlutoUI
 
 # ╔═╡ e57eb498-14bc-4606-89d0-3ddbaa20c5b5
 md"""
@@ -50,54 +47,28 @@ where $f(r) = \Delta/r^2$ and $\Delta = r^2 - 2Mr + Q^2 + r^4/R^2$. Here, $M$ de
 
 # ╔═╡ 8d2ee7b2-e5e9-402a-95b0-b5c53db84c67
 md"""
-We choose units such that $R = 1$.
-"""
-
-# ╔═╡ 4d0cd86e-8cb4-4c40-a202-6513b6257892
-R = one(TF)
-
-# ╔═╡ 24060d90-60f9-4dd6-8206-a28514fc2ab1
-md"""
-**Input horizon radius $r_+$:**
-"""
-
-# ╔═╡ 63dc53d0-0c1c-432a-9a0e-07502660eb6d
-@bind r₊_str TextField(default="1.0")
-
-# ╔═╡ a5869853-874c-4779-866f-ae5e7af251a8
-# parse input as a numeric value
-r₊ = parse(TF, r₊_str)
-
-# ╔═╡ 053e3de3-8ea4-409c-aa00-5d2dc07d8f14
-md"""
-The extremal value of the black hole charge, $Q_{\text{ext}}$, is given by the following function of the hole's horizon radius:
+We choose units such that $R = 1$. The extremal value of the black hole charge, $Q_{\text{ext}}$, is given by the following function of the hole's horizon radius:
 
 $$Q_{\text{ext}}^2 = r_{+}^2 \left(1 + \frac{3 r_{+}^2}{R^2}\right) \,.$$
 """
 
-# ╔═╡ 07200c40-621c-46f0-ae95-58a3b4755648
+# ╔═╡ a5869853-874c-4779-866f-ae5e7af251a8
 begin
+	# Ads Radius
+	R = one(TF)
+	# horizon radius
+	r₊ = parse(TF, "1.0")
+	# black hole charge
+	Q = parse(TF, "0.0")
+
+	M = (r₊ + r₊^3 / R^2 + Q^2 / r₊) / 2
 	Qext = r₊ * sqrt(1 + 3 * r₊^2 / R^2)
-	L"""Q_\text{ext} = %$(Qext)"""
-end
 
-# ╔═╡ 33b34c18-883c-46e2-bc84-80f5e411d382
-md"""
-**Input black hole charge $Q$:**
-"""
-
-# ╔═╡ e687ba54-efd4-4d0d-967c-eb20160a8c51
-@bind Q_str TextField(default="0.0")
-
-# ╔═╡ b766f294-5c18-40ce-8f92-696c1dcaaacb
-# parse input as a numeric value
-begin
-	Q = parse(TF, Q_str)
-
+	text = Markdown.parse("\$R = $R,\\, r_+ = $r₊,\\, M = $M,\\, Q = $Q,\\, Q_\\text{ext} = $Qext,\\, Q / Q_\\text{ext} = $(Q / Qext)\$")
 	if Q < Qext
-		L"Q / Q_\text{ext} = %$(Q / Qext)"
+		Markdown.MD(Markdown.Admonition("info", "Black Hole Parameters", [text]))
 	else
-		wrong(md"Out of range! $Q$ should be greater than zero and smaller than $Q_\text{ext}$.")
+		Markdown.MD(Markdown.Admonition("danger", "Black Hole Parameters: Q is out of range!", [text]))
 	end
 end
 
@@ -107,9 +78,6 @@ The black hole mass relates to its charge $Q$ and horizon radius $r_+$ via:
 
 $$M = \frac{1}{2}\left(r_+ + \frac{r_+^3}{R^2} + \frac{Q^2}{r_+}\right).$$
 """
-
-# ╔═╡ a5dc2c36-0c26-4cfe-a03a-137aabb47467
-M = (r₊ + r₊^3 / R^2 + Q^2 / r₊) / 2
 
 # ╔═╡ 9a09cfdf-98ae-4c73-943a-91472c0798e8
 md"""
@@ -136,22 +104,6 @@ the equation transforms to:
 
 $$f(r)\phi''(r) + \left[f'(r) - 2i\omega\right]\phi'(r) - \frac{V(r)}{f(r)}\phi(r) = 0.$$
 """
-
-# ╔═╡ bd2492fc-e012-42ea-bba5-3718ff10d6b4
-md"""
-**Input angular number $\ell$:**
-"""
-
-# ╔═╡ 9006db87-f4fb-42c5-b3ab-46e1434e3b42
-@bind l NumberField(0:100, default=0)
-
-# ╔═╡ 0ee959ae-25b1-4f4c-aa1d-1deb4b1204cc
-md"""
-**Input degree of the polynomial $n$:**
-"""
-
-# ╔═╡ 3a1ad375-c718-4465-95c6-d2f5bb9093df
-@bind n NumberField(10:1000, default=40)
 
 # ╔═╡ e1a42892-ffb5-4dba-aeb2-1fb931b5b424
 md"""
@@ -184,6 +136,22 @@ A \phi = \omega B \phi \,.
 # References
 - [[1202.1347] A fast and well-conditioned spectral method](https://arxiv.org/abs/1202.1347)
 """
+
+# ╔═╡ bd2492fc-e012-42ea-bba5-3718ff10d6b4
+md"""
+**Input angular number $\ell$:**
+"""
+
+# ╔═╡ 9006db87-f4fb-42c5-b3ab-46e1434e3b42
+@bind l NumberField(0:100, default=0)
+
+# ╔═╡ 0ee959ae-25b1-4f4c-aa1d-1deb4b1204cc
+md"""
+**Input degree of the polynomial $n$:**
+"""
+
+# ╔═╡ 3a1ad375-c718-4465-95c6-d2f5bb9093df
+@bind n NumberField(10:1000, default=40)
 
 # ╔═╡ d9c28ff1-8b86-4027-9ff3-0557d9565f79
 qnm = begin
@@ -224,19 +192,17 @@ qnm = begin
 end
 
 # ╔═╡ abdb5714-4794-4435-ad92-0fd349fa7e77
-Markdown.MD(Markdown.Admonition("warning", "TODO", [md"Ensure you perform a convergence test before publishing the results; this notebook is just a **tutorial**!"]))
+Markdown.MD(Markdown.Admonition("danger", "TODO", [md"Ensure you perform a convergence test before using the results; this notebook is just a **tutorial**!"]))
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 ApproxFun = "28f2ccd6-bb30-5033-b560-165f7b14dc2f"
-LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
 ApproxFun = "~0.13.28"
-LaTeXStrings = "~1.4.0"
 PlutoUI = "~0.7.61"
 """
 
@@ -246,7 +212,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.11.3"
 manifest_format = "2.0"
-project_hash = "199c4e11031110f1214b6a9590fa9dca4ccd8f9e"
+project_hash = "90faa558b849287a8b954660569cac91111db25f"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -622,11 +588,6 @@ deps = ["Artifacts", "JLLWrappers", "Libdl"]
 git-tree-sha1 = "78211fb6cbc872f77cad3fc0b6cf647d923f4929"
 uuid = "1d63c593-3942-5779-bab2-d838dc0a180e"
 version = "18.1.7+0"
-
-[[deps.LaTeXStrings]]
-git-tree-sha1 = "dda21b8cbd6a6c40d9d02a73230f9d70fed6918c"
-uuid = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
-version = "1.4.0"
 
 [[deps.LazyArrays]]
 deps = ["ArrayLayouts", "FillArrays", "LinearAlgebra", "MacroTools", "SparseArrays"]
@@ -1024,28 +985,18 @@ version = "17.4.0+2"
 
 # ╔═╡ Cell order:
 # ╠═fdf0edd0-efbc-11ef-1dea-e32569d65705
-# ╠═64dcba7b-daea-488c-bc89-e729cc7537e7
 # ╟─e57eb498-14bc-4606-89d0-3ddbaa20c5b5
 # ╠═6327b564-6066-45b4-b188-095e3761b96d
 # ╟─b1db4296-da97-4abe-9303-b77878f212ac
 # ╟─8d2ee7b2-e5e9-402a-95b0-b5c53db84c67
-# ╠═4d0cd86e-8cb4-4c40-a202-6513b6257892
-# ╟─24060d90-60f9-4dd6-8206-a28514fc2ab1
-# ╠═63dc53d0-0c1c-432a-9a0e-07502660eb6d
 # ╠═a5869853-874c-4779-866f-ae5e7af251a8
-# ╟─053e3de3-8ea4-409c-aa00-5d2dc07d8f14
-# ╠═07200c40-621c-46f0-ae95-58a3b4755648
-# ╟─33b34c18-883c-46e2-bc84-80f5e411d382
-# ╠═e687ba54-efd4-4d0d-967c-eb20160a8c51
-# ╠═b766f294-5c18-40ce-8f92-696c1dcaaacb
 # ╟─7f6a4b13-c252-47e9-b01c-5db1a7710985
-# ╠═a5dc2c36-0c26-4cfe-a03a-137aabb47467
 # ╟─9a09cfdf-98ae-4c73-943a-91472c0798e8
+# ╟─e1a42892-ffb5-4dba-aeb2-1fb931b5b424
 # ╟─bd2492fc-e012-42ea-bba5-3718ff10d6b4
 # ╠═9006db87-f4fb-42c5-b3ab-46e1434e3b42
 # ╟─0ee959ae-25b1-4f4c-aa1d-1deb4b1204cc
 # ╠═3a1ad375-c718-4465-95c6-d2f5bb9093df
-# ╟─e1a42892-ffb5-4dba-aeb2-1fb931b5b424
 # ╠═d9c28ff1-8b86-4027-9ff3-0557d9565f79
 # ╟─abdb5714-4794-4435-ad92-0fd349fa7e77
 # ╟─00000000-0000-0000-0000-000000000001
