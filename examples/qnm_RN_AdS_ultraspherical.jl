@@ -134,21 +134,7 @@ $$\psi(r) = e^{-i\omega r_*} \phi(r),$$
 
 the equation transforms to:
 
-$$f(r)\phi''(r) + \left[f'(r) - 2i\omega\right]\phi'(r) - \frac{V(r)}{f(r)}\phi(r) = 0.$$  
-
-To make coefficients of the equation finite for $r \in [0, +\infty)$, we define a new function:
-
-$$F = \frac{\Delta}{r^4}$$
-
-Then, we have:
-
-$$F(r) \phi''(r) + \left( F'(r) + \frac{2 (r F - i \omega)}{r^2} \right) \phi'(r) - \left[ \frac{r F'(r)+2 F}{r^2} + \frac{l (l+1)}{r^4} \right] \phi = 0 $$
-
-For numerical computation, compactify the radial coordinate using:
-
-$$x \equiv 1 - \frac{r_+}{r}.$$
-
-Here, $x \in [0, 1]$.
+$$f(r)\phi''(r) + \left[f'(r) - 2i\omega\right]\phi'(r) - \frac{V(r)}{f(r)}\phi(r) = 0.$$
 """
 
 # ╔═╡ bd2492fc-e012-42ea-bba5-3718ff10d6b4
@@ -166,6 +152,38 @@ md"""
 
 # ╔═╡ 3a1ad375-c718-4465-95c6-d2f5bb9093df
 @bind n NumberField(10:1000, default=40)
+
+# ╔═╡ e1a42892-ffb5-4dba-aeb2-1fb931b5b424
+md"""
+To make coefficients of the equation finite for $r \in [0, +\infty)$, we define a new function
+
+```math
+F = \frac{\Delta}{r^4} \,.
+```
+
+Then, we have
+
+```math
+F(r) \phi''(r) + \left( F'(r) + \frac{2 (r F - i \omega)}{r^2} \right) \phi'(r) - \left[ \frac{r F'(r)+2 F}{r^2} + \frac{l (l+1)}{r^4} \right] \phi = 0 \,.
+```
+
+For numerical computation, compactify the radial coordinate using:
+
+```math
+x \equiv 1 - \frac{r_+}{r} \,.
+```
+
+Here, $x \in [0, 1]$.
+
+After discretization, we obtain a generalized eigenvalue problem
+
+```math
+A \phi = \omega B \phi \,.
+```
+
+# References
+- [[1202.1347] A fast and well-conditioned spectral method](https://arxiv.org/abs/1202.1347)
+"""
 
 # ╔═╡ d9c28ff1-8b86-4027-9ff3-0557d9565f79
 qnm = begin
@@ -1027,7 +1045,8 @@ version = "17.4.0+2"
 # ╠═9006db87-f4fb-42c5-b3ab-46e1434e3b42
 # ╟─0ee959ae-25b1-4f4c-aa1d-1deb4b1204cc
 # ╠═3a1ad375-c718-4465-95c6-d2f5bb9093df
+# ╟─e1a42892-ffb5-4dba-aeb2-1fb931b5b424
 # ╠═d9c28ff1-8b86-4027-9ff3-0557d9565f79
-# ╠═abdb5714-4794-4435-ad92-0fd349fa7e77
+# ╟─abdb5714-4794-4435-ad92-0fd349fa7e77
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
