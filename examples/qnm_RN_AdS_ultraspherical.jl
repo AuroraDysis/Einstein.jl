@@ -194,8 +194,8 @@ qnm = begin
 	Bm[end, :] .= 0
 	
 	# Solve the generalized eigenvalue problem A ϕ = ω B ϕ
-	qnm = eigvals!(Am, Bm; sortby=abs)
-	filter(x -> !isnan(x) && imag(x) < 0, qnm)
+	eigs = eigvals!(Am, Bm; sortby=abs)
+	filter(x -> !isnan(x) && imag(x) < 0, eigs)
 end
 
 # ╔═╡ abdb5714-4794-4435-ad92-0fd349fa7e77
