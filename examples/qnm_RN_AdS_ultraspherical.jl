@@ -206,7 +206,7 @@ qnm = begin
 end
 
 # ╔═╡ abdb5714-4794-4435-ad92-0fd349fa7e77
-Markdown.MD(Markdown.Admonition("warning", "TODO", [md"Ensure you perform a convergence test before publishing the results; this is just a **tutorial**!"]))
+Markdown.MD(Markdown.Admonition("warning", "TODO", [md"Ensure you perform a convergence test before publishing the results; this notebook is just a **tutorial**!"]))
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
