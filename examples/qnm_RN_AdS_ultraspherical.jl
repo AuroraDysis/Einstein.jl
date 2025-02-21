@@ -103,10 +103,7 @@ $$\psi(r) = e^{-i\omega r_*} \phi(r),$$
 the equation transforms to:
 
 $$f(r)\phi''(r) + \left[f'(r) - 2i\omega\right]\phi'(r) - \frac{V(r)}{f(r)}\phi(r) = 0.$$
-"""
 
-# ╔═╡ e1a42892-ffb5-4dba-aeb2-1fb931b5b424
-md"""
 To make coefficients of the equation finite for $r \in [0, +\infty)$, we define a new function
 
 ```math
@@ -132,9 +129,6 @@ After discretization, we obtain a generalized eigenvalue problem
 ```math
 A \phi = \omega B \phi \,.
 ```
-
-# References
-- [[1202.1347] A fast and well-conditioned spectral method](https://arxiv.org/abs/1202.1347)
 """
 
 # ╔═╡ bd2492fc-e012-42ea-bba5-3718ff10d6b4
@@ -992,7 +986,6 @@ version = "17.4.0+2"
 # ╠═a5869853-874c-4779-866f-ae5e7af251a8
 # ╟─7f6a4b13-c252-47e9-b01c-5db1a7710985
 # ╟─9a09cfdf-98ae-4c73-943a-91472c0798e8
-# ╟─e1a42892-ffb5-4dba-aeb2-1fb931b5b424
 # ╟─bd2492fc-e012-42ea-bba5-3718ff10d6b4
 # ╠═9006db87-f4fb-42c5-b3ab-46e1434e3b42
 # ╟─0ee959ae-25b1-4f4c-aa1d-1deb4b1204cc
