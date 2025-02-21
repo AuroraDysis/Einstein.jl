@@ -19,14 +19,6 @@ end
 # ╔═╡ fdf0edd0-efbc-11ef-1dea-e32569d65705
 using ApproxFun, LinearAlgebra, PlutoUI
 
-# ╔═╡ e57eb498-14bc-4606-89d0-3ddbaa20c5b5
-md"""
-We use `Float64` by default to obtain high accuracy results. For even higher precision, `Double64` (requires the `DoubleFloats.jl` package), `BigFloat`, or other types can be used.
-"""
-
-# ╔═╡ 6327b564-6066-45b4-b188-095e3761b96d
-TF = Float64
-
 # ╔═╡ b1db4296-da97-4abe-9303-b77878f212ac
 md"""
 # Calculate scalar QNMs of RN AdS black hole using the ultraspherical spectral method
@@ -44,6 +36,14 @@ where $f(r) = \Delta/r^2$ and $\Delta = r^2 - 2Mr + Q^2 + r^4/R^2$. Here, $M$ de
 - [[hep-th/0003295] Quasinormal modes of Reissner-Nordström Anti-de Sitter Black Holes](https://arxiv.org/abs/hep-th/0003295)
 - [[1202.1347] A fast and well-conditioned spectral method](https://arxiv.org/abs/1202.1347)
 """
+
+# ╔═╡ e57eb498-14bc-4606-89d0-3ddbaa20c5b5
+md"""
+We use `Float64` by default to obtain high accuracy results. For even higher precision, `Double64` (requires the `DoubleFloats.jl` package), `BigFloat`, or other types can be used.
+"""
+
+# ╔═╡ 6327b564-6066-45b4-b188-095e3761b96d
+TF = Float64
 
 # ╔═╡ 8d2ee7b2-e5e9-402a-95b0-b5c53db84c67
 md"""
@@ -102,9 +102,9 @@ $$\psi(r) = e^{-i\omega r_*} \phi(r),$$
 
 the equation transforms to:
 
-$$f(r)\phi''(r) + \left[f'(r) - 2i\omega\right]\phi'(r) - \frac{V(r)}{f(r)}\phi(r) = 0.$$
+$$f(r)\phi''(r) + \left[f'(r) - 2i\omega\right]\phi'(r) - \tilde{V}(r) \phi(r) = 0.$$
 
-To make coefficients of the equation finite for $r \in [0, +\infty)$, we define a new function
+where $\tilde{V}(r) = \frac{V(r)}{f(r)} $. To make coefficients of the equation finite for $r \in [0, +\infty)$, we define a new function
 
 ```math
 F = \frac{\Delta}{r^4} \,.
@@ -113,7 +113,13 @@ F = \frac{\Delta}{r^4} \,.
 Then, we have
 
 ```math
-F(r) \phi''(r) + \left( F'(r) + \frac{2 (r F - i \omega)}{r^2} \right) \phi'(r) - \left[ \frac{r F'(r)+2 F}{r^2} + \frac{l (l+1)}{r^4} \right] \phi = 0 \,.
+r^2 F(r) \phi''(r) + \left[r^2 F'(r)+2 r F(r)-2 i \omega \right] \phi'(r) - \tilde{V} \phi(r)  = 0 \,,
+```
+
+where,
+
+```math
+\tilde{V}(x) = (x-1) \left(\frac{l (l+1) (x-1)}{r_+^2}-F'(x)\right)+2 F(x) \,.
 ```
 
 For numerical computation, compactify the radial coordinate using:
@@ -122,12 +128,19 @@ For numerical computation, compactify the radial coordinate using:
 x \equiv 1 - \frac{r_+}{r} \,.
 ```
 
-Here, $x \in [0, 1]$.
-
-After discretization, we obtain a generalized eigenvalue problem
+Here, $x \in [0, 1]$. We can transform this equation into a generalized eigenvalue problem
 
 ```math
-A \phi = \omega B \phi \,.
+A \phi = \omega B \phi \,,
+```
+
+where
+
+```math
+\begin{align}
+A &= \left[ (x-1)^2 F(x) \right] \frac{\partial^2}{\partial x^2} + \left[ (x-1)^2 F'(x) \right]  \frac{\partial}{\partial x} - \tilde{V} \,, \\
+B &= \frac{2 i (x-1)^2}{r_+} \frac{\partial}{\partial x} \,.
+\end{align}
 ```
 """
 
@@ -165,15 +178,15 @@ qnm = begin
 	# generalized eigenvalue problem A ϕ = ω B ϕ
 
 	# construct matrix A
-	c02 = (x - 1)^2 * F
-	c01 = (x - 1)^2 * dF
-	c00 = -2 * F + (x - 1) * (- l * (l + 1) * (x - 1) / r₊^2 + dF)
-	A = c02 * D^2 + c01 * D + c00
+	cA2 = (x - 1)^2 * F
+	cA1 = (x - 1)^2 * dF
+	Vtilde = 2 * F + (x - 1) * (l * (l + 1) * (x - 1) / r₊^2 - dF)
+	A = cA2 * D^2 + cA1 * D - Vtilde
 	Am = @view(A[1:n, 1:n]) |> Matrix |> complex
 
 	# construct matrix B
-	c11 = 2im * (x - 1)^2 / r₊
-	B = conversion1to2 * (c11 * D)
+	cB1 = 2im * (x - 1)^2 / r₊
+	B = conversion1to2 * (cB1 * D)
 	Bm = @view(B[1:n, 1:n]) |> Matrix
 
 	# enforce Dirichlet boundary conditions at x = 1
