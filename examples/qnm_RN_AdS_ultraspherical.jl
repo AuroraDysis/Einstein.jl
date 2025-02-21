@@ -4,8 +4,31 @@
 using Markdown
 using InteractiveUtils
 
+# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
+macro bind(def, element)
+    #! format: off
+    quote
+        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
+        local el = $(esc(element))
+        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
+        el
+    end
+    #! format: on
+end
+
 # ╔═╡ fdf0edd0-efbc-11ef-1dea-e32569d65705
-using ApproxFun, FillArrays, LinearAlgebra
+using ApproxFun, LinearAlgebra, PlutoUI, LaTeXStrings
+
+# ╔═╡ 64dcba7b-daea-488c-bc89-e729cc7537e7
+wrong(text) = Markdown.MD(Markdown.Admonition("danger", "Input is out of range!", [text]));
+
+# ╔═╡ e57eb498-14bc-4606-89d0-3ddbaa20c5b5
+md"""
+We use `Float64` by default to obtain high accuracy results. For even higher precision, `Double64` (requires the `DoubleFloats.jl` package), `BigFloat`, or other types can be used.
+"""
+
+# ╔═╡ 6327b564-6066-45b4-b188-095e3761b96d
+TF = Float64
 
 # ╔═╡ b1db4296-da97-4abe-9303-b77878f212ac
 md"""
@@ -15,10 +38,81 @@ We are interested in scalar perturbations of a Reissner-Nordström-AdS (RNAdS) b
 
 $$ds^2 = f(r)dt^2 - \frac{dr^2}{f(r)} - r^2(d\theta^2 + \sin^2\theta d\phi^2),$$ 
 
-where $f(r) = \Delta/r^2$ and $\Delta = r^2 - 2Mr + Q^2 + r^4/R^2$. Here, $M$ denotes the black hole mass, $Q$ the charge, and $R$ the AdS radius. The black hole mass relates to its charge $Q$ and horizon radius $r_+$ via:  
+where $f(r) = \Delta/r^2$ and $\Delta = r^2 - 2Mr + Q^2 + r^4/R^2$. Here, $M$ denotes the black hole mass, $Q$ the charge, and $R$ the AdS radius.
 
-$$M = \frac{1}{2}\left(r_+ + \frac{r_+^3}{R^2} + \frac{Q^2}{r_+}\right).$$  
+## References
 
+- [[gr-qc/0301052] Quasinormal modes of Reissner-Nordström-anti-de Sitter black holes: scalar, electromagnetic and gravitational perturbations](https://arxiv.org/abs/gr-qc/0301052)
+- [[2209.09324] Calculating quasinormal modes of Schwarzschild anti-de Sitter black holes using the continued fraction method](https://arxiv.org/abs/2209.09324)
+- [[hep-th/0003295] Quasinormal modes of Reissner-Nordström Anti-de Sitter Black Holes](https://arxiv.org/abs/hep-th/0003295)
+- [[1202.1347] A fast and well-conditioned spectral method](https://arxiv.org/abs/1202.1347)
+"""
+
+# ╔═╡ 8d2ee7b2-e5e9-402a-95b0-b5c53db84c67
+md"""
+We choose units such that $R = 1$.
+"""
+
+# ╔═╡ 4d0cd86e-8cb4-4c40-a202-6513b6257892
+R = one(TF)
+
+# ╔═╡ 24060d90-60f9-4dd6-8206-a28514fc2ab1
+md"""
+**Input horizon radius $r_+$:**
+"""
+
+# ╔═╡ 63dc53d0-0c1c-432a-9a0e-07502660eb6d
+@bind r₊_str TextField(default="1.0")
+
+# ╔═╡ a5869853-874c-4779-866f-ae5e7af251a8
+# parse input as a numeric value
+r₊ = parse(TF, r₊_str)
+
+# ╔═╡ 053e3de3-8ea4-409c-aa00-5d2dc07d8f14
+md"""
+The extremal value of the black hole charge, $Q_{\text{ext}}$, is given by the following function of the hole's horizon radius:
+
+$$Q_{\text{ext}}^2 = r_{+}^2 \left(1 + \frac{3 r_{+}^2}{R^2}\right) \,.$$
+"""
+
+# ╔═╡ 07200c40-621c-46f0-ae95-58a3b4755648
+begin
+	Qext = r₊ * sqrt(1 + 3 * r₊^2 / R^2)
+	L"""Q_\text{ext} = %$(Qext)"""
+end
+
+# ╔═╡ 33b34c18-883c-46e2-bc84-80f5e411d382
+md"""
+**Input black hole charge $Q$:**
+"""
+
+# ╔═╡ e687ba54-efd4-4d0d-967c-eb20160a8c51
+@bind Q_str TextField(default="0.0")
+
+# ╔═╡ b766f294-5c18-40ce-8f92-696c1dcaaacb
+# parse input as a numeric value
+begin
+	Q = parse(TF, Q_str)
+
+	if Q < Qext
+		L"Q / Q_\text{ext} = %$(Q / Qext)"
+	else
+		wrong(md"Out of range! $Q$ should be greater than zero and smaller than $Q_\text{ext}$.")
+	end
+end
+
+# ╔═╡ 7f6a4b13-c252-47e9-b01c-5db1a7710985
+md"""
+The black hole mass relates to its charge $Q$ and horizon radius $r_+$ via:  
+
+$$M = \frac{1}{2}\left(r_+ + \frac{r_+^3}{R^2} + \frac{Q^2}{r_+}\right).$$
+"""
+
+# ╔═╡ a5dc2c36-0c26-4cfe-a03a-137aabb47467
+M = (r₊ + r₊^3 / R^2 + Q^2 / r₊) / 2
+
+# ╔═╡ 9a09cfdf-98ae-4c73-943a-91472c0798e8
+md"""
 The radial part of scalar perturbations satisfies the wave equation:  
 
 $$\frac{d^2 \psi}{dr_*^2} + \left(\omega^2 - V\right)\psi = 0,$$  
@@ -55,84 +149,77 @@ For numerical computation, compactify the radial coordinate using:
 $$x \equiv 1 - \frac{r_+}{r}.$$
 
 Here, $x \in [0, 1]$.
-
-## References
-
-- [[gr-qc/0301052] Quasinormal modes of Reissner-Nordström-anti-de Sitter black holes: scalar, electromagnetic and gravitational perturbations](https://arxiv.org/abs/gr-qc/0301052)
-- [[2209.09324] Calculating quasinormal modes of Schwarzschild anti-de Sitter black holes using the continued fraction method](https://arxiv.org/abs/2209.09324)
-- [[hep-th/0003295] Quasinormal modes of Reissner-Nordström Anti-de Sitter Black Holes](https://arxiv.org/abs/hep-th/0003295)
-- [[1202.1347] A fast and well-conditioned spectral method](https://arxiv.org/abs/1202.1347)
 """
 
-# ╔═╡ 6327b564-6066-45b4-b188-095e3761b96d
-# type used for qnm computing
-const TF = Float64
-
-# ╔═╡ b766f294-5c18-40ce-8f92-696c1dcaaacb
-Q = parse(TF, "0")
-
-# ╔═╡ 63dc53d0-0c1c-432a-9a0e-07502660eb6d
-r₊ = parse(TF, "1.0")
-
-# ╔═╡ 4d0cd86e-8cb4-4c40-a202-6513b6257892
-R = one(TF)
-
-# ╔═╡ a5dc2c36-0c26-4cfe-a03a-137aabb47467
-M = (r₊ + r₊^3 / R^2 + Q^2 / r₊) / 2
+# ╔═╡ bd2492fc-e012-42ea-bba5-3718ff10d6b4
+md"""
+**Input angular number $\ell$:**
+"""
 
 # ╔═╡ 9006db87-f4fb-42c5-b3ab-46e1434e3b42
-l = 0
+@bind l NumberField(0:100, default=0)
+
+# ╔═╡ 0ee959ae-25b1-4f4c-aa1d-1deb4b1204cc
+md"""
+**Input degree of the polynomial $n$:**
+"""
 
 # ╔═╡ 3a1ad375-c718-4465-95c6-d2f5bb9093df
-# degree of the polynomial
-n = 100
+@bind n NumberField(10:1000, default=40)
 
 # ╔═╡ d9c28ff1-8b86-4027-9ff3-0557d9565f79
-λ = begin
+qnm = begin
+	# domain x ∈ [0, 1]
 	x_min = zero(TF)
 	x_max = one(TF)
-
 	dom = x_min .. x_max
+
 	chebSpace = Chebyshev(dom)
-	ultraSpace = Ultraspherical(2, dom)
-	conversionA1 = Conversion(Ultraspherical(1, dom), ultraSpace)
-	
+	D = Derivative(chebSpace)
+	conversion1to2 = Conversion(Ultraspherical(1, dom), Ultraspherical(2, dom))
+
 	x = Fun(chebSpace)
 	F = (r₊ * (r₊^3 / R^2 + r₊ * (x - 1)^2 + 2 * M * (x - 1)^3) + Q^2 * (x - 1)^4) / r₊^4
 	dF = F'
-	
+
+	# generalized eigenvalue problem A ϕ = ω B ϕ
+
+	# construct operators A
 	c02 = (x - 1)^2 * F
 	c01 = (x - 1)^2 * dF
 	c00 = -2 * F + (x - 1) * (- l * (l + 1) * (x - 1) / r₊^2 + dF)
-	
-	c11 = -2im * (x - 1)^2 / r₊
-	
-	A0 = (c02 * 𝒟^2 + c01 * 𝒟 + c00):chebSpace
-	A1 = (-c11 * 𝒟):chebSpace
-	A1c = conversionA1 * A1
+	A = c02 * D^2 + c01 * D + c00
+	Am = @view(A[1:n, 1:n]) |> Matrix |> complex
 
-	A0m = complex(Matrix(@view(A0[1:n, 1:n])))
-	A1m = Matrix(@view(A1c[1:n, 1:n]))
-	
+	# construct matrix B
+	c11 = 2im * (x - 1)^2 / r₊
+	B = conversion1to2 * (c11 * D)
+	Bm = @view(B[1:n, 1:n]) |> Matrix
+
 	# enforce Dirichlet boundary conditions at x = 1
-	A0m[end, :] .= 1
-	A1m[end, :] .= 0
+	Am[end, :] .= 1
+	Bm[end, :] .= 0
 	
-	# Solve the generalized eigenvalue problem
-	qnm = eigvals(A0m, A1m; sortby=abs)
+	# Solve the generalized eigenvalue problem A ϕ = ω B ϕ
+	qnm = eigvals!(Am, Bm; sortby=abs)
 	filter(x -> !isnan(x) && imag(x) < 0, qnm)
 end
+
+# ╔═╡ abdb5714-4794-4435-ad92-0fd349fa7e77
+Markdown.MD(Markdown.Admonition("warning", "TODO", [md"Add convergence test!"]))
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 ApproxFun = "28f2ccd6-bb30-5033-b560-165f7b14dc2f"
-FillArrays = "1a297f60-69ca-5386-bcde-b61e274b549b"
+LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
 ApproxFun = "~0.13.28"
-FillArrays = "~1.13.0"
+LaTeXStrings = "~1.4.0"
+PlutoUI = "~0.7.61"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -141,7 +228,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.11.3"
 manifest_format = "2.0"
-project_hash = "058dc72d76c26ac82ff930ac39d908b2fd478ef7"
+project_hash = "199c4e11031110f1214b6a9590fa9dca4ccd8f9e"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -156,6 +243,12 @@ version = "1.5.0"
     [deps.AbstractFFTs.weakdeps]
     ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
     Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[[deps.AbstractPlutoDingetjes]]
+deps = ["Pkg"]
+git-tree-sha1 = "6e1d2a35f2f90a4bc7c2ed98079b2ba09c35b83a"
+uuid = "6e696c72-6542-2067-7265-42206c756150"
+version = "1.3.2"
 
 [[deps.ApproxFun]]
 deps = ["AbstractFFTs", "ApproxFunBase", "ApproxFunFourier", "ApproxFunOrthogonalPolynomials", "ApproxFunSingularities", "Calculus", "DomainSets", "FastTransforms", "LinearAlgebra", "RecipesBase", "Reexport", "SpecialFunctions", "StaticArrays"]
@@ -276,6 +369,12 @@ git-tree-sha1 = "9cb23bbb1127eefb022b022481466c0f1127d430"
 uuid = "49dc2e85-a5d0-5ad3-a950-438e2897f1b9"
 version = "0.5.2"
 
+[[deps.ColorTypes]]
+deps = ["FixedPointNumbers", "Random"]
+git-tree-sha1 = "b10d0b65641d57b8b4d5e234446582de5047050d"
+uuid = "3da002f7-5984-5a60-b8a6-cbb66c0b333f"
+version = "0.11.5"
+
 [[deps.Combinatorics]]
 git-tree-sha1 = "08c8b6831dc00bfea825826be0bc8336fc369860"
 uuid = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
@@ -392,6 +491,12 @@ version = "1.13.0"
     SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
     Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
+[[deps.FixedPointNumbers]]
+deps = ["Statistics"]
+git-tree-sha1 = "05882d6995ae5c12bb5f36dd2ed3f61c98cbb172"
+uuid = "53c48c17-4a7d-5ca2-90c5-79b7896eea93"
+version = "0.8.5"
+
 [[deps.Future]]
 deps = ["Random"]
 uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
@@ -412,6 +517,24 @@ version = "0.1.6"
 git-tree-sha1 = "9c3149243abb5bc0bad0431d6c4fcac0f4443c7c"
 uuid = "f0d1745a-41c9-11e9-1dd9-e5d34d218721"
 version = "1.6.0"
+
+[[deps.Hyperscript]]
+deps = ["Test"]
+git-tree-sha1 = "179267cfa5e712760cd43dcae385d7ea90cc25a4"
+uuid = "47d2ed2b-36de-50cf-bf87-49c2cf4b8b91"
+version = "0.0.5"
+
+[[deps.HypertextLiteral]]
+deps = ["Tricks"]
+git-tree-sha1 = "7134810b1afce04bbc1045ca1985fbe81ce17653"
+uuid = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
+version = "0.9.5"
+
+[[deps.IOCapture]]
+deps = ["Logging", "Random"]
+git-tree-sha1 = "b6d6bfdd7ce25b0f9b2f6b3dd56b2673a66c8770"
+uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
+version = "0.2.5"
 
 [[deps.InfiniteArrays]]
 deps = ["ArrayLayouts", "FillArrays", "Infinities", "LazyArrays", "LinearAlgebra"]
@@ -437,6 +560,11 @@ deps = ["Artifacts", "JLLWrappers", "LazyArtifacts", "Libdl"]
 git-tree-sha1 = "0f14a5456bdc6b9731a5682f439a672750a09e48"
 uuid = "1d5cc7b8-4909-519e-a0f8-d0f5ad9712d0"
 version = "2025.0.4+0"
+
+[[deps.InteractiveUtils]]
+deps = ["Markdown"]
+uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
+version = "1.11.0"
 
 [[deps.IntervalSets]]
 git-tree-sha1 = "dba9ddf07f77f60450fe5d2e2beb9854d9a49bd0"
@@ -465,11 +593,22 @@ git-tree-sha1 = "a007feb38b422fbdab534406aeca1b86823cb4d6"
 uuid = "692b3bcd-3c85-4b1f-b108-f13ce0eb3210"
 version = "1.7.0"
 
+[[deps.JSON]]
+deps = ["Dates", "Mmap", "Parsers", "Unicode"]
+git-tree-sha1 = "31e996f0a15c7b280ba9f76636b3ff9e2ae58c9a"
+uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+version = "0.21.4"
+
 [[deps.LLVMOpenMP_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
 git-tree-sha1 = "78211fb6cbc872f77cad3fc0b6cf647d923f4929"
 uuid = "1d63c593-3942-5779-bab2-d838dc0a180e"
 version = "18.1.7+0"
+
+[[deps.LaTeXStrings]]
+git-tree-sha1 = "dda21b8cbd6a6c40d9d02a73230f9d70fed6918c"
+uuid = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
+version = "1.4.0"
 
 [[deps.LazyArrays]]
 deps = ["ArrayLayouts", "FillArrays", "LinearAlgebra", "MacroTools", "SparseArrays"]
@@ -553,6 +692,11 @@ weakdeps = ["FillArrays"]
     [deps.LowRankMatrices.extensions]
     LowRankMatricesFillArraysExt = "FillArrays"
 
+[[deps.MIMEs]]
+git-tree-sha1 = "1833212fd6f580c20d4291da9c1b4e8a655b128e"
+uuid = "6c6e2e6c-3030-632d-7369-2d6c69616d65"
+version = "1.0.0"
+
 [[deps.MKL_jll]]
 deps = ["Artifacts", "IntelOpenMP_jll", "JLLWrappers", "LazyArtifacts", "Libdl", "oneTBB_jll"]
 git-tree-sha1 = "5de60bc6cb3899cd318d80d627560fae2e2d99ae"
@@ -588,6 +732,10 @@ weakdeps = ["BandedMatrices"]
 deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
 version = "2.28.6+0"
+
+[[deps.Mmap]]
+uuid = "a63ad114-7e13-5084-954f-fe012c677804"
+version = "1.11.0"
 
 [[deps.MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
@@ -627,6 +775,12 @@ git-tree-sha1 = "cc4054e898b852042d7b503313f7ad03de99c3dd"
 uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
 version = "1.8.0"
 
+[[deps.Parsers]]
+deps = ["Dates", "PrecompileTools", "UUIDs"]
+git-tree-sha1 = "8489905bcdbcfac64d1daa51ca07c0d8f0283821"
+uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
+version = "2.8.1"
+
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "Random", "SHA", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
@@ -637,6 +791,12 @@ version = "1.11.0"
 
     [deps.Pkg.weakdeps]
     REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
+
+[[deps.PlutoUI]]
+deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
+git-tree-sha1 = "7e71a55b87222942f0f9337be62e26b1f103d3e4"
+uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+version = "0.7.61"
 
 [[deps.Polynomials]]
 deps = ["LinearAlgebra", "OrderedCollections", "RecipesBase", "Requires", "Setfield", "SparseArrays"]
@@ -781,6 +941,11 @@ deps = ["ArgTools", "SHA"]
 uuid = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
 version = "1.10.0"
 
+[[deps.Test]]
+deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
+uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+version = "1.11.0"
+
 [[deps.ToeplitzMatrices]]
 deps = ["AbstractFFTs", "DSP", "FillArrays", "LinearAlgebra"]
 git-tree-sha1 = "338d725bd62115be4ba7ffa891d85654e0bfb1a1"
@@ -792,6 +957,16 @@ version = "0.8.5"
 
     [deps.ToeplitzMatrices.weakdeps]
     StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+
+[[deps.Tricks]]
+git-tree-sha1 = "6cae795a5a9313bbb4f60683f7263318fc7d1505"
+uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
+version = "0.1.10"
+
+[[deps.URIs]]
+git-tree-sha1 = "67db6cc7b3821e19ebe75791a9dd19c9b1188f2b"
+uuid = "5c2747f8-b7ea-4ff2-ba2e-563bfd36b1d4"
+version = "1.5.1"
 
 [[deps.UUIDs]]
 deps = ["Random", "SHA"]
@@ -830,15 +1005,29 @@ version = "17.4.0+2"
 """
 
 # ╔═╡ Cell order:
-# ╠═b1db4296-da97-4abe-9303-b77878f212ac
 # ╠═fdf0edd0-efbc-11ef-1dea-e32569d65705
+# ╠═64dcba7b-daea-488c-bc89-e729cc7537e7
+# ╟─e57eb498-14bc-4606-89d0-3ddbaa20c5b5
 # ╠═6327b564-6066-45b4-b188-095e3761b96d
-# ╠═b766f294-5c18-40ce-8f92-696c1dcaaacb
-# ╠═63dc53d0-0c1c-432a-9a0e-07502660eb6d
+# ╟─b1db4296-da97-4abe-9303-b77878f212ac
+# ╟─8d2ee7b2-e5e9-402a-95b0-b5c53db84c67
 # ╠═4d0cd86e-8cb4-4c40-a202-6513b6257892
+# ╟─24060d90-60f9-4dd6-8206-a28514fc2ab1
+# ╠═63dc53d0-0c1c-432a-9a0e-07502660eb6d
+# ╠═a5869853-874c-4779-866f-ae5e7af251a8
+# ╟─053e3de3-8ea4-409c-aa00-5d2dc07d8f14
+# ╠═07200c40-621c-46f0-ae95-58a3b4755648
+# ╟─33b34c18-883c-46e2-bc84-80f5e411d382
+# ╠═e687ba54-efd4-4d0d-967c-eb20160a8c51
+# ╠═b766f294-5c18-40ce-8f92-696c1dcaaacb
+# ╟─7f6a4b13-c252-47e9-b01c-5db1a7710985
 # ╠═a5dc2c36-0c26-4cfe-a03a-137aabb47467
+# ╟─9a09cfdf-98ae-4c73-943a-91472c0798e8
+# ╟─bd2492fc-e012-42ea-bba5-3718ff10d6b4
 # ╠═9006db87-f4fb-42c5-b3ab-46e1434e3b42
+# ╟─0ee959ae-25b1-4f4c-aa1d-1deb4b1204cc
 # ╠═3a1ad375-c718-4465-95c6-d2f5bb9093df
 # ╠═d9c28ff1-8b86-4027-9ff3-0557d9565f79
+# ╠═abdb5714-4794-4435-ad92-0fd349fa7e77
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
