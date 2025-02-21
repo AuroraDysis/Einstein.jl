@@ -50,6 +50,10 @@ md"""
 We choose units such that $R = 1$. The extremal value of the black hole charge, $Q_{\text{ext}}$, is given by the following function of the hole's horizon radius:
 
 $$Q_{\text{ext}}^2 = r_{+}^2 \left(1 + \frac{3 r_{+}^2}{R^2}\right) \,.$$
+
+The black hole mass relates to its charge $Q$ and horizon radius $r_+$ via:  
+
+$$M = \frac{1}{2}\left(r_+ + \frac{r_+^3}{R^2} + \frac{Q^2}{r_+}\right).$$
 """
 
 # ╔═╡ a5869853-874c-4779-866f-ae5e7af251a8
@@ -71,13 +75,6 @@ begin
 		Markdown.MD(Markdown.Admonition("danger", "Black Hole Parameters: Q is out of range!", [text]))
 	end
 end
-
-# ╔═╡ 7f6a4b13-c252-47e9-b01c-5db1a7710985
-md"""
-The black hole mass relates to its charge $Q$ and horizon radius $r_+$ via:  
-
-$$M = \frac{1}{2}\left(r_+ + \frac{r_+^3}{R^2} + \frac{Q^2}{r_+}\right).$$
-"""
 
 # ╔═╡ 9a09cfdf-98ae-4c73-943a-91472c0798e8
 md"""
@@ -141,6 +138,16 @@ where
 A &= \left[ (x-1)^2 F(x) \right] \frac{\partial^2}{\partial x^2} + \left[ (x-1)^2 F'(x) \right]  \frac{\partial}{\partial x} - \tilde{V} \,, \\
 B &= \frac{2 i (x-1)^2}{r_+} \frac{\partial}{\partial x} \,.
 \end{align}
+```
+
+To enforce the boundary condition at $\phi(x = 1) = 0$, we need to modify the last line of the matrix $B$ to $\mathcal{B} \phi = \mathbf{0}$, where
+
+```math
+\mathcal{B} = \left(\begin{array}{cccc}
+T_0(1) & T_1(1) & T_2(1) & \cdots
+\end{array}\right) = \left(\begin{array}{cccc}
+1 & 1 & 1 & \cdots
+\end{array}\right) \,.
 ```
 """
 
@@ -997,7 +1004,6 @@ version = "17.4.0+2"
 # ╠═6327b564-6066-45b4-b188-095e3761b96d
 # ╟─8d2ee7b2-e5e9-402a-95b0-b5c53db84c67
 # ╠═a5869853-874c-4779-866f-ae5e7af251a8
-# ╟─7f6a4b13-c252-47e9-b01c-5db1a7710985
 # ╟─9a09cfdf-98ae-4c73-943a-91472c0798e8
 # ╟─bd2492fc-e012-42ea-bba5-3718ff10d6b4
 # ╠═9006db87-f4fb-42c5-b3ab-46e1434e3b42
