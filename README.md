@@ -52,7 +52,7 @@ When solving GR PDEs in spherical symmetry or even axisymmetry, the requirements
   - [x] Modified Lentz method for continued fractions
   - [ ] WKB approximation for general potentials
 
-Some examples and tutorials are available in the `examples` folder. These are [Pluto.jl](https://plutojl.org/) notebooks.
+Some examples and tutorials are available in the `examples` folder, which are provided as [Pluto.jl](https://plutojl.org/) notebooks or [Jupyter](https://jupyter.org/) notebooks.
 
 - [x] Scalar QNMs of RN AdS black hole using the ultraspherical spectral method.
 
