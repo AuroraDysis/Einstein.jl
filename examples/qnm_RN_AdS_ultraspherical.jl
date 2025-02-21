@@ -170,7 +170,7 @@ qnm = begin
 
 	# generalized eigenvalue problem A ϕ = ω B ϕ
 
-	# construct operators A
+	# construct matrix A
 	c02 = (x - 1)^2 * F
 	c01 = (x - 1)^2 * dF
 	c00 = -2 * F + (x - 1) * (- l * (l + 1) * (x - 1) / r₊^2 + dF)
