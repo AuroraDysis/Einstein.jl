@@ -20,63 +20,68 @@ When solving GR PDEs in spherical symmetry or even axisymmetry, the requirements
 
 **Einstein.jl** is a **high-performance** suite designed to compute **arbitrary-precision solutions** of PDEs in GR. It is planned to support solving the following built-in equations (some of which were developed for previous projects and will be ported to this library):
 
-- **Spatial Discretization**
-  - [x] Chebyshev collocation at Chebyshev points of the first and second kinds (Most of algorithms are translated from Chebfun)
-  - [x] Finite difference method
-  - [x] Hermite finite difference method
-  - [x] Rectangular collocation method (Most of algorithms are translated from Chebfun)
-  - [x] Ultraspherical spectral method (Most of algorithms are translated from Chebfun)
-    - For boundary value problems, I recommend using [ApproxFun.jl](https://github.com/JuliaApproximation/ApproxFun.jl).
-  - [ ] Ultraspherical rectangular collocation ([tomtrogdon/URCMethod.jl: A Jupyter notebook with an implementation of the URC method](https://github.com/tomtrogdon/URCMethod.jl))
+### Spatial Discretization
 
-- **General Utilities**
+- [x] Chebyshev collocation at Chebyshev points of the first and second kinds (Most of algorithms are translated from Chebfun)
+- [x] Finite difference method
+- [x] Hermite finite difference method
+- [x] Rectangular collocation method (Most of algorithms are translated from Chebfun)
+- [x] Ultraspherical spectral method (Most of algorithms are translated from Chebfun)
+  - For boundary value problems, I recommend using [ApproxFun.jl](https://github.com/JuliaApproximation/ApproxFun.jl).
+- [ ] Ultraspherical rectangular collocation ([tomtrogdon/URCMethod.jl: A Jupyter notebook with an implementation of the URC method](https://github.com/tomtrogdon/URCMethod.jl))
 
-  - [x] Correctly rounded floating-point dot/sum using [xsum](https://arxiv.org/abs/1505.05571) or [Kahan summation](https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
-  - [x] Spin-weighted spheroidal harmonics using the Cook-Zalutskiy spectral method
+### General Utilities
 
-- **Quasinormal Modes**
+- [x] Correctly rounded floating-point dot/sum using [xsum](https://arxiv.org/abs/1505.05571) or [Kahan summation](https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
+- [x] Spin-weighted spheroidal harmonics using the Cook-Zalutskiy spectral method
 
-  - [ ] Compute quasinormal modes for the Schwarzschild black hole using the Regge-Wheeler-Zerilli equation.
-    - [ ] Continued fraction method to determine the eigenvalue
-    - [x] Ultraspherical spectral method in hyperboloidal coordinates to determine the eigenfunction.
-    - [x] Dolan and Ottewill Regge poles expansion method
-    - [ ] WKB approximation
-    - [ ] Direct integration method
-  - [x] Compute quasinormal modes for the Kerr black hole using the Teukolsky equation.
-    - [x] Continued fraction method for the radial equation (translated from [duetosymmetry/qnm](https://github.com/duetosymmetry/qnm))
-    - [x] Cook-Zalutskiy spectral method for the angular sector (translated from [duetosymmetry/qnm](https://github.com/duetosymmetry/qnm))
-    - [x] Direct integration method for the radial equation
-    - [x] Ultraspherical spectral method in hyperboloidal coordinates to determine the eigenfunction.
-  - Utilities
-    - [x] Modified Lentz method for continued fractions
-    - [ ] WKB approximation for general potentials
+### Quasinormal Modes
 
-- **Time Domain**
+- [ ] Compute quasinormal modes for the Schwarzschild black hole using the Regge-Wheeler-Zerilli equation.
+  - [ ] Continued fraction method to determine the eigenvalue
+  - [x] Ultraspherical spectral method in hyperboloidal coordinates to determine the eigenfunction.
+  - [x] Dolan and Ottewill Regge poles expansion method
+  - [ ] WKB approximation
+  - [ ] Direct integration method
+- [x] Compute quasinormal modes for the Kerr black hole using the Teukolsky equation.
+  - [x] Continued fraction method for the radial equation (translated from [duetosymmetry/qnm](https://github.com/duetosymmetry/qnm))
+  - [x] Cook-Zalutskiy spectral method for the angular sector (translated from [duetosymmetry/qnm](https://github.com/duetosymmetry/qnm))
+  - [x] Direct integration method for the radial equation
+  - [x] Ultraspherical spectral method in hyperboloidal coordinates to determine the eigenfunction.
+- Utilities
+  - [x] Modified Lentz method for continued fractions
+  - [ ] WKB approximation for general potentials
 
-  - **Spherical Symmetry**
+Some examples and tutorials are available in the `examples` folder. These are [Pluto.jl](https://plutojl.org/) notebooks.
 
-    - [ ] Regge-Wheeler-Zerilli equation
-      - [ ] Hyperboloidal coordinates
-      - [ ] Kerr-Schild coordinates
-      - [ ] Tortoise coordinates
-    - [ ] Klein-Gordon equation
-      - [ ] Hyperboloidal coordinates
-      - [ ] Kerr-Schild coordinates
-      - [ ] Tortoise coordinates
-    - [ ] Einstein equations with a scalar field
-      - [ ] Z4 formulation
-      - [ ] Hyperboloidal coordinates
+- [x] Scalar QNMs of RN AdS black hole using the ultraspherical spectral method.
 
-  - **Axisymmetry**
+### Time Domain
 
-    - [ ] Teukolsky equation
-      - [ ] Hyperboloidal coordinates
-      - [ ] Kerr-Schild coordinates
-      - [ ] Tortoise coordinates
-    - [ ] Klein-Gordon equation
-      - [ ] Hyperboloidal coordinates
-      - [ ] Kerr-Schild coordinates
-      - [ ] Tortoise coordinates
+- **Spherical Symmetry**
+
+  - [ ] Regge-Wheeler-Zerilli equation
+    - [ ] Hyperboloidal coordinates
+    - [ ] Kerr-Schild coordinates
+    - [ ] Tortoise coordinates
+  - [ ] Klein-Gordon equation
+    - [ ] Hyperboloidal coordinates
+    - [ ] Kerr-Schild coordinates
+    - [ ] Tortoise coordinates
+  - [ ] Einstein equations with a scalar field
+    - [ ] Z4 formulation
+    - [ ] Hyperboloidal coordinates
+
+- **Axisymmetry**
+
+  - [ ] Teukolsky equation
+    - [ ] Hyperboloidal coordinates
+    - [ ] Kerr-Schild coordinates
+    - [ ] Tortoise coordinates
+  - [ ] Klein-Gordon equation
+    - [ ] Hyperboloidal coordinates
+    - [ ] Kerr-Schild coordinates
+    - [ ] Tortoise coordinates
 
 While the `ChebyshevSuite` is inspired by algorithms from [Chebfun](https://www.chebfun.org/), it has been significantly enhanced in this package to improve performance and support arbitrary-precision calculations.
 
