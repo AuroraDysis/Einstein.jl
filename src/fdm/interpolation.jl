@@ -16,7 +16,7 @@ nearest to the evaluation point.
 - An interpolant function that can be evaluated at any point within `[minimum(points), maximum(points)]`
 
 # Notes
-- Requires `length(points) ≤ degree + 1`
+- Requires `length(points) >= degree + 1`
 - `points` and `values` must have the same length
 - Uses barycentric Lagrange interpolation for numerical stability
 
