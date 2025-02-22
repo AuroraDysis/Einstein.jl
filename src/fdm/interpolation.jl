@@ -8,7 +8,7 @@ spaced points `points`. The interpolation is performed locally using `degree + 1
 nearest to the evaluation point.
 
 # Arguments
-- `points::Uniformpoints{TF}`: Uniformly spaced points
+- `points::StepRangeLen{TF}`: Equispaced points for interpolation
 - `values::AbstractVector{TF}`: Function values at the points
 - `degree::Integer=4`: Degree of the local polynomial interpolant
 
@@ -33,7 +33,7 @@ struct LocalBarycentricInterpolation{TF<:AbstractFloat}
     upper_bound::TF
 
     function LocalBarycentricInterpolation(
-        points::Uniformpoints{TF}, values::AbstractVector{TF}; degree::Integer=4
+        points::StepRangeLen{TF}, values::AbstractVector{TF}; degree::Integer=4
     ) where {TF<:AbstractFloat}
         @argcheck length(points) <= degree + 1 "points is too small for degree"
         @argcheck length(points) == length(values) "points and values must have the same length"
