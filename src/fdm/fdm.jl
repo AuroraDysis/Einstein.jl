@@ -18,6 +18,6 @@ include("fdmop.jl")
 include("diffmat.jl")
 include("dissmat.jl")
 include("integrate.jl")
-# include("interp.jl")
+include("interpolation.jl")
 
 end
