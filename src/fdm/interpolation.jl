@@ -62,7 +62,7 @@ function (itp::LocalBarycentricInterpolation{TF})(x::TF) where {TF<:AbstractFloa
         (relative_pos > nearest_idx ? half_num_weights - 1 : half_num_weights - 2 + is_odd)
 
     # Ensure the interpolation window stays within points boundaries
-    start_idx += min(0, n + 1 - start_idx - num_weights) + max(1 - start_idx, 0)
+    start_idx += max(0, 1 - start_idx) + min(0, n + 1 - start_idx - num_weights)
     idx = start_idx:(start_idx + num_weights - 1)
     @inbounds local_points = view(points, idx)
     @inbounds local_values = view(values, idx)
