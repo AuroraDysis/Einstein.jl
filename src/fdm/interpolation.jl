@@ -33,10 +33,10 @@ struct LocalBarycentricInterpolation{TF<:AbstractFloat}
     function LocalBarycentricInterpolation(
         points::StepRangeLen{TF}, values::AbstractVector{TF}; degree::Integer=4
     ) where {TF<:AbstractFloat}
-        @argcheck length(points) <= degree + 1 "points is too small for degree"
+        @argcheck length(points) >= degree + 1 "points is too small for degree"
         @argcheck length(points) == length(values) "points and values must have the same length"
 
-        weights = barycentric_weights(degree)
+        weights = barycentric_weights(TF, degree)
         dx_inv = inv(step(points))
         return new{TF}(points, values, weights, degree, dx_inv)
     end
@@ -65,5 +65,7 @@ function (itp::LocalBarycentricInterpolation{TF})(x::TF) where {TF<:AbstractFloa
     @inbounds local_points = view(points, idx)
     @inbounds local_values = view(values, idx)
 
-    return barycentric_interpolate(points, local_points, local_values, weights)
+    return barycentric_interpolate(x, local_points, local_values, weights)
 end
+
+export LocalBarycentricInterpolation
