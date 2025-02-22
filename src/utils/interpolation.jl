@@ -1,5 +1,5 @@
-function barycentric_kernal(
-    x::TF, points::AbstractVector{TF}, ys::AbstractVector{TR}, weights::Vector{TF}
+function barycentric_interpolate(
+    x::TF, points::AbstractVector{TF}, values::AbstractVector{TR}, weights::Vector{TF}
 ) where {TF<:AbstractFloat,TR<:Union{TF,Complex{TF}}}
     p = zero(TR)
     q = zero(TR)
@@ -8,11 +8,11 @@ function barycentric_kernal(
         Δx = x - points[i]
 
         if iszero(Δx)
-            return ys[i]
+            return values[i]
         end
 
         wi = weights[i] / Δx
-        p += wi * ys[i]
+        p += wi * values[i]
         q += wi
     end
 
@@ -46,7 +46,7 @@ function (itp::BarycentricInterpolation{TF})(
 ) where {TF<:AbstractFloat,TR<:Union{TF,Complex{TF}}}
     (; points, weights) = itp
 
-    return barycentric_kernal(x, points, values, weights)
+    return barycentric_interpolate(x, points, values, weights)
 end
 
-export BarycentricInterpolation
+export BarycentricInterpolation, barycentric_interpolate
