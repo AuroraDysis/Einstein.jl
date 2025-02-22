@@ -1,18 +1,18 @@
 function barycentric_kernal(
-    x0::TF, grid::AbstractVector{TF}, values::AbstractVector{TR}, weights::Vector{TF}
+    x::TF, points::AbstractVector{TF}, ys::AbstractVector{TR}, weights::Vector{TF}
 ) where {TF<:AbstractFloat,TR<:Union{TF,Complex{TF}}}
     p = zero(TR)
     q = zero(TR)
 
-    @inbounds for i in eachindex(grid)
-        Δx = x0 - grid[i]
+    @inbounds for i in eachindex(points)
+        Δx = x - points[i]
 
         if iszero(Δx)
-            return values[i]
+            return ys[i]
         end
 
         wi = weights[i] / Δx
-        p += wi * values[i]
+        p += wi * ys[i]
         q += wi
     end
 
@@ -20,33 +20,33 @@ function barycentric_kernal(
 end
 
 """
-    BarycentricInterpolation{TF<:AbstractFloat}(grid::Vector{TF}, weights::Vector{TF})
+    BarycentricInterpolation{TF<:AbstractFloat}(points::AbstractVector{TF}, weights::AbstractVector{TF})
 
 A structure representing barycentric interpolation with precomputed weights.
 
 # Fields
-- `grid::Vector{TF}`: Vector of interpolation grid (typically Chebyshev grid)
-- `weights::Vector{TF}`: Vector of barycentric weights
+- `points::AbstractVector{TF}`: Vector of interpolation points (typically Chebyshev points)
+- `weights::AbstractVector{TF}`: Vector of barycentric weights
 
 # Methods
-    (itp::BarycentricInterpolation{TF})(y::AbstractVector{TR}, x0::TF) where {TF<:AbstractFloat,TR<:Union{TF,Complex{TF}}}
+    (itp::BarycentricInterpolation{TF})(values::AbstractVector{TR}, x::TF) where {TF<:AbstractFloat,TR<:Union{TF,Complex{TF}}}
 
-Evaluate the interpolant at point `x0` for function values `y`.
+Evaluate the interpolant at point `x` for function values.
 
 # Reference
 - [chebfun/@chebtech2/bary.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/bary.m)
 """
 struct BarycentricInterpolation{TF<:AbstractFloat}
-    grid::AbstractVector{TF}   # Grid grid
-    weights::Vector{TF}  # Barycentric weights
+    points::AbstractVector{TF}   # Grid points
+    weights::AbstractVector{TF}        # Barycentric weights
 end
 
 function (itp::BarycentricInterpolation{TF})(
-    values::AbstractVector{TR}, x0::TF
+    values::AbstractVector{TR}, x::TF
 ) where {TF<:AbstractFloat,TR<:Union{TF,Complex{TF}}}
-    (; grid, weights) = itp
+    (; points, weights) = itp
 
-    return barycentric_kernal(x0, grid, values, weights)
+    return barycentric_kernal(x, points, values, weights)
 end
 
 export BarycentricInterpolation
