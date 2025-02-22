@@ -45,6 +45,7 @@ function (itp::BarycentricInterpolation{TF})(
     values::AbstractVector{TR}, x::TF
 ) where {TF<:AbstractFloat,TR<:Union{TF,Complex{TF}}}
     (; points, weights) = itp
+    @argcheck points[1] <= x <= points[end] "x is out of range"
 
     return barycentric_interpolate(x, points, values, weights)
 end

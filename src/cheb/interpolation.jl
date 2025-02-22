@@ -20,6 +20,8 @@ function (itp::ChebyshevInterpolation{TF})(
     values::AbstractVector{TFC}, x::TF
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
     (; grid, weights) = itp
+    @argcheck grid.lower_bound <= x <= grid.upper_bound "x is out of range"
+
     points = grid.data
     return barycentric_interpolate(x, points, values, weights)
 end
