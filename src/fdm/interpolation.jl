@@ -29,6 +29,8 @@ struct LocalBarycentricInterpolation{TF<:AbstractFloat}
     weights::Vector{TF}
     degree::Integer
     dx_inv::TF
+    lower_bound::TF
+    upper_bound::TF
 
     function LocalBarycentricInterpolation(
         points::StepRangeLen{TF}, values::AbstractVector{TF}; degree::Integer=4
@@ -38,18 +40,18 @@ struct LocalBarycentricInterpolation{TF<:AbstractFloat}
 
         weights = barycentric_weights(TF, degree)
         dx_inv = inv(step(points))
-        return new{TF}(points, values, weights, degree, dx_inv)
+        return new{TF}(points, values, weights, degree, dx_inv, points[begin], points[end])
     end
 end
 
 function (itp::LocalBarycentricInterpolation{TF})(x::TF) where {TF<:AbstractFloat}
-    (; points, values, weights, degree, dx_inv) = itp
-    @argcheck points[begin] <= x <= points[end] "x is out of range"
+    (; points, values, weights, degree, dx_inv, lower_bound, upper_bound) = itp
+    @argcheck lower_bound <= x <= upper_bound "x is out of range"
 
     n = length(points)
 
     # Find indices of nodes nearest to the evaluation point for local interpolation
-    relative_pos = (x - points[begin]) * dx_inv  # relative position in points units
+    relative_pos = (x - lower_bound) * dx_inv  # relative position in points units
     nearest_idx = round(Int, relative_pos)   # index of nearest points point (zero-based)
     num_weights = degree + 1                 # number of points for local interpolation
     half_num_weights, is_odd = divrem(num_weights, 2)
