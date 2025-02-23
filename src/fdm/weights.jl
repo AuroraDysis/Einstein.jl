@@ -70,7 +70,7 @@ w_f, w_d = fdm_weights(3, 0.0, x, hermite=true)
 - [MethodOfLines.jl/src/discretization/schemes/fornberg_calculate_weights.jl at master · SciML/MethodOfLines.jl](https://github.com/SciML/MethodOfLines.jl/blob/master/src/discretization/schemes/fornberg_calculate_weights.jl)
 - [fornberg1988generation](@citet*)
 - [fornberg2021algorithm](@citet*)
-- [doi:10.1137/S0036144596322507](@citet*)
+- [Fornberg1998](@citet*)
 - [precision - Numerical derivative and finite difference coefficients: any update of the Fornberg method? - Computational Science Stack Exchange](https://scicomp.stackexchange.com/questions/11249/numerical-derivative-and-finite-difference-coefficients-any-update-of-the-fornb)
 """
 function fdm_weights(
