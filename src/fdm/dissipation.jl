@@ -1,21 +1,21 @@
 """
-    fdm_dissorder(acc_order::Integer)
+    fdm_dissipation_order(acc_order::Integer)
 
 Calculate the order of dissipation needed for a given finite difference accuracy order [Babiuc:2007vr](@cite).
 For a scheme of accuracy order 2r-2, returns dissipation order 2r.
 """
-function fdm_dissorder(acc_order::Integer)
+function fdm_dissipation_order(acc_order::Integer)
     @argcheck iseven(acc_order) "Only even orders are supported."
     r = div(acc_order + 2, 2)
     return 2r
 end
 
 """
-    fdm_disswts([TR=Rational{Int}], diss_order::Integer)
+    fdm_dissipation_weights([TR=Rational{Int}], diss_order::Integer)
 
 Calculate the weights for Kreiss-Oliger dissipation of given order [Babiuc:2007vr](@cite).
 """
-function fdm_disswts(::Type{TR}, diss_order::Integer) where {TR<:Real}
+function fdm_dissipation_weights(::Type{TR}, diss_order::Integer) where {TR<:Real}
     @argcheck iseven(diss_order) "Only even orders are supported."
     r = div(diss_order, 2)
     wts = fdm_central_weights(TR, diss_order, 2)
@@ -23,16 +23,16 @@ function fdm_disswts(::Type{TR}, diss_order::Integer) where {TR<:Real}
     return wts
 end
 
-function fdm_disswts(diss_order::TI) where {TI<:Integer}
-    return fdm_disswts(Rational{TI}, diss_order)
+function fdm_dissipation_weights(diss_order::TI) where {TI<:Integer}
+    return fdm_dissipation_weights(Rational{TI}, diss_order)
 end
 
 """
-    fdm_disswts_bound([TR=Rational{Int}], diss_order::Integer)
+    fdm_dissipation_boundary_weights([TR=Rational{Int}], diss_order::Integer)
 
 Calculate the weights for Kreiss-Oliger dissipation of given order at the boundary [Babiuc:2007vr](@cite).
 """
-function fdm_disswts_bound(::Type{TR}, diss_order::Integer) where {TR<:Real}
+function fdm_dissipation_boundary_weights(::Type{TR}, diss_order::Integer) where {TR<:Real}
     @argcheck iseven(diss_order) "Only even orders are supported."
     r = div(diss_order, 2)
     wts_left, wts_right = fdm_boundary_weights(TR, diss_order, 2)
@@ -42,8 +42,8 @@ function fdm_disswts_bound(::Type{TR}, diss_order::Integer) where {TR<:Real}
     return wts_left, wts_right
 end
 
-function fdm_disswts_bound(diss_order::TI) where {TI<:Integer}
-    return fdm_disswts_bound(Rational{TI}, diss_order)
+function fdm_dissipation_boundary_weights(diss_order::TI) where {TI<:Integer}
+    return fdm_dissipation_boundary_weights(Rational{TI}, diss_order)
 end
 
-export fdm_dissorder, fdm_disswts, fdm_disswts_bound
+export fdm_dissipation_order, fdm_dissipation_weights, fdm_dissipation_boundary_weights

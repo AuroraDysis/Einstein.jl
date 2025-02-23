@@ -150,7 +150,7 @@ Create a finite difference dissipation operator with specified order (interior).
 - `dx::TR`: Grid spacing
 """
 function fdm_dissop(diss_order::Integer, σ::TR, dx::TR) where {TR<:AbstractFloat}
-    wts = fdm_disswts(diss_order)
+    wts = fdm_dissipation_weights(diss_order)
     num_coeffs = length(wts)
     num_side = div(num_coeffs - 1, 2)
     return FDMDissOp{TR}(diss_order, num_coeffs, num_side, wts, σ / dx)
@@ -182,7 +182,7 @@ Create a finite difference dissipation operator with specified order (boundary).
 - `dx::TR`: Grid spacing
 """
 function fdm_dissop_bound(diss_order::Integer, σ::TR, dx::TR) where {TR<:AbstractFloat}
-    wts_left, wts_right = fdm_disswts_bound(TR, diss_order)
+    wts_left, wts_right = fdm_dissipation_boundary_weights(TR, diss_order)
     num_coeffs = size(wts_left, 1)
     num_points = size(wts_left, 2)
     σ_over_dx = σ / dx
