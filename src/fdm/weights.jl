@@ -208,33 +208,26 @@ function fdm_hermite_weights(derivative_order::TI, accuracy_order::TI) where {TI
 end
 
 """
-    fdm_extrapwts_left(extrap_order::Int)
+    fdm_extrapolation_weights(extrapolation_order::Int, side::Symbol=:right)
 
-Generate weights for left-sided extrapolation of order `extrap_order`.
-
-# Arguments
-- `extrap_order::Int`: Order of extrapolation
-
-# Returns
-Vector of rational coefficients for left-sided extrapolation
-"""
-function fdm_extrapwts_left(extrap_order::Int)
-    return fdm_weights_fornberg(0, 0, 1:extrap_order)
-end
-
-"""
-    fdm_extrapwts_right(extrap_order::Int)
-
-Generate weights for right-sided extrapolation of order `extrap_order`.
+Generate weights for left or right-sided extrapolation of order `extrapolation_order`.
 
 # Arguments
-- `extrap_order::Int`: Order of extrapolation
+- `extrapolation_order::Int`: Order of extrapolation
+- `side::Symbol`: Side of the extrapolation (default: :right)
 
 # Returns
-Vector of rational coefficients for right-sided extrapolation
+Vector of Integer coefficients for the extrapolation
 """
-function fdm_extrapwts_right(extrap_order::Int)
-    return fdm_weights_fornberg(0, 0, extrap_order:-1:1)
+function fdm_extrapolation_weights(extrapolation_order::Int, side::Symbol=:right)
+    @argcheck extrapolation_order > 0 "Only positive extrapolation orders are supported."
+    @argcheck side in (:left, :right) "Only left or right extrapolation is supported."
+
+    if side == :left
+        return fdm_weights_fornberg(0, 0, 1:extrapolation_order)
+    else
+        return fdm_weights_fornberg(0, 0, extrapolation_order:-1:1)
+    end
 end
 
 """
@@ -271,7 +264,9 @@ function fdm_boundary_weights(
         for j in 1:num_coeffs
             local_grid[end - j + 1] = (i - 1) - (j - 1)
         end
-        D_right[end - i + 1, :] = fdm_weights_fornberg(derivative_order, zero(TR), local_grid)
+        D_right[end - i + 1, :] = fdm_weights_fornberg(
+            derivative_order, zero(TR), local_grid
+        )
     end
 
     return D_left, D_right
@@ -285,5 +280,5 @@ export fdm_weights_fornberg,
     fdm_central_weights,
     fdm_hermite_weights,
     fdm_extrapwts_right,
-    fdm_extrapwts_left,
+    fdm_extrapolation_weights,
     fdm_boundary_weights

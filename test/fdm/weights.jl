@@ -115,11 +115,20 @@ end
 @testitem "fdm_extrapwts" begin
     using Einstein.FiniteDifferenceSuite, Test
 
-    @test fdm_extrapwts_left(4) == [4, -6, 4, -1]
-    @test fdm_extrapwts_right(4) == [-1, 4, -6, 4]
+    @testset "coefficients" begin
+        @test fdm_extrapolation_weights(4, :left) == [4, -6, 4, -1]
+        @test fdm_extrapolation_weights(4, :right) == [-1, 4, -6, 4]
 
-    @test fdm_extrapwts_left(5) == [5, -10, 10, -5, 1]
-    @test fdm_extrapwts_right(5) == [1, -5, 10, -10, 5]
+        @test fdm_extrapolation_weights(5, :left) == [5, -10, 10, -5, 1]
+        @test fdm_extrapolation_weights(5, :right) == [1, -5, 10, -10, 5]
+    end
+
+    @testset "return type" begin
+        for order in 1:10
+            @test typeof(fdm_extrapolation_weights(order, :left)) == Vector{Int}
+            @test typeof(fdm_extrapolation_weights(order, :right)) == Vector{Int}
+        end
+    end
 end
 
 @testitem "fdm_boundary_weights" begin
