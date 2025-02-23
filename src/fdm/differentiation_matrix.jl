@@ -1,12 +1,12 @@
 """
-    fdm_differentiation_matrix(::Type{TR}, der_order::Integer, acc_order::Integer, n::Integer, boundary::Bool=false)
+    fdm_differentiation_matrix(::Type{TR}, derivative_order::Integer, accuracy_order::Integer, n::Integer, boundary::Bool=false)
 
 Construct a matrix representing a finite difference operator for numerical differentiation.
 
 # Arguments
 - `TR`: Type parameter for the real number type to be used
-- `der_order`: Order of the derivative to approximate
-- `acc_order`: Order of accuracy for the approximation
+- `derivative_order`: Order of the derivative to approximate
+- `accuracy_order`: Order of accuracy for the approximation
 - `n`: Number of grid points
 - `boundary`: Flag to indicate if the matrix should include shifted boundary finite difference coefficients (default: `false`)
 - `transpose`: Flag to indicate if the matrix should be transposed (default: `false`)
@@ -23,20 +23,20 @@ Construct a matrix representing a finite difference operator for numerical diffe
 """
 function fdm_differentiation_matrix(
     ::Type{TR},
-    der_order::Integer,
-    acc_order::Integer,
+    derivative_order::Integer,
+    accuracy_order::Integer,
     n::Integer;
     boundary::Bool=true,
     transpose::Bool=false,
 ) where {TR<:Real}
-    op = fdm_centralop(der_order, acc_order, one(TR))
+    op = fdm_centralop(derivative_order, accuracy_order, one(TR))
     num_side = op.num_side
     wts = op.wts
 
     if boundary
         diffmat = BandedMatrix(Zeros{TR}(n, n), (num_side, num_side))
     else
-        op_left, op_right = fdm_boundop(der_order, acc_order, one(TR))
+        op_left, op_right = fdm_boundop(derivative_order, accuracy_order, one(TR))
         num_boundcoeffs = op_left.num_coeffs
         wts_left, wts_right = op_left.wts, op_right.wts
 

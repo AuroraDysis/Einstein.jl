@@ -5,8 +5,8 @@
         dx = 0.1
         # Basic construction
         op = fdm_centralop(2, 4, dx)  # 2nd derivative, 4th order accuracy
-        @test op.der_order == 2
-        @test op.acc_order == 4
+        @test op.derivative_order == 2
+        @test op.accuracy_order == 4
     end
 
     @testset "Operator Application" begin
@@ -44,8 +44,8 @@ end
         dx = 0.1
         # Basic construction
         op = fdm_hermiteop(2, 4, dx)  # 2nd derivative, 4th order accuracy
-        @test op.der_order == 2
-        @test op.acc_order == 4
+        @test op.derivative_order == 2
+        @test op.accuracy_order == 4
     end
 
     @testset "Operator Application" begin

@@ -1,48 +1,48 @@
 """
-    fdm_central_width(der_order::Integer, acc_order::Integer)
+    fdm_central_width(derivative_order::Integer, accuracy_order::Integer)
 
 Calculate the number of coefficients needed for central FDM stencil.
 
 # Arguments
-- `der_order::Integer`: Order of the derivative
-- `acc_order::Integer`: Order of accuracy
+- `derivative_order::Integer`: Order of the derivative
+- `accuracy_order::Integer`: Order of accuracy
 
 # References
 - [Finite difference coefficient - Wikipedia](https://en.wikipedia.org/wiki/Finite_difference_coefficient)
 """
-function fdm_central_width(der_order::Integer, acc_order::Integer)
+function fdm_central_width(derivative_order::Integer, accuracy_order::Integer)
     # https://github.com/maroba/findiff/blob/master/findiff/coefs.py
     # coefficients number for central difference
-    return 2 * div(der_order + 1, 2) - 1 + acc_order
+    return 2 * div(derivative_order + 1, 2) - 1 + accuracy_order
 end
 
 """
-    fdm_hermite_width(der_order::Integer, acc_order::Integer)
+    fdm_hermite_width(derivative_order::Integer, accuracy_order::Integer)
 
 Calculate the number of coefficients needed for Hermite FDM stencil.
 
 # Arguments
-- `der_order::Integer`: Order of the derivative
-- `acc_order::Integer`: Order of accuracy
+- `derivative_order::Integer`: Order of the derivative
+- `accuracy_order::Integer`: Order of accuracy
 
 # References
 - [fornberg2021algorithm](@citet*)
 """
-function fdm_hermite_width(der_order::Integer, acc_order::Integer)
-    return return div(der_order, 2) + div(acc_order, 2)
+function fdm_hermite_width(derivative_order::Integer, accuracy_order::Integer)
+    return return div(derivative_order, 2) + div(accuracy_order, 2)
 end
 
 """
-    fdm_boundary_width(der_order::Integer, acc_order::Integer)
+    fdm_boundary_width(derivative_order::Integer, accuracy_order::Integer)
 
 Calculate the number of coefficients needed for shifted boundary FDM stencil.
 
 # Arguments
-- `der_order::Integer`: Order of the derivative
-- `acc_order::Integer`: Order of accuracy
+- `derivative_order::Integer`: Order of the derivative
+- `accuracy_order::Integer`: Order of accuracy
 """
-function fdm_boundary_width(der_order::Integer, acc_order::Integer)
-    return der_order + acc_order
+function fdm_boundary_width(derivative_order::Integer, accuracy_order::Integer)
+    return derivative_order + accuracy_order
 end
 
 """

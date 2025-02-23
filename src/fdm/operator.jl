@@ -1,6 +1,6 @@
 struct FDMCentralOp{TR<:Real}
-    der_order::Integer
-    acc_order::Integer
+    derivative_order::Integer
+    accuracy_order::Integer
     num_coeffs::Integer
     num_side::Integer
     wts::Vector{TR}
@@ -15,30 +15,30 @@ end
 end
 
 """
-    fdm_centralop(der_order::Integer, acc_order::Integer, dx::TR) where {TR<:AbstractFloat}
+    fdm_centralop(derivative_order::Integer, accuracy_order::Integer, dx::TR) where {TR<:AbstractFloat}
 
 Create a central finite difference operator with specified derivative order and accuracy.
 
 # Arguments
-- `der_order::Integer`: The order of the derivative to approximate
-- `acc_order::Integer`: The desired order of accuracy (must be even)
+- `derivative_order::Integer`: The order of the derivative to approximate
+- `accuracy_order::Integer`: The desired order of accuracy (must be even)
 - `dx::TR`: Grid spacing
 ```
 """
 function fdm_centralop(
-    der_order::Integer, acc_order::Integer, dx::TR
+    derivative_order::Integer, accuracy_order::Integer, dx::TR
 ) where {TR<:AbstractFloat}
-    wts = fdm_central_weights(TR, der_order, acc_order)
+    wts = fdm_central_weights(TR, derivative_order, accuracy_order)
     num_coeffs = length(wts)
     num_side = div(num_coeffs - 1, 2)
     return FDMCentralOp{TR}(
-        der_order, acc_order, num_coeffs, num_side, wts, one(TR) / dx^der_order
+        derivative_order, accuracy_order, num_coeffs, num_side, wts, one(TR) / dx^derivative_order
     )
 end
 
 struct FDMBoundOp{TR<:Real}
-    der_order::Integer
-    acc_order::Integer
+    derivative_order::Integer
+    accuracy_order::Integer
     num_coeffs::Integer
     num_points::Integer
     wts::Matrix{TR}
@@ -53,34 +53,34 @@ end
 end
 
 """
-    fdm_boundop(der_order::Integer, acc_order::Integer, dx::TR) where {TR<:AbstractFloat}
+    fdm_boundop(derivative_order::Integer, accuracy_order::Integer, dx::TR) where {TR<:AbstractFloat}
 
 Create a shifted finite difference operator with specified derivative order and accuracy for boundary.
 
 # Arguments
-- `der_order::Integer`: The order of the derivative to approximate
-- `acc_order::Integer`: The desired order of accuracy (must be even)
+- `derivative_order::Integer`: The order of the derivative to approximate
+- `accuracy_order::Integer`: The desired order of accuracy (must be even)
 - `dx::TR`: Grid spacing
 ```
 """
 function fdm_boundop(
-    der_order::Integer, acc_order::Integer, dx::TR
+    derivative_order::Integer, accuracy_order::Integer, dx::TR
 ) where {TR<:AbstractFloat}
-    wts_left, wts_right = fdm_boundary_weights(TR, der_order, acc_order)
+    wts_left, wts_right = fdm_boundary_weights(TR, derivative_order, accuracy_order)
     num_coeffs = size(wts_left, 1)
     num_points = size(wts_left, 2)
     op_left = FDMBoundOp{TR}(
-        der_order, acc_order, num_coeffs, num_points, wts_left, one(TR) / dx^der_order
+        derivative_order, accuracy_order, num_coeffs, num_points, wts_left, one(TR) / dx^derivative_order
     )
     op_right = FDMBoundOp{TR}(
-        der_order, acc_order, num_coeffs, num_points, wts_right, one(TR) / dx^der_order
+        derivative_order, accuracy_order, num_coeffs, num_points, wts_right, one(TR) / dx^derivative_order
     )
     return op_left, op_right
 end
 
 struct FDMHermiteOp{TR<:Real}
-    der_order::Integer
-    acc_order::Integer
+    derivative_order::Integer
+    accuracy_order::Integer
     num_coeffs::Integer
     num_side::Integer
     Dwts::Vector{TR}
@@ -97,30 +97,30 @@ function (op::FDMHermiteOp{TR})(
 end
 
 """
-    fdm_hermiteop(der_order::Integer, acc_order::Integer, dx::TR) where {TR<:AbstractFloat}
+    fdm_hermiteop(derivative_order::Integer, accuracy_order::Integer, dx::TR) where {TR<:AbstractFloat}
 
 Create a Hermite finite difference operator with specified derivative order and accuracy.
 
 # Arguments
-- `der_order::Integer`: The order of the derivative to approximate
-- `acc_order::Integer`: The desired order of accuracy (must be even)
+- `derivative_order::Integer`: The order of the derivative to approximate
+- `accuracy_order::Integer`: The desired order of accuracy (must be even)
 - `dx::TR`: Grid spacing
 """
 function fdm_hermiteop(
-    der_order::Integer, acc_order::Integer, dx::TR
+    derivative_order::Integer, accuracy_order::Integer, dx::TR
 ) where {TR<:AbstractFloat}
-    Dwts, Ewts = fdm_hermite_weights(TR, der_order, acc_order)
+    Dwts, Ewts = fdm_hermite_weights(TR, derivative_order, accuracy_order)
     num_coeffs = length(Dwts)
     num_side = div(num_coeffs - 1, 2)
     return FDMHermiteOp{TR}(
-        der_order,
-        acc_order,
+        derivative_order,
+        accuracy_order,
         num_coeffs,
         num_side,
         Dwts,
         Ewts,
-        one(TR) / dx^der_order,
-        one(TR) / dx^(der_order - 1),
+        one(TR) / dx^derivative_order,
+        one(TR) / dx^(derivative_order - 1),
     )
 end
 
