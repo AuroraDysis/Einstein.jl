@@ -1,5 +1,5 @@
 """
-    sum_xsum(vec::StridedVector{T}) where {T<:Union{Float32,Float64}}
+    sum_xsum(vec::AbstractVector{Float64})
 
 Compute the sum of a vector using extended precision accumulation.
 Uses the `xsum` package for improved numerical accuracy.
@@ -12,12 +12,12 @@ Uses the `xsum` package for improved numerical accuracy.
 - [JuliaMath/Xsum.jl](https://github.com/JuliaMath/Xsum.jl)
 - [Radford Neal / xsum · GitLab](https://gitlab.com/radfordneal/xsum)
 """
-@inline function sum_xsum(vec::StridedVector{Float64})
+@inline function sum_xsum(vec::AbstractVector{Float64})
     return xsum(vec)
 end
 
 """
-    sum_kahan(v::StridedVector{T}) where {T<:Number}
+    sum_kahan(v::AbstractVector{T}) where {T<:Number}
 
 Compute the sum using Kahan summation algorithm to reduce numerical errors.
 
@@ -25,7 +25,7 @@ Compute the sum using Kahan summation algorithm to reduce numerical errors.
 - Slower than `sum_xsum` for large vectors, but faster for small vectors.
 - Similar performance to `sum_kahan_neumaier`
 """
-function sum_kahan(v::StridedVector{T}) where {T<:Number}
+function sum_kahan(v::AbstractVector{T}) where {T<:Number}
     s = zero(T)
     c = zero(T)
     y = zero(T)
@@ -44,7 +44,7 @@ function sum_kahan(v::StridedVector{T}) where {T<:Number}
 end
 
 """
-    sum_kahan_neumaier(v::StridedVector{T}) where {T<:Number}
+    sum_kahan_neumaier(v::AbstractVector{T}) where {T<:Number}
 
 Neumaier's variant of Kahan summation algorithm to reduce numerical errors.
 
@@ -57,7 +57,7 @@ numerical stability. Processes two elements per iteration when possible.
 # References
 - [JuliaMath/KahanSummation.jl](https://github.com/JuliaMath/KahanSummation.jl)
 """
-function sum_kahan_neumaier(v::StridedVector{T}) where {T<:Number}
+function sum_kahan_neumaier(v::AbstractVector{T}) where {T<:Number}
     @inbounds begin
         n = length(v)
         c = zero(T)
