@@ -1,5 +1,5 @@
 """
-    fdm_differentiation_matrix(::Type{TR}, der_order::Integer, acc_order::Integer, n::Integer, with_bound::Bool=false)
+    fdm_differentiation_matrix(::Type{TR}, der_order::Integer, acc_order::Integer, n::Integer, boundary::Bool=false)
 
 Construct a finite difference matrix for numerical differentiation.
 
@@ -8,7 +8,7 @@ Construct a finite difference matrix for numerical differentiation.
 - `der_order`: Order of the derivative to approximate
 - `acc_order`: Order of accuracy for the approximation
 - `n`: Number of grid points
-- `with_bound`: Flag to indicate if the matrix should include shifted boundary finite difference coefficients (default: `false`)
+- `boundary`: Flag to indicate if the matrix should include shifted boundary finite difference coefficients (default: `false`)
 - `transpose`: Flag to indicate if the matrix should be transposed (default: `false`)
 
 # Returns
@@ -26,10 +26,10 @@ function fdm_differentiation_matrix(
     der_order::Integer,
     acc_order::Integer,
     n::Integer;
-    with_bound::Bool=true,
+    boundary::Bool=true,
     transpose::Bool=false,
 ) where {TR<:Real}
-    if with_bound
+    if boundary
         diffmat = fdm_diffmat_bound(TR, der_order, acc_order, n)
     else
         diffmat = fdm_diffmat_central(TR, der_order, acc_order, n)
