@@ -46,21 +46,21 @@ function fdm_boundary_width(derivative_order::Integer, accuracy_order::Integer)
 end
 
 """
-    fdm_dissipation_width(diss_order::Integer)
+    fdm_dissipation_width(dissipation_order::Integer)
 
 Calculate the number of coefficients needed for Kreiss-Oliger dissipation (interior).
 """
-function fdm_dissipation_width(diss_order::Integer)
-    return fdm_central_width(diss_order, 2)
+function fdm_dissipation_width(dissipation_order::Integer)
+    return fdm_central_width(dissipation_order, 2)
 end
 
 """
-    fdm_dissipation_boundary_width(diss_order::Integer)
+    fdm_dissipation_boundary_width(dissipation_order::Integer)
 
 Calculate the number of coefficients needed for Kreiss-Oliger dissipation (boundary).
 """
-function fdm_dissipation_boundary_width(diss_order::Integer)
-    return fdm_boundary_width(diss_order, 2)
+function fdm_dissipation_boundary_width(dissipation_order::Integer)
+    return fdm_boundary_width(dissipation_order, 2)
 end
 
 export fdm_central_width, fdm_hermite_width, fdm_boundary_width, fdm_dissipation_width, fdm_dissipation_boundary_width

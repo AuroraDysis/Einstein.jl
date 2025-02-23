@@ -248,8 +248,8 @@ Generate finite difference coefficients for shifted boundary conditions.
 
 # Returns
 Tuple of left and right shifted boundary finite difference coefficients
-The coefficients are stored in a matrix with the columns representing the different grid points.
-The columns are ordered from the leftmost grid point to the rightmost grid point.
+The coefficients are stored in a matrix with the rows representing the different grid points.
+The rows are ordered from the leftmost grid point to the rightmost grid point.
 """
 function fdm_boundary_weights(
     ::Type{TR}, derivative_order::Integer, accuracy_order::Integer
@@ -258,20 +258,20 @@ function fdm_boundary_weights(
     num_central = fdm_central_width(derivative_order, accuracy_order)
     num_side = div(num_central - 1, 2)
 
-    D_left = zeros(TR, num_coeffs, num_side)
-    D_right = zeros(TR, num_coeffs, num_side)
+    D_left = zeros(TR, num_side, num_coeffs)
+    D_right = zeros(TR, num_side, num_coeffs)
 
     local_grid = zeros(TR, num_coeffs)
     @inbounds for i in 1:num_side
         for j in 1:num_coeffs
             local_grid[j] = -(i - 1) + (j - 1)
         end
-        D_left[:, i] = fdm_weights_fornberg(derivative_order, zero(TR), local_grid)
+        D_left[i, :] = fdm_weights_fornberg(derivative_order, zero(TR), local_grid)
 
         for j in 1:num_coeffs
             local_grid[end - j + 1] = (i - 1) - (j - 1)
         end
-        D_right[:, end - i + 1] = fdm_weights_fornberg(derivative_order, zero(TR), local_grid)
+        D_right[end - i + 1, :] = fdm_weights_fornberg(derivative_order, zero(TR), local_grid)
     end
 
     return D_left, D_right

@@ -8,6 +8,7 @@ using FillArrays
 using FastBroadcast
 using LinearAlgebra
 using BandedMatrices
+using StaticArrays
 
 include("utils.jl")
 include("grid.jl")
