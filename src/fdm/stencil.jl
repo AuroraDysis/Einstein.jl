@@ -16,7 +16,7 @@ function fdm_centralwts(::Type{T}, der_order::Integer, acc_order::Integer) where
     num_coeffs = fdm_centralnum(der_order, acc_order)
     num_side = div(num_coeffs - 1, 2)
     local_grid = collect(T, (-num_side):num_side)
-    return fdm_fornbergwts(der_order, zero(T), local_grid)
+    return fdm_weights(der_order, zero(T), local_grid)
 end
 
 function fdm_centralwts(der_order::TI, acc_order::TI) where {TI<:Integer}
@@ -51,7 +51,7 @@ function fdm_hermitewts(::Type{T}, der_order::Integer, acc_order::Integer) where
     num_coeffs = fdm_hermitenum(der_order, acc_order)
     num_side = div(num_coeffs - 1, 2)
     local_grid = collect(T, (-num_side):num_side)
-    return fdm_fornbergwts(der_order, zero(T), local_grid; hermite=true)
+    return fdm_weights(der_order, zero(T), local_grid; hermite=true)
 end
 
 function fdm_hermitewts(der_order::TI, acc_order::TI) where {TI<:Integer}
@@ -70,7 +70,7 @@ Generate weights for left-sided extrapolation of order `extrap_order`.
 Vector of rational coefficients for left-sided extrapolation
 """
 function fdm_extrapwts_left(extrap_order::Int)
-    return fdm_fornbergwts(0, 0, 1:extrap_order)
+    return fdm_weights(0, 0, 1:extrap_order)
 end
 
 """
@@ -85,7 +85,7 @@ Generate weights for right-sided extrapolation of order `extrap_order`.
 Vector of rational coefficients for right-sided extrapolation
 """
 function fdm_extrapwts_right(extrap_order::Int)
-    return fdm_fornbergwts(0, 0, extrap_order:-1:1)
+    return fdm_weights(0, 0, extrap_order:-1:1)
 end
 
 """
@@ -115,12 +115,12 @@ function fdm_boundwts(::Type{T}, der_order::Integer, acc_order::Integer) where {
         for j in 1:num_coeffs
             local_grid[j] = -(i - 1) + (j - 1)
         end
-        D_left[:, i] = fdm_fornbergwts(der_order, zero(T), local_grid)
+        D_left[:, i] = fdm_weights(der_order, zero(T), local_grid)
 
         for j in 1:num_coeffs
             local_grid[end - j + 1] = (i - 1) - (j - 1)
         end
-        D_right[:, end - i + 1] = fdm_fornbergwts(der_order, zero(T), local_grid)
+        D_right[:, end - i + 1] = fdm_weights(der_order, zero(T), local_grid)
     end
 
     return D_left, D_right
