@@ -279,6 +279,5 @@ end
 export fdm_weights_fornberg,
     fdm_central_weights,
     fdm_hermite_weights,
-    fdm_extrapwts_right,
     fdm_extrapolation_weights,
     fdm_boundary_weights

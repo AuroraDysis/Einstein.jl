@@ -1,10 +1,24 @@
 import Base: *
 
-struct FiniteDifferenceOperator{TR<:Real,Width,HalfWidth,BoundaryWidth}
+abstract type FiniteDifferenceOperator{TR<:Real} end
+
+struct FiniteDifferenceDerivativeOperator{TR<:Real,Width,HalfWidth,BoundaryWidth} <:
+       FiniteDifferenceOperator{TR}
     weights::SVector{Width,TR}
     left_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
     right_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
     factor::Base.RefValue{TR}
+    derivative_order::Integer
+    accuracy_order::Integer
+end
+
+struct FiniteDifferenceDissipationOperator{TR<:Real,Width,HalfWidth,BoundaryWidth} <:
+       FiniteDifferenceOperator{TR}
+    weights::SVector{Width,TR}
+    left_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
+    right_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
+    factor::Base.RefValue{TR}
+    dissipation_order::Integer
 end
 
 function mul!(
@@ -53,9 +67,9 @@ end
 end
 
 """
-    fdm_operator([TR=Float64], derivative_order::Integer, accuracy_order::Integer, dx::TR) -> FiniteDifferenceOperator{TR}
+    fdm_derivative_operator([TR=Float64], derivative_order::Integer, accuracy_order::Integer, dx::TR) -> FiniteDifferenceDerivativeOperator{TR}
 
-Create a finite difference operator with specified derivative and accuracy orders.
+Create a finite difference derivative operator with specified derivative and accuracy orders.
 
 # Arguments
 - `TR`: The element type of the operator
@@ -63,7 +77,7 @@ Create a finite difference operator with specified derivative and accuracy order
 - `accuracy_order::Integer`: The order of accuracy
 - `dx::TR`: The grid spacing
 """
-function fdm_operator(
+function fdm_derivative_operator(
     ::Type{TR}, derivative_order::Integer, accuracy_order::Integer, dx::TR
 ) where {TR<:Real}
     weights = fdm_central_weights(TR, derivative_order, accuracy_order)
@@ -72,20 +86,24 @@ function fdm_operator(
     half_width = div(width - 1, 2)
     boundary_width = size(left_weights, 2)
     factor = inv(dx^derivative_order)
-    return FiniteDifferenceOperator{TR,width,half_width,boundary_width}(
+    return FiniteDifferenceDerivativeOperator{TR,width,half_width,boundary_width}(
         SVector{width,TR}(weights),
         SMatrix{half_width,boundary_width,TR}(left_weights),
         SMatrix{half_width,boundary_width,TR}(right_weights),
         Ref(factor),
+        derivative_order,
+        accuracy_order,
     )
 end
 
-function fdm_operator(derivative_order::Integer, accuracy_order::Integer, dx::Float64)
-    return fdm_operator(Float64, derivative_order, accuracy_order, dx)
+function fdm_derivative_operator(
+    derivative_order::Integer, accuracy_order::Integer, dx::Float64
+)
+    return fdm_derivative_operator(Float64, derivative_order, accuracy_order, dx)
 end
 
 """
-    fdm_dissipation_operator([TR=Float64], dissipation_order::Integer, σ::TR, dx::TR) -> FiniteDifferenceOperator{TR}
+    fdm_dissipation_operator([TR=Float64], dissipation_order::Integer, σ::TR, dx::TR) -> FiniteDifferenceDerivativeOperator{TR}
 
 Create a finite difference dissipation operator with specified dissipation order.
 
@@ -104,11 +122,12 @@ function fdm_dissipation_operator(
     half_width = div(width - 1, 2)
     boundary_width = size(left_weights, 2)
     factor = σ / dx
-    return FiniteDifferenceOperator{TR,width,half_width,boundary_width}(
+    return FiniteDifferenceDerivativeOperator{TR,width,half_width,boundary_width}(
         SVector{width,TR}(weights),
         SMatrix{half_width,boundary_width,TR}(left_weights),
         SMatrix{half_width,boundary_width,TR}(right_weights),
         Ref(factor),
+        dissipation_order,
     )
 end
 
@@ -165,5 +184,6 @@ function fdm_operator_matrix(
     end
 end
 
-export FiniteDifferenceOperator, fdm_operator, fdm_dissipation_operator, fdm_operator_matrix
+export FiniteDifferenceDerivativeOperator,
+    fdm_derivative_operator, fdm_dissipation_operator, fdm_operator_matrix
 export fdm_convolve_boundary!, fdm_convolve_interior!

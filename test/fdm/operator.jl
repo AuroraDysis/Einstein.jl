@@ -1,4 +1,4 @@
-@testitem "fdm_operator" begin
+@testitem "fdm_derivative_operator" begin
     using LinearAlgebra, BandedMatrices
 
     @testset "Operator Application" begin
@@ -8,18 +8,18 @@
         f = x .^ 2
 
         # First derivative should give 2x
-        op1 = fdm_operator(1, 4, dx)
+        op1 = fdm_derivative_operator(1, 4, dx)
         df = op1 * f
         @test df ≈ 2 .* x
 
         # Second derivative should give 2
-        op2 = fdm_operator(2, 4, dx)
+        op2 = fdm_derivative_operator(2, 4, dx)
         d2f = op2 * f
         @test isapprox(d2f, ones(length(x)) * 2, atol=1e-12)
     end
 
     @testset "Operator Properties" begin
-        op = fdm_operator(2, 4, 0.1)
+        op = fdm_derivative_operator(2, 4, 0.1)
 
         # Test stencil properties
         @test length(op.weights) == 5  # 5-point stencil for 2nd der, 4th order
@@ -31,7 +31,7 @@
         dx = 0.001
         x = (-10 * dx):dx:(10 * dx)
         n = length(x)
-        op = fdm_operator(2, 4, dx)
+        op = fdm_derivative_operator(2, 4, dx)
         mat = fdm_operator_matrix(op, n)
 
         # Test matrix properties
@@ -50,7 +50,7 @@ end
 
     @testset "Construction" begin
         op = fdm_dissipation_operator(2, 1.0, 0.1)
-        @test op isa FiniteDifferenceOperator{Float64}
+        @test op isa FiniteDifferenceDerivativeOperator{Float64}
         @test op.factor[] ≈ 10.0
     end
 
