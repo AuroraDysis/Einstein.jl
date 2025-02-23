@@ -160,7 +160,7 @@ function fdm_central_weights(
 ) where {TR<:Real}
     @argcheck acc_order % 2 == 0 "Only even orders are supported for central FDM stencils."
 
-    num_coeffs = fdm_central_size(der_order, acc_order)
+    num_coeffs = fdm_central_width(der_order, acc_order)
     num_side = div(num_coeffs - 1, 2)
     local_grid = collect(TR, (-num_side):num_side)
     return fdm_weights_fornberg(der_order, zero(TR), local_grid)
@@ -197,7 +197,7 @@ function fdm_hermite_weights(
         @argcheck acc_order % 4 == 2 "Only acc_order % 4 == 2 are supported for Hermite-type finite difference with der order 4,5,8,9,12..."
     end
 
-    num_coeffs = fdm_hermite_size(der_order, acc_order)
+    num_coeffs = fdm_hermite_width(der_order, acc_order)
     num_side = div(num_coeffs - 1, 2)
     local_grid = collect(TR, (-num_side):num_side)
     return fdm_weights_fornberg(der_order, zero(TR), local_grid; hermite=true)
@@ -254,8 +254,8 @@ The columns are ordered from the leftmost grid point to the rightmost grid point
 function fdm_boundary_weights(
     ::Type{TR}, der_order::Integer, acc_order::Integer
 ) where {TR<:Real}
-    num_coeffs = fdm_boundary_size(der_order, acc_order)
-    num_central = fdm_central_size(der_order, acc_order)
+    num_coeffs = fdm_boundary_width(der_order, acc_order)
+    num_central = fdm_central_width(der_order, acc_order)
     num_side = div(num_central - 1, 2)
 
     D_left = zeros(TR, num_coeffs, num_side)
