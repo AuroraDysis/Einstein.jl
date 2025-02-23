@@ -10,7 +10,6 @@ include("grid.jl")
 include("errors.jl")
 include("sum.jl")
 include("dot.jl")
-include("matop.jl")
 include("sws.jl")
 include("interpolation.jl")
 
