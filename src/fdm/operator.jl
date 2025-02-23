@@ -136,21 +136,18 @@ function fdm_dissipation_operator(dissipation_order::Integer, σ::Float64, dx::F
 end
 
 """
-    fdm_operator_matrix(op::FiniteDifferenceOperator{TR,Width,HalfWidth,BoundaryWidth}; boundary::Bool=false, transpose::Bool=false) -> BandedMatrix{TR}
+    fdm_operator_matrix(op::FiniteDifferenceOperator{TR}; boundary::Bool=false, transpose::Bool=false) -> BandedMatrix{TR}
 
 Create a banded matrix representation of the finite difference operator.
 
 # Arguments
-- `op::FiniteDifferenceOperator{TR,Width,HalfWidth,BoundaryWidth}`: The finite difference operator
+- `op::FiniteDifferenceOperator{TR}`: The finite difference operator
 - `boundary::Bool=true`: Whether to include boundary weights
 - `transpose::Bool=false`: Whether to transpose the matrix
 """
 function fdm_operator_matrix(
-    op::FiniteDifferenceOperator{TR,Width,HalfWidth,BoundaryWidth},
-    n::Integer,
-    boundary::Bool=true,
-    transpose::Bool=false,
-) where {TR<:Real,Width,HalfWidth,BoundaryWidth}
+    op::FiniteDifferenceOperator{TR}, n::Integer, boundary::Bool=true, transpose::Bool=false
+) where {TR<:Real}
     (; weights, left_weights, right_weights, factor) = op
     half_width = length(weights) ÷ 2
     weights *= factor[]
