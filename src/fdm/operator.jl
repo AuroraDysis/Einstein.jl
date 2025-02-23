@@ -1,13 +1,13 @@
-struct FiniteDifferenceOperator{TF<:AbstractFloat,Width,HalfWidth,BoundaryWidth}
-    weights::SVector{Width,TF}
-    left_weights::SMatrix{HalfWidth,BoundaryWidth,TF}
-    right_weights::SMatrix{HalfWidth,BoundaryWidth,TF}
-    factor::Base.RefValue{TF}
+struct FiniteDifferenceOperator{TR<:Real,Width,HalfWidth,BoundaryWidth}
+    weights::SVector{Width,TR}
+    left_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
+    right_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
+    factor::Base.RefValue{TR}
 end
 
 function mul!(
-    df::StridedArray{TF}, op::FiniteDifferenceOperator{TF}, f::StridedArray{TF}
-) where {TF<:AbstractFloat}
+    df::StridedArray{TR}, op::FiniteDifferenceOperator{TR}, f::StridedArray{TR}
+) where {TR<:Real}
     (; weights, left_weights, right_weights, factor) = op
     fdm_convolve_interior!(df, f, weights, factor[])
     fdm_convolve_boundary!(df, f, left_weights, right_weights, factor[])
@@ -15,12 +15,12 @@ function mul!(
 end
 
 function fdm_convolve_boundary!(
-    out::StridedArray{TF},
-    in::StridedArray{TF},
-    left_weights::SMatrix{HalfWidth,BoundaryWidth,TF},
-    right_weights::SMatrix{HalfWidth,BoundaryWidth,TF},
-    factor::TF,
-) where {TF<:AbstractFloat,HalfWidth,BoundaryWidth}
+    out::StridedArray{TR},
+    in::StridedArray{TR},
+    left_weights::SMatrix{HalfWidth,BoundaryWidth,TR},
+    right_weights::SMatrix{HalfWidth,BoundaryWidth,TR},
+    factor::TR,
+) where {TR<:Real,HalfWidth,BoundaryWidth}
     out_left, out_right = @views out[1:HalfWidth, :], out[(end - HalfWidth + 1):end, :]
     in_left, in_right = @views in[1:BoundaryWidth, :], in[(end - BoundaryWidth + 1):end, :]
     out_left .= factor * left_weights * in_left
@@ -29,8 +29,8 @@ function fdm_convolve_boundary!(
 end
 
 @generated function fdm_convolve_interior!(
-    out::StridedArray{TF}, in::StridedArray{TF}, weights::SVector{width,TF}, factor::TF
-) where {width,TF<:AbstractFloat}
+    out::StridedArray{TR}, in::StridedArray{TR}, weights::SVector{width,TR}, factor::TR
+) where {width,TR<:Real}
     half_width = width ÷ 2
     ex = :(weights[1] * in[begin:(end - $width + 1), :])
 
@@ -45,60 +45,108 @@ end
 end
 
 """
-    fdm_operator(::Type{TF}, derivative_order::Integer, accuracy_order::Integer, dx::TF) -> FiniteDifferenceOperator{TF}
+    fdm_operator(::Type{TR}, derivative_order::Integer, accuracy_order::Integer, dx::TR) -> FiniteDifferenceOperator{TR}
 
 Create a finite difference operator with specified derivative and accuracy orders.
 
 # Arguments
-- `TF`: The element type of the operator
+- `TR`: The element type of the operator
 - `derivative_order::Integer`: The order of the derivative
 - `accuracy_order::Integer`: The order of accuracy
-- `dx::TF`: The grid spacing
+- `dx::TR`: The grid spacing
 """
 function fdm_operator(
-    ::Type{TF}, derivative_order::Integer, accuracy_order::Integer, dx::TF
-) where {TF<:AbstractFloat}
-    weights = fdm_central_weights(TF, derivative_order, accuracy_order)
-    left_weights, right_weights = fdm_boundary_weights(TF, derivative_order, accuracy_order)
+    ::Type{TR}, derivative_order::Integer, accuracy_order::Integer, dx::TR
+) where {TR<:Real}
+    weights = fdm_central_weights(TR, derivative_order, accuracy_order)
+    left_weights, right_weights = fdm_boundary_weights(TR, derivative_order, accuracy_order)
     width = length(weights)
     half_width = div(width - 1, 2)
     boundary_width = size(left_weights, 2)
     factor = inv(dx^derivative_order)
-    return FiniteDifferenceOperator{TF,width,half_width,boundary_width}(
-        SVector{width,TF}(weights),
-        SMatrix{half_width,boundary_width,TF}(left_weights),
-        SMatrix{half_width,boundary_width,TF}(right_weights),
+    return FiniteDifferenceOperator{TR,width,half_width,boundary_width}(
+        SVector{width,TR}(weights),
+        SMatrix{half_width,boundary_width,TR}(left_weights),
+        SMatrix{half_width,boundary_width,TR}(right_weights),
         Ref(factor),
     )
 end
 
 """
-    fdm_dissipation_operator(::Type{TF}, dissipation_order::Integer, σ::TF, dx::TF) -> FiniteDifferenceOperator{TF}
+    fdm_dissipation_operator(::Type{TR}, dissipation_order::Integer, σ::TR, dx::TR) -> FiniteDifferenceOperator{TR}
 
 Create a finite difference dissipation operator with specified dissipation order.
 
 # Arguments
-- `TF`: The element type of the operator
+- `TR`: The element type of the operator
 - `dissipation_order::Integer`: The order of the dissipation operator
-- `σ::TF`: The dissipation coefficient
-- `dx::TF`: The grid spacing
+- `σ::TR`: The dissipation coefficient
+- `dx::TR`: The grid spacing
 """
 function fdm_dissipation_operator(
-    ::Type{TF}, dissipation_order::Integer, σ::TF, dx::TF
-) where {TF<:AbstractFloat}
-    weights = fdm_dissipation_weights(TF, dissipation_order)
-    left_weights, right_weights = fdm_dissipation_boundary_weights(TF, dissipation_order)
+    ::Type{TR}, dissipation_order::Integer, σ::TR, dx::TR
+) where {TR<:Real}
+    weights = fdm_dissipation_weights(TR, dissipation_order)
+    left_weights, right_weights = fdm_dissipation_boundary_weights(TR, dissipation_order)
     width = length(weights)
     half_width = div(width - 1, 2)
     boundary_width = size(left_weights, 2)
     factor = σ / dx
-    return new{TF,width,half_width,0}(
-        SVector{width,TF}(weights),
-        SMatrix{half_width,boundary_width,TF}(left_weights),
-        SMatrix{half_width,boundary_width,TF}(right_weights),
+    return new{TR,width,half_width,0}(
+        SVector{width,TR}(weights),
+        SMatrix{half_width,boundary_width,TR}(left_weights),
+        SMatrix{half_width,boundary_width,TR}(right_weights),
         Ref(factor),
     )
 end
 
-export FiniteDifferenceOperator, fdm_operator, fdm_dissipation_operator
+"""
+    fdm_operator_matrix(op::FiniteDifferenceOperator{TR,Width,HalfWidth,BoundaryWidth}; boundary::Bool=false, transpose::Bool=false) -> BandedMatrix{TR}
+
+Create a banded matrix representation of the finite difference operator.
+
+# Arguments
+- `op::FiniteDifferenceOperator{TR,Width,HalfWidth,BoundaryWidth}`: The finite difference operator
+- `boundary::Bool=true`: Whether to include boundary weights
+- `transpose::Bool=false`: Whether to transpose the matrix
+"""
+function fdm_operator_matrix(
+    op::FiniteDifferenceOperator{TR,Width,HalfWidth,BoundaryWidth},
+    boundary::Bool=true,
+    transpose::Bool=false,
+) where {TR<:Real,Width,HalfWidth,BoundaryWidth}
+    (; weights, left_weights, right_weights, factor) = op
+    half_width = length(weights) ÷ 2
+    weights *= factor[]
+    left_weights *= factor[]
+    right_weights *= factor[]
+
+    if boundary
+        mat = BandedMatrix(Zeros{TR}(n, n), (half_width, half_width))
+    else
+        boundary_width = size(left_weights, 1)
+        mat = BandedMatrix(Zeros{TR}(n, n), (boundary_width, boundary_width))
+
+        @inbounds for i in 1:half_width
+            mat[i, 1:boundary_width] .= @view(left_weights[i, :])
+            mat[end - half_width + i, (end - boundary_width + 1):end] = @view(
+                right_weights[i, :]
+            )
+        end
+    end
+
+    @inbounds for i in (half_width + 1):(n - half_width)
+        mat[i, (i - half_width):(i + half_width)] .= wts
+    end
+
+    if transpose
+        diffmat_T = similar(mat)
+        transpose!(diffmat_T, mat)
+        return diffmat_T
+    else
+        return mat
+    end
+end
+
+export FiniteDifferenceOperator, fdm_operator, fdm_dissipation_operator, fdm_operator_matrix
 export fdm_convolve_boundary!, fdm_convolve_interior!
