@@ -45,8 +45,8 @@ function fdm_convolve_boundary!(
 ) where {TR<:Real,HalfWidth,BoundaryWidth}
     out_left, out_right = @views out[1:HalfWidth, :], out[(end - HalfWidth + 1):end, :]
     in_left, in_right = @views in[1:BoundaryWidth, :], in[(end - BoundaryWidth + 1):end, :]
-    out_left .= factor .* left_weights * in_left
-    out_right .= factor .* right_weights * in_right
+    out_left .= factor .* (left_weights * in_left)
+    out_right .= factor .* (right_weights * in_right)
     return nothing
 end
 
