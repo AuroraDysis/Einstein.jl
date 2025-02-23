@@ -1,5 +1,5 @@
 """
-    fdm_diffmat(::Type{TR}, der_order::Integer, acc_order::Integer, n::Integer, with_bound::Bool=false)
+    fdm_differentiation_matrix(::Type{TR}, der_order::Integer, acc_order::Integer, n::Integer, with_bound::Bool=false)
 
 Construct a finite difference matrix for numerical differentiation.
 
@@ -21,7 +21,7 @@ Construct a finite difference matrix for numerical differentiation.
 - Employs one-sided differences near boundaries
 - The resulting matrix has dimensions n×n where n = round(Int, (upper_bound - lower_bound) / dx) + 1
 """
-function fdm_diffmat(
+function fdm_differentiation_matrix(
     ::Type{TR},
     der_order::Integer,
     acc_order::Integer,
@@ -90,4 +90,4 @@ function fdm_diffmat_bound(
     return diffmat
 end
 
-export fdm_diffmat, fdm_diffmat_central, fdm_diffmat_bound
+export fdm_differentiation_matrix, fdm_diffmat_central, fdm_diffmat_bound
