@@ -45,8 +45,26 @@ function fdm_convolve_boundary!(
 ) where {TR<:Real,HalfWidth,BoundaryWidth}
     out_left, out_right = @views out[1:HalfWidth, :], out[(end - HalfWidth + 1):end, :]
     in_left, in_right = @views in[1:BoundaryWidth, :], in[(end - BoundaryWidth + 1):end, :]
-    out_left .= factor * left_weights * in_left
-    out_right .= factor * right_weights * in_right
+    mul!(out_left, left_weights, in_left)
+    mul!(out_right, right_weights, in_right)
+    out_left .*= factor
+    out_right .*= factor
+    return nothing
+end
+
+function fdm_convolve_boundary!(
+    out::StridedArray{TR},
+    in::StridedArray{TR},
+    left_weights::SMatrix{HalfWidth,BoundaryWidth,TR},
+    right_weights::SMatrix{HalfWidth,BoundaryWidth,TR},
+    factors::StridedVector{TR},
+) where {TR<:Real,HalfWidth,BoundaryWidth}
+    out_left, out_right = @views out[1:HalfWidth, :], out[(end - HalfWidth + 1):end, :]
+    in_left, in_right = @views in[1:BoundaryWidth, :], in[(end - BoundaryWidth + 1):end, :]
+    mul!(out_left, left_weights, in_left)
+    mul!(out_right, right_weights, in_right)
+    out_left .*= @view factors[1:HalfWidth]
+    out_right .*= @view factors[(end - HalfWidth + 1):end]
     return nothing
 end
 
@@ -62,6 +80,26 @@ end
 
     quote
         @.. out[(begin + $half_width):(end - $half_width), :] = $ex * factor
+        return nothing
+    end
+end
+
+@generated function fdm_convolve_interior!(
+    out::StridedArray{TR},
+    in::StridedArray{TR},
+    weights::SVector{width,TR},
+    factors::StridedVector{TR},
+) where {width,TR<:Real}
+    half_width = width ÷ 2
+    ex = :(weights[1] * in[begin:(end - $width + 1), :])
+
+    for i in 2:width
+        ex = :($ex + weights[$i] * in[(begin - 1 + $i):(end - $width + $i), :])
+    end
+
+    quote
+        @.. out[(begin + $half_width):(end - $half_width), :] =
+            $ex * factors[(begin + $half_width):(end - $half_width)]
         return nothing
     end
 end
@@ -122,7 +160,7 @@ function fdm_dissipation_operator(
     half_width = div(width - 1, 2)
     boundary_width = size(left_weights, 2)
     factor = σ / dx
-    return FiniteDifferenceDerivativeOperator{TR,width,half_width,boundary_width}(
+    return FiniteDifferenceDissipationOperator{TR,width,half_width,boundary_width}(
         SVector{width,TR}(weights),
         SMatrix{half_width,boundary_width,TR}(left_weights),
         SMatrix{half_width,boundary_width,TR}(right_weights),
@@ -182,5 +220,8 @@ function fdm_operator_matrix(
 end
 
 export FiniteDifferenceDerivativeOperator,
-    fdm_derivative_operator, fdm_dissipation_operator, fdm_operator_matrix
+    FiniteDifferenceDissipationOperator,
+    fdm_derivative_operator,
+    fdm_dissipation_operator,
+    fdm_operator_matrix
 export fdm_convolve_boundary!, fdm_convolve_interior!
