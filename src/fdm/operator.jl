@@ -139,9 +139,7 @@ function fdm_operator_matrix(
     right_weights *= factor[]
 
     if boundary
-        mat = BandedMatrix(Zeros{TR}(n, n), (half_width, half_width))
-    else
-        boundary_width = size(left_weights, 1)
+        boundary_width = size(left_weights, 2)
         mat = BandedMatrix(Zeros{TR}(n, n), (boundary_width, boundary_width))
 
         @inbounds for i in 1:half_width
@@ -150,6 +148,8 @@ function fdm_operator_matrix(
                 right_weights[i, :]
             )
         end
+    else
+        mat = BandedMatrix(Zeros{TR}(n, n), (half_width, half_width))
     end
 
     @inbounds for i in (half_width + 1):(n - half_width)
