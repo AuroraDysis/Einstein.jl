@@ -11,7 +11,7 @@ using BandedMatrices
 
 include("utils.jl")
 include("grid.jl")
-include("fornberg.jl")
+include("weights.jl")
 include("stencil.jl")
 include("diss.jl")
 include("fdmop.jl")
