@@ -72,9 +72,9 @@ function qnm_schw_cheb(
     c20 = σ + 1
     A2 = (c20 * conversion):chebSpace
 
-    A0m = Matrix(@view(A0[1:n, 1:n]))
-    A1m = Matrix(@view(A1c[1:n, 1:n]))
-    A2m = Matrix(@view(A2[1:n, 1:n]))
+    A0m = @view(A0[1:n, 1:n]) |> Matrix
+    A1m = @view(A1c[1:n, 1:n]) |> Matrix
+    A2m = @view(A2[1:n, 1:n]) |> Matrix
 
     if lo_bc == BCType.Dirichlet && hi_bc == BCType.Dirichlet
         # TODO: add tests for this case

@@ -53,10 +53,10 @@ struct QNMKerrChebCache{TR<:AbstractFloat}
         c20 = -16 * M^2 * (1 + 2 * M * ρ) + a^2 * (1 + 4 * M * ρ)^2
         A2 = (c20 * conversion):chebSpace
 
-        A0m = Matrix(@view(A0c[1:cheb_n, 1:cheb_n]))
-        A1m = Matrix(@view(A1c[1:cheb_n, 1:cheb_n]))
-        A2m = Matrix(@view(A2[1:cheb_n, 1:cheb_n]))
-        Anm = Matrix(@view(conversion[1:cheb_n, 1:cheb_n]))
+        A0m = @view(A0c[1:cheb_n, 1:cheb_n]) |> Matrix
+        A1m = @view(A1c[1:cheb_n, 1:cheb_n]) |> Matrix
+        A2m = @view(A2[1:cheb_n, 1:cheb_n]) |> Matrix
+        Anm = @view(conversion[1:cheb_n, 1:cheb_n]) |> Matrix
 
         if lo_bc == BCType.Dirichlet
             A0m[end, :] .= TR(1)
