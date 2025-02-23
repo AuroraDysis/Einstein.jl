@@ -24,14 +24,14 @@ SOFTWARE.
 """
 
 @doc raw"""
-    fdm_weights([T=Float64], order::Integer, x0::Real, x::AbstractVector; 
+    fdm_weights([TR=Float64], order::Integer, x0::Real, x::AbstractVector; 
                              hermite::Bool=false)
 
 Calculate finite difference weights for arbitrary-order derivatives using the Fornberg algorithm.
 Taken from [SciML/MethodOfLines.jl](https://github.com/SciML/MethodOfLines.jl).
 
 # Arguments
-- `T`: Type parameter for the weights (defaults to type of x0)
+- `TR`: Type parameter for the weights (defaults to type of x0)
 - `order`: Order of the derivative to approximate
 - `x0`: Point at which to approximate the derivative
 - `x`: Grid points to use in the approximation
@@ -39,10 +39,10 @@ Taken from [SciML/MethodOfLines.jl](https://github.com/SciML/MethodOfLines.jl).
 
 # Returns
 If `hermite == false`:
-- `Vector{T}`: Weights for standard finite differences
+- `Vector{TR}`: Weights for standard finite differences
 
 If `hermite == true`:
-- `Tuple{Vector{T}, Vector{T}}`: Weights for Hermite finite differences
+- `Tuple{Vector{TR}, Vector{TR}}`: Weights for Hermite finite differences
 
 # Requirements
 - For standard finite differences: N > order
@@ -74,21 +74,21 @@ w_f, w_d = fdm_weights(3, 0.0, x, hermite=true)
 - [precision - Numerical derivative and finite difference coefficients: any update of the Fornberg method? - Computational Science Stack Exchange](https://scicomp.stackexchange.com/questions/11249/numerical-derivative-and-finite-difference-coefficients-any-update-of-the-fornb)
 """
 function fdm_weights(
-    order::Integer, x0::T, x::AbstractVector{T}; hermite::Bool=false
-) where {T<:Real}
+    order::Integer, x0::TR, x::AbstractVector{TR}; hermite::Bool=false
+) where {TR<:Real}
     N = length(x)
     @argcheck hermite || N > order "Standard finite difference requires at least order + 1 points."
     @argcheck !hermite || N > div(order, 2) + 1 "Hermite finite difference requires at least order / 2 + 1 points."
 
     M = order
-    c1 = one(T)
+    c1 = one(TR)
     c4 = x[1] - x0
-    C = zeros(T, N, M + 1)
+    C = zeros(TR, N, M + 1)
     C[1, 1] = 1
     @inbounds for i in 1:(N - 1)
         i1 = i + 1
         mn = min(i, M)
-        c2 = one(T)
+        c2 = one(TR)
         c5 = c4
         c4 = x[i1] - x0
         for j in 0:(i - 1)
@@ -128,7 +128,7 @@ function fdm_weights(
         s = sum(1 ./ (A + I(N)); dims=1) .- 1
         cp = factorial.(0:M)
         cc = C ./ cp'
-        c̃ = zeros(T, N, M + 2)
+        c̃ = zeros(TR, N, M + 2)
         for k in 1:(M + 1)
             c̃[:, k + 1] = sum(cc[:, 1:k] .* cc[:, k:-1:1]; dims=2)
         end
