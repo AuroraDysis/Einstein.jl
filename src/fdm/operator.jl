@@ -44,6 +44,17 @@ end
     end
 end
 
+"""
+    fdm_operator(::Type{TF}, derivative_order::Integer, accuracy_order::Integer, dx::TF) -> FiniteDifferenceOperator{TF}
+
+Create a finite difference operator with specified derivative and accuracy orders.
+
+# Arguments
+- `TF`: The element type of the operator
+- `derivative_order::Integer`: The order of the derivative
+- `accuracy_order::Integer`: The order of accuracy
+- `dx::TF`: The grid spacing
+"""
 function fdm_operator(
     ::Type{TF}, derivative_order::Integer, accuracy_order::Integer, dx::TF
 ) where {TF<:AbstractFloat}
@@ -61,6 +72,17 @@ function fdm_operator(
     )
 end
 
+"""
+    fdm_dissipation_operator(::Type{TF}, dissipation_order::Integer, σ::TF, dx::TF) -> FiniteDifferenceOperator{TF}
+
+Create a finite difference dissipation operator with specified dissipation order.
+
+# Arguments
+- `TF`: The element type of the operator
+- `dissipation_order::Integer`: The order of the dissipation operator
+- `σ::TF`: The dissipation coefficient
+- `dx::TF`: The grid spacing
+"""
 function fdm_dissipation_operator(
     ::Type{TF}, dissipation_order::Integer, σ::TF, dx::TF
 ) where {TF<:AbstractFloat}
