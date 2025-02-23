@@ -32,7 +32,12 @@ function fdm_centralop(
     num_coeffs = length(wts)
     num_side = div(num_coeffs - 1, 2)
     return FDMCentralOp{TR}(
-        derivative_order, accuracy_order, num_coeffs, num_side, wts, one(TR) / dx^derivative_order
+        derivative_order,
+        accuracy_order,
+        num_coeffs,
+        num_side,
+        wts,
+        one(TR) / dx^derivative_order,
     )
 end
 
@@ -70,10 +75,20 @@ function fdm_boundop(
     num_coeffs = size(wts_left, 1)
     num_points = size(wts_left, 2)
     op_left = FDMBoundOp{TR}(
-        derivative_order, accuracy_order, num_coeffs, num_points, wts_left, one(TR) / dx^derivative_order
+        derivative_order,
+        accuracy_order,
+        num_coeffs,
+        num_points,
+        wts_left,
+        one(TR) / dx^derivative_order,
     )
     op_right = FDMBoundOp{TR}(
-        derivative_order, accuracy_order, num_coeffs, num_points, wts_right, one(TR) / dx^derivative_order
+        derivative_order,
+        accuracy_order,
+        num_coeffs,
+        num_points,
+        wts_right,
+        one(TR) / dx^derivative_order,
     )
     return op_left, op_right
 end
