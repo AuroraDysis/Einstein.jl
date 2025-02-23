@@ -89,7 +89,7 @@ function fdm_extrapwts_right(extrap_order::Int)
 end
 
 """
-    fdm_boundwts([TR=Rational{TI}], der_order::TI, acc_order::TI) where {TR<:Real, TI<:Integer}
+    fdm_boundary_weights([TR=Rational{TI}], der_order::TI, acc_order::TI) where {TR<:Real, TI<:Integer}
 
 Generate finite difference coefficients for shifted boundary conditions.
 
@@ -102,7 +102,7 @@ Tuple of left and right shifted boundary finite difference coefficients
 The coefficients are stored in a matrix with the columns representing the different grid points.
 The columns are ordered from the leftmost grid point to the rightmost grid point.
 """
-function fdm_boundwts(::Type{TR}, der_order::Integer, acc_order::Integer) where {TR<:Real}
+function fdm_boundary_weights(::Type{TR}, der_order::Integer, acc_order::Integer) where {TR<:Real}
     num_coeffs = fdm_boundnum(der_order, acc_order)
     num_central = fdm_centralnum(der_order, acc_order)
     num_side = div(num_central - 1, 2)
@@ -126,8 +126,8 @@ function fdm_boundwts(::Type{TR}, der_order::Integer, acc_order::Integer) where 
     return D_left, D_right
 end
 
-function fdm_boundwts(der_order::TI, acc_order::TI) where {TI<:Integer}
-    return fdm_boundwts(Rational{TI}, der_order, acc_order)
+function fdm_boundary_weights(der_order::TI, acc_order::TI) where {TI<:Integer}
+    return fdm_boundary_weights(Rational{TI}, der_order, acc_order)
 end
 
-export fdm_central_weights, fdm_hermite_weights, fdm_extrapwts_right, fdm_extrapwts_left, fdm_boundwts
+export fdm_central_weights, fdm_hermite_weights, fdm_extrapwts_right, fdm_extrapwts_left, fdm_boundary_weights

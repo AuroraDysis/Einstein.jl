@@ -66,7 +66,7 @@ Create a shifted finite difference operator with specified derivative order and 
 function fdm_boundop(
     der_order::Integer, acc_order::Integer, dx::TR
 ) where {TR<:AbstractFloat}
-    wts_left, wts_right = fdm_boundwts(TR, der_order, acc_order)
+    wts_left, wts_right = fdm_boundary_weights(TR, der_order, acc_order)
     num_coeffs = size(wts_left, 1)
     num_points = size(wts_left, 2)
     op_left = FDMBoundOp{TR}(

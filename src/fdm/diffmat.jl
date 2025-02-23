@@ -76,7 +76,7 @@ function fdm_diffmat_bound(
     diffmat = BandedMatrix(Zeros{TR}(n, n), (num_boundcoeffs, num_boundcoeffs))
 
     wts = fdm_central_weights(TR, der_order, acc_order)
-    wts_left, wts_right = fdm_boundwts(TR, der_order, acc_order)
+    wts_left, wts_right = fdm_boundary_weights(TR, der_order, acc_order)
 
     @inbounds for i in 1:num_side
         diffmat[i, 1:num_boundcoeffs] .= @view(wts_left[:, i])

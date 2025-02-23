@@ -66,16 +66,16 @@ end
     @test fdm_extrapwts_right(5) == [1, -5, 10, -10, 5]
 end
 
-@testitem "fdm_boundwts" begin
+@testitem "fdm_boundary_weights" begin
     using Einstein.FiniteDifferenceSuite, Test
 
-    Dl14, Dr14 = fdm_boundwts(1, 4)
+    Dl14, Dr14 = fdm_boundary_weights(1, 4)
     @test Dl14[:, 1] == [-25//12, 4//1, -3//1, 4//3, -1//4]
     @test Dl14[:, 2] == [-1//4, -5//6, 3//2, -1//2, 1//12]
     @test Dr14[:, 1] == [-1//12, 1//2, -3//2, 5//6, 1//4]
     @test Dr14[:, 2] == [1//4, -4//3, 3//1, -4//1, 25//12]
 
-    Dl24, Dr24 = fdm_boundwts(2, 4)
+    Dl24, Dr24 = fdm_boundary_weights(2, 4)
     @test Dl24[:, 1] == [15//4, -77//6, 107//6, -13//1, 61//12, -5//6]
     @test Dl24[:, 2] == [5//6, -5//4, -1//3, 7//6, -1//2, 1//12]
     @test Dr24[:, 1] == [1//12, -1//2, 7//6, -1//3, -5//4, 5//6]
