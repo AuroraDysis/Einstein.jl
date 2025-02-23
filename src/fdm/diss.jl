@@ -18,7 +18,7 @@ Calculate the weights for Kreiss-Oliger dissipation of given order [Babiuc:2007v
 function fdm_disswts(::Type{TR}, diss_order::Integer) where {TR<:Real}
     @argcheck iseven(diss_order) "Only even orders are supported."
     r = div(diss_order, 2)
-    wts = fdm_centralwts(TR, diss_order, 2)
+    wts = fdm_central_weights(TR, diss_order, 2)
     @.. wts = (-1)^(r + 1) * wts / 2^(2 * r)
     return wts
 end

@@ -52,7 +52,7 @@ function fdm_diffmat_central(
     wts = op.wts
 
     diffmat = BandedMatrix(Zeros{TR}(n, n), (num_side, num_side))
-    wts = fdm_centralwts(TR, der_order, acc_order)
+    wts = fdm_central_weights(TR, der_order, acc_order)
 
     @inbounds for i in (num_side + 1):(n - num_side)
         diffmat[i, (i - num_side):(i + num_side)] .= wts
@@ -75,7 +75,7 @@ function fdm_diffmat_bound(
 
     diffmat = BandedMatrix(Zeros{TR}(n, n), (num_boundcoeffs, num_boundcoeffs))
 
-    wts = fdm_centralwts(TR, der_order, acc_order)
+    wts = fdm_central_weights(TR, der_order, acc_order)
     wts_left, wts_right = fdm_boundwts(TR, der_order, acc_order)
 
     @inbounds for i in 1:num_side

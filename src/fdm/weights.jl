@@ -24,7 +24,7 @@ SOFTWARE.
 """
 
 @doc raw"""
-    fdm_weights([TR=Float64], order::Integer, x0::Real, x::AbstractVector; 
+    fdm_weights_fornberg([TR=Float64], order::Integer, x0::Real, x::AbstractVector; 
                              hermite::Bool=false)
 
 Calculate finite difference weights for arbitrary-order derivatives using the Fornberg algorithm.
@@ -53,16 +53,16 @@ where N is the length of x
 ```julia
 # Standard central difference for first derivative
 x = [-1.0, 0.0, 1.0]
-w = fdm_weights(1, 0.0, x)
+w = fdm_weights_fornberg(1, 0.0, x)
 # Returns approximately [-0.5, 0.0, 0.5]
 
 # Forward difference for second derivative
 x = [0.0, 1.0, 2.0, 3.0]
-w = fdm_weights(2, 0.0, x)
+w = fdm_weights_fornberg(2, 0.0, x)
 
 # Hermite finite difference for third derivative
 x = [-1.0, 0.0, 1.0]
-w_f, w_d = fdm_weights(3, 0.0, x, hermite=true)
+w_f, w_d = fdm_weights_fornberg(3, 0.0, x, hermite=true)
 ```
 
 # References
@@ -73,7 +73,7 @@ w_f, w_d = fdm_weights(3, 0.0, x, hermite=true)
 - [Fornberg1998](@citet*)
 - [precision - Numerical derivative and finite difference coefficients: any update of the Fornberg method? - Computational Science Stack Exchange](https://scicomp.stackexchange.com/questions/11249/numerical-derivative-and-finite-difference-coefficients-any-update-of-the-fornb)
 """
-function fdm_weights(
+function fdm_weights_fornberg(
     order::Integer, x0::TR, x::AbstractVector{TR}; hermite::Bool=false
 ) where {TR<:Real}
     N = length(x)
@@ -143,4 +143,4 @@ function fdm_weights(
     end
 end
 
-export fdm_weights
+export fdm_weights_fornberg

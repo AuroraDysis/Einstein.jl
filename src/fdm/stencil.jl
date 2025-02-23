@@ -1,5 +1,5 @@
 """
-    fdm_centralwts([T=Rational{TI}], der_order::TI, acc_order::TI) where {T<:Real, TI<:Integer}
+    fdm_central_weights([TR=Rational{TI}], der_order::TI, acc_order::TI) where {TR<:Real, TI<:Integer}
 
 Generate central finite difference coefficients for a given derivative and accuracy order.
 
@@ -10,21 +10,21 @@ Generate central finite difference coefficients for a given derivative and accur
 # Returns
 Vector of rational coefficients for the finite difference stencil
 """
-function fdm_centralwts(::Type{T}, der_order::Integer, acc_order::Integer) where {T<:Real}
+function fdm_central_weights(::Type{TR}, der_order::Integer, acc_order::Integer) where {TR<:Real}
     @argcheck acc_order % 2 == 0 "Only even orders are supported for central FDM stencils."
 
     num_coeffs = fdm_centralnum(der_order, acc_order)
     num_side = div(num_coeffs - 1, 2)
-    local_grid = collect(T, (-num_side):num_side)
-    return fdm_weights(der_order, zero(T), local_grid)
+    local_grid = collect(TR, (-num_side):num_side)
+    return fdm_weights_fornberg(der_order, zero(TR), local_grid)
 end
 
-function fdm_centralwts(der_order::TI, acc_order::TI) where {TI<:Integer}
-    return fdm_centralwts(Rational{TI}, der_order, acc_order)
+function fdm_central_weights(der_order::TI, acc_order::TI) where {TI<:Integer}
+    return fdm_central_weights(Rational{TI}, der_order, acc_order)
 end
 
 """
-    fdm_hermitewts([T=Rational{TI}], der_order::TI, acc_order::TI) where {T<:Real, TI<:Integer}
+    fdm_hermite_weights([TR=Rational{TI}], der_order::TI, acc_order::TI) where {TR<:Real, TI<:Integer}
 
 Generate Hermite-type finite difference coefficients that include function value and derivative information.
 
@@ -37,7 +37,7 @@ Generate Hermite-type finite difference coefficients that include function value
 # Returns
 Vector of rational coefficients for the Hermite-type finite difference stencil
 """
-function fdm_hermitewts(::Type{T}, der_order::Integer, acc_order::Integer) where {T<:Real}
+function fdm_hermite_weights(::Type{TR}, der_order::Integer, acc_order::Integer) where {TR<:Real}
     @argcheck der_order >= 2 "Only derivative order greater than or equal to 2 are supported for Hermite-type finite difference."
 
     if mod(div(der_order, 2), 2) == 1
@@ -50,12 +50,12 @@ function fdm_hermitewts(::Type{T}, der_order::Integer, acc_order::Integer) where
 
     num_coeffs = fdm_hermitenum(der_order, acc_order)
     num_side = div(num_coeffs - 1, 2)
-    local_grid = collect(T, (-num_side):num_side)
-    return fdm_weights(der_order, zero(T), local_grid; hermite=true)
+    local_grid = collect(TR, (-num_side):num_side)
+    return fdm_weights_fornberg(der_order, zero(TR), local_grid; hermite=true)
 end
 
-function fdm_hermitewts(der_order::TI, acc_order::TI) where {TI<:Integer}
-    return fdm_hermitewts(Rational{TI}, der_order, acc_order)
+function fdm_hermite_weights(der_order::TI, acc_order::TI) where {TI<:Integer}
+    return fdm_hermite_weights(Rational{TI}, der_order, acc_order)
 end
 
 """
@@ -70,7 +70,7 @@ Generate weights for left-sided extrapolation of order `extrap_order`.
 Vector of rational coefficients for left-sided extrapolation
 """
 function fdm_extrapwts_left(extrap_order::Int)
-    return fdm_weights(0, 0, 1:extrap_order)
+    return fdm_weights_fornberg(0, 0, 1:extrap_order)
 end
 
 """
@@ -85,11 +85,11 @@ Generate weights for right-sided extrapolation of order `extrap_order`.
 Vector of rational coefficients for right-sided extrapolation
 """
 function fdm_extrapwts_right(extrap_order::Int)
-    return fdm_weights(0, 0, extrap_order:-1:1)
+    return fdm_weights_fornberg(0, 0, extrap_order:-1:1)
 end
 
 """
-    fdm_boundwts([T=Rational{TI}], der_order::TI, acc_order::TI) where {T<:Real, TI<:Integer}
+    fdm_boundwts([TR=Rational{TI}], der_order::TI, acc_order::TI) where {TR<:Real, TI<:Integer}
 
 Generate finite difference coefficients for shifted boundary conditions.
 
@@ -102,25 +102,25 @@ Tuple of left and right shifted boundary finite difference coefficients
 The coefficients are stored in a matrix with the columns representing the different grid points.
 The columns are ordered from the leftmost grid point to the rightmost grid point.
 """
-function fdm_boundwts(::Type{T}, der_order::Integer, acc_order::Integer) where {T<:Real}
+function fdm_boundwts(::Type{TR}, der_order::Integer, acc_order::Integer) where {TR<:Real}
     num_coeffs = fdm_boundnum(der_order, acc_order)
     num_central = fdm_centralnum(der_order, acc_order)
     num_side = div(num_central - 1, 2)
 
-    D_left = zeros(T, num_coeffs, num_side)
-    D_right = zeros(T, num_coeffs, num_side)
+    D_left = zeros(TR, num_coeffs, num_side)
+    D_right = zeros(TR, num_coeffs, num_side)
 
-    local_grid = zeros(T, num_coeffs)
+    local_grid = zeros(TR, num_coeffs)
     @inbounds for i in 1:num_side
         for j in 1:num_coeffs
             local_grid[j] = -(i - 1) + (j - 1)
         end
-        D_left[:, i] = fdm_weights(der_order, zero(T), local_grid)
+        D_left[:, i] = fdm_weights_fornberg(der_order, zero(TR), local_grid)
 
         for j in 1:num_coeffs
             local_grid[end - j + 1] = (i - 1) - (j - 1)
         end
-        D_right[:, end - i + 1] = fdm_weights(der_order, zero(T), local_grid)
+        D_right[:, end - i + 1] = fdm_weights_fornberg(der_order, zero(TR), local_grid)
     end
 
     return D_left, D_right
@@ -130,4 +130,4 @@ function fdm_boundwts(der_order::TI, acc_order::TI) where {TI<:Integer}
     return fdm_boundwts(Rational{TI}, der_order, acc_order)
 end
 
-export fdm_centralwts, fdm_hermitewts, fdm_extrapwts_right, fdm_extrapwts_left, fdm_boundwts
+export fdm_central_weights, fdm_hermite_weights, fdm_extrapwts_right, fdm_extrapwts_left, fdm_boundwts
