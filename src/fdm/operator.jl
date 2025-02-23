@@ -104,7 +104,7 @@ function fdm_dissipation_operator(
     half_width = div(width - 1, 2)
     boundary_width = size(left_weights, 2)
     factor = σ / dx
-    return new{TR,width,half_width,0}(
+    return FiniteDifferenceOperator{TR,width,half_width,boundary_width}(
         SVector{width,TR}(weights),
         SMatrix{half_width,boundary_width,TR}(left_weights),
         SMatrix{half_width,boundary_width,TR}(right_weights),
@@ -128,6 +128,7 @@ Create a banded matrix representation of the finite difference operator.
 """
 function fdm_operator_matrix(
     op::FiniteDifferenceOperator{TR,Width,HalfWidth,BoundaryWidth},
+    n::Integer,
     boundary::Bool=true,
     transpose::Bool=false,
 ) where {TR<:Real,Width,HalfWidth,BoundaryWidth}
@@ -152,7 +153,7 @@ function fdm_operator_matrix(
     end
 
     @inbounds for i in (half_width + 1):(n - half_width)
-        mat[i, (i - half_width):(i + half_width)] .= wts
+        mat[i, (i - half_width):(i + half_width)] .= weights
     end
 
     if transpose
