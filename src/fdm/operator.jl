@@ -21,59 +21,40 @@ struct FiniteDifferenceDissipationOperator{TR<:Real,Width,HalfWidth,BoundaryWidt
     dissipation_order::Integer
 end
 
-function mul!(
-    df::StridedArray{TR}, op::FiniteDifferenceOperator{TR}, f::StridedArray{TR}
-) where {TR<:Real}
+abstract type ConvolveMode end
+struct ConvolveAssign <: ConvolveMode end
+struct ConvolveAdd <: ConvolveMode end
+
+function fdm_apply_operator!(
+    df::StridedArray{TR},
+    op::FiniteDifferenceOperator{TR},
+    f::StridedArray{TR},
+    mode::Mode=ConvolveAssign(),
+) where {TR<:Real,Mode<:ConvolveMode}
     (; weights, left_weights, right_weights, factor) = op
-    fdm_convolve_interior!(df, f, weights, factor[])
-    fdm_convolve_boundary!(df, f, left_weights, right_weights, factor[])
+    fdm_convolve_interior!(df, f, weights, factor[], mode)
+    fdm_convolve_boundary!(df, f, left_weights, right_weights, factor[], mode)
     return nothing
 end
 
-function mul!(
+function fdm_apply_operator!(
     df::StridedArray{TR},
     op::FiniteDifferenceOperator{TR},
     f::StridedArray{TR},
     jacobian::StridedArray{TR},
-) where {TR<:Real}
+    mode::Mode=ConvolveAssign(),
+) where {TR<:Real,Mode<:ConvolveMode}
     (; weights, left_weights, right_weights, factor) = op
-    fdm_convolve_interior!(df, f, weights, factor[], jacobian)
-    fdm_convolve_boundary!(df, f, left_weights, right_weights, factor[], jacobian)
-    return nothing
-end
-
-function muladd!(
-    df::StridedArray{TR}, op::FiniteDifferenceOperator{TR}, f::StridedArray{TR}
-) where {TR<:Real}
-    (; weights, left_weights, right_weights, factor) = op
-    fdm_convolve_interior!(df, f, weights, factor[], ConvolveAdd())
-    fdm_convolve_boundary!(df, f, left_weights, right_weights, factor[], ConvolveAdd())
-    return nothing
-end
-
-function muladd!(
-    df::StridedArray{TR},
-    op::FiniteDifferenceOperator{TR},
-    f::StridedArray{TR},
-    jacobian::StridedArray{TR},
-) where {TR<:Real}
-    (; weights, left_weights, right_weights, factor) = op
-    fdm_convolve_interior!(df, f, weights, factor[], jacobian, ConvolveAdd())
-    fdm_convolve_boundary!(
-        df, f, left_weights, right_weights, factor[], jacobian, ConvolveAdd()
-    )
+    fdm_convolve_interior!(df, f, weights, factor[], jacobian, mode)
+    fdm_convolve_boundary!(df, f, left_weights, right_weights, factor[], jacobian, mode)
     return nothing
 end
 
 function *(op::FiniteDifferenceOperator{TR}, f::StridedArray{TR,N}) where {TR<:Real,N}
     df = Array{TR}(undef, size(f))::Array{TR,N}
-    mul!(df, op, f)
+    fdm_apply_operator!(df, op, f)
     return df
 end
-
-abstract type ConvolveMode end
-struct ConvolveAssign <: ConvolveMode end
-struct ConvolveAdd <: ConvolveMode end
 
 function fdm_convolve_boundary!(
     out::StridedArray{TR},
@@ -291,6 +272,5 @@ export FiniteDifferenceDerivativeOperator,
     fdm_operator_matrix,
     ConvolveAdd,
     ConvolveAssign,
-    mul!,
-    muladd!
+    fdm_apply_operator!
 export fdm_convolve_boundary!, fdm_convolve_interior!
