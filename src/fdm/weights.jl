@@ -207,26 +207,23 @@ function fdm_hermite_weights(derivative_order::TI, accuracy_order::TI) where {TI
     return fdm_hermite_weights(Rational{TI}, derivative_order, accuracy_order)
 end
 
-@enumx ExtrapolationDirection Left Right
-
 """
-    fdm_extrapolation_weights(extrapolation_order::Int, direction::ExtrapolationDirection)
+    fdm_extrapolation_weights(extrapolation_order::Int, direction::Symbol)
 
 Generate weights for left or right extrapolation.
 
 # Arguments
 - `extrapolation_order::Int`: Order of extrapolation
-- `direction::ExtrapolationDirection`: Direction of extrapolation
+- `direction::Symbol`: Direction of extrapolation (:left or :right)
 
 # Returns
 Vector of Integer coefficients for the extrapolation weights.
 """
-function fdm_extrapolation_weights(
-    extrapolation_order::Int, direction::ExtrapolationDirection.T
-)
+function fdm_extrapolation_weights(extrapolation_order::Int, direction::Symbol)
     @argcheck extrapolation_order > 0 "Only positive extrapolation orders are supported."
+    @argcheck direction in (:left, :right) "Direction must be :left or :right"
 
-    if direction == ExtrapolationDirection.Left
+    if direction === :left
         weights = fdm_weights_fornberg(0, 0, 1:extrapolation_order)
     else
         weights = fdm_weights_fornberg(0, 0, extrapolation_order:-1:1)
