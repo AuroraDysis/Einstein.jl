@@ -12,12 +12,21 @@
         @test out_1d[2:4] ≈ [1.0, 1.0, 1.0]
 
         # Test 2D interior convolution
-        in_2d = [1.0 2.0; 2.0 3.0; 3.0 4.0; 4.0 5.0]
+        in_2d = [1.0 2.0; 2.0 3.0; 3.0 4.0; 4.0 5.0; 5.0 6.0]
         out_2d = similar(in_2d)
         weights = SVector{3}([-0.5, 0.0, 0.5])
         
         fdm_convolve_interior!(out_2d, in_2d, weights, factor)
-        @test out_2d[2:3, :] ≈ [1.0 1.0; 1.0 1.0]
+        @test out_2d[2:4, :] ≈ [1.0 1.0; 1.0 1.0; 1.0 1.0]
+
+        # Test 1D interior convolution with vector factor
+        factors = [0.5, 0.6, 0.7, 0.8, 0.9]
+        fdm_convolve_interior!(out_1d, in_1d, weights, factors)
+        @test out_1d[2:4] ≈ [0.6, 0.7, 0.8]
+
+        # Test 2D interior convolution with vector factor
+        fdm_convolve_interior!(out_2d, in_2d, weights, factors)
+        @test out_2d[2:4, :] ≈ [0.6 0.6; 0.7 0.7; 0.8 0.8]
     end
 
     @testset "Boundary Convolution" begin
