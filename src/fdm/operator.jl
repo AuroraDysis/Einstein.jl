@@ -1,4 +1,5 @@
 import Base: *
+using Static
 
 abstract type FiniteDifferenceOperator{TR<:Real} end
 
@@ -21,6 +22,9 @@ struct FiniteDifferenceDissipationOperator{TR<:Real,Width,HalfWidth,BoundaryWidt
     dissipation_order::Integer
 end
 
+const Add = StaticInt{1}
+const Assign = StaticInt{0}
+
 function mul!(
     df::StridedArray{TR}, op::FiniteDifferenceOperator{TR}, f::StridedArray{TR}
 ) where {TR<:Real}
@@ -42,11 +46,17 @@ function fdm_convolve_boundary!(
     left_weights::SMatrix{HalfWidth,BoundaryWidth,TR},
     right_weights::SMatrix{HalfWidth,BoundaryWidth,TR},
     factor::TR,
+    mode::StaticInt=Assign(),
 ) where {TR<:Real,HalfWidth,BoundaryWidth}
     out_left, out_right = @views out[1:HalfWidth, :], out[(end - HalfWidth + 1):end, :]
     in_left, in_right = @views in[1:BoundaryWidth, :], in[(end - BoundaryWidth + 1):end, :]
-    out_left .= factor .* (left_weights * in_left)
-    out_right .= factor .* (right_weights * in_right)
+    if mode == Assign()
+        out_left .= factor .* (left_weights * in_left)
+        out_right .= factor .* (right_weights * in_right)
+    else # Add mode
+        out_left .+= factor .* (left_weights * in_left)
+        out_right .+= factor .* (right_weights * in_right)
+    end
     return nothing
 end
 
@@ -56,18 +66,28 @@ function fdm_convolve_boundary!(
     left_weights::SMatrix{HalfWidth,BoundaryWidth,TR},
     right_weights::SMatrix{HalfWidth,BoundaryWidth,TR},
     factors::StridedVector{TR},
+    mode::StaticInt=Assign(),
 ) where {TR<:Real,HalfWidth,BoundaryWidth}
     out_left, out_right = @views out[1:HalfWidth, :], out[(end - HalfWidth + 1):end, :]
     in_left, in_right = @views in[1:BoundaryWidth, :], in[(end - BoundaryWidth + 1):end, :]
     factors_left, factors_right = @views factors[1:HalfWidth],
     factors[(end - HalfWidth + 1):end]
-    out_left .= factors_left .* (left_weights * in_left)
-    out_right .= factors_right .* (right_weights * in_right)
+    if mode == Assign()
+        out_left .= factors_left .* (left_weights * in_left)
+        out_right .= factors_right .* (right_weights * in_right)
+    else # Add mode
+        out_left .+= factors_left .* (left_weights * in_left)
+        out_right .+= factors_right .* (right_weights * in_right)
+    end
     return nothing
 end
 
 @generated function fdm_convolve_interior!(
-    out::StridedArray{TR}, in::StridedArray{TR}, weights::SVector{width,TR}, factor::TR
+    out::StridedArray{TR},
+    in::StridedArray{TR},
+    weights::SVector{width,TR},
+    factor::TR,
+    mode::StaticInt=Assign(),
 ) where {width,TR<:Real}
     half_width = width ÷ 2
     ex = :(weights[1] * in[begin:(end - $width + 1), :])
@@ -77,7 +97,11 @@ end
     end
 
     quote
-        @.. out[(begin + $half_width):(end - $half_width), :] = $ex * factor
+        if mode == Assign()
+            @.. out[(begin + $half_width):(end - $half_width), :] = $ex * factor
+        else # Add mode
+            @.. out[(begin + $half_width):(end - $half_width), :] += $ex * factor
+        end
         return nothing
     end
 end
@@ -87,6 +111,7 @@ end
     in::StridedArray{TR},
     weights::SVector{width,TR},
     factors::StridedVector{TR},
+    mode::StaticInt=Assign(),
 ) where {width,TR<:Real}
     half_width = width ÷ 2
     ex = :(weights[1] * in[begin:(end - $width + 1), :])
@@ -96,8 +121,13 @@ end
     end
 
     quote
-        @.. broadcast=true out[(begin + $half_width):(end - $half_width), :] =
-            factors[(begin + $half_width):(end - $half_width)] * $ex
+        if mode == Assign()
+            @.. broadcast = true out[(begin + $half_width):(end - $half_width), :] =
+                factors[(begin + $half_width):(end - $half_width)] * $ex
+        else # Add mode
+            @.. broadcast = true out[(begin + $half_width):(end - $half_width), :] +=
+                factors[(begin + $half_width):(end - $half_width)] * $ex
+        end
         return nothing
     end
 end
@@ -221,5 +251,7 @@ export FiniteDifferenceDerivativeOperator,
     FiniteDifferenceDissipationOperator,
     fdm_derivative_operator,
     fdm_dissipation_operator,
-    fdm_operator_matrix
+    fdm_operator_matrix,
+    Add,
+    Assign
 export fdm_convolve_boundary!, fdm_convolve_interior!
