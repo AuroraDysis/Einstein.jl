@@ -35,7 +35,7 @@ function mul!(
 end
 
 function muladd!(
-    df::StridedArray{TR}, op::FiniteDifferenceDissipationOperator{TR}, f::StridedArray{TR}
+    df::StridedArray{TR}, op::FiniteDifferenceOperator{TR}, f::StridedArray{TR}
 ) where {TR<:Real}
     (; weights, left_weights, right_weights, factor) = op
     fdm_convolve_interior!(df, f, weights, factor[], Add())
