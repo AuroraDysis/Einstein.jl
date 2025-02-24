@@ -4,6 +4,7 @@ using ..Utils
 
 using ArgCheck: @argcheck
 
+using EnumX
 using FillArrays
 using FastBroadcast
 using LinearAlgebra
