@@ -1,3 +1,5 @@
+using Static
+
 """
 MIT License
 
@@ -207,6 +209,9 @@ function fdm_hermite_weights(derivative_order::TI, accuracy_order::TI) where {TI
     return fdm_hermite_weights(Rational{TI}, derivative_order, accuracy_order)
 end
 
+const Right = StaticInt{0}
+const Left = StaticInt{1}
+
 """
     fdm_extrapolation_weights(extrapolation_order::Int, side::Symbol=:right)
 
@@ -219,11 +224,11 @@ Generate weights for left or right-sided extrapolation of order `extrapolation_o
 # Returns
 Vector of Integer coefficients for the extrapolation
 """
-function fdm_extrapolation_weights(extrapolation_order::Int, side::Symbol=:right)
+function fdm_extrapolation_weights(extrapolation_order::Int, side::StaticInt=Right())
     @argcheck extrapolation_order > 0 "Only positive extrapolation orders are supported."
-    @argcheck side in (:left, :right) "Only left or right extrapolation is supported."
+    @argcheck side in (Right(), Left()) "Only Right() or Left() side is supported."
 
-    if side == :left
+    if side == Left()
         return fdm_weights_fornberg(0, 0, 1:extrapolation_order)
     else
         return fdm_weights_fornberg(0, 0, extrapolation_order:-1:1)
@@ -280,4 +285,6 @@ export fdm_weights_fornberg,
     fdm_central_weights,
     fdm_hermite_weights,
     fdm_extrapolation_weights,
-    fdm_boundary_weights
+    fdm_boundary_weights,
+    Right,
+    Left

@@ -112,21 +112,21 @@ end
     @test E4 == [1//36, 8//9, 0//1, -8//9, -1//36]
 end
 
-@testitem "fdm_extrapwts" begin
-    using Einstein.FiniteDifferenceSuite, Test
+@testitem "fdm_extrapolation_weights" begin
+    using Einstein.FiniteDifferenceSuite
 
     @testset "coefficients" begin
-        @test fdm_extrapolation_weights(4, :left) == [4, -6, 4, -1]
-        @test fdm_extrapolation_weights(4, :right) == [-1, 4, -6, 4]
+        @test fdm_extrapolation_weights(4, Left()) == [4, -6, 4, -1]
+        @test fdm_extrapolation_weights(4, Right()) == [-1, 4, -6, 4]
 
-        @test fdm_extrapolation_weights(5, :left) == [5, -10, 10, -5, 1]
-        @test fdm_extrapolation_weights(5, :right) == [1, -5, 10, -10, 5]
+        @test fdm_extrapolation_weights(5, Left()) == [5, -10, 10, -5, 1]
+        @test fdm_extrapolation_weights(5, Right()) == [1, -5, 10, -10, 5]
     end
 
     @testset "return type" begin
         for order in 1:10
-            @test typeof(fdm_extrapolation_weights(order, :left)) == Vector{Int}
-            @test typeof(fdm_extrapolation_weights(order, :right)) == Vector{Int}
+            @test typeof(fdm_extrapolation_weights(order, Left())) == Vector{Int}
+            @test typeof(fdm_extrapolation_weights(order, Right())) == Vector{Int}
         end
     end
 end
