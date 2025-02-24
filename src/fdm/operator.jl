@@ -30,12 +30,38 @@ function mul!(
     return nothing
 end
 
+function mul!(
+    df::StridedArray{TR},
+    op::FiniteDifferenceOperator{TR},
+    f::StridedArray{TR},
+    jacobian::StridedArray{TR},
+) where {TR<:Real}
+    (; weights, left_weights, right_weights, factor) = op
+    fdm_convolve_interior!(df, f, weights, factor[], jacobian)
+    fdm_convolve_boundary!(df, f, left_weights, right_weights, factor[], jacobian)
+    return nothing
+end
+
 function muladd!(
     df::StridedArray{TR}, op::FiniteDifferenceOperator{TR}, f::StridedArray{TR}
 ) where {TR<:Real}
     (; weights, left_weights, right_weights, factor) = op
     fdm_convolve_interior!(df, f, weights, factor[], ConvolveAdd())
     fdm_convolve_boundary!(df, f, left_weights, right_weights, factor[], ConvolveAdd())
+    return nothing
+end
+
+function muladd!(
+    df::StridedArray{TR},
+    op::FiniteDifferenceOperator{TR},
+    f::StridedArray{TR},
+    jacobian::StridedArray{TR},
+) where {TR<:Real}
+    (; weights, left_weights, right_weights, factor) = op
+    fdm_convolve_interior!(df, f, weights, factor[], jacobian, ConvolveAdd())
+    fdm_convolve_boundary!(
+        df, f, left_weights, right_weights, factor[], jacobian, ConvolveAdd()
+    )
     return nothing
 end
 
