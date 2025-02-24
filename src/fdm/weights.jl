@@ -283,4 +283,3 @@ export fdm_weights_fornberg,
     fdm_hermite_weights,
     fdm_extrapolation_weights,
     fdm_boundary_weights
-export ExtrapolationDirection
