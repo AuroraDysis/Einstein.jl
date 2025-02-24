@@ -22,9 +22,6 @@ struct FiniteDifferenceDissipationOperator{TR<:Real,Width,HalfWidth,BoundaryWidt
     dissipation_order::Integer
 end
 
-const Add = StaticInt{1}
-const Assign = StaticInt{0}
-
 function mul!(
     df::StridedArray{TR}, op::FiniteDifferenceOperator{TR}, f::StridedArray{TR}
 ) where {TR<:Real}
@@ -38,8 +35,8 @@ function muladd!(
     df::StridedArray{TR}, op::FiniteDifferenceOperator{TR}, f::StridedArray{TR}
 ) where {TR<:Real}
     (; weights, left_weights, right_weights, factor) = op
-    fdm_convolve_interior!(df, f, weights, factor[], Add())
-    fdm_convolve_boundary!(df, f, left_weights, right_weights, factor[], Add())
+    fdm_convolve_interior!(df, f, weights, factor[], ConvolveAadd())
+    fdm_convolve_boundary!(df, f, left_weights, right_weights, factor[], ConvolveAadd())
     return nothing
 end
 
@@ -49,17 +46,21 @@ function *(op::FiniteDifferenceOperator{TR}, f::StridedArray{TR,N}) where {TR<:R
     return df
 end
 
+abstract type ConvolveMode end
+struct ConvolveAssign <: ConvolveMode end
+struct ConvolveAdd <: ConvolveMode end
+
 function fdm_convolve_boundary!(
     out::StridedArray{TR},
     in::StridedArray{TR},
     left_weights::SMatrix{HalfWidth,BoundaryWidth,TR},
     right_weights::SMatrix{HalfWidth,BoundaryWidth,TR},
     factor::TR,
-    mode::StaticInt=Assign(),
-) where {TR<:Real,HalfWidth,BoundaryWidth}
+    ::Mode=ConvolveAssign(),
+) where {TR<:Real,HalfWidth,BoundaryWidth,Mode<:ConvolveMode}
     out_left, out_right = @views out[1:HalfWidth, :], out[(end - HalfWidth + 1):end, :]
     in_left, in_right = @views in[1:BoundaryWidth, :], in[(end - BoundaryWidth + 1):end, :]
-    if mode == Assign()
+    if mode == ConvolveAssign()
         out_left .= factor .* (left_weights * in_left)
         out_right .= factor .* (right_weights * in_right)
     else # Add mode
@@ -75,13 +76,13 @@ function fdm_convolve_boundary!(
     left_weights::SMatrix{HalfWidth,BoundaryWidth,TR},
     right_weights::SMatrix{HalfWidth,BoundaryWidth,TR},
     factors::StridedVector{TR},
-    mode::StaticInt=Assign(),
-) where {TR<:Real,HalfWidth,BoundaryWidth}
+    ::Mode=ConvolveAssign(),
+) where {TR<:Real,HalfWidth,BoundaryWidth,Mode<:ConvolveMode}
     out_left, out_right = @views out[1:HalfWidth, :], out[(end - HalfWidth + 1):end, :]
     in_left, in_right = @views in[1:BoundaryWidth, :], in[(end - BoundaryWidth + 1):end, :]
     factors_left, factors_right = @views factors[1:HalfWidth],
     factors[(end - HalfWidth + 1):end]
-    if mode == Assign()
+    if mode == ConvolveAssign()
         out_left .= factors_left .* (left_weights * in_left)
         out_right .= factors_right .* (right_weights * in_right)
     else # Add mode
@@ -96,8 +97,8 @@ end
     in::StridedArray{TR},
     weights::SVector{width,TR},
     factor::TR,
-    mode::StaticInt=Assign(),
-) where {width,TR<:Real}
+    ::Mode=ConvolveAssign(),
+) where {width,TR<:Real,Mode<:ConvolveMode}
     half_width = width ÷ 2
     ex = :(weights[1] * in[begin:(end - $width + 1), :])
 
@@ -106,7 +107,7 @@ end
     end
 
     quote
-        if mode == Assign()
+        if mode == ConvolveAssign()
             @.. out[(begin + $half_width):(end - $half_width), :] = $ex * factor
         else # Add mode
             @.. out[(begin + $half_width):(end - $half_width), :] += $ex * factor
@@ -120,8 +121,8 @@ end
     in::StridedArray{TR},
     weights::SVector{width,TR},
     factors::StridedVector{TR},
-    mode::StaticInt=Assign(),
-) where {width,TR<:Real}
+    ::Mode=ConvolveAssign(),
+) where {width,TR<:Real,Mode<:ConvolveMode}
     half_width = width ÷ 2
     ex = :(weights[1] * in[begin:(end - $width + 1), :])
 
@@ -130,7 +131,7 @@ end
     end
 
     quote
-        if mode == Assign()
+        if mode == ConvolveAssign()
             @.. broadcast = true out[(begin + $half_width):(end - $half_width), :] =
                 factors[(begin + $half_width):(end - $half_width)] * $ex
         else # Add mode

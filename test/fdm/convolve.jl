@@ -30,22 +30,22 @@
 
         # Test Add mode for 1D interior convolution
         out_1d_add = ones(size(in_1d))
-        fdm_convolve_interior!(out_1d_add, in_1d, weights, factor, Add())
+        fdm_convolve_interior!(out_1d_add, in_1d, weights, factor, ConvolveAadd())
         @test out_1d_add[2:4] ≈ [2.0, 2.0, 2.0]  # original ones + convolution result
 
         # Test Add mode for 2D interior convolution
         out_2d_add = ones(size(in_2d))
-        fdm_convolve_interior!(out_2d_add, in_2d, weights, factor, Add())
+        fdm_convolve_interior!(out_2d_add, in_2d, weights, factor, ConvolveAadd())
         @test out_2d_add[2:4, :] ≈ [2.0 2.0; 2.0 2.0; 2.0 2.0]
 
         # Test Add mode for 1D interior convolution with vector factor
         out_1d_add = ones(size(in_1d))
-        fdm_convolve_interior!(out_1d_add, in_1d, weights, factors, Add())
+        fdm_convolve_interior!(out_1d_add, in_1d, weights, factors, ConvolveAadd())
         @test out_1d_add[2:4] ≈ [1.6, 1.7, 1.8]
 
         # Test Add mode for 2D interior convolution with vector factor
         out_2d_add = ones(size(in_2d))
-        fdm_convolve_interior!(out_2d_add, in_2d, weights, factors, Add())
+        fdm_convolve_interior!(out_2d_add, in_2d, weights, factors, ConvolveAadd())
         @test out_2d_add[2:4, :] ≈ [1.6 1.6; 1.7 1.7; 1.8 1.8]
     end
 
@@ -84,25 +84,25 @@
 
         # Test Add mode for 1D boundary convolution
         out_1d_add = ones(size(in_1d))
-        fdm_convolve_boundary!(out_1d_add, in_1d, left_weights, right_weights, factor, Add())
+        fdm_convolve_boundary!(out_1d_add, in_1d, left_weights, right_weights, factor, ConvolveAadd())
         @test out_1d_add[1:2] ≈ [-2.0, 1.5]  # original ones + convolution result
         @test out_1d_add[4:5] ≈ [1.5, -5.0]
 
         # Test Add mode with vector factors
         out_1d_add = ones(size(in_1d))
-        fdm_convolve_boundary!(out_1d_add, in_1d, left_weights, right_weights, factors, Add())
+        fdm_convolve_boundary!(out_1d_add, in_1d, left_weights, right_weights, factors, ConvolveAadd())
         @test out_1d_add[1:2] ≈ [-0.5, 1.3]
         @test out_1d_add[4:5] ≈ [1.4, -4.4]
 
         # Test Add mode for 2D boundary convolution
         out_2d_add = ones(size(in_2d))
-        fdm_convolve_boundary!(out_2d_add, in_2d, left_weights, right_weights, factor, Add())
+        fdm_convolve_boundary!(out_2d_add, in_2d, left_weights, right_weights, factor, ConvolveAadd())
         @test out_2d_add[1:2, :] ≈ [-2.0 -3.0; 1.5 1.5]
         @test out_2d_add[5:6, :] ≈ [1.5 1.5; -6.0 -7.0]
 
         # Test Add mode with vector factors for 2D
         out_2d_add = ones(size(in_2d))
-        fdm_convolve_boundary!(out_2d_add, in_2d, left_weights, right_weights, factors, Add())
+        fdm_convolve_boundary!(out_2d_add, in_2d, left_weights, right_weights, factors, ConvolveAadd())
         @test out_2d_add[1:2, :] ≈ [-0.5 -1.0; 1.3 1.3]
         @test out_2d_add[5:6, :] ≈ [1.4 1.4; -5.3 -6.2]
     end
