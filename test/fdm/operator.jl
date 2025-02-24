@@ -50,7 +50,7 @@ end
 
     @testset "Construction" begin
         op = fdm_dissipation_operator(2, 1.0, 0.1)
-        @test op isa FiniteDifferenceDerivativeOperator{Float64}
+        @test op isa FiniteDifferenceDissipationOperator{Float64}
         @test op.factor[] ≈ 10.0
     end
 

@@ -42,9 +42,24 @@
         @test out_1d[4:5] ≈ [0.5, -6.0]
 
         # Test with vector factors
-        factors = [0.5, 1.0, 1.0, 1.0, 0.5]
+        factors = [0.5, 0.6, 0.7, 0.8, 0.9]
         fdm_convolve_boundary!(out_1d, in_1d, left_weights, right_weights, factors)
-        @test out_1d[1:2] ≈ [-1.5, 0.5]
-        @test out_1d[4:5] ≈ [0.5, -3.0]
+        @test out_1d[1:2] ≈ [-1.5, 0.3]
+        @test out_1d[4:5] ≈ [0.4, -5.4]
+
+        # Test 2D boundary convolution
+        in_2d = [1.0 2.0; 2.0 3.0; 3.0 4.0; 4.0 5.0; 5.0 6.0; 6.0 7.0]
+        out_2d = similar(in_2d)
+        left_weights = @SMatrix [1.0 -2.0; -0.5 0.5]
+        right_weights = @SMatrix [-0.5 0.5; 1.0 -2.0]
+
+        fdm_convolve_boundary!(out_2d, in_2d, left_weights, right_weights, factor)
+        @test out_2d[1:2, :] ≈ [-3.0 -4.0; 0.5 0.5]
+        @test out_2d[5:6, :] ≈ [0.5 0.5; -7.0 -8.0]
+
+        # Test with vector factors
+        fdm_convolve_boundary!(out_2d, in_2d, left_weights, right_weights, factors)
+        @test out_2d[1:2, :] ≈ [-1.5 -2.0; 0.3 0.3]
+        @test out_2d[5:6, :] ≈ [0.4 0.4; -6.3 -7.2]
     end
 end
