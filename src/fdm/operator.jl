@@ -34,8 +34,8 @@ function muladd!(
     df::StridedArray{TR}, op::FiniteDifferenceOperator{TR}, f::StridedArray{TR}
 ) where {TR<:Real}
     (; weights, left_weights, right_weights, factor) = op
-    fdm_convolve_interior!(df, f, weights, factor[], ConvolveAadd())
-    fdm_convolve_boundary!(df, f, left_weights, right_weights, factor[], ConvolveAadd())
+    fdm_convolve_interior!(df, f, weights, factor[], ConvolveAdd())
+    fdm_convolve_boundary!(df, f, left_weights, right_weights, factor[], ConvolveAdd())
     return nothing
 end
 
@@ -59,7 +59,7 @@ function fdm_convolve_boundary!(
 ) where {TR<:Real,HalfWidth,BoundaryWidth,Mode<:ConvolveMode}
     out_left, out_right = @views out[1:HalfWidth, :], out[(end - HalfWidth + 1):end, :]
     in_left, in_right = @views in[1:BoundaryWidth, :], in[(end - BoundaryWidth + 1):end, :]
-    if Mode == ConvolveAssign()
+    if Mode == ConvolveAssign
         out_left .= factor .* (left_weights * in_left)
         out_right .= factor .* (right_weights * in_right)
     else # Add Mode
@@ -74,19 +74,20 @@ function fdm_convolve_boundary!(
     in::StridedArray{TR},
     left_weights::SMatrix{HalfWidth,BoundaryWidth,TR},
     right_weights::SMatrix{HalfWidth,BoundaryWidth,TR},
-    factors::StridedVector{TR},
+    factor::TR,
+    jacobian::StridedArray{TR},
     ::Mode=ConvolveAssign(),
 ) where {TR<:Real,HalfWidth,BoundaryWidth,Mode<:ConvolveMode}
     out_left, out_right = @views out[1:HalfWidth, :], out[(end - HalfWidth + 1):end, :]
     in_left, in_right = @views in[1:BoundaryWidth, :], in[(end - BoundaryWidth + 1):end, :]
-    factors_left, factors_right = @views factors[1:HalfWidth],
-    factors[(end - HalfWidth + 1):end]
-    if Mode == ConvolveAssign()
-        out_left .= factors_left .* (left_weights * in_left)
-        out_right .= factors_right .* (right_weights * in_right)
+    jac_left = @view jacobian[1:HalfWidth, :]
+    jac_right = @view jacobian[(end - HalfWidth + 1):end, :]
+    if Mode == ConvolveAssign
+        out_left .= factor .* jac_left .* (left_weights * in_left)
+        out_right .= factor .* jac_right .* (right_weights * in_right)
     else # Add Mode
-        out_left .+= factors_left .* (left_weights * in_left)
-        out_right .+= factors_right .* (right_weights * in_right)
+        out_left .+= factor .* jac_left .* (left_weights * in_left)
+        out_right .+= factor .* jac_right .* (right_weights * in_right)
     end
     return nothing
 end
@@ -106,7 +107,7 @@ end
     end
 
     quote
-        if Mode == ConvolveAssign()
+        if Mode == ConvolveAssign
             @.. out[(begin + $half_width):(end - $half_width), :] = $ex * factor
         else # Add Mode
             @.. out[(begin + $half_width):(end - $half_width), :] += $ex * factor
@@ -119,7 +120,8 @@ end
     out::StridedArray{TR},
     in::StridedArray{TR},
     weights::SVector{width,TR},
-    factors::StridedVector{TR},
+    factor::TR,
+    jacobian::StridedArray{TR},
     ::Mode=ConvolveAssign(),
 ) where {width,TR<:Real,Mode<:ConvolveMode}
     half_width = width ÷ 2
@@ -130,12 +132,12 @@ end
     end
 
     quote
-        if Mode == ConvolveAssign()
+        if Mode == ConvolveAssign
             @.. broadcast = true out[(begin + $half_width):(end - $half_width), :] =
-                factors[(begin + $half_width):(end - $half_width)] * $ex
+                factor * jacobian[(begin + $half_width):(end - $half_width)] * $ex
         else # Add Mode
             @.. broadcast = true out[(begin + $half_width):(end - $half_width), :] +=
-                factors[(begin + $half_width):(end - $half_width)] * $ex
+                factor * jacobian[(begin + $half_width):(end - $half_width)] * $ex
         end
         return nothing
     end
