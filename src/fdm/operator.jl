@@ -59,10 +59,10 @@ function fdm_convolve_boundary!(
 ) where {TR<:Real,HalfWidth,BoundaryWidth,Mode<:ConvolveMode}
     out_left, out_right = @views out[1:HalfWidth, :], out[(end - HalfWidth + 1):end, :]
     in_left, in_right = @views in[1:BoundaryWidth, :], in[(end - BoundaryWidth + 1):end, :]
-    if mode == ConvolveAssign()
+    if Mode == ConvolveAssign()
         out_left .= factor .* (left_weights * in_left)
         out_right .= factor .* (right_weights * in_right)
-    else # Add mode
+    else # Add Mode
         out_left .+= factor .* (left_weights * in_left)
         out_right .+= factor .* (right_weights * in_right)
     end
@@ -81,10 +81,10 @@ function fdm_convolve_boundary!(
     in_left, in_right = @views in[1:BoundaryWidth, :], in[(end - BoundaryWidth + 1):end, :]
     factors_left, factors_right = @views factors[1:HalfWidth],
     factors[(end - HalfWidth + 1):end]
-    if mode == ConvolveAssign()
+    if Mode == ConvolveAssign()
         out_left .= factors_left .* (left_weights * in_left)
         out_right .= factors_right .* (right_weights * in_right)
-    else # Add mode
+    else # Add Mode
         out_left .+= factors_left .* (left_weights * in_left)
         out_right .+= factors_right .* (right_weights * in_right)
     end
@@ -106,9 +106,9 @@ end
     end
 
     quote
-        if mode == ConvolveAssign()
+        if Mode == ConvolveAssign()
             @.. out[(begin + $half_width):(end - $half_width), :] = $ex * factor
-        else # Add mode
+        else # Add Mode
             @.. out[(begin + $half_width):(end - $half_width), :] += $ex * factor
         end
         return nothing
@@ -130,10 +130,10 @@ end
     end
 
     quote
-        if mode == ConvolveAssign()
+        if Mode == ConvolveAssign()
             @.. broadcast = true out[(begin + $half_width):(end - $half_width), :] =
                 factors[(begin + $half_width):(end - $half_width)] * $ex
-        else # Add mode
+        else # Add Mode
             @.. broadcast = true out[(begin + $half_width):(end - $half_width), :] +=
                 factors[(begin + $half_width):(end - $half_width)] * $ex
         end
