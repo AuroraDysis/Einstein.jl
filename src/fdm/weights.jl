@@ -1,5 +1,3 @@
-using Static
-
 """
 MIT License
 
@@ -209,30 +207,32 @@ function fdm_hermite_weights(derivative_order::TI, accuracy_order::TI) where {TI
     return fdm_hermite_weights(Rational{TI}, derivative_order, accuracy_order)
 end
 
-const Right = StaticInt{0}
-const Left = StaticInt{1}
+@enumx ExtrapolationDirection Left Right
 
 """
-    fdm_extrapolation_weights(extrapolation_order::Int, side::Symbol=:right)
+    fdm_extrapolation_weights(extrapolation_order::Int, direction::ExtrapolationDirection)
 
-Generate weights for left or right-sided extrapolation of order `extrapolation_order`.
+Generate weights for left or right extrapolation.
 
 # Arguments
 - `extrapolation_order::Int`: Order of extrapolation
-- `side::Symbol`: Side of the extrapolation (default: :right)
+- `direction::ExtrapolationDirection`: Direction of extrapolation
 
 # Returns
-Vector of Integer coefficients for the extrapolation
+Vector of Integer coefficients for the extrapolation weights.
 """
-function fdm_extrapolation_weights(extrapolation_order::Int, side::StaticInt=Right())
+function fdm_extrapolation_weights(
+    extrapolation_order::Int, direction::ExtrapolationDirection.T
+)
     @argcheck extrapolation_order > 0 "Only positive extrapolation orders are supported."
-    @argcheck side in (Right(), Left()) "Only Right() or Left() side is supported."
 
-    if side == Left()
-        return fdm_weights_fornberg(0, 0, 1:extrapolation_order)
+    if direction == ExtrapolationDirection.Left
+        weights = fdm_weights_fornberg(0, 0, 1:extrapolation_order)
     else
-        return fdm_weights_fornberg(0, 0, extrapolation_order:-1:1)
+        weights = fdm_weights_fornberg(0, 0, extrapolation_order:-1:1)
     end
+
+    return weights
 end
 
 """
@@ -285,6 +285,5 @@ export fdm_weights_fornberg,
     fdm_central_weights,
     fdm_hermite_weights,
     fdm_extrapolation_weights,
-    fdm_boundary_weights,
-    Right,
-    Left
+    fdm_boundary_weights
+export ExtrapolationDirection

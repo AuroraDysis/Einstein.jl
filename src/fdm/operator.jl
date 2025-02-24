@@ -1,5 +1,4 @@
 import Base: *
-using Static
 
 abstract type FiniteDifferenceOperator{TR<:Real} end
 
@@ -262,8 +261,8 @@ export FiniteDifferenceDerivativeOperator,
     fdm_derivative_operator,
     fdm_dissipation_operator,
     fdm_operator_matrix,
-    Add,
-    Assign,
+    ConvolveAdd,
+    ConvolveAssign,
     mul!,
     muladd!
 export fdm_convolve_boundary!, fdm_convolve_interior!

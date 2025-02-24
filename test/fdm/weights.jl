@@ -116,11 +116,13 @@ end
     using Einstein.FiniteDifferenceSuite
 
     @testset "coefficients" begin
-        @test fdm_extrapolation_weights(4, Left()) == [4, -6, 4, -1]
-        @test fdm_extrapolation_weights(4, Right()) == [-1, 4, -6, 4]
+        @test fdm_extrapolation_weights(4, ExtrapolationDirection.Left) == [4, -6, 4, -1]
+        @test fdm_extrapolation_weights(4, ExtrapolationDirection.Right) == [-1, 4, -6, 4]
 
-        @test fdm_extrapolation_weights(5, Left()) == [5, -10, 10, -5, 1]
-        @test fdm_extrapolation_weights(5, Right()) == [1, -5, 10, -10, 5]
+        @test fdm_extrapolation_weights(5, ExtrapolationDirection.Left) ==
+            [5, -10, 10, -5, 1]
+        @test fdm_extrapolation_weights(5, ExtrapolationDirection.Right) ==
+            [1, -5, 10, -10, 5]
     end
 
     @testset "return type" begin
