@@ -34,6 +34,15 @@ function mul!(
     return nothing
 end
 
+function muladd!(
+    df::StridedArray{TR}, op::FiniteDifferenceDissipationOperator{TR}, f::StridedArray{TR}
+) where {TR<:Real}
+    (; weights, left_weights, right_weights, factor) = op
+    fdm_convolve_interior!(df, f, weights, factor[], Add())
+    fdm_convolve_boundary!(df, f, left_weights, right_weights, factor[], Add())
+    return nothing
+end
+
 function *(op::FiniteDifferenceOperator{TR}, f::StridedArray{TR,N}) where {TR<:Real,N}
     df = Array{TR}(undef, size(f))::Array{TR,N}
     mul!(df, op, f)
@@ -253,5 +262,7 @@ export FiniteDifferenceDerivativeOperator,
     fdm_dissipation_operator,
     fdm_operator_matrix,
     Add,
-    Assign
+    Assign,
+    mul!,
+    muladd!
 export fdm_convolve_boundary!, fdm_convolve_interior!
