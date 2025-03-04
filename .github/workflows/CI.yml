@@ -3,6 +3,13 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'examples/**'
+      - 'notebooks/**'
+      - 'CITATION.bib'
+      - 'LICENSE'
+      - 'Project.toml'
+      - 'README.md'
     tags: ['*']
   pull_request:
   workflow_dispatch:
