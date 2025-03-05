@@ -146,3 +146,23 @@ end
     @test Dr24[1, :] == [1//12, -1//2, 7//6, -1//3, -5//4, 5//6]
     @test Dr24[2, :] == [-5//6, 61//12, -13//1, 107//6, -77//6, 15//4]
 end
+
+@testitem "fdm_hermite_boundary_weights" begin
+    using Einstein.FiniteDifferenceSuite, Test
+
+    Dl24, El24, Dr24, Er24 = fdm_hermite_boundary_weights(2, 8)
+
+    # <|Stencil->-((485 f[x])/(24 dx^2))-(64 f[dx+x])/(3 dx^2)+(18 f[2 dx+x])/dx^2+(64 f[3 dx+x])/(3 dx^2)+(53 f[4 dx+x])/(24 dx^2)-(25 (f^\[Prime])[x])/(3 dx)-(32 (f^\[Prime])[dx+x])/dx-(36 (f^\[Prime])[2 dx+x])/dx-(32 (f^\[Prime])[3 dx+x])/(3 dx)-(f^\[Prime])[4 dx+x]/(2 dx),Coefficients->{-(485/(24 dx^2)),-(64/(3 dx^2)),18/dx^2,64/(3 dx^2),53/(24 dx^2),-(25/(3 dx)),-(32/dx),-(36/dx),-(32/(3 dx)),-(1/(2 dx))},Order->-((dx^8 (f^(10))[x])/3150)|>
+    @test Dl24[1, :] == [-485//24, -64//3, 18//1, 64//3, 53//24]
+    @test El24[1, :] == [-25//3, -32//1, -36//1, -32//3, -1//2]
+
+    # <|Stencil->(31 f[x])/(48 dx^2)-(15 f[dx+x])/(2 dx^2)+(9 f[2 dx+x])/(2 dx^2)+(13 f[3 dx+x])/(6 dx^2)+(3 f[4 dx+x])/(16 dx^2)+(f^\[Prime])[x]/(8 dx)-(10 (f^\[Prime])[dx+x])/(3 dx)-(9 (f^\[Prime])[2 dx+x])/(2 dx)-(f^\[Prime])[3 dx+x]/dx-(f^\[Prime])[4 dx+x]/(24 dx),Coefficients->{31/(48 dx^2),-(15/(2 dx^2)),9/(2 dx^2),13/(6 dx^2),3/(16 dx^2),1/(8 dx),-(10/(3 dx)),-(9/(2 dx)),-(1/dx),-(1/(24 dx))},Order->-((dx^8 (f^(10))[x])/50400)|>
+    @test Dl24[2, :] == [31//48, -15//2, 9//2, 13//6, 3//16]
+    @test El24[2, :] == [1//8, -10//3, -9//2, -1//1, -1//24]
+
+    @test Dr24[2, :] == reverse([-485//24, -64//3, 18//1, 64//3, 53//24])
+    @test Er24[2, :] == -reverse([-25//3, -32//1, -36//1, -32//3, -1//2])
+
+    @test Dr24[1, :] == reverse([31//48, -15//2, 9//2, 13//6, 3//16])
+    @test Er24[1, :] == -reverse([1//8, -10//3, -9//2, -1//1, -1//24])
+end

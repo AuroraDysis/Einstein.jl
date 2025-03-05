@@ -3,10 +3,6 @@
 
 Calculate the number of coefficients needed for central FDM stencil.
 
-# Arguments
-- `derivative_order::Integer`: Order of the derivative
-- `accuracy_order::Integer`: Order of accuracy
-
 # References
 - [Finite difference coefficient - Wikipedia](https://en.wikipedia.org/wiki/Finite_difference_coefficient)
 """
@@ -25,10 +21,6 @@ end
     fdm_hermite_width(derivative_order::Integer, accuracy_order::Integer)
 
 Calculate the number of coefficients needed for Hermite FDM stencil.
-
-# Arguments
-- `derivative_order::Integer`: Order of the derivative
-- `accuracy_order::Integer`: Order of accuracy
 
 # References
 - [fornberg2021algorithm](@citet*)
@@ -53,10 +45,6 @@ end
     fdm_boundary_width(derivative_order::Integer, accuracy_order::Integer)
 
 Calculate the number of coefficients needed for shifted boundary FDM stencil.
-
-# Arguments
-- `derivative_order::Integer`: Order of the derivative
-- `accuracy_order::Integer`: Order of accuracy
 """
 function fdm_boundary_width(derivative_order::Integer, accuracy_order::Integer)
     @boundscheck begin
@@ -65,6 +53,20 @@ function fdm_boundary_width(derivative_order::Integer, accuracy_order::Integer)
     end
 
     return derivative_order + accuracy_order
+end
+
+"""
+    fdm_hermite_boundary_width(derivative_order::Integer, accuracy_order::Integer)
+
+Calculate the number of coefficients needed for Hermite FDM stencil on boundary.
+"""
+function fdm_hermite_boundary_width(derivative_order::Integer, accuracy_order::Integer)
+    @boundscheck begin
+        @argcheck derivative_order >= 2 "Derivative order must be at least 2"
+        @argcheck accuracy_order >= 1 "Accuracy order must be at least 1"
+    end
+
+    return div(derivative_order + 1, 2) + div(accuracy_order, 2)
 end
 
 """

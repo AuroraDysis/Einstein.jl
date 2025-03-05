@@ -158,7 +158,10 @@ Vector of rational coefficients for the finite difference stencil
 function fdm_central_weights(
     ::Type{TR}, derivative_order::Integer, accuracy_order::Integer
 ) where {TR<:Real}
-    @argcheck accuracy_order % 2 == 0 "Only even orders are supported for central FDM stencils."
+    @boundscheck begin
+        @argcheck derivative_order >= 1 "Derivative order must be at least 1"
+        @argcheck accuracy_order % 2 == 0 "Only even orders are supported for central FDM stencils."
+    end
 
     num_coeffs = fdm_central_width(derivative_order, accuracy_order)
     num_side = div(num_coeffs - 1, 2)
@@ -187,14 +190,16 @@ Vector of rational coefficients for the Hermite-type finite difference stencil
 function fdm_hermite_weights(
     ::Type{TR}, derivative_order::Integer, accuracy_order::Integer
 ) where {TR<:Real}
-    @argcheck derivative_order >= 2 "Only derivative order greater than or equal to 2 are supported for Hermite-type finite difference."
+    @boundscheck begin
+        @argcheck derivative_order >= 2 "Only derivative order greater than or equal to 2 are supported for Hermite-type finite difference."
 
-    if mod(div(derivative_order, 2), 2) == 1
-        # accuracy_order must be 4,8,12... for der order 2,3,6,7,10,11...
-        @argcheck accuracy_order % 4 == 0 "Only accuracy_order % 4 == 0 are supported for Hermite-type finite difference with der order 2,3,6,7,10,11..."
-    else
-        # accuracy_order must be 2,6,10... for der order 4,5,8,9,12...
-        @argcheck accuracy_order % 4 == 2 "Only accuracy_order % 4 == 2 are supported for Hermite-type finite difference with der order 4,5,8,9,12..."
+        if mod(div(derivative_order, 2), 2) == 1
+            # accuracy_order must be 4,8,12... for der order 2,3,6,7,10,11...
+            @argcheck accuracy_order % 4 == 0 "Only accuracy_order % 4 == 0 are supported for Hermite-type finite difference with der order 2,3,6,7,10,11..."
+        else
+            # accuracy_order must be 2,6,10... for der order 4,5,8,9,12...
+            @argcheck accuracy_order % 4 == 2 "Only accuracy_order % 4 == 2 are supported for Hermite-type finite difference with der order 4,5,8,9,12..."
+        end
     end
 
     num_coeffs = fdm_hermite_width(derivative_order, accuracy_order)
@@ -220,8 +225,10 @@ Generate weights for left or right extrapolation.
 Vector of Integer coefficients for the extrapolation weights.
 """
 function fdm_extrapolation_weights(extrapolation_order::Int, direction::Symbol)
-    @argcheck extrapolation_order > 0 "Only positive extrapolation orders are supported."
-    @argcheck direction in (:left, :right) "Direction must be :left or :right"
+    @boundscheck begin
+        @argcheck extrapolation_order > 0 "Only positive extrapolation orders are supported."
+        @argcheck direction in (:left, :right) "Direction must be :left or :right"
+    end
 
     if direction === :left
         weights = fdm_weights_fornberg(0, 0, 1:extrapolation_order)
@@ -249,6 +256,11 @@ The rows are ordered from the leftmost grid point to the rightmost grid point.
 function fdm_boundary_weights(
     ::Type{TR}, derivative_order::Integer, accuracy_order::Integer
 ) where {TR<:Real}
+    @boundscheck begin
+        @argcheck derivative_order >= 1 "Derivative order must be at least 1"
+        @argcheck accuracy_order >= 1 "Accuracy order must be at least 1"
+    end
+
     num_coeffs = fdm_boundary_width(derivative_order, accuracy_order)
     num_central = fdm_central_width(derivative_order, accuracy_order)
     num_side = div(num_central - 1, 2)
@@ -278,8 +290,57 @@ function fdm_boundary_weights(derivative_order::TI, accuracy_order::TI) where {T
     return fdm_boundary_weights(Rational{TI}, derivative_order, accuracy_order)
 end
 
+"""
+    fdm_hermite_boundary_weights([TR=Rational{TI}], derivative_order::TI, accuracy_order::TI) where {TR<:Real, TI<:Integer}
+
+Generate Hermite-type finite difference coefficients for boundary conditions.
+"""
+function fdm_hermite_boundary_weights(
+    ::Type{TR}, derivative_order::Integer, accuracy_order::Integer
+) where {TR<:Real}
+    @boundscheck begin
+        @argcheck derivative_order >= 2 "Derivative order must be at least 2"
+        @argcheck accuracy_order >= 1 "Accuracy order must be at least 1"
+    end
+
+    num_coeffs = fdm_hermite_boundary_width(derivative_order, accuracy_order)
+    num_central = fdm_hermite_width(derivative_order, accuracy_order)
+    num_side = div(num_central - 1, 2)
+
+    D_left = zeros(TR, num_side, num_coeffs)
+    E_left = zeros(TR, num_side, num_coeffs)
+    D_right = zeros(TR, num_side, num_coeffs)
+    E_right = zeros(TR, num_side, num_coeffs)
+
+    local_grid = zeros(TR, num_coeffs)
+    @inbounds for i in 1:num_side
+        for j in 1:num_coeffs
+            local_grid[j] = -(i - 1) + (j - 1)
+        end
+        D_left[i, :], E_left[i, :] = fdm_weights_fornberg(
+            derivative_order, zero(TR), local_grid; hermite=true
+        )
+
+        for j in 1:num_coeffs
+            local_grid[end - j + 1] = (i - 1) - (j - 1)
+        end
+        D_right[end - i + 1, :], E_right[end - i + 1, :] = fdm_weights_fornberg(
+            derivative_order, zero(TR), local_grid; hermite=true
+        )
+    end
+
+    return D_left, E_left, D_right, E_right
+end
+
+function fdm_hermite_boundary_weights(
+    derivative_order::TI, accuracy_order::TI
+) where {TI<:Integer}
+    return fdm_hermite_boundary_weights(Rational{TI}, derivative_order, accuracy_order)
+end
+
 export fdm_weights_fornberg,
     fdm_central_weights,
     fdm_hermite_weights,
     fdm_extrapolation_weights,
-    fdm_boundary_weights
+    fdm_boundary_weights,
+    fdm_hermite_boundary_weights
