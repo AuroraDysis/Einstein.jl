@@ -61,7 +61,7 @@ end
         @test all(op.D_weights .≈ D_weights)
         @test all(op.E_weights .≈ E_weights)
     end
-    
+
     @testset "Operator Application" begin
         # Test on a cubic function f(x) = x³
         # For f(x) = x³, f'(x) = 3x², f''(x) = 6x
@@ -81,7 +81,7 @@ end
         fdm_apply_operator!(d2f, op, f, df)
         
         # Second derivative should be 6x
-        @test d2f ≈ 6 .* x atol=1e-10
+        @test d2f ≈ 6 .* x atol=1e-14
     end
 end
 
