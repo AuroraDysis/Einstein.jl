@@ -45,6 +45,46 @@
     end
 end
 
+@testitem "fdm_hermite_derivative_operator" begin
+    @testset "Operator Construction" begin
+        # Test basic construction
+        dx = 0.1
+        op = fdm_hermite_derivative_operator(2, 4, dx)
+        
+        # Test operator properties
+        @test op isa HermiteFiniteDifferenceOperator{Float64}
+        @test op.derivative_order == 2
+        @test op.accuracy_order == 4
+        
+        # Check that weights are consistent with fdm_hermite_weights
+        D_weights, E_weights = fdm_hermite_weights(2, 4)
+        @test all(op.D_weights .≈ D_weights)
+        @test all(op.E_weights .≈ E_weights)
+    end
+    
+    @testset "Operator Application" begin
+        # Test on a cubic function f(x) = x³
+        # For f(x) = x³, f'(x) = 3x², f''(x) = 6x
+        dx = 0.001
+        x = (-5 * dx):dx:(5 * dx)
+        f = x .^ 3
+        df = 3 .* x .^ 2
+        
+        # Create the operator for second derivative
+        op = fdm_hermite_derivative_operator(2, 4, dx)
+        
+        # Apply the operator with both function and derivative
+        # To use the Hermite operator, we need to provide both f and df
+        # Since the operator doesn't have a direct multiplication method with two inputs,
+        # we'll create temporary arrays and use the apply function
+        d2f = similar(f)
+        fdm_apply_operator!(d2f, op, f, df)
+        
+        # Second derivative should be 6x
+        @test d2f ≈ 6 .* x atol=1e-10
+    end
+end
+
 @testitem "Dissipation operator" begin
     using BandedMatrices
 

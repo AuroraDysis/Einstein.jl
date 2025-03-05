@@ -1,9 +1,24 @@
 import Base: *
 
-abstract type FiniteDifferenceOperator{TR<:Real} end
+abstract type AbstractHermiteFiniteDifferenceOperator{TR<:Real} end
+abstract type AbstractFiniteDifferenceOperator{TR<:Real} end
+
+struct HermiteFiniteDifferenceOperator{TR<:Real,Width,HalfWidth,BoundaryWidth} <:
+       AbstractHermiteFiniteDifferenceOperator{TR}
+    D_weights::SVector{Width,TR}
+    E_weights::SVector{Width,TR}
+    D_left_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
+    D_right_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
+    E_left_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
+    E_right_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
+    D_factor::Base.RefValue{TR}
+    E_factor::Base.RefValue{TR}
+    derivative_order::Integer
+    accuracy_order::Integer
+end
 
 struct FiniteDifferenceDerivativeOperator{TR<:Real,Width,HalfWidth,BoundaryWidth} <:
-       FiniteDifferenceOperator{TR}
+       AbstractFiniteDifferenceOperator{TR}
     weights::SVector{Width,TR}
     left_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
     right_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
@@ -13,7 +28,7 @@ struct FiniteDifferenceDerivativeOperator{TR<:Real,Width,HalfWidth,BoundaryWidth
 end
 
 struct FiniteDifferenceDissipationOperator{TR<:Real,Width,HalfWidth,BoundaryWidth} <:
-       FiniteDifferenceOperator{TR}
+       AbstractFiniteDifferenceOperator{TR}
     weights::SVector{Width,TR}
     left_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
     right_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
@@ -27,7 +42,7 @@ struct ConvolveAdd <: ConvolveMode end
 
 function fdm_apply_operator!(
     df::StridedArray{TR},
-    op::FiniteDifferenceOperator{TR},
+    op::AbstractFiniteDifferenceOperator{TR},
     f::StridedArray{TR},
     mode::Mode=ConvolveAssign(),
 ) where {TR<:Real,Mode<:ConvolveMode}
@@ -39,7 +54,7 @@ end
 
 function fdm_apply_operator!(
     df::StridedArray{TR},
-    op::FiniteDifferenceOperator{TR},
+    op::AbstractFiniteDifferenceOperator{TR},
     f::StridedArray{TR},
     jacobian::StridedArray{TR},
     mode::Mode=ConvolveAssign(),
@@ -50,7 +65,64 @@ function fdm_apply_operator!(
     return nothing
 end
 
-function *(op::FiniteDifferenceOperator{TR}, f::StridedArray{TR,N}) where {TR<:Real,N}
+function fdm_apply_operator!(
+    ddf::StridedArray{TR},
+    op::AbstractHermiteFiniteDifferenceOperator{TR},
+    f::StridedArray{TR},
+    df::StridedArray{TR},
+    mode::Mode=ConvolveAssign(),
+) where {TR<:Real,Mode<:ConvolveMode}
+    (;
+        D_weights,
+        E_weights,
+        D_left_weights,
+        E_left_weights,
+        D_right_weights,
+        E_right_weights,
+        D_factor,
+        E_factor,
+    ) = op
+    fdm_convolve_interior!(ddf, f, D_weights, D_factor[], mode)
+    fdm_convolve_interior!(ddf, df, E_weights, E_factor[], ConvolveAdd())
+    fdm_convolve_boundary!(ddf, f, D_left_weights, D_right_weights, D_factor[], mode)
+    fdm_convolve_boundary!(
+        ddf, df, E_left_weights, E_right_weights, E_factor[], ConvolveAdd()
+    )
+    return nothing
+end
+
+function fdm_apply_operator!(
+    ddf::StridedArray{TR},
+    op::AbstractHermiteFiniteDifferenceOperator{TR},
+    f::StridedArray{TR},
+    df::StridedArray{TR},
+    jacobian::StridedArray{TR},
+    mode::Mode=ConvolveAssign(),
+) where {TR<:Real,Mode<:ConvolveMode}
+    (;
+        D_weights,
+        E_weights,
+        D_left_weights,
+        E_left_weights,
+        D_right_weights,
+        E_right_weights,
+        D_factor,
+        E_factor,
+    ) = op
+    fdm_convolve_interior!(ddf, f, D_weights, D_factor[], jacobian, mode)
+    fdm_convolve_interior!(ddf, df, E_weights, E_factor[], jacobian, ConvolveAdd())
+    fdm_convolve_boundary!(
+        ddf, f, D_left_weights, D_right_weights, D_factor[], jacobian, mode
+    )
+    fdm_convolve_boundary!(
+        ddf, df, E_left_weights, E_right_weights, E_factor[], jacobian, ConvolveAdd()
+    )
+    return nothing
+end
+
+function *(
+    op::AbstractFiniteDifferenceOperator{TR}, f::StridedArray{TR,N}
+) where {TR<:Real,N}
     df = Array{TR}(undef, size(f))::Array{TR,N}
     fdm_apply_operator!(df, op, f)
     return df
@@ -186,6 +258,39 @@ function fdm_derivative_operator(
     return fdm_derivative_operator(Float64, derivative_order, accuracy_order, dx)
 end
 
+function fdm_hermite_derivative_operator(
+    ::Type{TR}, derivative_order::Integer, accuracy_order::Integer, dx::TR
+) where {TR<:Real}
+    D_weights, E_weights = fdm_hermite_weights(TR, derivative_order, accuracy_order)
+    D_left_weights, E_left_weights, D_right_weights, E_right_weights = fdm_hermite_boundary_weights(
+        TR, derivative_order, accuracy_order
+    )
+
+    width = length(D_weights)
+    half_width = div(width - 1, 2)
+    boundary_width = size(D_left_weights, 2)
+    D_factor = inv(dx^derivative_order)
+    E_factor = inv(dx^(derivative_order - 1))
+    return HermiteFiniteDifferenceOperator{TR,width,half_width,boundary_width}(
+        D_weights,
+        E_weights,
+        D_left_weights,
+        D_right_weights,
+        E_left_weights,
+        E_right_weights,
+        Ref(D_factor),
+        Ref(E_factor),
+        derivative_order,
+        accuracy_order,
+    )
+end
+
+function fdm_hermite_derivative_operator(
+    derivative_order::Integer, accuracy_order::Integer, dx::Float64
+)
+    return fdm_hermite_derivative_operator(Float64, derivative_order, accuracy_order, dx)
+end
+
 """
     fdm_dissipation_operator([TR=Float64], dissipation_order::Integer, σ::TR, dx::TR) -> FiniteDifferenceDerivativeOperator{TR}
 
@@ -220,17 +325,20 @@ function fdm_dissipation_operator(dissipation_order::Integer, σ::Float64, dx::F
 end
 
 """
-    fdm_operator_matrix(op::FiniteDifferenceOperator{TR}; boundary::Bool=false, transpose::Bool=false) -> BandedMatrix{TR}
+    fdm_operator_matrix(op::AbstractFiniteDifferenceOperator{TR}; boundary::Bool=false, transpose::Bool=false) -> BandedMatrix{TR}
 
 Create a banded matrix representation of the finite difference operator.
 
 # Arguments
-- `op::FiniteDifferenceOperator{TR}`: The finite difference operator
+- `op::AbstractFiniteDifferenceOperator{TR}`: The finite difference operator
 - `boundary::Bool=true`: Whether to include boundary weights
 - `transpose::Bool=false`: Whether to transpose the matrix
 """
 function fdm_operator_matrix(
-    op::FiniteDifferenceOperator{TR}, n::Integer, boundary::Bool=true, transpose::Bool=false
+    op::AbstractFiniteDifferenceOperator{TR},
+    n::Integer,
+    boundary::Bool=true,
+    transpose::Bool=false,
 ) where {TR<:Real}
     (; weights, left_weights, right_weights, factor) = op
     half_width = length(weights) ÷ 2
@@ -266,8 +374,10 @@ function fdm_operator_matrix(
 end
 
 export FiniteDifferenceDerivativeOperator,
+    HermiteFiniteDifferenceOperator,
     FiniteDifferenceDissipationOperator,
     fdm_derivative_operator,
+    fdm_hermite_derivative_operator,
     fdm_dissipation_operator,
     fdm_operator_matrix,
     ConvolveAdd,
