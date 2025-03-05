@@ -29,7 +29,7 @@ Calculate the number of coefficients needed for Hermite FDM stencil.
 - [fornberg2021algorithm](@citet*)
 """
 function fdm_hermite_width(derivative_order::Integer, accuracy_order::Integer)
-    return return div(derivative_order, 2) + div(accuracy_order, 2)
+    return div(derivative_order, 2) + div(accuracy_order, 2)
 end
 
 """
