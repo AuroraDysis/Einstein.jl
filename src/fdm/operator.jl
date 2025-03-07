@@ -96,7 +96,8 @@ function fdm_apply_operator!(
     op::AbstractHermiteFiniteDifferenceOperator{TR},
     f::StridedArray{TR},
     df::StridedArray{TR},
-    jacobian::StridedArray{TR},
+    jac_D::StridedArray{TR},
+    jac_E::StridedArray{TR},
     mode::Mode=ConvolveAssign(),
 ) where {TR<:Real,Mode<:ConvolveMode}
     (;
@@ -109,13 +110,13 @@ function fdm_apply_operator!(
         D_factor,
         E_factor,
     ) = op
-    fdm_convolve_interior!(ddf, f, D_weights, D_factor[], jacobian, mode)
-    fdm_convolve_interior!(ddf, df, E_weights, E_factor[], jacobian, ConvolveAdd())
+    fdm_convolve_interior!(ddf, f, D_weights, D_factor[], jac_D, mode)
+    fdm_convolve_interior!(ddf, df, E_weights, E_factor[], jac_E, ConvolveAdd())
     fdm_convolve_boundary!(
-        ddf, f, D_left_weights, D_right_weights, D_factor[], jacobian, mode
+        ddf, f, D_left_weights, D_right_weights, D_factor[], jac_D, mode
     )
     fdm_convolve_boundary!(
-        ddf, df, E_left_weights, E_right_weights, E_factor[], jacobian, ConvolveAdd()
+        ddf, df, E_left_weights, E_right_weights, E_factor[], jac_E, ConvolveAdd()
     )
     return nothing
 end
