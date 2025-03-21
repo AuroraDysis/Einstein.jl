@@ -11,4 +11,4 @@ function cheb_quadrature_weights(
     )
 end
 
-export cheb_integration_matrix
+export cheb_quadrature_weights
