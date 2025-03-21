@@ -23,6 +23,7 @@ include("synthesis_matrix.jl")
 include("differentiation_matrix.jl")
 include("integration_matrix.jl")
 include("dissipation.jl")
+include("quadrature_weights.jl")
 
 include("utils/fft.jl")
 include("utils/barycentric_differentiation_matrix.jl")
