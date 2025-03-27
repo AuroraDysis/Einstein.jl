@@ -103,9 +103,7 @@ function barycentric_differentiation_matrix(
 
     # Negative sum trick on the diagonal: D(i,i) = -sum of row i
     # This ensures each row sums to zero.
-    for i in 1:n
-        D[i, i] = -sum(D[i, :]) + D[i, i]  # add D[i,i] then subtract entire row
-    end
+    negative_sum_trick!(D)
 
     # Enforce a symmetry fix for even n on the diagonal entries:
     # (Matches the "Forcing symmetry for even n" from the original code.)
@@ -115,7 +113,7 @@ function barycentric_differentiation_matrix(
     # Indices from end down to n-floor(n/2)+1:
     # That is from n down to n-halfN+1
     Ddiag = collect(diag(D))
-    Ddiag[end:-1:(n - halfN + 1)] = -Ddiag[1:halfN]
+    Ddiag[end:-1:(n-halfN+1)] = -Ddiag[1:halfN]
     for i in 1:n
         D[i, i] = Ddiag[i]
     end
@@ -137,9 +135,7 @@ function barycentric_differentiation_matrix(
         end
     end
     # negative sum trick
-    for i in 1:n
-        D2[i, i] = -sum(D2[i, :]) + D2[i, i]
-    end
+    negative_sum_trick!(D2)
 
     if k == 2
         return D2
@@ -158,13 +154,16 @@ function barycentric_differentiation_matrix(
             end
         end
         # negative sum trick
-        for i in 1:n
-            D_next[i, i] = -sum(D_next[i, :]) + D_next[i, i]
-        end
+        negative_sum_trick!(D_next)
         D_current = D_next
     end
 
     return D_current
+end
+
+function negative_sum_trick!(D::Matrix{TR}) where {TR<:AbstractFloat}
+    D[diagind(D)] .= zero(TR)
+    D[diagind(D)] .-= sum(D, dims=2)
 end
 
 export barycentric_differentiation_matrix
