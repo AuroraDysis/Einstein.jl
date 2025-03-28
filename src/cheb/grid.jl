@@ -39,7 +39,6 @@ struct ChebyshevGrid{TF<:AbstractFloat,TNode<:AbstractChebyshevNode} <: Abstract
     end
 end
 
-# Overloads for ChebyshevGrid
 Base.length(grid::ChebyshevGrid) = length(grid.data)
 Base.size(grid::ChebyshevGrid) = size(grid.data)
 
@@ -47,7 +46,6 @@ Base.@propagate_inbounds function Base.getindex(grid::ChebyshevGrid, i)
     return grid.data[i]
 end
 
-# Additional Base overload: iteration
 Base.@propagate_inbounds function Base.iterate(grid::ChebyshevGrid, state...)
     return iterate(grid.data, state...)
 end
