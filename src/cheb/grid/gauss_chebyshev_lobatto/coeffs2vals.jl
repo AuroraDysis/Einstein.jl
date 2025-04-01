@@ -14,8 +14,7 @@ values = op(coeffs)
 # References
 - [chebfun/@chebtech2/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/coeffs2vals.m)
 """
-struct Coeffs2ValsCache{TF<:AbstractFloat} <:
-       AbstractChebyshevSynthesisImplementation
+struct Coeffs2ValsCache{TF<:AbstractFloat}
     tmp::Vector{Complex{TF}}
     vals::Vector{Complex{TF}}
     real_vals::Vector{TF}
