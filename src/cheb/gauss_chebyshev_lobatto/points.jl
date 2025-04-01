@@ -49,7 +49,6 @@ function gauss_chebyshev_lobatto_points(n::Integer)
     return gauss_chebyshev_lobatto_points(Float64, n)
 end
 
-# Mapped version documentation is inherited from the main docstring
 function gauss_chebyshev_lobatto_points(
     ::Type{TF}, n::Integer, lower_bound::TF, upper_bound::TF
 ) where {TF<:AbstractFloat}

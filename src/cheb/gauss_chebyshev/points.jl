@@ -50,7 +50,6 @@ function gauss_chebyshev_points(n::Integer)
     return gauss_chebyshev_points(Float64, n)
 end
 
-# Mapped version
 function gauss_chebyshev_points(
     ::Type{TF}, n::Integer, lower_bound::TF, upper_bound::TF
 ) where {TF<:AbstractFloat}

@@ -57,10 +57,10 @@ end
 function gauss_chebyshev_lobatto_quadrature_weights(
     ::Type{TF}, n::Integer, lower_bound::TF, upper_bound::TF
 ) where {TF<:AbstractFloat}
-    w = gauss_chebyshev_lobatto_quadrature_weights(TF, n)
-    scale = (upper_bound - lower_bound) / 2
-    w .*= scale
-    return w
+    weights = gauss_chebyshev_lobatto_quadrature_weights(TF, n)
+    jacobian = (upper_bound - lower_bound) / 2
+    weights .*= jacobian
+    return weights
 end
 
 function gauss_chebyshev_lobatto_quadrature_weights(n::Integer, lower_bound::Float64, upper_bound::Float64)
