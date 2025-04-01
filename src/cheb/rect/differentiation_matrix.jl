@@ -204,7 +204,7 @@ function cheb_rect_differentiation_matrix(
     # Setup grids
     tau = points(TF, m)
     TAU = angles(TF, m)
-    a = chebyshevt_diff(a)
+    a = chebyshevt_derivative(a)
 
     # Compute denominator matrix
     denom = [2 * sin((tau + t) / 2) * sin((tau - t) / 2) for tau in TAU, t in T]
@@ -212,7 +212,7 @@ function cheb_rect_differentiation_matrix(
 
     # Higher-order derivatives
     for l in 2:p
-        a = chebyshevt_diff(a)
+        a = chebyshevt_derivative(a)
         Tt = chebyshevt_eval(a, tau)
         D .= (Tt .* sgn' .+ l .* D) ./ denom
     end

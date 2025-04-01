@@ -1,6 +1,6 @@
 """
-    chebyshevt_diff(coeffs::AbstractVector{T}) where {T<:AbstractFloat}
-    chebyshevt_diff!(coeffs::AbstractVector{T}, coeffs_der::AbstractVector{T}) where {T<:AbstractFloat}
+    chebyshevt_derivative(coeffs::AbstractVector{T}) where {T<:AbstractFloat}
+    chebyshevt_derivative!(coeffs::AbstractVector{T}, coeffs_der::AbstractVector{T}) where {T<:AbstractFloat}
 
 Compute derivatives of Chebyshev coefficients.
 
@@ -8,7 +8,7 @@ Compute derivatives of Chebyshev coefficients.
 - `coeffs`: Input vector of Chebyshev coefficients with length n
 - `coeffs_der`: Pre-allocated output vector for derivative coefficients (length at least n - 1)
 """
-function chebyshevt_diff!(
+function chebyshevt_derivative!(
     coeffs::AbstractVector{T}, coeffs_der::AbstractVector{T}
 ) where {T<:AbstractFloat}
     n = length(coeffs)
@@ -49,11 +49,11 @@ function chebyshevt_diff!(
     return nothing
 end
 
-function chebyshevt_diff(coeffs::AbstractVector{T}) where {T<:AbstractFloat}
+function chebyshevt_derivative(coeffs::AbstractVector{T}) where {T<:AbstractFloat}
     n = length(coeffs)
     coeffs_der = similar(coeffs, n - 1)
-    chebyshevt_diff!(coeffs, coeffs_der)
+    chebyshevt_derivative!(coeffs, coeffs_der)
     return coeffs_der
 end
 
-export chebyshevt_diff, chebyshevt_diff!
+export chebyshevt_derivative, chebyshevt_derivative!
