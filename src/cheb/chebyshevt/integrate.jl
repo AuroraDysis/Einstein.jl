@@ -2,7 +2,7 @@
 
 """
     chebyshevt_integrate(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat}
-    ChebyshevCoefficientsIntegration{[TR=Float64]}(n::TI)(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat,TI<:Integer}
+    ChebyshevTIntegration{[TR=Float64]}(n::TI)(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat,TI<:Integer}
 
 Compute the indefinite integral of a function given its Chebyshev coefficients.
 
@@ -12,13 +12,13 @@ Compute the indefinite integral of a function given its Chebyshev coefficients.
 # References
 - [chebfun/@chebtech/cumsum.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech/cumsum.m)
 """
-struct ChebyshevCoefficientsIntegration{TR<:AbstractFloat,TI<:Integer}
+struct ChebyshevTIntegration{TR<:AbstractFloat,TI<:Integer}
     n::TI              # Number of coefficients
     tmp::Vector{TR}    # Temporary storage for padded coefficients
     result::Vector{TR} # Result storage
     v::Vector{TI}      # Pre-computed alternating signs
 
-    function ChebyshevCoefficientsIntegration{TR}(n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    function ChebyshevTIntegration{TR}(n::TI) where {TR<:AbstractFloat,TI<:Integer}
         # Pre-allocate workspace
         tmp = Vector{TR}(undef, n + 2)
         result = Vector{TR}(undef, n + 1)
@@ -32,12 +32,12 @@ struct ChebyshevCoefficientsIntegration{TR<:AbstractFloat,TI<:Integer}
         return new{TR,TI}(n, tmp, result, v)
     end
 
-    function ChebyshevCoefficientsIntegration(n::TI) where {TI<:Integer}
-        return ChebyshevCoefficientsIntegration{Float64}(n)
+    function ChebyshevTIntegration(n::TI) where {TI<:Integer}
+        return ChebyshevTIntegration{Float64}(n)
     end
 end
 
-function (op::ChebyshevCoefficientsIntegration{TR,TI})(
+function (op::ChebyshevTIntegration{TR,TI})(
     coeffs::AbstractVector{TR}
 ) where {TR<:AbstractFloat,TI<:Integer}
     @argcheck length(coeffs) == op.n "length(coeffs) must be equal to n"
@@ -78,8 +78,8 @@ end
 
 function chebyshevt_integrate(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat}
     n = length(coeffs)
-    op = ChebyshevCoefficientsIntegration{TR}(n)
+    op = ChebyshevTIntegration{TR}(n)
     return op(coeffs)
 end
 
-export chebyshevt_integrate, ChebyshevCoefficientsIntegration
+export chebyshevt_integrate, ChebyshevTIntegration

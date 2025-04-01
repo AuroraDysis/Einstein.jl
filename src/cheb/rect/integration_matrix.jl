@@ -25,7 +25,7 @@ function cheb_rect_integration_matrix(
     end
 
     # Integrate
-    cumsum_op = ChebyshevCoefficientsIntegration{TR}(n)
+    cumsum_op = ChebyshevTIntegration{TR}(n)
     @inbounds for i in 1:n
         K[:, i] = cumsum_op(@view(K[1:(end - 1), i]))
     end
