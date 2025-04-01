@@ -10,6 +10,10 @@ Alternatively, for $n + 1$ equidistant nodes, the weights can be computed by pas
 - [Berrut2004](@citet*)
 """
 function barycentric_weights(x::AbstractVector{TF}) where {TF<:AbstractFloat}
+    @boundscheck begin
+        @argcheck length(x) > 1 "x must have at least two elements"
+    end
+
     return TF[inv(prod(x[i] - x[j] for j in eachindex(x) if j != i)) for i in eachindex(x)]
 end
 
@@ -19,6 +23,10 @@ function barycentric_weights(x::AbstractRange{TF}) where {TF<:AbstractFloat}
 end
 
 function barycentric_weights(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+    @boundscheck begin
+        @argcheck n > 0 "n must be a positive integer"
+    end
+
     return TF[(-1)^j * binomial(n, j) for j in 0:n]
 end
 
@@ -35,6 +43,12 @@ and barycentric weights `weights` at point `x`.
 function barycentric_interpolate(
     x::TF, points::AbstractVector{TF}, values::AbstractVector{TFC}, weights::Vector{TF}
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
+    @boundscheck begin
+        @argcheck length(points) > 1 "points must have at least two elements"
+        @argcheck length(points) == length(values) "points and values must have the same length"
+        @argcheck length(points) == length(weights) "points and weights must have the same length"
+    end
+
     p = zero(TFC)
     q = zero(TFC)
 
