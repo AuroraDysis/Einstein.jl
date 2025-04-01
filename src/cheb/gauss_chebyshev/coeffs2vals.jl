@@ -15,11 +15,11 @@ values = op(coeffs)
 - [chebfun/@chebtech1/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/coeffs2vals.m)
 """
 struct GaussChebyshevCoeffs2ValsCache{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}}
-    w::Vector{Complex{TF}}    # Weight vector
-    tmp::Vector{Complex{TF}}  # Temporary storage
-    vals::Vector{Complex{TF}} # values
-    real_vals::Vector{TF} # values
-    fft_plan::TPlan        # fft plan
+    w::Vector{Complex{TF}}
+    tmp::Vector{Complex{TF}}
+    vals::Vector{Complex{TF}}
+    real_vals::Vector{TF}
+    fft_plan::TPlan
 
     function GaussChebyshevCoeffs2ValsCache{TF}(n::Integer) where {TF<:AbstractFloat}
         # Precompute weights
@@ -82,14 +82,8 @@ function (op::GaussChebyshevCoeffs2ValsCache{TF})(
         end
     end
 
-    # Apply weights and FFT
     @inbounds begin
-        # Apply weights
-        for i in eachindex(tmp)
-            tmp[i] *= w[i]
-        end
-
-        # FFT
+        tmp .*= w
         fft_plan * tmp
     end
 
