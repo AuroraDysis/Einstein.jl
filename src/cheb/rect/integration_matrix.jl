@@ -31,7 +31,7 @@ function cheb_rect_integration_matrix(
     end
 
     # Evaluate at grid
-    xm = cheb2_points(m)
+    xm = chebtech2_points(m)
     intmat = Array{TR}(undef, m, n)
     @inbounds for j in 1:n, i in 1:n
         intmat[i, j] = cheb_coeffs_eval(@view(K[:, j]), xm[i])

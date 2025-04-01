@@ -7,25 +7,25 @@ Construct a Chebyshev analysis operator for the given grid, converting from coef
 """
 struct ChebyshevAnalysis{
     TF<:AbstractFloat,
-    TNode<:AbstractChebyshevNode,
+    Basis<:AbstractBasisFunction,
     TAnalysisImpl<:AbstractChebyshevAnalysisImplementation,
 }
-    grid::ChebyshevGrid{TF,TNode}
+    grid::ChebyshevGrid{TF,Basis}
     impl::TAnalysisImpl
 
     function ChebyshevAnalysis(
-        grid::ChebyshevGrid{TF,TNode}
-    ) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
-        impl = _cheb_analysis(grid.node, TF, length(grid))
-        return new{TF,TNode,typeof(impl)}(grid, impl)
+        grid::ChebyshevGrid{TF,Basis}
+    ) where {TF<:AbstractFloat,Basis<:AbstractBasisFunction}
+        impl = _cheb_analysis(grid.basis, TF, length(grid))
+        return new{TF,Basis,typeof(impl)}(grid, impl)
     end
 end
 
-function (ana::ChebyshevAnalysis{TF,TNode,TAnalysisImpl})(
+function (ana::ChebyshevAnalysis{TF,Basis,TAnalysisImpl})(
     values::AbstractVector{TFC}
 ) where {
     TF<:AbstractFloat,
-    TNode<:AbstractChebyshevNode,
+    Basis<:AbstractBasisFunction,
     TAnalysisImpl<:AbstractChebyshevAnalysisImplementation,
     TFC<:Union{TF,Complex{TF}},
 }

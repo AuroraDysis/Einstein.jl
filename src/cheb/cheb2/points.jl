@@ -1,6 +1,6 @@
 @doc raw"""
-    cheb2_points([TF=Float64], n::Integer) where {TF<:AbstractFloat}
-    cheb2_points([TF=Float64], n::Integer, lower_bound::TF, upper_bound::TF) where {TF<:AbstractFloat}
+    chebtech2_points([TF=Float64], n::Integer) where {TF<:AbstractFloat}
+    chebtech2_points([TF=Float64], n::Integer, lower_bound::TF, upper_bound::TF) where {TF<:AbstractFloat}
 
 Generate Chebyshev points of the 1st kind.
 
@@ -23,7 +23,7 @@ x_{\mathrm{mapped}} = \frac{x_{\mathrm{max}} + x_{\mathrm{min}}}{2} + \frac{x_{\
 # References
 - [chebfun/@chebtech2/chebpts.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/chebpts.m)
 """
-function cheb2_points(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function chebtech2_points(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     @argcheck n >= 0 "n must be nonnegative"
 
     if n == 0
@@ -45,15 +45,15 @@ function cheb2_points(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     return x_grid
 end
 
-function cheb2_points(n::Integer)
-    return cheb2_points(Float64, n)
+function chebtech2_points(n::Integer)
+    return chebtech2_points(Float64, n)
 end
 
 # Mapped version documentation is inherited from the main docstring
-function cheb2_points(
+function chebtech2_points(
     ::Type{TF}, n::Integer, lower_bound::TF, upper_bound::TF
 ) where {TF<:AbstractFloat}
-    x_grid = cheb2_points(TF, n)
+    x_grid = chebtech2_points(TF, n)
 
     a = (upper_bound + lower_bound) / 2
     b = (upper_bound - lower_bound) / 2
@@ -62,14 +62,14 @@ function cheb2_points(
     return x_grid
 end
 
-function cheb2_points(n::Integer, lower_bound::Float64, upper_bound::Float64)
-    return cheb2_points(Float64, n, lower_bound, upper_bound)
+function chebtech2_points(n::Integer, lower_bound::Float64, upper_bound::Float64)
+    return chebtech2_points(Float64, n, lower_bound, upper_bound)
 end
 
 function _cheb_points(
-    ::ChebyshevSecondKindNode, ::Type{TF}, n::Integer, lower_bound::TF, upper_bound::TF
+    ::ChebyshevU, ::Type{TF}, n::Integer, lower_bound::TF, upper_bound::TF
 ) where {TF<:AbstractFloat}
-    return cheb2_points(TF, n, lower_bound, upper_bound)
+    return chebtech2_points(TF, n, lower_bound, upper_bound)
 end
 
-export cheb2_points
+export chebtech2_points

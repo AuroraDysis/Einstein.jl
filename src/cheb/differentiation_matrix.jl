@@ -1,13 +1,13 @@
 @doc raw"""
-    cheb_differentiation_matrix(grid::ChebyshevGrid{TF,TNode}) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
+    cheb_differentiation_matrix(grid::ChebyshevGrid{TF,Basis}) where {TF<:AbstractFloat,Basis<:AbstractBasisFunction}
 
 Compute the Chebyshev differentiation matrix that maps function values at `n` Chebyshev points to values of the derivative of the interpolating polynomial at those points.
 """
 function cheb_differentiation_matrix(
-    grid::ChebyshevGrid{TF,TNode}, k::Integer=1
-) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
+    grid::ChebyshevGrid{TF,Basis}, k::Integer=1
+) where {TF<:AbstractFloat,Basis<:AbstractBasisFunction}
     return _cheb_differentiation_matrix(
-        grid.node, TF, length(grid), grid.lower_bound, grid.upper_bound, k
+        grid.basis, TF, length(grid), grid.lower_bound, grid.upper_bound, k
     )
 end
 

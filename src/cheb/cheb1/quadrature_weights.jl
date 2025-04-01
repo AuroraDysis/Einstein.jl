@@ -78,7 +78,7 @@ function cheb1_quadrature_weights(n::Integer, lower_bound::Float64, upper_bound:
 end
 
 function _cheb_quadrature_weights(
-    ::ChebyshevFirstKindNode, ::Type{TF}, n::Integer, lower_bound::TF, upper_bound::TF
+    ::ChebyshevT, ::Type{TF}, n::Integer, lower_bound::TF, upper_bound::TF
 ) where {TF<:AbstractFloat}
     return cheb1_quadrature_weights(TF, n, lower_bound, upper_bound)
 end

@@ -22,7 +22,7 @@ function cheb1_synthesis_matrix(n::Integer)
 end
 
 function _cheb_synthesis_matrix(
-    ::ChebyshevFirstKindNode, ::Type{TF}, n::Integer
+    ::ChebyshevT, ::Type{TF}, n::Integer
 ) where {TF<:AbstractFloat}
     return cheb1_synthesis_matrix(TF, n)
 end

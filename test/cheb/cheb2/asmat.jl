@@ -4,7 +4,7 @@ using TestItems
     using Einstein.ChebyshevSuite, Test
 
     n = 32  # Enough points for good accuracy
-    x = cheb2_points(Float64, n)
+    x = chebtech2_points(Float64, n)
     A = cheb2_analysis_matrix(Float64, n)
     S = cheb2_synthesis_matrix(Float64, n)
 

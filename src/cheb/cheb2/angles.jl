@@ -1,5 +1,5 @@
 @doc raw"""
-    cheb1_angles(TF, n) where {TF<:AbstractFloat}
+    chebtech1_angles(TF, n) where {TF<:AbstractFloat}
 
 Compute angles for Chebyshev points of the 2nd kind:
 ```math
@@ -10,7 +10,7 @@ Compute angles for Chebyshev points of the 2nd kind:
 - `TF`: Type parameter for the angles (e.g., Float64)
 - `n`: Number of points
 """
-function cheb2_angles(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function chebtech2_angles(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     @argcheck n >= 0 "n must be nonnegative"
 
     if n == 0
@@ -29,14 +29,14 @@ function cheb2_angles(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     return θ
 end
 
-function cheb2_angles(n::Integer)
-    return cheb2_angles(Float64, n)
+function chebtech2_angles(n::Integer)
+    return chebtech2_angles(Float64, n)
 end
 
 function _cheb_angles(
-    ::ChebyshevSecondKindNode, ::Type{TF}, n::Integer
+    ::ChebyshevU, ::Type{TF}, n::Integer
 ) where {TF<:AbstractFloat}
-    return cheb2_angles(TF, n)
+    return chebtech2_angles(TF, n)
 end
 
-export cheb2_angles
+export chebtech2_angles

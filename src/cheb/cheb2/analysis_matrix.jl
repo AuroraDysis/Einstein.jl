@@ -21,7 +21,7 @@ function cheb2_analysis_matrix(n::Integer)
 end
 
 function _cheb_analysis_matrix(
-    ::ChebyshevSecondKindNode, ::Type{TF}, n::Integer
+    ::ChebyshevU, ::Type{TF}, n::Integer
 ) where {TF<:AbstractFloat}
     return cheb2_analysis_matrix(TF, n)
 end

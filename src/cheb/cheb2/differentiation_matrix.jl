@@ -15,9 +15,9 @@ to values of the `k`-th derivative of the interpolating polynomial at those poin
 function cheb2_differentiation_matrix(
     ::Type{TR}, n::Integer, k::Integer=1
 ) where {TR<:AbstractFloat}
-    x = cheb2_points(TR, n)               # First kind points.
+    x = chebtech2_points(TR, n)               # First kind points.
     w = cheb2_barycentric_weights(TR, n)           # Barycentric weights.
-    t = cheb2_angles(TR, n)            # acos(x).
+    t = chebtech2_angles(TR, n)            # acos(x).
     D = barycentric_differentiation_matrix(x, w, k, t)       # Construct matrix.
     return D
 end
@@ -42,7 +42,7 @@ function cheb2_differentiation_matrix(
 end
 
 function _cheb_differentiation_matrix(
-    ::ChebyshevSecondKindNode, ::Type{TR}, n::Integer, lower_bound::TR, upper_bound::TR, k::Integer
+    ::ChebyshevU, ::Type{TR}, n::Integer, lower_bound::TR, upper_bound::TR, k::Integer
 ) where {TR<:AbstractFloat}
     return cheb2_differentiation_matrix(TR, n, lower_bound, upper_bound, k)
 end

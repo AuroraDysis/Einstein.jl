@@ -4,10 +4,10 @@
 Compute the quadrature weights for a Chebyshev grid.
 """
 function cheb_quadrature_weights(
-    grid::ChebyshevGrid{TF,TNode}
-) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
+    grid::ChebyshevGrid{TF,Basis}
+) where {TF<:AbstractFloat,Basis<:AbstractBasisFunction}
     return _cheb_quadrature_weights(
-        grid.node, TF, length(grid), grid.lower_bound, grid.upper_bound
+        grid.basis, TF, length(grid), grid.lower_bound, grid.upper_bound
     )
 end
 

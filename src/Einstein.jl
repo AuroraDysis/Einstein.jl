@@ -19,11 +19,11 @@ using PrecompileTools
 PrecompileTools.@compile_workload begin
     using .ChebyshevSuite
 
-    cheb1_points(Float64, 5)
-    cheb2_points(Float64, 5)
+    chebtech1_points(Float64, 5)
+    chebtech2_points(Float64, 5)
 
-    cheb1_angles(Float64, 5)
-    cheb2_angles(Float64, 5)
+    chebtech1_angles(Float64, 5)
+    chebtech2_angles(Float64, 5)
 
     # TODO: implement the rest of the precompiles
 end

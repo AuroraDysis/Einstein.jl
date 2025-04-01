@@ -7,25 +7,25 @@ Construct a Chebyshev synthesis operator for the given grid, converting from coe
 """
 struct ChebyshevSynthesis{
     TF<:AbstractFloat,
-    TNode<:AbstractChebyshevNode,
+    Basis<:AbstractBasisFunction,
     TSynthesisImpl<:AbstractChebyshevSynthesisImplementation,
 }
-    grid::ChebyshevGrid{TF,TNode}
+    grid::ChebyshevGrid{TF,Basis}
     impl::TSynthesisImpl
 
     function ChebyshevSynthesis(
-        grid::ChebyshevGrid{TF,TNode}
-    ) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
-        impl = _cheb_synthesis(grid.node, TF, length(grid))
-        return new{TF,TNode,typeof(impl)}(grid, impl)
+        grid::ChebyshevGrid{TF,Basis}
+    ) where {TF<:AbstractFloat,Basis<:AbstractBasisFunction}
+        impl = _cheb_synthesis(grid.basis, TF, length(grid))
+        return new{TF,Basis,typeof(impl)}(grid, impl)
     end
 end
 
-function (syn::ChebyshevSynthesis{TF,TNode,TSynthesisImpl})(
+function (syn::ChebyshevSynthesis{TF,Basis,TSynthesisImpl})(
     coeffs::AbstractVector{TFC}
 ) where {
     TF<:AbstractFloat,
-    TNode<:AbstractChebyshevNode,
+    Basis<:AbstractBasisFunction,
     TSynthesisImpl<:AbstractChebyshevSynthesisImplementation,
     TFC<:Union{TF,Complex{TF}},
 }

@@ -1,18 +1,18 @@
 """
-    ChebyshevInterpolation(grid::ChebyshevGrid{TF,TNode}) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
+    ChebyshevInterpolation(grid::ChebyshevGrid{TF,Basis}) where {TF<:AbstractFloat,Basis<:AbstractBasisFunction}
     (itp::ChebyshevInterpolation{TF})(values::AbstractVector{TFC}, x::TF) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}
 
 Construct a barycentric interpolation with precomputed weights for a Chebyshev grid.
 """
-struct ChebyshevInterpolation{TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
-    grid::ChebyshevGrid{TF,TNode}
+struct ChebyshevInterpolation{TF<:AbstractFloat,Basis<:AbstractBasisFunction}
+    grid::ChebyshevGrid{TF,Basis}
     weights::Vector{TF}
 
     function ChebyshevInterpolation(
-        grid::ChebyshevGrid{TF,TNode}
-    ) where {TF<:AbstractFloat,TNode<:AbstractChebyshevNode}
-        weights = _cheb_barycentric_weights(grid.node, TF, length(grid))
-        return new{TF,TNode}(grid, weights)
+        grid::ChebyshevGrid{TF,Basis}
+    ) where {TF<:AbstractFloat,Basis<:AbstractBasisFunction}
+        weights = _cheb_barycentric_weights(grid.basis, TF, length(grid))
+        return new{TF,Basis}(grid, weights)
     end
 end
 

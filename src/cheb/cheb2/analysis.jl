@@ -110,7 +110,7 @@ function (op::ChebyshevSecondKindAnalysis{TF})(
 end
 
 function _cheb_analysis(
-    ::ChebyshevSecondKindNode, ::Type{TF}, n::Integer
+    ::ChebyshevU, ::Type{TF}, n::Integer
 ) where {TF<:AbstractFloat}
     return ChebyshevSecondKindAnalysis{TF}(n)
 end
