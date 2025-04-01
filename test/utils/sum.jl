@@ -7,7 +7,7 @@
         return sum
     end
 
-    accurate_sum_functions = [sum_xsum, sum_kahan_neumaier]
+    accurate_sum_functions = [sum_xsum, sum_kahan]
 
     for sum_func in accurate_sum_functions
         @testset "$sum_func" begin

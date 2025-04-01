@@ -16,64 +16,45 @@ Uses the `xsum` package for improved numerical accuracy.
     return xsum(vec)
 end
 
-# """
-#     sum_kahan(v::AbstractVector{T}) where {T<:Number}
-
-# Compute the sum using Kahan summation algorithm to reduce numerical errors.
-
-# # Note
-# - Slower than `sum_xsum` for large vectors, but faster for small vectors.
-# - Similar performance to `sum_kahan_neumaier`
-# """
-# function sum_kahan(v::AbstractVector{T}) where {T<:Number}
-#     s = zero(T)
-#     c = zero(T)
-#     y = zero(T)
-#     t = zero(T)
-#     j = 1
-#     n = length(v)
-
-#     @inbounds for j in 1:n
-#         y = v[j] - c
-#         t = s
-#         s += y
-#         c = (s - t) - y
-#     end
-
-#     return s
-# end
-
 """
-    sum_kahan_neumaier(v::AbstractVector{T}) where {T<:Number}
+    sum_kahan(v::AbstractVector{T}) where {T<:Number}
 
 Neumaier's variant of Kahan summation algorithm to reduce numerical errors.
 
 # Note
 - Slower than `sum_xsum` for large vectors, but faster for small vectors.
-- Similar performance to `sum_kahan`
 - Uses loop unrolling for better performance while maintaining Kahan summation's
 numerical stability. Processes two elements per iteration when possible.
 
 # References
 - [JuliaMath/KahanSummation.jl](https://github.com/JuliaMath/KahanSummation.jl)
 """
-function sum_kahan_neumaier(v::AbstractVector{T}) where {T<:Number}
+function sum_kahan(v::AbstractVector{T}) where {T<:Number}
     @inbounds begin
-        n = length(v)
+        it = iterate(v)
         c = zero(T)
-        s = v[1] - c
-        for i in 2:n
-            si = v[i]
-            t = s + si
-            if abs(s) >= abs(si)
-                c -= ((s - t) + si)
+
+        # return 0 if empty(v)
+        if it === nothing
+            return c
+        end
+
+        vi, i = it
+        s = vi - c
+
+        while (it = iterate(v, i)) !== nothing
+            vi, i = it
+            t = s + vi
+            if abs(s) >= abs(vi)
+                c -= ((s - t) + vi)
             else
-                c -= ((si - t) + s)
+                c -= ((vi - t) + s)
             end
             s = t
         end
+
         return s - c
     end
 end
 
-export sum_xsum, sum_kahan_neumaier
+export sum_xsum, sum_kahan
