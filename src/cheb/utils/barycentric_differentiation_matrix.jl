@@ -15,22 +15,21 @@ Compute the barycentric differentiation matrix.
 function barycentric_differentiation_matrix(
     x::AbstractVector{TF}, w::AbstractVector{TF}, k::Integer=1, t::AbstractVector{TF}=TF[]
 ) where {TF<:AbstractFloat}
+    @boundscheck begin
+        @argcheck length(x) == length(w) "x and w must have the same length"
+    end
+
     n = length(x)
 
     # Handle trivial cases:
     if n == 0
-        return zeros(TF, 0, 0)
+        return Matrix{TF}(undef, 0, 0)
     elseif n == 1
-        # Single point -> derivative matrix is [0]
+        # Derivative of a constant is 0
         return zeros(TF, 1, 1)
     end
 
-    # Check for length agreement:
-    if length(w) != n
-        throw(ArgumentError("Length of w must match the length of x."))
-    end
-
-    # If k = 0, return identity:
+    # 0-th derivative is the identity matrix
     if k == 0
         return Matrix{TF}(I, n, n)
     end
