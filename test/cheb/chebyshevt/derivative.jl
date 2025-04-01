@@ -1,8 +1,6 @@
 using TestItems
 
 @testitem "chebyshevt_derivative!" begin
-    using Einstein.ChebyshevSuite, Test
-
     @testset "Basic functionality" begin
         # Test case 1: Simple polynomial
         c = [1.0, 2.0, 3.0]
