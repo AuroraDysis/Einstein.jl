@@ -4,25 +4,25 @@
 Compute the barycentric differentiation matrix.
 
 # Arguments
-- `x::AbstractVector{TR}` : Vector of interpolation points
-- `w::AbstractVector{TR}` : Barycentric weights of the interpolation points
+- `x::AbstractVector{TF}` : Vector of interpolation points
+- `w::AbstractVector{TF}` : Barycentric weights of the interpolation points
 - `k::Integer` : Order of the derivative (default: 1)
-- `t::AbstractVector{TR}` : Vector of angles (default: empty)
+- `t::AbstractVector{TF}` : Vector of angles (default: empty)
 
 # References:
 - [chebfun/@chebcolloc/baryDiffMat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc/baryDiffMat.m)
 """
 function barycentric_differentiation_matrix(
-    x::AbstractVector{TR}, w::AbstractVector{TR}, k::Integer=1, t::AbstractVector{TR}=TR[]
-) where {TR<:AbstractFloat}
+    x::AbstractVector{TF}, w::AbstractVector{TF}, k::Integer=1, t::AbstractVector{TF}=TF[]
+) where {TF<:AbstractFloat}
     n = length(x)
 
     # Handle trivial cases:
     if n == 0
-        return zeros(TR, 0, 0)
+        return zeros(TF, 0, 0)
     elseif n == 1
         # Single point -> derivative matrix is [0]
-        return zeros(TR, 1, 1)
+        return zeros(TF, 1, 1)
     end
 
     # Check for length agreement:
@@ -32,13 +32,13 @@ function barycentric_differentiation_matrix(
 
     # If k=0, return identity:
     if k == 0
-        return Matrix{TR}(I, n, n)
+        return Matrix{TF}(I, n, n)
     end
 
     # Prepare pairwise difference matrix Dx and pairwise weight ratio Dw:
     # We'll construct them so that Dx[i,j] = x[i] - x[j], Dw[i,j] = w[j]/w[i].
-    Dx = zeros(TR, n, n)
-    Dw = zeros(TR, n, n)
+    Dx = zeros(TF, n, n)
+    Dw = zeros(TF, n, n)
 
     # If t is provided, use the sine-based formula for differences (see reference [4]):
     if length(t) > 0
@@ -47,7 +47,7 @@ function barycentric_differentiation_matrix(
         # We'll mimic the "flipud" approach if needed.
         t = collect(reverse(t))
         # Build matrix using: 2*sin((t[i]+t[j])/2)*sin((t[i]-t[j])/2)
-        half = one(TR) / 2
+        half = one(TF) / 2
         for i in 1:n
             for j in 1:n
                 if i == j
@@ -97,7 +97,7 @@ function barycentric_differentiation_matrix(
     end
 
     # Compute reciprocal of Dx:
-    Dxi = one(TR) ./ Dx  # elementwise reciprocal
+    Dxi = one(TF) ./ Dx  # elementwise reciprocal
     # Construct initial derivative matrix:
     D = Dw .* Dxi
 
@@ -113,7 +113,7 @@ function barycentric_differentiation_matrix(
     # Indices from end down to n-floor(n/2)+1:
     # That is from n down to n-halfN+1
     Ddiag = collect(diag(D))
-    Ddiag[end:-1:(n-halfN+1)] = -Ddiag[1:halfN]
+    Ddiag[end:-1:(n - halfN + 1)] = -Ddiag[1:halfN]
     for i in 1:n
         D[i, i] = Ddiag[i]
     end
@@ -161,9 +161,9 @@ function barycentric_differentiation_matrix(
     return D_current
 end
 
-function negative_sum_trick!(D::Matrix{TR}) where {TR<:AbstractFloat}
-    D[diagind(D)] .= zero(TR)
-    D[diagind(D)] .-= sum(D, dims=2)
+function negative_sum_trick!(D::Matrix{TF}) where {TF<:AbstractFloat}
+    D[diagind(D)] .= zero(TF)
+    return D[diagind(D)] .-= sum(D; dims=2)
 end
 
 export barycentric_differentiation_matrix
