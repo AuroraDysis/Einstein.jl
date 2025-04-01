@@ -42,8 +42,7 @@ function chebyshevt_derivative!(
         end
 
         # Scale first coefficient
-        half = one(T) / 2
-        coeffs_der[1] *= half
+        coeffs_der[1] /= 2
     end
 
     return nothing
