@@ -30,8 +30,8 @@ function gauss_chebyshev_differentiation_matrix(
     ::Type{TR}, n::Integer, lower_bound::TR, upper_bound::TR, k::Integer=1
 ) where {TR<:AbstractFloat}
     D = gauss_chebyshev_differentiation_matrix(TR, n, k)
-    scale = (2 / (upper_bound - lower_bound))^k
-    D .*= scale
+    jacobian = (2 / (upper_bound - lower_bound))^k
+    D .*= jacobian
     return D
 end
 
