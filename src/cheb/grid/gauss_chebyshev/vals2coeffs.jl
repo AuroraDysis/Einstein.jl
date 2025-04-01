@@ -43,10 +43,6 @@ struct Vals2CoeffsCache{TF<:AbstractFloat} <:
 
         return new{TF}(w, tmp, coeffs, real_coeffs, ifft_plan)
     end
-
-    function Vals2CoeffsCache(n::Integer)
-        return Vals2CoeffsCache{Float64}(n)
-    end
 end
 
 function (op::Vals2CoeffsCache{TF})(

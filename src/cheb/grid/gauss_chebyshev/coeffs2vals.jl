@@ -21,7 +21,7 @@ struct Coeffs2ValsCache{TF<:AbstractFloat} <: AbstractChebyshevSynthesisImplemen
     real_vals::Vector{TF} # values
     fft_plan::Plan{Complex{TF}}        # fft plan
 
-    function Coeffs2ValsCache(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+    function Coeffs2ValsCache{TF}(n::Integer) where {TF<:AbstractFloat}
         # Precompute weights
         w = Vector{Complex{TF}}(undef, 2n)
         @inbounds begin
@@ -125,8 +125,8 @@ function (op::Coeffs2ValsCache{TF})(
     end
 end
 
-function coeffs2vals(::Type{TF}, n::Integer)
-    return Coeffs2ValsCache(TF, n)
+function coeffs2vals(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+    return Coeffs2ValsCache{TF}(n)
 end
 
 function coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:AbstractFloatOrComplex}

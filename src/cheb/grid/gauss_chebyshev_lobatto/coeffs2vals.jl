@@ -28,10 +28,6 @@ struct Coeffs2ValsCache{TF<:AbstractFloat} <:
         fft_plan = plan_fft_measure!(tmp)
         return new{TF}(tmp, vals, real_vals, fft_plan)
     end
-
-    function Coeffs2ValsCache(n::Integer)
-        return Coeffs2ValsCache{Float64}(n)
-    end
 end
 
 function (op::Coeffs2ValsCache{TF})(

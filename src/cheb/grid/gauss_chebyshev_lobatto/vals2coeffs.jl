@@ -20,16 +20,12 @@ struct Vals2CoeffsCache{TF<:AbstractFloat} <: AbstractChebyshevAnalysisImplement
     real_coeffs::Vector{TF}
     ifft_plan::Plan{Complex{TF}}
 
-    function Vals2CoeffsCache(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+    function Vals2CoeffsCache{TF}(n::Integer) where {TF<:AbstractFloat}
         tmp = zeros(Complex{TF}, 2n - 2)
         coeffs = zeros(Complex{TF}, n)
         real_coeffs = zeros(TF, n)
         ifft_plan = plan_ifft_measure!(tmp)
         return new{TF}(tmp, coeffs, real_coeffs, ifft_plan)
-    end
-
-    function Vals2CoeffsCache(n::Integer)
-        return Vals2CoeffsCache(Float64, n)
     end
 end
 
@@ -113,7 +109,7 @@ function vals2coeffs(vals::AbstractVector{TFC}) where {TFC<:AbstractFloatOrCompl
     if n <= 1
         return deepcopy(vals)
     end
-    op = Vals2CoeffsCache(real(TFC), n)
+    op = Vals2CoeffsCache{real(TFC)}(n)
     return op(vals)
 end
 
