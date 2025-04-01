@@ -50,11 +50,11 @@ struct GaussChebyshevCoeffs2ValsCache{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}
 end
 
 function _compute_gauss_chebyshev_coeffs2vals!(
-    op::GaussChebyshevCoeffs2ValsCache{TF}, coeffs::AbstractVector{Complex{TF}}
-) where {TF<:AbstractFloat}
-    (; weights, tmp, complex_values, fft_plan) = op
+    op::GaussChebyshevCoeffs2ValsCache{TF}, coeffs::AbstractVector{TFC}
+) where {TF<:AbstractFloat,TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
+    (; n, weights, tmp, complex_values, fft_plan) = op
 
-    @argcheck length(coeffs) == op.n "coeffs must have length n"
+    @argcheck length(coeffs) == n "coeffs must have length n"
 
     # Check for symmetry
     tol = sqrt(eps(TF))
@@ -63,17 +63,14 @@ function _compute_gauss_chebyshev_coeffs2vals!(
 
     # Copy coefficients and mirror
     @inbounds begin
-        # First half: original coefficients
-        for i in 1:n
-            tmp[i] = coeffs[i] * weights[i]
-        end
-        # Second half: mirrored coefficients
+        tmp[1:n] .= coeffs
         tmp[n + 1] = 1
         for i in (n + 2):(2n)
-            tmp[i] = coeffs[2n - i + 2] * weights[i]
+            tmp[i] = coeffs[2n - i + 2]
         end
     end
 
+    tmp .*= weights
     fft_plan * tmp
 
     # Extract values from the second half of the FFT result
@@ -104,11 +101,10 @@ end
 function (op::GaussChebyshevCoeffs2ValsCache{TF})(
     coeffs::AbstractVector{TF}
 ) where {TF<:AbstractFloat}
+    (; complex_values, real_values) = op
     _compute_gauss_chebyshev_coeffs2vals!(op, coeffs)
-    @inbounds for k in 1:(op.n)
-        op.real_values[k] = real(op.complex_values[k])
-    end
-    return op.real_values
+    @. real_values = real(complex_values)
+    return real_values
 end
 
 function (op::GaussChebyshevCoeffs2ValsCache{TF})(
