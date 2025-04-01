@@ -100,9 +100,11 @@ end
 function (itp::BarycentricInterpolation{TF})(
     values::AbstractVector{TFC}, x::TF
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
-    (; points, weights, lower_bound, upper_bound) = itp
-    @argcheck lower_bound <= x <= upper_bound "x is out of range"
+    @boundscheck begin
+        @argcheck itp.lower_bound <= x <= itp.upper_bound "x is out of range"
+    end
 
+    (; points, weights) = itp
     return barycentric_interpolate(x, points, values, weights)
 end
 
