@@ -40,6 +40,9 @@ const points = chebgrid1_points
 const coeffs2vals = chebgrid1_coeffs2vals
 const vals2coeffs = chebgrid1_vals2coeffs
 
+const coeffs2vals_matrix = chebgrid1_coeffs2vals_matrix
+const vals2coeffs_matrix = chebgrid1_vals2coeffs_matrix
+
 const barycentric_weights = chebgrid1_barycentric_weights
 const quadrature_weights = chebgrid1_quadrature_weights
 
