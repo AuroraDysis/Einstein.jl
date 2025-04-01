@@ -1,7 +1,7 @@
-@testitem "GaussChebyshevLobattoGrid - points" begin
+@testitem "gauss_chebyshev_lobatto_points" begin
     @testset "n = 5" begin
         n = 5
-        x = GaussChebyshevLobattoGrid.points(n)
+        x = gauss_chebyshev_lobatto_points(n)
 
         @test length(x) == n
         @test x ≈ [-1.0, -0.707106781186548, 0.0, 0.707106781186548, 1.0]
@@ -9,7 +9,7 @@
 
     @testset "n = 6" begin
         n = 6
-        x = GaussChebyshevLobattoGrid.points(n)
+        x = gauss_chebyshev_lobatto_points(n)
 
         @test length(x) == n
         @test x ≈ [
