@@ -1,5 +1,5 @@
 """
-    chebgrid1_coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:AbstractFloatOrComplex}
+    coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:AbstractFloatOrComplex}
     ChebGrid1Coeffs2ValsCache{[TF=Float64]}(n::Integer)(coeffs::AbstractVector{TFC})
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 1st kind.
@@ -126,11 +126,11 @@ function (op::ChebGrid1Coeffs2ValsCache{TF})(
     end
 end
 
-function chebgrid1_coeffs2vals(::Type{TF}, n::Integer)
+function coeffs2vals(::Type{TF}, n::Integer)
     return ChebGrid1Coeffs2ValsCache(TF, n)
 end
 
-function chebgrid1_coeffs2vals(
+function coeffs2vals(
     coeffs::AbstractVector{TFC}
 ) where {TFC<:AbstractFloatOrComplex}
     n = length(coeffs)
@@ -144,7 +144,7 @@ function chebgrid1_coeffs2vals(
 end
 
 """
-    chebgrid1_coeffs2vals_matrix([TF=Float64], n::Integer) where {TF<:AbstractFloat}
+    coeffs2vals_matrix([TF=Float64], n::Integer) where {TF<:AbstractFloat}
 
 Construct the synthesis matrix S that transforms Chebyshev coefficients to function values at Chebyshev points of the 1st kind.
 
@@ -152,7 +152,7 @@ Construct the synthesis matrix S that transforms Chebyshev coefficients to funct
 - `TF`: Element type (defaults to Float64)
 - `n`: Number of points/coefficients
 """
-function chebgrid1_coeffs2vals_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function coeffs2vals_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     S = Array{TF,2}(undef, n, n)
     op = ChebGrid1Coeffs2ValsCache{TF}(n)
     @inbounds for i in 1:n
@@ -161,6 +161,6 @@ function chebgrid1_coeffs2vals_matrix(::Type{TF}, n::Integer) where {TF<:Abstrac
     return S
 end
 
-function chebgrid1_coeffs2vals_matrix(n::Integer)
-    return chebgrid1_coeffs2vals_matrix(Float64, n)
+function coeffs2vals_matrix(n::Integer)
+    return coeffs2vals_matrix(Float64, n)
 end

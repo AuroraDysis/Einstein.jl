@@ -1,6 +1,6 @@
 using TestItems
 
-@testitem "chebgrid1_points" begin
+@testitem "points" begin
     using ApproxFun, Einstein.ChebyshevSuite, Test
 
     for TF in [Float64, BigFloat]
@@ -11,7 +11,7 @@ using TestItems
             @testset "$TF, $intervals" begin
                 for n in 0:10
                     @test isapprox(
-                        chebgrid1_points(TF, n, lower_bound, upper_bound),
+                        points(TF, n, lower_bound, upper_bound),
                         reverse(points(Chebyshev(lower_bound .. upper_bound), n)),
                         atol=tol,
                     )

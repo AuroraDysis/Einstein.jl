@@ -10,7 +10,7 @@ using TestItems
             for n in 0:10
                 grid = ChebyshevGrid(n, lower_bound, upper_bound; kind=1)
                 @test isapprox(
-                    grid.data, chebgrid1_points(TF, n, lower_bound, upper_bound), atol=10 * eps(TF)
+                    grid.data, points(TF, n, lower_bound, upper_bound), atol=10 * eps(TF)
                 )
             end
         end

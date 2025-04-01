@@ -1,5 +1,5 @@
 """
-    chebgrid1_differentiation_matrix([TR=Float64], n::Integer, k::Integer=1) where {TR<:AbstractFloat}
+    differentiation_matrix([TR=Float64], n::Integer, k::Integer=1) where {TR<:AbstractFloat}
 
 Construct a Chebyshev differentiation that maps function values at `n` Chebyshev points of the 1st kind 
 to values of the `k`-th derivative of the interpolating polynomial at those points.
@@ -12,31 +12,31 @@ to values of the `k`-th derivative of the interpolating polynomial at those poin
 # References
 - [chebfun/@chebcolloc1/chebcolloc1.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc1/chebcolloc1.m)
 """
-function chebgrid1_differentiation_matrix(
+function differentiation_matrix(
     ::Type{TR}, n::Integer, k::Integer=1
 ) where {TR<:AbstractFloat}
-    x = chebgrid1_points(TR, n)               # First kind points.
+    x = points(TR, n)               # First kind points.
     w = cheb1_barycentric_weights(TR, n)           # Barycentric weights.
-    t = chebgrid1_angles(TR, n)            # acos(x).
+    t = angles(TR, n)            # acos(x).
     D = barycentric_differentiation_matrix(x, w, k, t)       # Construct matrix.
     return D
 end
 
-function chebgrid1_differentiation_matrix(n::Integer, k::Integer=1)
-    return chebgrid1_differentiation_matrix(Float64, n, k)
+function differentiation_matrix(n::Integer, k::Integer=1)
+    return differentiation_matrix(Float64, n, k)
 end
 
-function chebgrid1_differentiation_matrix(
+function differentiation_matrix(
     ::Type{TR}, n::Integer, lower_bound::TR, upper_bound::TR, k::Integer=1
 ) where {TR<:AbstractFloat}
-    D = chebgrid1_differentiation_matrix(TR, n, k)
+    D = differentiation_matrix(TR, n, k)
     scale = (2 / (upper_bound - lower_bound))^k
     D .*= scale
     return D
 end
 
-function chebgrid1_differentiation_matrix(
+function differentiation_matrix(
     n::Integer, lower_bound::Float64, upper_bound::Float64, k::Integer=1
 )
-    return chebgrid1_differentiation_matrix(Float64, n, lower_bound, upper_bound, k)
+    return differentiation_matrix(Float64, n, lower_bound, upper_bound, k)
 end

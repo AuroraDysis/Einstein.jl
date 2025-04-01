@@ -1,5 +1,5 @@
 """
-    chebgrid1_vals2coeffs(vals::AbstractVector{TF}) where {TF<:AbstractFloat}
+    vals2coeffs(vals::AbstractVector{TF}) where {TF<:AbstractFloat}
     ChebGrid1Vals2CoeffsCache{[TF=Float64]}(n::Integer)(vals::VT) where {TF<:AbstractFloat}
 
 Convert values at Chebyshev points of the 1st kind into Chebyshev coefficients.
@@ -119,7 +119,7 @@ function (op::ChebGrid1Vals2CoeffsCache{TF})(
     end
 end
 
-function chebgrid1_vals2coeffs(
+function vals2coeffs(
     vals::AbstractVector{TFC}
 ) where {TFC<:AbstractFloatOrComplex}
     n = length(vals)
@@ -132,7 +132,7 @@ function chebgrid1_vals2coeffs(
 end
 
 """
-    chebgrid1_vals2coeffs_matrix([TF=Float64], n::Integer) where {TF<:AbstractFloat}
+    vals2coeffs_matrix([TF=Float64], n::Integer) where {TF<:AbstractFloat}
 
 Construct the analysis matrix A that transforms function values at Chebyshev points of the 1st kind to Chebyshev coefficients.
 
@@ -140,7 +140,7 @@ Construct the analysis matrix A that transforms function values at Chebyshev poi
 - `TF`: Element type (defaults to Float64)
 - `n`: Number of points/coefficients
 """
-function chebgrid1_vals2coeffs_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function vals2coeffs_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     A = Array{TF,2}(undef, n, n)
     op = ChebGrid1Vals2CoeffsCache{TF}(n)
     @inbounds for i in 1:n
@@ -149,6 +149,6 @@ function chebgrid1_vals2coeffs_matrix(::Type{TF}, n::Integer) where {TF<:Abstrac
     return A
 end
 
-function chebgrid1_vals2coeffs_matrix(n::Integer)
-    return chebgrid1_vals2coeffs_matrix(Float64, n)
+function vals2coeffs_matrix(n::Integer)
+    return vals2coeffs_matrix(Float64, n)
 end

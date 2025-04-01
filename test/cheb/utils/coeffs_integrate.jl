@@ -7,10 +7,10 @@ using TestItems
 
     @testset "cheb1" begin
         n = 15
-        f = cos.(chebgrid1_points(n))
+        f = cos.(points(n))
         f_coeffs = cheb1_vals2coeffs(f)
         If_coeffs = cheb_coeffs_integrate(f_coeffs)
-        If = sin.(chebgrid1_points(n)) .- sin(-1) # sin(x) - sin(-1) is the antiderivative of cos(x)
+        If = sin.(points(n)) .- sin(-1) # sin(x) - sin(-1) is the antiderivative of cos(x)
         If_coeffs_true = cheb1_vals2coeffs(If)
         @test norm(If_coeffs[1:(end - 1)] .- If_coeffs_true, Inf) < tol
     end

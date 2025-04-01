@@ -1,6 +1,6 @@
 using TestItems
 
-@testitem "chebgrid1_angles" begin
+@testitem "angles" begin
     using ApproxFun, Einstein.ChebyshevSuite, Test
 
     for TF in [Float64, BigFloat]
@@ -9,7 +9,7 @@ using TestItems
         @testset "$TF" begin
             for n in 0:10
                 @test isapprox(
-                    chebgrid1_angles(TF, n), reverse(acos.(points(Chebyshev(dom), n))), atol=tol
+                    angles(TF, n), reverse(acos.(points(Chebyshev(dom), n))), atol=tol
                 )
             end
         end

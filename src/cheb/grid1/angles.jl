@@ -1,5 +1,5 @@
 @doc raw"""
-    chebgrid1_angles(TF, n) where {TF<:AbstractFloat}
+    angles(TF, n) where {TF<:AbstractFloat}
 
 Compute angles for Chebyshev points of the 1st kind:
 ```math
@@ -10,7 +10,7 @@ Compute angles for Chebyshev points of the 1st kind:
 - `TF`: Type parameter for the angles (e.g., Float64)
 - `n`: Number of points
 """
-function chebgrid1_angles(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function angles(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     @argcheck n >= 0 "n must be nonnegative"
 
     if n == 0
@@ -28,6 +28,6 @@ function chebgrid1_angles(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     return θ
 end
 
-function chebgrid1_angles(n::Integer)
-    return chebgrid1_angles(Float64, n)
+function angles(n::Integer)
+    return angles(Float64, n)
 end

@@ -1,5 +1,5 @@
 @doc raw"""
-    chebgrid1_angles(TF, n) where {TF<:AbstractFloat}
+    angles(TF, n) where {TF<:AbstractFloat}
 
 Compute angles for Chebyshev points of the 2nd kind:
 ```math
