@@ -50,4 +50,4 @@ const differentiation_matrix = chebgrid1_differentiation_matrix
 const integration_matrix = chebgrid1_integration_matrix
 end
 
-export GaussChebyshevGrid
+export GaussChebyshevGrid, GaussChebyshevGridTool
