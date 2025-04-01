@@ -1,3 +1,5 @@
+using It
+
 """
     barycentric_differentiation_matrix(x, w, k, t)
 
@@ -11,21 +13,23 @@ Compute the barycentric differentiation matrix.
 
 # References:
 - [chebfun/@chebcolloc/baryDiffMat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc/baryDiffMat.m)
+- [Baltensperger2003](@citet*)
 """
 function barycentric_differentiation_matrix(
-    x::AbstractVector{TF}, w::AbstractVector{TF}, k::Integer=1, t::AbstractVector{TF}=TF[]
+    x::AbstractVector{TF},
+    w::AbstractVector{TF},
+    k::Integer=1,
+    t::Union{AbstractVector{TF},Nothing}=nothing,
 ) where {TF<:AbstractFloat}
-    @boundscheck begin
-        @argcheck length(x) == length(w) "x and w must have the same length"
-    end
+    @argcheck length(x) == length(w) "x and w must have the same length"
 
     n = length(x)
 
-    # Handle trivial cases:
+    # handle trivial cases:
     if n == 0
         return Matrix{TF}(undef, 0, 0)
     elseif n == 1
-        # Derivative of a constant is 0
+        # derivative of a constant is 0
         return zeros(TF, 1, 1)
     end
 
@@ -34,135 +38,95 @@ function barycentric_differentiation_matrix(
         return Matrix{TF}(I, n, n)
     end
 
-    # Prepare pairwise difference matrix Dx and pairwise weight ratio Dw:
-    # We'll construct them so that Dx[i,j] = x[i] - x[j], Dw[i,j] = w[j]/w[i].
+    # Dx[i,j] = x[i] - x[j]
     Dx = zeros(TF, n, n)
-    Dw = zeros(TF, n, n)
+    diag_idx = diagind(Dx)
 
-    # If t is provided, use the sine-based formula for differences (see reference [4]):
-    if length(t) > 0
-        # In MATLAB code, t was optionally passed in a reversed order. 
-        # Here we assume user passes the correct array. 
-        # We'll mimic the "flipud" approach if needed.
-        t = collect(reverse(t))
-        # Build matrix using: 2*sin((t[i]+t[j])/2)*sin((t[i]-t[j])/2)
-        half = one(TF) / 2
-        for i in 1:n
-            for j in 1:n
-                if i == j
-                    Dx[i, j] = 1  # set the diagonal to 1 (placeholder)
-                else
-                    Dx[i, j] = 2 * sin((t[i] + t[j]) * half) * sin((t[i] - t[j]) * half)
-                end
-            end
-        end
+    if !isnothing(t)
+        @argcheck length(t) == n "t must have the same length as x"
 
-        # Instead, rotate Dx by 180 degrees, then flip signs above diagonal:
-        DxRot = reverse(reverse(Dx; dims=1); dims=2)
-        for i in 1:n
-            for j in 1:n
-                if j > i
-                    Dx[i, j] = -DxRot[i, j]
-                end
-            end
-        end
-
-        # Finally, set the diagonal to 1:
-        for i in 1:n
-            Dx[i, i] = 1
+        # use trigonometric identities as described in Baltensperger2003
+        tr = @view t[end:-1:1]
+        for j in 1:n, i in 1:(n - j + 1)
+            Dx[i, j] = 2 * sin((tr[i] + tr[j]) / 2) * sin((tr[i] - tr[j]) / 2)
         end
     else
-        # Standard difference (x[i] - x[j]):
-        for i in 1:n
-            for j in 1:n
-                if i == j
-                    Dx[i, j] = 1
-                else
-                    Dx[i, j] = x[i] - x[j]
-                end
-            end
+        # standard pairwise differences: Dx[i, j] = x[i] - x[j]
+        for j in 1:n, i in 1:(n - j + 1)
+            Dx[i, j] = x[i] - x[j]
         end
     end
 
-    # Build Dw = w[j] / w[i], with zero on diagonal:
-    for i in 1:n
-        for j in 1:n
-            if i == j
-                Dw[i, j] = 0
-            else
-                Dw[i, j] = w[j] / w[i]
-            end
-        end
+    # flipping trick, D_{N-k, N-j}=-D_{k j}
+    for j in 1:n, i in (n - j + 2):n
+        Dx[i, j] = -Dx[n - i + 1, n - j + 1]
     end
 
-    # Compute reciprocal of Dx:
-    Dxi = one(TF) ./ Dx  # elementwise reciprocal
-    # Construct initial derivative matrix:
+    # build Dw = w[j] / w[i], with zero on diagonal:
+    Dw = zeros(TF, n, n)
+    for i in 1:n, j in 1:n
+        Dw[i, j] = w[j] / w[i]
+    end
+    Dw[diag_idx] .= zero(TF)
+
+    # k = 1
+    Dx[diag_idx] .= one(TF) # Set diagonal to 1 temporarily to avoid division by zero
+    Dxi = one(TF) ./ Dx
     D = Dw .* Dxi
 
-    # Negative sum trick on the diagonal: D(i,i) = -sum of row i
-    # This ensures each row sums to zero.
     negative_sum_trick!(D)
 
-    # Enforce a symmetry fix for even n on the diagonal entries:
-    # (Matches the "Forcing symmetry for even n" from the original code.)
-    # The original code effectively flips the sign for half of the diagonal indices for even n.
-    # For simplicity, replicate that behavior exactly:
-    halfN = div(n, 2)
-    # Indices from end down to n-floor(n/2)+1:
-    # That is from n down to n-halfN+1
-    Ddiag = collect(diag(D))
-    Ddiag[end:-1:(n - halfN + 1)] = -Ddiag[1:halfN]
-    for i in 1:n
-        D[i, i] = Ddiag[i]
-    end
+    # enforce a symmetry fix for even n on the diagonal entries:
+    half_n = div(n, 2)
+    D[diag_idx[end:-1:(n - half_n + 1)]] .= -D[diag_idx[1:half_n]]
 
-    # If k=1, we're done:
     if k == 1
         return D
     end
 
-    # For k=2:
-    # D <- 2 * D .* (repeat(diag(D), 1, n) - Dxi)
-    # and then negative sum trick
-    D2 = copy(D)
+    # k = 2
     for i in 1:n
-        # diag(D) for row i is D[i,i]
-        dii = D[i, i]
+        Dii = D[i, i]
         for j in 1:n
-            D2[i, j] = 2 * D[i, j] * (dii - Dxi[i, j])
+            D[i, j] = 2 * D[i, j] * (Dii - Dxi[i, j])
         end
     end
-    # negative sum trick
-    negative_sum_trick!(D2)
+
+    negative_sum_trick!(D)
 
     if k == 2
-        return D2
+        return D
     end
 
-    # For k >= 3:
-    # We'll iteratively build D for nth derivative:
-    D_current = copy(D2)
+    # For k >= 3
     for n in 3:k
-        # D <- n * Dxi .* (Dw .* repeat(diag(D_current), 1, n) - D_current)
-        D_next = similar(D_current)
         for i in 1:n
-            dii = D_current[i, i]
+            Dii = D[i, i]
             for j in 1:n
-                D_next[i, j] = n * Dxi[i, j] * (Dw[i, j] * dii - D_current[i, j])
+                D[i, j] = n * Dxi[i, j] * (Dw[i, j] * Dii - D[i, j])
             end
         end
-        # negative sum trick
-        negative_sum_trick!(D_next)
-        D_current = D_next
+
+        negative_sum_trick!(D)
     end
 
-    return D_current
+    return D
 end
 
+# D_{k k}=-\sum_{\substack{j=0 \\ j \neq k}}^N D_{k j}
 function negative_sum_trick!(D::Matrix{TF}) where {TF<:AbstractFloat}
-    D[diagind(D)] .= zero(TF)
-    return D[diagind(D)] .-= sum(D; dims=2)
+    n = size(D, 1)
+
+    for i in 1:n
+        Dii = zero(TF)
+        for j in 1:(i - 1)
+            Dii += D[i, j]
+        end
+        for j in (i + 1):n
+            Dii += D[i, j]
+        end
+        D[i, i] = -Dii
+    end
 end
 
 export barycentric_differentiation_matrix
