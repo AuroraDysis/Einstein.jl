@@ -14,12 +14,12 @@ values = op(coeffs)
 # References
 - [chebfun/@chebtech1/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/coeffs2vals.m)
 """
-struct GaussChebyshevCoeffs2ValsCache{TF<:AbstractFloat}
+struct GaussChebyshevCoeffs2ValsCache{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}}
     w::Vector{Complex{TF}}    # Weight vector
     tmp::Vector{Complex{TF}}  # Temporary storage
     vals::Vector{Complex{TF}} # values
     real_vals::Vector{TF} # values
-    fft_plan::Plan{Complex{TF}}        # fft plan
+    fft_plan::TPlan        # fft plan
 
     function GaussChebyshevCoeffs2ValsCache{TF}(n::Integer) where {TF<:AbstractFloat}
         # Precompute weights
@@ -40,7 +40,7 @@ struct GaussChebyshevCoeffs2ValsCache{TF<:AbstractFloat}
         vals = Vector{Complex{TF}}(undef, n)
         real_vals = Vector{TF}(undef, n)
         fft_plan = plan_fft_measure!(tmp)
-        return new{TF}(w, tmp, vals, real_vals, fft_plan)
+        return new{TF,typeof(fft_plan)}(w, tmp, vals, real_vals, fft_plan)
     end
 end
 
@@ -129,7 +129,9 @@ function gauss_chebyshev_coeffs2vals(::Type{TF}, n::Integer) where {TF<:Abstract
     return GaussChebyshevCoeffs2ValsCache{TF}(n)
 end
 
-function gauss_chebyshev_coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
+function gauss_chebyshev_coeffs2vals(
+    coeffs::AbstractVector{TFC}
+) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     n = length(coeffs)
 
     if n <= 1
@@ -149,7 +151,9 @@ Construct the synthesis matrix S that transforms Chebyshev coefficients to funct
 - `TF`: Element type (defaults to Float64)
 - `n`: Number of points/coefficients
 """
-function gauss_chebyshev_coeffs2vals_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function gauss_chebyshev_coeffs2vals_matrix(
+    ::Type{TF}, n::Integer
+) where {TF<:AbstractFloat}
     S = Array{TF,2}(undef, n, n)
     op = GaussChebyshevCoeffs2ValsCache{TF}(n)
     @inbounds for i in 1:n

@@ -14,18 +14,18 @@ values = op(coeffs)
 # References
 - [chebfun/@chebtech2/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/coeffs2vals.m)
 """
-struct GaussChebyshevLobattoCoeffs2ValsCache{TF<:AbstractFloat}
+struct GaussChebyshevLobattoCoeffs2ValsCache{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}}
     tmp::Vector{Complex{TF}}
     vals::Vector{Complex{TF}}
     real_vals::Vector{TF}
-    fft_plan::Union{Plan{Complex{TF}},Nothing}
+    fft_plan::TPlan
 
     function GaussChebyshevLobattoCoeffs2ValsCache{TF}(n::Integer) where {TF<:AbstractFloat}
         tmp = zeros(Complex{TF}, 2n - 2)
         vals = zeros(Complex{TF}, n)
         real_vals = zeros(TF, n)
-        fft_plan = n > 1 ? plan_fft_measure!(tmp) : nothing
-        return new{TF}(tmp, vals, real_vals, fft_plan)
+        fft_plan = plan_fft_measure!(tmp)
+        return new{TF,typeof(fft_plan)}(tmp, vals, real_vals, fft_plan)
     end
 end
 
@@ -99,11 +99,15 @@ function (op::GaussChebyshevLobattoCoeffs2ValsCache{TF})(
     end
 end
 
-function gauss_chebyshev_lobatto_coeffs2vals(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function gauss_chebyshev_lobatto_coeffs2vals(
+    ::Type{TF}, n::Integer
+) where {TF<:AbstractFloat}
     return GaussChebyshevLobattoCoeffs2ValsCache{TF}(n)
 end
 
-function gauss_chebyshev_lobatto_coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
+function gauss_chebyshev_lobatto_coeffs2vals(
+    coeffs::AbstractVector{TFC}
+) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     n = length(coeffs)
 
     if n <= 1
@@ -123,7 +127,9 @@ Construct the synthesis matrix S that transforms Chebyshev coefficients to funct
 - `TF`: Element type (defaults to Float64)
 - `n`: Number of points/coefficients
 """
-function gauss_chebyshev_lobatto_coeffs2vals_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function gauss_chebyshev_lobatto_coeffs2vals_matrix(
+    ::Type{TF}, n::Integer
+) where {TF<:AbstractFloat}
     S = Array{TF,2}(undef, n, n)
     op = GaussChebyshevLobattoCoeffs2ValsCache{TF}(n)
     @inbounds for i in 1:n
