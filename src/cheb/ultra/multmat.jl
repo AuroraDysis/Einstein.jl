@@ -14,7 +14,7 @@ Construct nxn multiplication matrix representing the multiplication of F in the 
 """
 function ultra_multmat!(
     coeffs::AbstractVector{TFC}, λ::Integer
-) where {TFC<:AbstractFloatOrComplex}
+) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     n = length(coeffs)
 
     if λ == 0 # λ == 0 case (Chebyshev T)
@@ -60,7 +60,7 @@ end
 
 function ultra_multmat(
     coeffs::AbstractVector{TFC}, λ::Integer
-) where {TFC<:AbstractFloatOrComplex}
+) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     return ultra_multmat!(deepcopy(coeffs), λ)
 end
 

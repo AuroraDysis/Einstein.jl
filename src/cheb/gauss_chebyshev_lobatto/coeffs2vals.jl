@@ -1,6 +1,6 @@
 """
-    coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
-    coeffs2vals([TF=Float64], n::Integer)(coeffs::AbstractVector{TR})
+    coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
+    coeffs2vals([TF=Float64], n::Integer)(coeffs::AbstractVector{TFC})
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 2nd kind.
 
@@ -30,9 +30,9 @@ struct Coeffs2ValsCache{TF<:AbstractFloat}
 end
 
 function (op::Coeffs2ValsCache{TF})(
-    coeffs::AbstractVector{TR}
-) where {TF<:AbstractFloat,TR<:Union{TF,Complex{TF}}}
-    type_is_float = typeisfloat(TR)
+    coeffs::AbstractVector{TFC}
+) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
+    type_is_float = typeisfloat(TFC)
 
     n = length(coeffs)
     if n <= 1
@@ -103,14 +103,14 @@ function coeffs2vals(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     return Coeffs2ValsCache{TF}(n)
 end
 
-function coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
+function coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     n = length(coeffs)
 
     if n <= 1
         return deepcopy(coeffs)
     end
 
-    op = Coeffs2ValsCache{real(TR)}(n)
+    op = Coeffs2ValsCache{real(TFC)}(n)
     return op(coeffs)
 end
 

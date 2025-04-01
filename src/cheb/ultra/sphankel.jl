@@ -8,7 +8,7 @@ operator.
 # References
 - [chebfun/@ultraS/sphankel.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40ultraS/sphankel.m)
 """
-function ultra_sphankel(r::AbstractVector{TFC}) where {TFC<:AbstractFloatOrComplex}
+function ultra_sphankel(r::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     return Hankel(r, OneElement(@inbounds(r[end]), 1, length(r)))
 end
 

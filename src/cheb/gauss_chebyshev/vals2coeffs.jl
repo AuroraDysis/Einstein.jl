@@ -118,7 +118,7 @@ function vals2coeffs(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     return Vals2CoeffsCache{TF}(n)
 end
 
-function vals2coeffs(vals::AbstractVector{TFC}) where {TFC<:AbstractFloatOrComplex}
+function vals2coeffs(vals::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     n = length(vals)
     if n <= 1
         return deepcopy(vals)

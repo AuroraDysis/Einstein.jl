@@ -13,3 +13,5 @@ end
 function plan_ifft_measure!(tmp::Vector{Complex{T}}) where {T<:AbstractFloat}
     return plan_ifft!(tmp)
 end
+
+export plan_fft_measure!, plan_ifft_measure!

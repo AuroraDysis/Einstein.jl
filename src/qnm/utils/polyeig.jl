@@ -36,7 +36,7 @@ Ax = λEx
 """
 function qnm_polyeig(
     ::Type{TFC}, pep::AbstractVector{<:AbstractMatrix}
-) where {TFC<:AbstractFloatOrComplex}
+) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     # Size of coefficient matrices
     n = size(pep[1], 1)
 

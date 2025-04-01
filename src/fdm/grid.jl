@@ -1,4 +1,4 @@
-function fdm_uniform_grid(lower_bound::TF, upper_bound::TF, dx::TF)
+function fdm_uniform_grid(lower_bound::TF, upper_bound::TF, dx::TF) where {TF<:AbstractFloat}
     @argcheck upper_bound > lower_bound "Invalid interval"
     @argcheck dx > 0 "Spacing must be positive"
 

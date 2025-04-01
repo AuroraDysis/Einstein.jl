@@ -17,13 +17,10 @@ include("qnm/qnm.jl")
 using PrecompileTools
 
 PrecompileTools.@compile_workload begin
-    using .ChebyshevSuite
-
-    points(Float64, 5)
-    points(Float64, 5)
-
-    angles(Float64, 5)
-    angles(Float64, 5)
+    for grid in (GaussChebyshev, GaussChebyshevLobatto)
+        points = grid.points(Float64, 5)
+        angles = grid.angles(Float64, 5)
+    end
 
     # TODO: implement the rest of the precompiles
 end

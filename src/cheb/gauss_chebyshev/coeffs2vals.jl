@@ -1,5 +1,5 @@
 """
-    coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:AbstractFloatOrComplex}
+    coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     coeffs2vals([TF=Float64], n::Integer)(coeffs::AbstractVector{TFC})
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 1st kind.
@@ -129,7 +129,7 @@ function coeffs2vals(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     return Coeffs2ValsCache{TF}(n)
 end
 
-function coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:AbstractFloatOrComplex}
+function coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     n = length(coeffs)
 
     if n <= 1

@@ -9,6 +9,13 @@ mapped intervals [a,b] through appropriate scaling transformations.
 - [chebfun/@chebtech1/chebtech1.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/chebtech1.m)
 """
 module GaussChebyshev
+
+using AbstractFFTs: Plan
+using ArgCheck: @argcheck
+using FastBroadcast: @..
+
+using ..ChebyshevSuite
+
 include("angles.jl")
 include("points.jl")
 
