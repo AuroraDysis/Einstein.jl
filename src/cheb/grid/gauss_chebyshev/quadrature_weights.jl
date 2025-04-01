@@ -76,3 +76,5 @@ end
 function quadrature_weights(n::Integer, lower_bound::Float64, upper_bound::Float64)
     return quadrature_weights(Float64, n, lower_bound, upper_bound)
 end
+
+export quadrature_weights

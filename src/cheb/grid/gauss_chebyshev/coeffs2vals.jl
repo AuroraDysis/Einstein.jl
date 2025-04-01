@@ -164,3 +164,5 @@ end
 function coeffs2vals_matrix(n::Integer)
     return coeffs2vals_matrix(Float64, n)
 end
+
+export ChebGrid1Coeffs2ValsCache, coeffs2vals, coeffs2vals_matrix

@@ -49,3 +49,5 @@ end
 function barycentric_weights(n::Integer)
     return barycentric_weights(Float64, n)
 end
+
+export barycentric_weights

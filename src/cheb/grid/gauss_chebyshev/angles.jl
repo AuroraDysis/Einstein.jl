@@ -31,3 +31,5 @@ end
 function angles(n::Integer)
     return angles(Float64, n)
 end
+
+export angles

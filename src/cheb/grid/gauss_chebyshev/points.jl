@@ -66,3 +66,5 @@ end
 function points(n::Integer, lower_bound::Float64, upper_bound::Float64)
     return points(Float64, n, lower_bound, upper_bound)
 end
+
+export points

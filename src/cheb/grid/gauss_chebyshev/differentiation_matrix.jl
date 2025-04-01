@@ -40,3 +40,5 @@ function differentiation_matrix(
 )
     return differentiation_matrix(Float64, n, lower_bound, upper_bound, k)
 end
+
+export differentiation_matrix

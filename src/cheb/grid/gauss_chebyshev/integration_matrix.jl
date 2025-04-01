@@ -32,3 +32,5 @@ end
 function integration_matrix(n::Integer, lower_bound::Float64, upper_bound::Float64)
     return integration_matrix(Float64, n, lower_bound, upper_bound)
 end
+
+export integration_matrix
