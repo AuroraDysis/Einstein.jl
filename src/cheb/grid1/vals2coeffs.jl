@@ -1,20 +1,20 @@
 """
     chebgrid1_vals2coeffs(vals::AbstractVector{TF}) where {TF<:AbstractFloat}
-    ChebyshevFirstKindAnalysis{[TF=Float64]}(n::Integer)(vals::VT) where {TF<:AbstractFloat}
+    ChebGrid1Vals2CoeffsCache{[TF=Float64]}(n::Integer)(vals::VT) where {TF<:AbstractFloat}
 
 Convert values at Chebyshev points of the 1st kind into Chebyshev coefficients.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-op = ChebyshevFirstKindAnalysis{Float64}(n)
+op = ChebGrid1Vals2CoeffsCache{Float64}(n)
 values = op(coeffs)
 ```
 
 # References
 - [chebfun/@chebtech1/vals2coeffs.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/vals2coeffs.m)
 """
-struct ChebyshevFirstKindAnalysis{TF<:AbstractFloat} <:
+struct ChebGrid1Vals2CoeffsCache{TF<:AbstractFloat} <:
        AbstractChebyshevAnalysisImplementation
     w::Vector{Complex{TF}}
     tmp::Vector{Complex{TF}}
@@ -22,7 +22,7 @@ struct ChebyshevFirstKindAnalysis{TF<:AbstractFloat} <:
     real_coeffs::Vector{TF}
     ifft_plan::Plan{Complex{TF}}
 
-    function ChebyshevFirstKindAnalysis{TF}(n::Integer) where {TF<:AbstractFloat}
+    function ChebGrid1Vals2CoeffsCache{TF}(n::Integer) where {TF<:AbstractFloat}
         # Precompute weights
         w = Vector{Complex{TF}}(undef, n)
         @inbounds begin
@@ -44,12 +44,12 @@ struct ChebyshevFirstKindAnalysis{TF<:AbstractFloat} <:
         return new{TF}(w, tmp, coeffs, real_coeffs, ifft_plan)
     end
 
-    function ChebyshevFirstKindAnalysis(n::Integer)
-        return ChebyshevFirstKindAnalysis{Float64}(n)
+    function ChebGrid1Vals2CoeffsCache(n::Integer)
+        return ChebGrid1Vals2CoeffsCache{Float64}(n)
     end
 end
 
-function (op::ChebyshevFirstKindAnalysis{TF})(
+function (op::ChebGrid1Vals2CoeffsCache{TF})(
     vals::AbstractVector{TFC}
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
     type_is_float = typeisfloat(TFC)
@@ -127,12 +127,12 @@ function chebgrid1_vals2coeffs(
         return deepcopy(vals)
     end
 
-    op = ChebyshevFirstKindAnalysis{real(TFC)}(n)
+    op = ChebGrid1Vals2CoeffsCache{real(TFC)}(n)
     return op(vals)
 end
 
 """
-    chebgrid1_analysis_matrix([TF=Float64], n::Integer) where {TF<:AbstractFloat}
+    chebgrid1_vals2coeffs_matrix([TF=Float64], n::Integer) where {TF<:AbstractFloat}
 
 Construct the analysis matrix A that transforms function values at Chebyshev points of the 1st kind to Chebyshev coefficients.
 
@@ -140,15 +140,15 @@ Construct the analysis matrix A that transforms function values at Chebyshev poi
 - `TF`: Element type (defaults to Float64)
 - `n`: Number of points/coefficients
 """
-function chebgrid1_analysis_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function chebgrid1_vals2coeffs_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     A = Array{TF,2}(undef, n, n)
-    op = ChebyshevFirstKindAnalysis{TF}(n)
+    op = ChebGrid1Vals2CoeffsCache{TF}(n)
     @inbounds for i in 1:n
         A[:, i] = op(OneElement(one(TF), i, n))
     end
     return A
 end
 
-function chebgrid1_analysis_matrix(n::Integer)
-    return chebgrid1_analysis_matrix(Float64, n)
+function chebgrid1_vals2coeffs_matrix(n::Integer)
+    return chebgrid1_vals2coeffs_matrix(Float64, n)
 end
