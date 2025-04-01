@@ -1,21 +1,20 @@
 """
     vals2coeffs(vals::AbstractVector{TF}) where {TF<:AbstractFloat}
-    Vals2CoeffsCache{[TF=Float64]}(n::Integer)(vals::VT) where {TF<:AbstractFloat}
+    vals2coeffs([TF=Float64], n::Integer)(vals::AbstractVector{TF}) where {TF<:AbstractFloat}
 
 Convert values at Chebyshev points of the 1st kind into Chebyshev coefficients.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-op = Vals2CoeffsCache{Float64}(n)
+op = vals2coeffs(Float64, n)
 values = op(coeffs)
 ```
 
 # References
 - [chebfun/@chebtech1/vals2coeffs.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/vals2coeffs.m)
 """
-struct Vals2CoeffsCache{TF<:AbstractFloat} <:
-       AbstractChebyshevAnalysisImplementation
+struct Vals2CoeffsCache{TF<:AbstractFloat} <: AbstractChebyshevAnalysisImplementation
     w::Vector{Complex{TF}}
     tmp::Vector{Complex{TF}}
     coeffs::Vector{Complex{TF}}
@@ -115,9 +114,11 @@ function (op::Vals2CoeffsCache{TF})(
     end
 end
 
-function vals2coeffs(
-    vals::AbstractVector{TFC}
-) where {TFC<:AbstractFloatOrComplex}
+function vals2coeffs(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+    return Vals2CoeffsCache{TF}(n)
+end
+
+function vals2coeffs(vals::AbstractVector{TFC}) where {TFC<:AbstractFloatOrComplex}
     n = length(vals)
     if n <= 1
         return deepcopy(vals)
@@ -149,4 +150,4 @@ function vals2coeffs_matrix(n::Integer)
     return vals2coeffs_matrix(Float64, n)
 end
 
-export Vals2CoeffsCache, vals2coeffs, vals2coeffs_matrix
+export vals2coeffs, vals2coeffs_matrix

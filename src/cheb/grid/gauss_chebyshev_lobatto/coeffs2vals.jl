@@ -1,13 +1,13 @@
 """
     coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
-    Coeffs2ValsCache{[TF=Float64]}(n::Integer)(coeffs::AbstractVector{TR})
+    coeffs2vals([TF=Float64], n::Integer)(coeffs::AbstractVector{TR})
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 2nd kind.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-op = Coeffs2ValsCache{Float64}(n)
+op = coeffs2vals(Float64, n)
 values = op(coeffs)
 ```
 
@@ -100,6 +100,10 @@ function (op::Coeffs2ValsCache{TF})(
     end
 end
 
+function coeffs2vals(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+    return Coeffs2ValsCache{TF}(n)
+end
+
 function coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
     n = length(coeffs)
 
@@ -133,4 +137,4 @@ function coeffs2vals_matrix(n::Integer)
     return coeffs2vals_matrix(Float64, n)
 end
 
-export Coeffs2ValsCache, coeffs2vals, coeffs2vals_matrix
+export coeffs2vals, coeffs2vals_matrix
