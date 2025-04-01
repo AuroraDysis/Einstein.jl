@@ -17,8 +17,8 @@ include("utils/fft.jl")
 include("utils/barycentric_differentiation_matrix.jl")
 
 # utils for coefficients of the corresponding first-kind Chebyshev series expansion.
-include("chebyshevt/eval.jl")
-include("chebyshevt/diff.jl")
+include("chebyshevt/evaluate.jl")
+include("chebyshevt/derivative.jl")
 include("chebyshevt/integrate.jl")
 include("chebyshevt/integration_matrix.jl")
 

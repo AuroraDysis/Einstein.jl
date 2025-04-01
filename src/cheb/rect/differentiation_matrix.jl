@@ -213,7 +213,7 @@ function cheb_rect_differentiation_matrix(
     # Higher-order derivatives
     for l in 2:p
         a = chebyshevt_derivative(a)
-        Tt = chebyshevt_eval(a, tau)
+        Tt = chebyshevt_evaluate(a, tau)
         D .= (Tt .* sgn' .+ l .* D) ./ denom
     end
 

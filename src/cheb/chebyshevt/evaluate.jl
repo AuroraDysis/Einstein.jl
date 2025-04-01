@@ -1,6 +1,6 @@
 """
-    chebyshevt_eval(coeffs::AbstractVector{TFC}, x::TF) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}
-    chebyshevt_eval(coeffs::AbstractVector{TFC}, x::AbstractVector{TF}) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}
+    chebyshevt_evaluate(coeffs::AbstractVector{TFC}, x::TF) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}
+    chebyshevt_evaluate(coeffs::AbstractVector{TFC}, x::AbstractVector{TF}) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}
 
 Evaluate Chebyshev coefficients at point(s) using Clenshaw's algorithm.
 
@@ -12,7 +12,7 @@ Evaluate Chebyshev coefficients at point(s) using Clenshaw's algorithm.
 - [chebfun/@chebtech/clenshaw.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech/clenshaw.m)
 - [chebfun/@chebtech/feval.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech/feval.m)
 """
-function chebyshevt_eval(
+function chebyshevt_evaluate(
     coeffs::AbstractVector{TFC}, x::TF
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
     @argcheck length(coeffs) > 0 "coeffs must have at least one element"
@@ -42,11 +42,11 @@ function chebyshevt_eval(
     return y
 end
 
-# TODO: Implement the vectorized version of chebyshevt_eval
-function chebyshevt_eval(
+# TODO: Implement the vectorized version of chebyshevt_evaluate
+function chebyshevt_evaluate(
     coeffs::AbstractVector{TFC}, x::AbstractArray{TF}
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
-    return map(xi -> chebyshevt_eval(coeffs, xi), x)
+    return map(xi -> chebyshevt_evaluate(coeffs, xi), x)
 end
 
-export chebyshevt_eval
+export chebyshevt_evaluate
