@@ -18,13 +18,13 @@ struct Coeffs2ValsCache{TF<:AbstractFloat}
     tmp::Vector{Complex{TF}}
     vals::Vector{Complex{TF}}
     real_vals::Vector{TF}
-    fft_plan::Plan{Complex{TF}}
+    fft_plan::Union{Plan{Complex{TF}},Nothing}
 
     function Coeffs2ValsCache{TF}(n::Integer) where {TF<:AbstractFloat}
         tmp = zeros(Complex{TF}, 2n - 2)
         vals = zeros(Complex{TF}, n)
         real_vals = zeros(TF, n)
-        fft_plan = plan_fft_measure!(tmp)
+        fft_plan = n > 1 ? plan_fft_measure!(tmp) : nothing
         return new{TF}(tmp, vals, real_vals, fft_plan)
     end
 end

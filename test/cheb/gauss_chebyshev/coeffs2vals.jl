@@ -14,10 +14,10 @@ using TestItems
 
     @testset "Single coefficient" begin
         c = [sqrt(2)]
-        v = GaussChebyshev.coeffs2vals(c)
-        v_via_matrix = coeffs2vals_via_matrix(c)
-        @test c ≈ v
-        @test c ≈ v_via_matrix
+        v1 = GaussChebyshev.coeffs2vals(c)
+        v2 = coeffs2vals_via_matrix(c)
+        @test c ≈ v1
+        @test c ≈ v2
     end
 
     @testset "Even case" begin
@@ -67,13 +67,13 @@ using TestItems
         c = kron(ones(10), Matrix{Float64}(I, 2, 2))
         v1 = GaussChebyshev.coeffs2vals(c[:, 1])
         v2 = GaussChebyshev.coeffs2vals(c[:, 2])
-        @test norm(v1 - reverse(v1), Inf) ≈ 0
-        @test norm(v2 + reverse(v2), Inf) ≈ 0
+        @test isapprox(v1, reverse(v1), atol=tol)
+        @test isapprox(v2, -reverse(v2), atol=tol)
 
         v1_via_matrix = coeffs2vals_via_matrix(c[:, 1])
         v2_via_matrix = coeffs2vals_via_matrix(c[:, 2])
-        @test norm(v1 - reverse(v1), Inf) ≈ 0
-        @test norm(v2 + reverse(v2), Inf) ≈ 0
+        @test isapprox(v1, reverse(v1), atol=tol)
+        @test isapprox(v2, -reverse(v2), atol=tol)
     end
 
     @testset "Operator style" begin
@@ -84,14 +84,14 @@ using TestItems
         # Test operator call
         vals1 = op(coeffs)
         vals2 = GaussChebyshev.coeffs2vals(coeffs)
-        @test maximum(abs.(vals1 .- vals2)) < tol
+        @test isapprox(vals1, vals2, atol=tol)
 
         # Test multiple calls
         for _ in 1:10
             coeffs = rand(n)
             vals1 = op(coeffs)
             vals2 = GaussChebyshev.coeffs2vals(coeffs)
-            @test maximum(abs.(vals1 .- vals2)) < tol
+            @test isapprox(vals1, vals2, atol=tol)
         end
     end
 end
