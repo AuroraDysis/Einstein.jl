@@ -1,5 +1,5 @@
 """
-    cheb1_coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:AbstractFloatOrComplex}
+    chebtech1_coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:AbstractFloatOrComplex}
     ChebyshevFirstKindSynthesis{[TF=Float64]}(n::Integer)(coeffs::AbstractVector{TFC})
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 1st kind.
@@ -136,7 +136,7 @@ function _cheb_synthesis(
     return ChebyshevFirstKindSynthesis{TF}(n)
 end
 
-function cheb1_coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:AbstractFloatOrComplex}
+function chebtech1_coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:AbstractFloatOrComplex}
     n = length(coeffs)
 
     if n <= 1
@@ -147,4 +147,4 @@ function cheb1_coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:AbstractFloa
     return op(coeffs)
 end
 
-export ChebyshevFirstKindSynthesis, cheb1_coeffs2vals
+export ChebyshevFirstKindSynthesis, chebtech1_coeffs2vals
