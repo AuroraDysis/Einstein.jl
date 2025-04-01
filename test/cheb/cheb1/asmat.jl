@@ -12,7 +12,7 @@ using TestItems
             f_coeffs = coefficients(f)
             n = ncoefficients(f)
 
-            x = chebtech1_points(type, n)
+            x = chebgrid1_points(type, n)
             f_vals = f.(x)
             A = chebtech1_analysis_matrix(type, n)
             S = cheb1_synthesis_matrix(type, n)
@@ -27,7 +27,7 @@ using TestItems
             f_coeffs = coefficients(f)
             n = ncoefficients(f)
 
-            x = chebtech1_points(type, n)
+            x = chebgrid1_points(type, n)
             f_vals = f.(x)
             A = chebtech1_analysis_matrix(type, n)
             S = cheb1_synthesis_matrix(type, n)

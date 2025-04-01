@@ -14,11 +14,11 @@ Constructing a 1st-order rectangular differentiation matrix mapping from a 1st-k
 """
 function cheb_rect_differentiation_matrix_kind1(::Type{TF}, m::Integer, n::Integer) where {TF<:AbstractFloat}
     # mapping-from grid (angles):
-    T = chebtech1_angles(n)'        # Row vector of length n
+    T = chebgrid1_angles(n)'        # Row vector of length n
     # difference between dimensions:
     c = n - m
     # mapping-to grid (angles):
-    TAU = chebtech1_angles(TF, m)       # Column vector of length m
+    TAU = chebgrid1_angles(TF, m)       # Column vector of length m
 
     # Denominator term
     denom = @. 2 * sin((T + TAU) / 2) * sin((TAU - T) / 2)
@@ -88,9 +88,9 @@ function cheb_rect_differentiation_matrix_kind2(::Type{TF}, m::Integer, n::Integ
     nm1 = n - 1                     # For convenience
     cm1 = nm1 - m                   # Difference between dimensions
     t = chebtech2_points(TF, n)            # Second-kind grid
-    tau = chebtech1_points(TF, m)          # First-kind grid
+    tau = chebgrid1_points(TF, m)          # First-kind grid
     T = chebtech2_angles(TF, n)         # Second-kind grid (angles)
-    TAU = chebtech1_angles(TF, m)       # First-kind grid (angles)
+    TAU = chebgrid1_angles(TF, m)       # First-kind grid (angles)
 
     # Denominator term (explicit expression)
     denom = [2 * sin((t + tau) / 2) * sin((tau - t) / 2) for tau in TAU, t in T]
@@ -187,7 +187,7 @@ function cheb_rect_differentiation_matrix(
 
     if kind == 1
         # First-kind grid
-        T = chebtech1_angles(TF, n)
+        T = chebgrid1_angles(TF, n)
         D = cheb_rect_differentiation_matrix_kind1(TF, m, n)
         a = vcat(zeros(TF, n), one(TF))
         sgn_coeff = (-1)^(n - 1) / TF(n)
@@ -202,8 +202,8 @@ function cheb_rect_differentiation_matrix(
     end
 
     # Setup grids
-    tau = chebtech1_points(TF, m)
-    TAU = chebtech1_angles(TF, m)
+    tau = chebgrid1_points(TF, m)
+    TAU = chebgrid1_angles(TF, m)
     a = cheb_coeffs_diff(a)
 
     # Compute denominator matrix
