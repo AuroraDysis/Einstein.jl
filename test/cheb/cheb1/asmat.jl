@@ -1,6 +1,6 @@
 using TestItems
 
-@testitem "chebtech1_analysis_matrix, cheb1_synthesis_matrix" begin
+@testitem "chebgrid1_analysis_matrix, chebgrid1_coeffs2vals_matrix" begin
     using ApproxFun, Einstein.ChebyshevSuite, Test
 
     for type in [Float64, BigFloat]
@@ -14,8 +14,8 @@ using TestItems
 
             x = chebgrid1_points(type, n)
             f_vals = f.(x)
-            A = chebtech1_analysis_matrix(type, n)
-            S = cheb1_synthesis_matrix(type, n)
+            A = chebgrid1_analysis_matrix(type, n)
+            S = chebgrid1_coeffs2vals_matrix(type, n)
 
             @test isapprox(A * f_vals, f_coeffs, atol=tol)
             @test isapprox(S * f_coeffs, f_vals, atol=tol)
@@ -29,8 +29,8 @@ using TestItems
 
             x = chebgrid1_points(type, n)
             f_vals = f.(x)
-            A = chebtech1_analysis_matrix(type, n)
-            S = cheb1_synthesis_matrix(type, n)
+            A = chebgrid1_analysis_matrix(type, n)
+            S = chebgrid1_coeffs2vals_matrix(type, n)
 
             @test isapprox(A * f_vals, f_coeffs, atol=tol)
             @test isapprox(S * f_coeffs, f_vals, atol=tol)

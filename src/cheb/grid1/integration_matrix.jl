@@ -10,8 +10,8 @@ polynomial at those points, with the convention that the first value is zero.
 - [chebfun/@chebcolloc1/chebcolloc1.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc1/chebcolloc1.m)
 """
 function chebgrid1_integration_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
-    A = chebtech1_analysis_matrix(TF, n)
-    S = cheb1_synthesis_matrix(TF, n)
+    A = chebgrid1_analysis_matrix(TF, n)
+    S = chebgrid1_coeffs2vals_matrix(TF, n)
     B = cheb_coeffs_integration_matrix(TF, n)
     Q = S * B * A
     return Q

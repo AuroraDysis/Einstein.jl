@@ -130,13 +130,9 @@ function (op::ChebyshevFirstKindSynthesis{TF})(
     end
 end
 
-function _cheb_synthesis(
-    ::ChebyshevT, ::Type{TF}, n::Integer
-) where {TF<:AbstractFloat}
-    return ChebyshevFirstKindSynthesis{TF}(n)
-end
-
-function chebgrid1_coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:AbstractFloatOrComplex}
+function chebgrid1_coeffs2vals(
+    coeffs::AbstractVector{TFC}
+) where {TFC<:AbstractFloatOrComplex}
     n = length(coeffs)
 
     if n <= 1
@@ -147,4 +143,26 @@ function chebgrid1_coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:Abstract
     return op(coeffs)
 end
 
-export ChebyshevFirstKindSynthesis, chebgrid1_coeffs2vals
+"""
+    chebgrid1_coeffs2vals_matrix([TF=Float64], n::Integer) where {TF<:AbstractFloat}
+
+Construct the synthesis matrix S that transforms Chebyshev coefficients to function values at Chebyshev points of the 1st kind.
+
+# Arguments
+- `TF`: Element type (defaults to Float64)
+- `n`: Number of points/coefficients
+"""
+function chebgrid1_coeffs2vals_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+    S = Array{TF,2}(undef, n, n)
+    op = ChebyshevFirstKindSynthesis{TF}(n)
+    @inbounds for i in 1:n
+        S[:, i] = op(OneElement(one(TF), i, n))
+    end
+    return S
+end
+
+function chebgrid1_coeffs2vals_matrix(n::Integer)
+    return chebgrid1_coeffs2vals_matrix(Float64, n)
+end
+
+export ChebyshevFirstKindSynthesis, chebgrid1_coeffs2vals, chebgrid1_coeffs2vals_matrix

@@ -26,8 +26,6 @@ include("barycentric_weights.jl")
 include("quadrature_weights.jl")
 
 include("differentiation_matrix.jl")
-include("analysis_matrix.jl")
-include("synthesis_matrix.jl")
 include("integration_matrix.jl")
 
 """
