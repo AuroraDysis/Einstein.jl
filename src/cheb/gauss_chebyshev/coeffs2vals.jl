@@ -15,6 +15,7 @@ values = op(coeffs)
 - [chebfun/@chebtech1/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/coeffs2vals.m)
 """
 struct GaussChebyshevCoeffs2ValsCache{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}}
+    n::Integer
     weights::Vector{Complex{TF}}
     tmp::Vector{Complex{TF}}
     complex_values::Vector{Complex{TF}}
@@ -22,6 +23,8 @@ struct GaussChebyshevCoeffs2ValsCache{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}
     fft_plan::TPlan
 
     function GaussChebyshevCoeffs2ValsCache{TF}(n::Integer) where {TF<:AbstractFloat}
+        @argcheck n > 1 "n must be greater than 1"
+
         # Precompute weights
         weights = Vector{Complex{TF}}(undef, 2n)
         @inbounds begin
@@ -40,54 +43,40 @@ struct GaussChebyshevCoeffs2ValsCache{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}
         complex_values = Vector{Complex{TF}}(undef, n)
         real_values = Vector{TF}(undef, n)
         fft_plan = plan_fft_measure!(tmp)
-        return new{TF,typeof(fft_plan)}(weights, tmp, complex_values, real_values, fft_plan)
+        return new{TF,typeof(fft_plan)}(
+            n, weights, tmp, complex_values, real_values, fft_plan
+        )
     end
 end
 
-function (op::GaussChebyshevCoeffs2ValsCache{TF})(
-    coeffs::AbstractVector{TFC}
-) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
-    type_is_float = TFC <: AbstractFloat
+function _compute_gauss_chebyshev_coeffs2vals!(
+    op::GaussChebyshevCoeffs2ValsCache{TF}, coeffs::AbstractVector{Complex{TF}}
+) where {TF<:AbstractFloat}
+    (; weights, tmp, complex_values, fft_plan) = op
 
-    n = length(coeffs)
-    if n <= 1
-        if type_is_float
-            op.real_values .= coeffs
-            return op.real_values
-        else
-            op.complex_values .= coeffs
-            return op.complex_values
-        end
-    end
-
-    weights = op.weights
-    tmp = op.tmp
-    complex_values = op.complex_values
-    fft_plan = op.fft_plan
+    @argcheck length(coeffs) == op.n "coeffs must have length n"
 
     # Check for symmetry
-    isEven = all(x -> x ≈ 0, @view(coeffs[2:2:end]))
-    isOdd = all(x -> x ≈ 0, @view(coeffs[1:2:end]))
+    tol = sqrt(eps(TF))
+    isEven = all(x -> abs(x) < tol, @view(coeffs[2:2:end]))
+    isOdd = all(x -> abs(x) < tol, @view(coeffs[1:2:end]))
 
     # Copy coefficients and mirror
     @inbounds begin
         # First half: original coefficients
         for i in 1:n
-            tmp[i] = coeffs[i]
+            tmp[i] = coeffs[i] * weights[i]
         end
         # Second half: mirrored coefficients
         tmp[n + 1] = 1
         for i in (n + 2):(2n)
-            tmp[i] = coeffs[2n - i + 2]
+            tmp[i] = coeffs[2n - i + 2] * weights[i]
         end
     end
 
-    @inbounds begin
-        tmp .*= weights
-        fft_plan * tmp
-    end
+    fft_plan * tmp
 
-    # Extract values
+    # Extract values from the second half of the FFT result
     @inbounds for i in 1:n
         complex_values[i] = tmp[n - i + 1]
     end
@@ -98,25 +87,35 @@ function (op::GaussChebyshevCoeffs2ValsCache{TF})(
         @inbounds for i in 1:div(n, 2)
             j = n - i + 1
             if isEven
-                s = complex_values[i] + complex_values[j]
-                complex_values[i] = half * s
-                complex_values[j] = half * s
+                s = half * (complex_values[i] + complex_values[j])
+                complex_values[i] = s
+                complex_values[j] = s
             else
-                d = complex_values[i] - complex_values[j]
-                complex_values[i] = half * d
-                complex_values[j] = -half * d
+                d = half * (complex_values[i] - complex_values[j])
+                complex_values[i] = d
+                complex_values[j] = -d
             end
         end
     end
 
-    if type_is_float
-        @inbounds for k in 1:n
-            op.real_values[k] = real(op.complex_values[k])
-        end
-        return op.real_values
-    else
-        return op.complex_values
+    return nothing
+end
+
+function (op::GaussChebyshevCoeffs2ValsCache{TF})(
+    coeffs::AbstractVector{TF}
+) where {TF<:AbstractFloat}
+    _compute_gauss_chebyshev_coeffs2vals!(op, coeffs)
+    @inbounds for k in 1:(op.n)
+        op.real_values[k] = real(op.complex_values[k])
     end
+    return op.real_values
+end
+
+function (op::GaussChebyshevCoeffs2ValsCache{TF})(
+    coeffs::AbstractVector{Complex{TF}}
+) where {TF<:AbstractFloat}
+    _compute_gauss_chebyshev_coeffs2vals!(op, coeffs)
+    return op.complex_values
 end
 
 function gauss_chebyshev_coeffs2vals(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
@@ -127,11 +126,6 @@ function gauss_chebyshev_coeffs2vals(
     coeffs::AbstractVector{TFC}
 ) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     n = length(coeffs)
-
-    if n <= 1
-        return deepcopy(coeffs)
-    end
-
     op = GaussChebyshevCoeffs2ValsCache{real(TFC)}(n)
     return op(coeffs)
 end
