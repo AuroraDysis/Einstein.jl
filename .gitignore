@@ -6,3 +6,5 @@
 /docs/build/
 .DS_Store
 diffmat_final.jl
+.vscode/
+/*.ipynb

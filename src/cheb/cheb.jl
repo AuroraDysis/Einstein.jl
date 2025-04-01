@@ -23,8 +23,11 @@ include("utils/coeffs_eval.jl")
 include("utils/coeffs_integrate.jl")
 include("utils/coeffs_integration_matrix.jl")
 
-include("grid/gauss_chebyshev/grid.jl")
-include("grid/gauss_chebyshev_lobatto/grid.jl")
+# Gauss-Chebyshev grid
+include("gauss_chebyshev/grid.jl")
+
+# Gauss-Chebyshev-Lobatto grid
+include("gauss_chebyshev_lobatto/grid.jl")
 
 # Rectangular spectral collocation
 include("rect/differentiation_matrix.jl")
