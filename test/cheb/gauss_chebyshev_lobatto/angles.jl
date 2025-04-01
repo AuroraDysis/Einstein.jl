@@ -1,29 +1,15 @@
 using TestItems
 
-@testitem "angles" begin
-    using Einstein.ChebyshevSuite, Test
+@testitem "GaussChebyshevLobatto - angles" begin
+    angles_0 = Float64[]
+    angles_1 = [1.570796326794897]
+    angles_2 = [3.141592653589793, 0.0]
+    angles_5 = [
+        3.141592653589793, 2.356194490192345, 1.570796326794897, 0.785398163397448, 0.0
+    ]
 
-    @testset "n = 5" begin
-        n = 5
-        θ = angles(n)
-
-        @test length(θ) == n
-        @test θ ≈
-            [3.14159265358979, 2.35619449019235, 1.57079632679490, 0.785398163397448, 0.0]
-    end
-
-    @testset "n = 6" begin
-        n = 6
-        θ = angles(n)
-
-        @test length(θ) == n
-        @test θ ≈ [
-            3.14159265358979,
-            2.51327412287183,
-            1.88495559215388,
-            1.25663706143592,
-            0.628318530717959,
-            0.0,
-        ]
-    end
+    @test GaussChebyshevLobatto.angles(Float64, 0) ≈ angles_0
+    @test GaussChebyshevLobatto.angles(Float64, 1) ≈ angles_1
+    @test GaussChebyshevLobatto.angles(Float64, 2) ≈ angles_2
+    @test GaussChebyshevLobatto.angles(Float64, 5) ≈ angles_5
 end
