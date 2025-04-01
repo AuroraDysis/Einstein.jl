@@ -26,8 +26,8 @@ function gauss_chebyshev_lobatto_integration_matrix(
     ::Type{TF}, n::Integer, lower_bound::TF, upper_bound::TF
 ) where {TF<:AbstractFloat}
     Q = gauss_chebyshev_lobatto_integration_matrix(TF, n)
-    scale = (upper_bound - lower_bound) / 2
-    Q .*= scale
+    jacobian = (upper_bound - lower_bound) / 2
+    Q .*= jacobian
     return Q
 end
 

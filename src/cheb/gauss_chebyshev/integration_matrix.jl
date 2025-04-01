@@ -25,7 +25,8 @@ function gauss_chebyshev_integration_matrix(
     ::Type{TF}, n::Integer, lower_bound::TF, upper_bound::TF
 ) where {TF<:AbstractFloat}
     Q = gauss_chebyshev_integration_matrix(TF, n)
-    Q .*= (upper_bound - lower_bound) / 2
+    jacobian = (upper_bound - lower_bound) / 2
+    Q .*= jacobian
     return Q
 end
 
