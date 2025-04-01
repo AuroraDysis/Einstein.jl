@@ -16,32 +16,32 @@ Uses the `xsum` package for improved numerical accuracy.
     return xsum(vec)
 end
 
-"""
-    sum_kahan(v::AbstractVector{T}) where {T<:Number}
+# """
+#     sum_kahan(v::AbstractVector{T}) where {T<:Number}
 
-Compute the sum using Kahan summation algorithm to reduce numerical errors.
+# Compute the sum using Kahan summation algorithm to reduce numerical errors.
 
-# Note
-- Slower than `sum_xsum` for large vectors, but faster for small vectors.
-- Similar performance to `sum_kahan_neumaier`
-"""
-function sum_kahan(v::AbstractVector{T}) where {T<:Number}
-    s = zero(T)
-    c = zero(T)
-    y = zero(T)
-    t = zero(T)
-    j = 1
-    n = length(v)
+# # Note
+# - Slower than `sum_xsum` for large vectors, but faster for small vectors.
+# - Similar performance to `sum_kahan_neumaier`
+# """
+# function sum_kahan(v::AbstractVector{T}) where {T<:Number}
+#     s = zero(T)
+#     c = zero(T)
+#     y = zero(T)
+#     t = zero(T)
+#     j = 1
+#     n = length(v)
 
-    @inbounds for j in 1:n
-        y = v[j] - c
-        t = s
-        s += y
-        c = (s - t) - y
-    end
+#     @inbounds for j in 1:n
+#         y = v[j] - c
+#         t = s
+#         s += y
+#         c = (s - t) - y
+#     end
 
-    return s
-end
+#     return s
+# end
 
 """
     sum_kahan_neumaier(v::AbstractVector{T}) where {T<:Number}
@@ -76,4 +76,4 @@ function sum_kahan_neumaier(v::AbstractVector{T}) where {T<:Number}
     end
 end
 
-export sum_xsum, sum_kahan, sum_kahan_neumaier
+export sum_xsum, sum_kahan_neumaier
