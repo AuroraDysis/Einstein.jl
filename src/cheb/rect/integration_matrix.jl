@@ -19,7 +19,7 @@ function cheb_rect_integration_matrix(
 ) where {TR<:AbstractFloat}
     # Build Lagrange basis
     K = Array{TR}(undef, n + 1, n)
-    vals2coeffs_op = ChebyshevSecondKindAnalysis{TR}(n)
+    vals2coeffs_op = Vals2CoeffsCache{TR}(n)
     @inbounds for i in 1:n
         K[1:(end - 1), i] = vals2coeffs_op(OneElement(one(TR), i, n))
     end
@@ -31,7 +31,7 @@ function cheb_rect_integration_matrix(
     end
 
     # Evaluate at grid
-    xm = chebtech2_points(m)
+    xm = points(m)
     intmat = Array{TR}(undef, m, n)
     @inbounds for j in 1:n, i in 1:n
         intmat[i, j] = cheb_coeffs_eval(@view(K[:, j]), xm[i])

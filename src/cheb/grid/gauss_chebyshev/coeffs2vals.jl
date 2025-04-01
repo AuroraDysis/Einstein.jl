@@ -1,28 +1,27 @@
 """
     coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:AbstractFloatOrComplex}
-    ChebGrid1Coeffs2ValsCache{[TF=Float64]}(n::Integer)(coeffs::AbstractVector{TFC})
+    Coeffs2ValsCache{[TF=Float64]}(n::Integer)(coeffs::AbstractVector{TFC})
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 1st kind.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-op = ChebGrid1Coeffs2ValsCache{Float64}(n)
+op = Coeffs2ValsCache{Float64}(n)
 values = op(coeffs)
 ```
 
 # References
 - [chebfun/@chebtech1/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/coeffs2vals.m)
 """
-struct ChebGrid1Coeffs2ValsCache{TF<:AbstractFloat} <:
-       AbstractChebyshevSynthesisImplementation
+struct Coeffs2ValsCache{TF<:AbstractFloat} <: AbstractChebyshevSynthesisImplementation
     w::Vector{Complex{TF}}    # Weight vector
     tmp::Vector{Complex{TF}}  # Temporary storage
     vals::Vector{Complex{TF}} # values
     real_vals::Vector{TF} # values
     fft_plan::Plan{Complex{TF}}        # fft plan
 
-    function ChebGrid1Coeffs2ValsCache(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+    function Coeffs2ValsCache(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
         # Precompute weights
         w = Vector{Complex{TF}}(undef, 2n)
         @inbounds begin
@@ -45,7 +44,7 @@ struct ChebGrid1Coeffs2ValsCache{TF<:AbstractFloat} <:
     end
 end
 
-function (op::ChebGrid1Coeffs2ValsCache{TF})(
+function (op::Coeffs2ValsCache{TF})(
     coeffs::AbstractVector{TFC}
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
     type_is_float = typeisfloat(TFC)
@@ -127,19 +126,17 @@ function (op::ChebGrid1Coeffs2ValsCache{TF})(
 end
 
 function coeffs2vals(::Type{TF}, n::Integer)
-    return ChebGrid1Coeffs2ValsCache(TF, n)
+    return Coeffs2ValsCache(TF, n)
 end
 
-function coeffs2vals(
-    coeffs::AbstractVector{TFC}
-) where {TFC<:AbstractFloatOrComplex}
+function coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:AbstractFloatOrComplex}
     n = length(coeffs)
 
     if n <= 1
         return deepcopy(coeffs)
     end
 
-    op = ChebGrid1Coeffs2ValsCache{real(TFC)}(n)
+    op = Coeffs2ValsCache{real(TFC)}(n)
     return op(coeffs)
 end
 
@@ -154,7 +151,7 @@ Construct the synthesis matrix S that transforms Chebyshev coefficients to funct
 """
 function coeffs2vals_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     S = Array{TF,2}(undef, n, n)
-    op = ChebGrid1Coeffs2ValsCache{TF}(n)
+    op = Coeffs2ValsCache{TF}(n)
     @inbounds for i in 1:n
         S[:, i] = op(OneElement(one(TF), i, n))
     end
@@ -165,4 +162,4 @@ function coeffs2vals_matrix(n::Integer)
     return coeffs2vals_matrix(Float64, n)
 end
 
-export ChebGrid1Coeffs2ValsCache, coeffs2vals, coeffs2vals_matrix
+export Coeffs2ValsCache, coeffs2vals, coeffs2vals_matrix

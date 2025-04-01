@@ -10,7 +10,7 @@ Compute angles for Chebyshev points of the 2nd kind:
 - `TF`: Type parameter for the angles (e.g., Float64)
 - `n`: Number of points
 """
-function chebtech2_angles(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function angles(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     @argcheck n >= 0 "n must be nonnegative"
 
     if n == 0
@@ -29,8 +29,8 @@ function chebtech2_angles(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     return θ
 end
 
-function chebtech2_angles(n::Integer)
-    return chebtech2_angles(Float64, n)
+function angles(n::Integer)
+    return angles(Float64, n)
 end
 
-export chebtech2_angles
+export angles

@@ -1,5 +1,5 @@
 """
-    cheb2_quadrature_weights([TF=Float64], n::Integer) where {TF<:AbstractFloat}
+    quadrature_weights([TF=Float64], n::Integer) where {TF<:AbstractFloat}
 
 Compute quadrature weights for Chebyshev points of the 2nd kind.
 
@@ -10,7 +10,7 @@ Compute quadrature weights for Chebyshev points of the 2nd kind.
 # References
 - [chebfun/@chebtech2/quadwts.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/quadwts.m)
 """
-function cheb2_quadrature_weights(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function quadrature_weights(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     if n == 0
         return TF[]
     elseif n == 1
@@ -50,27 +50,21 @@ function cheb2_quadrature_weights(::Type{TF}, n::Integer) where {TF<:AbstractFlo
     return w
 end
 
-function cheb2_quadrature_weights(n::Integer)
-    return cheb2_quadrature_weights(Float64, n)
+function quadrature_weights(n::Integer)
+    return quadrature_weights(Float64, n)
 end
 
-function cheb2_quadrature_weights(
+function quadrature_weights(
     ::Type{TF}, n::Integer, lower_bound::TF, upper_bound::TF
 ) where {TF<:AbstractFloat}
-    w = cheb2_quadrature_weights(TF, n)
+    w = quadrature_weights(TF, n)
     scale = (upper_bound - lower_bound) / 2
     w .*= scale
     return w
 end
 
-function cheb2_quadrature_weights(n::Integer, lower_bound::Float64, upper_bound::Float64)
-    return cheb2_quadrature_weights(Float64, n, lower_bound, upper_bound)
+function quadrature_weights(n::Integer, lower_bound::Float64, upper_bound::Float64)
+    return quadrature_weights(Float64, n, lower_bound, upper_bound)
 end
 
-function _cheb_quadrature_weights(
-    ::ChebyshevU, ::Type{TF}, n::Integer, lower_bound::TF, upper_bound::TF
-) where {TF<:AbstractFloat}
-    return cheb2_quadrature_weights(TF, n, lower_bound, upper_bound)
-end
-
-export cheb2_quadrature_weights
+export quadrature_weights

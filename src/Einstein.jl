@@ -20,10 +20,10 @@ PrecompileTools.@compile_workload begin
     using .ChebyshevSuite
 
     points(Float64, 5)
-    chebtech2_points(Float64, 5)
+    points(Float64, 5)
 
     angles(Float64, 5)
-    chebtech2_angles(Float64, 5)
+    angles(Float64, 5)
 
     # TODO: implement the rest of the precompiles
 end

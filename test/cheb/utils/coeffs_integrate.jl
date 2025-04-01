@@ -17,11 +17,11 @@ using TestItems
 
     @testset "cheb2" begin
         n = 15
-        f = cos.(chebtech2_points(n))
-        f_coeffs = cheb2_vals2coeffs(f)
+        f = cos.(points(n))
+        f_coeffs = vals2coeffs(f)
         If_coeffs = cheb_coeffs_integrate(f_coeffs)
-        If = sin.(chebtech2_points(n)) .- sin(-1) # sin(x) - sin(-1) is the antiderivative of cos(x)
-        If_coeffs_true = cheb2_vals2coeffs(If)
+        If = sin.(points(n)) .- sin(-1) # sin(x) - sin(-1) is the antiderivative of cos(x)
+        If_coeffs_true = vals2coeffs(If)
         @test norm(If_coeffs[1:(end - 1)] .- If_coeffs_true, Inf) < tol
     end
 end

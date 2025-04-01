@@ -1,11 +1,11 @@
 using TestItems
 
-@testitem "chebtech2_points" begin
+@testitem "points" begin
     using Einstein.ChebyshevSuite, Test
 
     @testset "n = 5" begin
         n = 5
-        x = chebtech2_points(n)
+        x = points(n)
 
         @test length(x) == n
         @test x ≈ [-1.0, -0.707106781186548, 0.0, 0.707106781186548, 1.0]
@@ -13,7 +13,7 @@ using TestItems
 
     @testset "n = 6" begin
         n = 6
-        x = chebtech2_points(n)
+        x = points(n)
 
         @test length(x) == n
         @test x ≈ [

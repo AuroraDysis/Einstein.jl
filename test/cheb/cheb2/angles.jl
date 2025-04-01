@@ -1,11 +1,11 @@
 using TestItems
 
-@testitem "chebtech2_angles" begin
+@testitem "angles" begin
     using Einstein.ChebyshevSuite, Test
 
     @testset "n = 5" begin
         n = 5
-        θ = chebtech2_angles(n)
+        θ = angles(n)
 
         @test length(θ) == n
         @test θ ≈
@@ -14,7 +14,7 @@ using TestItems
 
     @testset "n = 6" begin
         n = 6
-        θ = chebtech2_angles(n)
+        θ = angles(n)
 
         @test length(θ) == n
         @test θ ≈ [

@@ -1,27 +1,27 @@
 """
-    cheb2_coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
-    ChebyshevSecondKindSynthesis{[TF=Float64]}(n::Integer)(coeffs::AbstractVector{TR})
+    coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
+    Coeffs2ValsCache{[TF=Float64]}(n::Integer)(coeffs::AbstractVector{TR})
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 2nd kind.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-op = ChebyshevSecondKindSynthesis{Float64}(n)
+op = Coeffs2ValsCache{Float64}(n)
 values = op(coeffs)
 ```
 
 # References
 - [chebfun/@chebtech2/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/coeffs2vals.m)
 """
-struct ChebyshevSecondKindSynthesis{TF<:AbstractFloat} <:
+struct Coeffs2ValsCache{TF<:AbstractFloat} <:
        AbstractChebyshevSynthesisImplementation
     tmp::Vector{Complex{TF}}
     vals::Vector{Complex{TF}}
     real_vals::Vector{TF}
     fft_plan::Plan{Complex{TF}}
 
-    function ChebyshevSecondKindSynthesis{TF}(n::Integer) where {TF<:AbstractFloat}
+    function Coeffs2ValsCache{TF}(n::Integer) where {TF<:AbstractFloat}
         tmp = zeros(Complex{TF}, 2n - 2)
         vals = zeros(Complex{TF}, n)
         real_vals = zeros(TF, n)
@@ -29,12 +29,12 @@ struct ChebyshevSecondKindSynthesis{TF<:AbstractFloat} <:
         return new{TF}(tmp, vals, real_vals, fft_plan)
     end
 
-    function ChebyshevSecondKindSynthesis(n::Integer)
-        return ChebyshevSecondKindSynthesis{Float64}(n)
+    function Coeffs2ValsCache(n::Integer)
+        return Coeffs2ValsCache{Float64}(n)
     end
 end
 
-function (op::ChebyshevSecondKindSynthesis{TF})(
+function (op::Coeffs2ValsCache{TF})(
     coeffs::AbstractVector{TR}
 ) where {TF<:AbstractFloat,TR<:Union{TF,Complex{TF}}}
     type_is_float = typeisfloat(TR)
@@ -104,21 +104,37 @@ function (op::ChebyshevSecondKindSynthesis{TF})(
     end
 end
 
-function _cheb_synthesis(
-    ::ChebyshevU, ::Type{TF}, n::Integer
-) where {TF<:AbstractFloat}
-    return ChebyshevSecondKindSynthesis{TF}(n)
-end
-
-function cheb2_coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
+function coeffs2vals(coeffs::AbstractVector{TR}) where {TR<:AbstractFloatOrComplex}
     n = length(coeffs)
 
     if n <= 1
         return deepcopy(coeffs)
     end
 
-    op = ChebyshevSecondKindSynthesis{real(TR)}(n)
+    op = Coeffs2ValsCache{real(TR)}(n)
     return op(coeffs)
 end
 
-export ChebyshevSecondKindSynthesis, cheb2_coeffs2vals
+"""
+    coeffs2vals_matrix([TF=Float64], n::Integer) where {TF<:AbstractFloat}
+
+Construct the synthesis matrix S that transforms Chebyshev coefficients to function values at Chebyshev points of the 2nd kind.
+
+# Arguments
+- `TF`: Element type (defaults to Float64)
+- `n`: Number of points/coefficients
+"""
+function coeffs2vals_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+    S = Array{TF,2}(undef, n, n)
+    op = Coeffs2ValsCache{TF}(n)
+    @inbounds for i in 1:n
+        S[:, i] = op(OneElement(one(TF), i, n))
+    end
+    return S
+end
+
+function coeffs2vals_matrix(n::Integer)
+    return coeffs2vals_matrix(Float64, n)
+end
+
+export Coeffs2ValsCache, coeffs2vals, coeffs2vals_matrix

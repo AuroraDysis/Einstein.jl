@@ -1,6 +1,6 @@
 using TestItems
 
-@testitem "cheb2_vals2coeffs" begin
+@testitem "vals2coeffs" begin
     using Einstein.ChebyshevSuite, Test
 
     # Set tolerance
@@ -8,7 +8,7 @@ using TestItems
 
     @testset "Single value" begin
         v = sqrt(2)
-        c = cheb2_vals2coeffs([v])
+        c = vals2coeffs([v])
         @test v ≈ c[1]
     end
 
@@ -16,7 +16,7 @@ using TestItems
         v = collect(1.0:5.0)
         # Exact coefficients
         cTrue = [3.0, 1 + 1 / sqrt(2), 0.0, 1 - 1 / sqrt(2), 0.0]
-        c = cheb2_vals2coeffs(v)
+        c = vals2coeffs(v)
         @test maximum(abs.(c .- cTrue)) < tol
         @test all(abs.(imag.(c)) .== 0)
     end
@@ -26,8 +26,8 @@ using TestItems
         cTrue = [3.0, 1 + 1 / sqrt(2), 0.0, 1 - 1 / sqrt(2), 0.0]
 
         # Test forward and reversed arrays
-        c1 = cheb2_vals2coeffs(v)
-        c2 = cheb2_vals2coeffs(reverse(v))
+        c1 = vals2coeffs(v)
+        c2 = vals2coeffs(reverse(v))
 
         tmp = ones(length(cTrue))
         tmp[(end - 1):-2:1] .= -1
@@ -42,8 +42,8 @@ using TestItems
         v_even = repeat([1.0], n)
         v_odd = repeat([-1.0, 1.0], n ÷ 2)
 
-        c_even = cheb2_vals2coeffs(v_even)
-        c_odd = cheb2_vals2coeffs(v_odd)
+        c_even = vals2coeffs(v_even)
+        c_odd = vals2coeffs(v_odd)
 
         # Even coefficients should have zero odd terms
         @test all(abs.(c_even[2:2:end]) .< tol)
@@ -54,18 +54,18 @@ using TestItems
     @testset "Operator style" begin
         n = 100
         vals = rand(n)
-        op = ChebyshevSecondKindAnalysis(n)
+        op = Vals2CoeffsCache(n)
 
         # Test operator call
         coeffs1 = op(vals)
-        coeffs2 = cheb2_vals2coeffs(vals)
+        coeffs2 = vals2coeffs(vals)
         @test maximum(abs.(coeffs1 .- coeffs2)) < tol
 
         # Test multiple calls
         for _ in 1:10
             vals = rand(n)
             coeffs1 = op(vals)
-            coeffs2 = cheb2_vals2coeffs(vals)
+            coeffs2 = vals2coeffs(vals)
             @test maximum(abs.(coeffs1 .- coeffs2)) < tol
         end
     end
