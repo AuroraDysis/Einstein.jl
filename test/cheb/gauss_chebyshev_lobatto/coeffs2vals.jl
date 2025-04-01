@@ -11,16 +11,8 @@
         return A * c
     end
 
-    @testset "Single coefficient" begin
-        c = [sqrt(2)]
-        v1 = gauss_chebyshev_lobatto_coeffs2vals(c)
-        v2 = coeffs2vals_via_matrix(c)
-        @test c ≈ v1
-        @test c ≈ v2
-    end
-
     @testset "Even case" begin
-        c = collect(1.0:5.0)
+        c = collect(Float64, 1:5)
         vTrue = [3; -4 + sqrt(2); 3; -4 - sqrt(2); 15]
         v1 = gauss_chebyshev_lobatto_coeffs2vals(c)
         v2 = coeffs2vals_via_matrix(c)
@@ -29,7 +21,7 @@
     end
 
     @testset "Odd case" begin
-        c = collect(1.0:6.0)
+        c = collect(Float64, 1:6)
         vTrue = [-3; 7 / 2; -(11 / 2) + sqrt(5); 7 / 2; -(11 / 2) - sqrt(5); 21]
         v1 = gauss_chebyshev_lobatto_coeffs2vals(c)
         v2 = coeffs2vals_via_matrix(c)

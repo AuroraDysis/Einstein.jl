@@ -10,16 +10,8 @@ using TestItems
         return A * v
     end
 
-    @testset "Single value" begin
-        v = sqrt(2)
-        c1 = gauss_chebyshev_lobatto_vals2coeffs([v])
-        c2 = vals2coeffs_via_matrix([v])
-        @test v ≈ c1[1]
-        @test v ≈ c2[1]
-    end
-
     @testset "Simple data" begin
-        v = collect(1.0:5.0)
+        v = collect(Float64, 1:5)
         # Exact coefficients
         cTrue = [3.0, 1 + 1 / sqrt(2), 0.0, 1 - 1 / sqrt(2), 0.0]
         c1 = gauss_chebyshev_lobatto_vals2coeffs(v)
@@ -29,7 +21,7 @@ using TestItems
     end
 
     @testset "Array input" begin
-        v = collect(1.0:5.0)
+        v = collect(Float64, 1:5)
         cTrue = [3.0, 1 + 1 / sqrt(2), 0.0, 1 - 1 / sqrt(2), 0.0]
 
         # Test forward and reversed arrays

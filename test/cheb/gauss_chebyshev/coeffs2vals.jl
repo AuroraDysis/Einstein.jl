@@ -12,17 +12,9 @@ using TestItems
         return A * c
     end
 
-    @testset "Single coefficient" begin
-        c = [sqrt(2)]
-        v1 = gauss_chebyshev_coeffs2vals(c)
-        v2 = coeffs2vals_via_matrix(c)
-        @test c ≈ v1
-        @test c ≈ v2
-    end
-
     @testset "Even case" begin
         # Simple data (even case)
-        c = collect(6.0:-1:1)
+        c = collect(Float64, 6:-1:1)
         # Exact values
         vTrue = [
             -3 * sqrt(6) / 2 - 5 / sqrt(2) + 2 * sqrt(3) + 7
@@ -44,7 +36,7 @@ using TestItems
 
     @testset "Odd case" begin
         # Simple data (odd case)
-        c = collect(5.0:-1:1)
+        c = collect(Float64, 5:-1:1)
         # Exact values
         vTrue = [
             11 / 2 + sqrt(5) - 2 * sqrt((5 + sqrt(5)) / 2) - sqrt((5 - sqrt(5)) / 2)

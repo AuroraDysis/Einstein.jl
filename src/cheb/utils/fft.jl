@@ -1,11 +1,5 @@
-struct EmptyPlan{TF<:Complex{<:AbstractFloat}} <: Plan{TF} end
-
 function plan_fft_measure!(tmp::Vector{Complex{TF}}) where {TF<:AbstractFloat}
-    @argcheck length(tmp) > 0 "tmp must have at least two elements"
-
-    if length(tmp) == 1
-        return EmptyPlan{Complex{TF}}()
-    end
+    @argcheck length(tmp) > 1 "tmp must have at least two elements"
 
     if TF <: FFTW.fftwReal
         return plan_fft!(tmp; flags=FFTW.MEASURE)
@@ -15,11 +9,7 @@ function plan_fft_measure!(tmp::Vector{Complex{TF}}) where {TF<:AbstractFloat}
 end
 
 function plan_ifft_measure!(tmp::Vector{Complex{TF}}) where {TF<:AbstractFloat}
-    @argcheck length(tmp) > 0 "tmp must have at least two elements"
-
-    if length(tmp) == 1
-        return EmptyPlan{Complex{TF}}()
-    end
+    @argcheck length(tmp) > 1 "tmp must have at least two elements"
 
     if TF <: FFTW.fftwReal
         return plan_ifft!(tmp; flags=FFTW.MEASURE)
