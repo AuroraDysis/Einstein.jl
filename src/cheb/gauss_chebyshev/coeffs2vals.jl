@@ -47,7 +47,7 @@ end
 function (op::Coeffs2ValsCache{TF})(
     coeffs::AbstractVector{TFC}
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
-    type_is_float = typeisfloat(TFC)
+    type_is_float = TFC <: AbstractFloat
 
     n = length(coeffs)
     if n <= 1

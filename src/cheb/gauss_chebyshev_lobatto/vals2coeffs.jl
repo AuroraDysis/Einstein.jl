@@ -32,7 +32,7 @@ end
 function (op::Vals2CoeffsCache{TF})(
     vals::AbstractVector{TFC}
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
-    type_is_float = typeisfloat(TFC)
+    type_is_float = TFC <: AbstractFloat
 
     n = length(vals)
 

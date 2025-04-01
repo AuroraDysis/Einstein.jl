@@ -14,6 +14,8 @@ using AbstractFFTs: Plan
 using ArgCheck: @argcheck
 using FastBroadcast: @..
 
+using FillArrays
+
 using ..ChebyshevSuite
 
 include("angles.jl")

@@ -1,15 +1,23 @@
 using TestItems
 
-@testitem "cheb1_coeffs2vals" begin
-    using LinearAlgebra, Einstein.ChebyshevSuite, Test
+@testitem "GaussChebyshev - coeffs2vals" begin
+    using LinearAlgebra
 
     # Set tolerance
-    tol = 100 * eps()
+    tol = typetol(Float64)
+
+    function coeffs2vals_via_matrix(c::AbstractVector{T}) where {T<:Number}
+        n = length(c)
+        A = GaussChebyshev.coeffs2vals_matrix(T, n)
+        return A * c
+    end
 
     @testset "Single coefficient" begin
         c = [sqrt(2)]
-        v = cheb1_coeffs2vals(c)
+        v = GaussChebyshev.coeffs2vals(c)
+        v_via_matrix = coeffs2vals_via_matrix(c)
         @test c ≈ v
+        @test c ≈ v_via_matrix
     end
 
     @testset "Even case" begin
@@ -26,9 +34,12 @@ using TestItems
         ]
 
         # Test real branch
-        v = cheb1_coeffs2vals(c)
-        @test norm(v - vTrue, Inf) < tol
-        @test all(iszero, imag.(v))
+        v1 = GaussChebyshev.coeffs2vals(c)
+        @test isapprox(v1, vTrue, atol=tol)
+        @test all(iszero, imag.(v1))
+
+        v2 = coeffs2vals_via_matrix(c)
+        @test isapprox(v2, vTrue, atol=tol)
     end
 
     @testset "Odd case" begin
@@ -44,15 +55,23 @@ using TestItems
         ]
 
         # Test real branch
-        v = cheb1_coeffs2vals(c)
-        @test norm(v - vTrue, Inf) < tol
-        @test all(iszero, imag.(v))
+        v1 = GaussChebyshev.coeffs2vals(c)
+        @test isapprox(v1, vTrue, atol=tol)
+        @test all(iszero, imag.(v1))
+
+        v2 = coeffs2vals_via_matrix(c)
+        @test isapprox(v2, vTrue, atol=tol)
     end
 
     @testset "Symmetry preservation" begin
         c = kron(ones(10), Matrix{Float64}(I, 2, 2))
-        v1 = cheb1_coeffs2vals(c[:, 1])
-        v2 = cheb1_coeffs2vals(c[:, 2])
+        v1 = GaussChebyshev.coeffs2vals(c[:, 1])
+        v2 = GaussChebyshev.coeffs2vals(c[:, 2])
+        @test norm(v1 - reverse(v1), Inf) ≈ 0
+        @test norm(v2 + reverse(v2), Inf) ≈ 0
+
+        v1_via_matrix = coeffs2vals_via_matrix(c[:, 1])
+        v2_via_matrix = coeffs2vals_via_matrix(c[:, 2])
         @test norm(v1 - reverse(v1), Inf) ≈ 0
         @test norm(v2 + reverse(v2), Inf) ≈ 0
     end
@@ -60,18 +79,18 @@ using TestItems
     @testset "Operator style" begin
         n = 100
         coeffs = rand(n)
-        op = ChebyshevFirstKindSynthesis{Float64}(n)
+        op = GaussChebyshev.coeffs2vals(Float64, n)
 
         # Test operator call
         vals1 = op(coeffs)
-        vals2 = cheb1_coeffs2vals(coeffs)
+        vals2 = GaussChebyshev.coeffs2vals(coeffs)
         @test maximum(abs.(vals1 .- vals2)) < tol
 
         # Test multiple calls
         for _ in 1:10
             coeffs = rand(n)
             vals1 = op(coeffs)
-            vals2 = cheb1_coeffs2vals(coeffs)
+            vals2 = GaussChebyshev.coeffs2vals(coeffs)
             @test maximum(abs.(vals1 .- vals2)) < tol
         end
     end
