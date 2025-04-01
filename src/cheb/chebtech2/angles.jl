@@ -33,10 +33,4 @@ function chebtech2_angles(n::Integer)
     return chebtech2_angles(Float64, n)
 end
 
-function _cheb_angles(
-    ::ChebyshevU, ::Type{TF}, n::Integer
-) where {TF<:AbstractFloat}
-    return chebtech2_angles(TF, n)
-end
-
 export chebtech2_angles

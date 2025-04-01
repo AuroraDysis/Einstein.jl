@@ -1,5 +1,5 @@
 """
-    cheb1_barycentric_weights([TF=Float64], n::Integer) where {TF<:AbstractFloat}
+    chebtech1_barycentric_weights([TF=Float64], n::Integer) where {TF<:AbstractFloat}
 
 Compute the barycentric weights for Chebyshev points of the 1st kind.
 
@@ -14,7 +14,7 @@ Compute the barycentric weights for Chebyshev points of the 1st kind.
 
 See also: [`BarycentricInterpolation`](@ref), [`chebtech1_points`](@ref)
 """
-function cheb1_barycentric_weights(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function chebtech1_barycentric_weights(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     if n == 0
         return TF[]
     elseif n == 1
@@ -46,14 +46,6 @@ function cheb1_barycentric_weights(::Type{TF}, n::Integer) where {TF<:AbstractFl
     return v
 end
 
-function cheb1_barycentric_weights(n::Integer)
-    return cheb1_barycentric_weights(Float64, n)
+function chebtech1_barycentric_weights(n::Integer)
+    return chebtech1_barycentric_weights(Float64, n)
 end
-
-function _cheb_barycentric_weights(
-    ::ChebyshevT, ::Type{TF}, n::Integer
-) where {TF<:AbstractFloat}
-    return cheb1_barycentric_weights(TF, n)
-end
-
-export cheb1_barycentric_weights
