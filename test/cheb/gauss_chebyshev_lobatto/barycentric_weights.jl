@@ -1,20 +1,15 @@
 using TestItems
 
-@testitem "barycentric_weights" begin
-    using Einstein.ChebyshevSuite, Test
+@testitem "GaussChebyshevLobatto - barycentric_weights" begin
+    weights_0 = Float64[]
+    weights_1 = [1.0]
+    weights_2 = [-0.500000000000000, 0.500000000000000]
+    weights_5 = [0.500000000000000, -1.0, 1.0, -1.0, 0.500000000000000]
+    weights_6 = [-0.500000000000000, 1.0, -1.0, 1.0, -1.0, 0.500000000000000]
 
-    # Test n=1 case
-    w1 = barycentric_weights(Float64, 1)
-    @test w1 ≈ [1.0]
-
-    # Test n=2 case
-    w2 = barycentric_weights(Float64, 2)
-    @test w2 ≈ [-0.500000000000000, 0.500000000000000]
-
-    # Test n=5 case
-    w5 = barycentric_weights(Float64, 5)
-    @test w5 ≈ [0.500000000000000, -1.0, 1.0, -1.0, 0.500000000000000]
-
-    w6 = barycentric_weights(Float64, 6)
-    @test w6 ≈ [-0.500000000000000, 1.0, -1.0, 1.0, -1.0, 0.500000000000000]
+    @test GaussChebyshevLobatto.barycentric_weights(0) ≈ weights_0
+    @test GaussChebyshevLobatto.barycentric_weights(1) ≈ weights_1
+    @test GaussChebyshevLobatto.barycentric_weights(2) ≈ weights_2
+    @test GaussChebyshevLobatto.barycentric_weights(5) ≈ weights_5
+    @test GaussChebyshevLobatto.barycentric_weights(6) ≈ weights_6
 end
