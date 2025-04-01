@@ -17,10 +17,10 @@ include("utils/fft.jl")
 include("utils/barycentric_differentiation_matrix.jl")
 
 # utils for coefficients of the corresponding first-kind Chebyshev series expansion.
-include("utils/coeffs_diff.jl")
-include("utils/coeffs_eval.jl")
-include("utils/coeffs_integrate.jl")
-include("utils/coeffs_integration_matrix.jl")
+include("chebyshevt/eval.jl")
+include("chebyshevt/diff.jl")
+include("chebyshevt/integrate.jl")
+include("chebyshevt/integration_matrix.jl")
 
 # Gauss-Chebyshev grid
 include("gauss_chebyshev/grid.jl")

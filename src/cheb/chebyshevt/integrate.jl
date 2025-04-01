@@ -1,7 +1,7 @@
 
 
 """
-    cheb_coeffs_integrate(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat}
+    chebyshevt_integrate(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat}
     ChebyshevCoefficientsIntegration{[TR=Float64]}(n::TI)(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat,TI<:Integer}
 
 Compute the indefinite integral of a function given its Chebyshev coefficients.
@@ -76,10 +76,10 @@ function (op::ChebyshevCoefficientsIntegration{TR,TI})(
     return result
 end
 
-function cheb_coeffs_integrate(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat}
+function chebyshevt_integrate(coeffs::AbstractVector{TR}) where {TR<:AbstractFloat}
     n = length(coeffs)
     op = ChebyshevCoefficientsIntegration{TR}(n)
     return op(coeffs)
 end
 
-export cheb_coeffs_integrate, ChebyshevCoefficientsIntegration
+export chebyshevt_integrate, ChebyshevCoefficientsIntegration

@@ -1,7 +1,7 @@
 
 """
-    cheb_coeffs_integration_matrix([TR=Float64], n::Integer) where {TR<:AbstractFloat}
-    cheb_coeffs_integration_matrix([TR=Float64], n::Integer, lower_bound::TR, upper_bound::TR) where {TR<:AbstractFloat}
+    chebyshevt_integration_matrix([TR=Float64], n::Integer) where {TR<:AbstractFloat}
+    chebyshevt_integration_matrix([TR=Float64], n::Integer, lower_bound::TR, upper_bound::TR) where {TR<:AbstractFloat}
 
 Generate the Chebyshev coefficient integration matrix
 that maps Chebyshev coefficients to the coefficients
@@ -17,7 +17,7 @@ of the integral of the interpolating polynomial.
 - [chebfun/@chebcolloc1/chebcolloc1.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc1/chebcolloc1.m)
 - [chebfun/@chebcolloc2/chebcolloc2.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc2/chebcolloc2.m)
 """
-function cheb_coeffs_integration_matrix(::Type{TR}, n::Integer) where {TR<:AbstractFloat}
+function chebyshevt_integration_matrix(::Type{TR}, n::Integer) where {TR<:AbstractFloat}
     nm1 = n - 1
 
     B = zeros(TR, n, n)
@@ -49,19 +49,19 @@ function cheb_coeffs_integration_matrix(::Type{TR}, n::Integer) where {TR<:Abstr
     return B
 end
 
-function cheb_coeffs_integration_matrix(n::Integer)
-    return cheb_coeffs_integration_matrix(Float64, n)
+function chebyshevt_integration_matrix(n::Integer)
+    return chebyshevt_integration_matrix(Float64, n)
 end
 
 # Second method documentation is inherited from the main docstring
-function cheb_coeffs_integration_matrix(
+function chebyshevt_integration_matrix(
     ::Type{TR}, n::Integer, lower_bound::TR, upper_bound::TR
 ) where {TR<:AbstractFloat}
-    B = cheb_coeffs_integration_matrix(TR, n)
+    B = chebyshevt_integration_matrix(TR, n)
     B .*= (upper_bound - lower_bound) / 2
     return B
 end
 
-function cheb_coeffs_integration_matrix(n::Integer, lower_bound::Float64, upper_bound::Float64)
-    return cheb_coeffs_integration_matrix(Float64, n, lower_bound, upper_bound)
+function chebyshevt_integration_matrix(n::Integer, lower_bound::Float64, upper_bound::Float64)
+    return chebyshevt_integration_matrix(Float64, n, lower_bound, upper_bound)
 end

@@ -12,7 +12,7 @@ polynomial at those points, with the convention that the first value is zero.
 function integration_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     A = vals2coeffs_matrix(TF, n)
     S = coeffs2vals_matrix(TF, n)
-    B = cheb_coeffs_integration_matrix(TF, n)
+    B = chebyshevt_integration_matrix(TF, n)
     Q = S * B * A
     @inbounds Q[1, :] .= 0
     return Q
