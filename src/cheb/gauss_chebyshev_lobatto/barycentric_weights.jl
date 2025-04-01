@@ -17,7 +17,7 @@ function barycentric_weights(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     if n == 0
         return TF[]
     elseif n == 1
-        return TF[one(TF)]
+        return ones(TF, 1)
     end
 
     w = ones(TF, n)
