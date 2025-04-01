@@ -16,7 +16,7 @@ function differentiation_matrix(
     ::Type{TR}, n::Integer, k::Integer=1
 ) where {TR<:AbstractFloat}
     x = points(TR, n)               # First kind points.
-    w = cheb1_barycentric_weights(TR, n)           # Barycentric weights.
+    w = barycentric_weights(TR, n)           # Barycentric weights.
     t = angles(TR, n)            # acos(x).
     D = barycentric_differentiation_matrix(x, w, k, t)       # Construct matrix.
     return D
