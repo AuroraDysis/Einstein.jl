@@ -1,16 +1,17 @@
 module ChebyshevSuite
 
-import AbstractFFTs: Plan
-using ..Utils
-using FFTW
-using FastTransforms
+using AbstractFFTs: Plan
 using ArgCheck: @argcheck
 using FastBroadcast: @..
+
+using FFTW
 using LinearAlgebra
 using FillArrays
 using SparseArrays
 using BandedMatrices
 using ToeplitzMatrices: Toeplitz, Hankel
+
+using ..Utils
 
 include("utils/fft.jl")
 include("utils/barycentric_differentiation_matrix.jl")
@@ -37,7 +38,6 @@ include("ultra/convertmat.jl")
 include("ultra/sphankel.jl")
 include("ultra/multmat.jl")
 
-include("interpolation.jl")
 include("dissipation.jl")
 
 end

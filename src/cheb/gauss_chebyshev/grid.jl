@@ -10,10 +10,11 @@ mapped intervals [a,b] through appropriate scaling transformations.
 """
 module GaussChebyshev
 
-using AbstractFFTs: Plan
+using AbstractFFTs: Plan, ifft!
 using ArgCheck: @argcheck
 using FastBroadcast: @..
 
+using FFTW
 using FillArrays
 
 using ..ChebyshevSuite

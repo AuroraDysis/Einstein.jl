@@ -88,23 +88,21 @@ Evaluate the interpolant at point `x` for function values.
 struct BarycentricInterpolation{TF<:AbstractFloat}
     points::AbstractVector{TF}   # Grid points
     weights::AbstractVector{TF}  # Barycentric weights
-    lower_bound::TF
-    upper_bound::TF
 
-    function BarycentricInterpolation(points::AbstractVector{TF}) where {TF<:AbstractFloat}
-        weights = barycentric_weights(points)
-        return new{TF}(points, weights, points[begin], points[end])
+    function BarycentricInterpolation(points::AbstractVector{TF}, weights::AbstractVector{TF}) where {TF<:AbstractFloat}
+        return new{TF}(points, weights)
     end
 end
 
 function (itp::BarycentricInterpolation{TF})(
     values::AbstractVector{TFC}, x::TF
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
+    (; points, weights) = itp
+
     @boundscheck begin
-        @argcheck itp.lower_bound <= x <= itp.upper_bound "x is out of range"
+        @argcheck first(points) <= x <= last(points) "x is out of range"
     end
 
-    (; points, weights) = itp
     return barycentric_interpolate(x, points, values, weights)
 end
 
