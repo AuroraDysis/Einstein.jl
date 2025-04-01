@@ -1,6 +1,6 @@
 using TestItems
 
-@testitem "GaussChebyshev - vals2coeffs_matrix, coeffs2vals_matrix" begin
+@testitem "GaussChebyshevGrid - vals2coeffs_matrix, coeffs2vals_matrix" begin
     using ApproxFun
 
     for type in [Float64, BigFloat]
@@ -12,10 +12,10 @@ using TestItems
             f_coeffs = coefficients(f)
             n = ncoefficients(f)
 
-            x = GaussChebyshev.points(type, n)
+            x = GaussChebyshevGrid.points(type, n)
             f_vals = f.(x)
-            A = GaussChebyshev.vals2coeffs_matrix(type, n)
-            S = GaussChebyshev.coeffs2vals_matrix(type, n)
+            A = GaussChebyshevGrid.vals2coeffs_matrix(type, n)
+            S = GaussChebyshevGrid.coeffs2vals_matrix(type, n)
 
             @test isapprox(A * f_vals, f_coeffs, atol=tol)
             @test isapprox(S * f_coeffs, f_vals, atol=tol)
@@ -27,10 +27,10 @@ using TestItems
             f_coeffs = coefficients(f)
             n = ncoefficients(f)
 
-            x = GaussChebyshev.points(type, n)
+            x = GaussChebyshevGrid.points(type, n)
             f_vals = f.(x)
-            A = GaussChebyshev.vals2coeffs_matrix(type, n)
-            S = GaussChebyshev.coeffs2vals_matrix(type, n)
+            A = GaussChebyshevGrid.vals2coeffs_matrix(type, n)
+            S = GaussChebyshevGrid.coeffs2vals_matrix(type, n)
 
             @test isapprox(A * f_vals, f_coeffs, atol=tol)
             @test isapprox(S * f_coeffs, f_vals, atol=tol)

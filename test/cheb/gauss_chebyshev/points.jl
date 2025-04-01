@@ -1,4 +1,4 @@
-@testitem "GaussChebyshev - points" begin
+@testitem "GaussChebyshevGrid - points" begin
     using ApproxFun
 
     for TF in [Float64, BigFloat]
@@ -9,7 +9,7 @@
             @testset "$TF, $intervals" begin
                 for n in 0:10
                     @test isapprox(
-                        GaussChebyshev.points(TF, n, lower_bound, upper_bound),
+                        GaussChebyshevGrid.points(TF, n, lower_bound, upper_bound),
                         reverse(points(Chebyshev(lower_bound .. upper_bound), n)),
                         atol=tol,
                     )

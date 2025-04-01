@@ -1,6 +1,6 @@
 using TestItems
 
-@testitem "GaussChebyshev - coeffs2vals" begin
+@testitem "GaussChebyshevGrid - coeffs2vals" begin
     using LinearAlgebra
 
     # Set tolerance
@@ -8,13 +8,13 @@ using TestItems
 
     function coeffs2vals_via_matrix(c::AbstractVector{T}) where {T<:Number}
         n = length(c)
-        A = GaussChebyshev.coeffs2vals_matrix(T, n)
+        A = GaussChebyshevGrid.coeffs2vals_matrix(T, n)
         return A * c
     end
 
     @testset "Single coefficient" begin
         c = [sqrt(2)]
-        v1 = GaussChebyshev.coeffs2vals(c)
+        v1 = GaussChebyshevGrid.coeffs2vals(c)
         v2 = coeffs2vals_via_matrix(c)
         @test c ≈ v1
         @test c ≈ v2
@@ -34,7 +34,7 @@ using TestItems
         ]
 
         # Test real branch
-        v1 = GaussChebyshev.coeffs2vals(c)
+        v1 = GaussChebyshevGrid.coeffs2vals(c)
         @test isapprox(v1, vTrue, atol=tol)
         @test all(iszero, imag.(v1))
 
@@ -55,7 +55,7 @@ using TestItems
         ]
 
         # Test real branch
-        v1 = GaussChebyshev.coeffs2vals(c)
+        v1 = GaussChebyshevGrid.coeffs2vals(c)
         @test isapprox(v1, vTrue, atol=tol)
         @test all(iszero, imag.(v1))
 
@@ -65,8 +65,8 @@ using TestItems
 
     @testset "Symmetry preservation" begin
         c = kron(ones(10), Matrix{Float64}(I, 2, 2))
-        v1 = GaussChebyshev.coeffs2vals(c[:, 1])
-        v2 = GaussChebyshev.coeffs2vals(c[:, 2])
+        v1 = GaussChebyshevGrid.coeffs2vals(c[:, 1])
+        v2 = GaussChebyshevGrid.coeffs2vals(c[:, 2])
         @test isapprox(v1, reverse(v1), atol=tol)
         @test isapprox(v2, -reverse(v2), atol=tol)
 
@@ -79,18 +79,18 @@ using TestItems
     @testset "Operator style" begin
         n = 100
         coeffs = rand(n)
-        op = GaussChebyshev.coeffs2vals(Float64, n)
+        op = GaussChebyshevGrid.coeffs2vals(Float64, n)
 
         # Test operator call
         vals1 = op(coeffs)
-        vals2 = GaussChebyshev.coeffs2vals(coeffs)
+        vals2 = GaussChebyshevGrid.coeffs2vals(coeffs)
         @test isapprox(vals1, vals2, atol=tol)
 
         # Test multiple calls
         for _ in 1:10
             coeffs = rand(n)
             vals1 = op(coeffs)
-            vals2 = GaussChebyshev.coeffs2vals(coeffs)
+            vals2 = GaussChebyshevGrid.coeffs2vals(coeffs)
             @test isapprox(vals1, vals2, atol=tol)
         end
     end

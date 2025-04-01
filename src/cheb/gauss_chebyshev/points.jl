@@ -1,6 +1,6 @@
 @doc raw"""
-    points([TF=Float64], n::Integer) where {TF<:AbstractFloat}
-    points([TF=Float64], n::Integer, lower_bound::TF, upper_bound::TF) where {TF<:AbstractFloat}
+    gauss_chebyshev_points([TF=Float64], n::Integer) where {TF<:AbstractFloat}
+    gauss_chebyshev_points([TF=Float64], n::Integer, lower_bound::TF, upper_bound::TF) where {TF<:AbstractFloat}
 
 Generate Chebyshev points of the 2nd kind.
 
@@ -23,7 +23,7 @@ x_{\mathrm{mapped}} = \frac{x_{\mathrm{max}} + x_{\mathrm{min}}}{2} + \frac{x_{\
 # References
 - [chebfun/@chebtech1/chebpts.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/chebpts.m)
 """
-function points(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function gauss_chebyshev_points(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     @argcheck n >= 0 "n must be nonnegative"
 
     if n == 0
@@ -46,15 +46,15 @@ function points(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     return x_grid
 end
 
-function points(n::Integer)
-    return points(Float64, n)
+function gauss_chebyshev_points(n::Integer)
+    return gauss_chebyshev_points(Float64, n)
 end
 
 # Mapped version
-function points(
+function gauss_chebyshev_points(
     ::Type{TF}, n::Integer, lower_bound::TF, upper_bound::TF
 ) where {TF<:AbstractFloat}
-    x_grid = points(TF, n)
+    x_grid = gauss_chebyshev_points(TF, n)
 
     a = (upper_bound + lower_bound) / 2
     b = (upper_bound - lower_bound) / 2
@@ -63,8 +63,8 @@ function points(
     return x_grid
 end
 
-function points(n::Integer, lower_bound::Float64, upper_bound::Float64)
-    return points(Float64, n, lower_bound, upper_bound)
+function gauss_chebyshev_points(n::Integer, lower_bound::Float64, upper_bound::Float64)
+    return gauss_chebyshev_points(Float64, n, lower_bound, upper_bound)
 end
 
-export points
+export gauss_chebyshev_points

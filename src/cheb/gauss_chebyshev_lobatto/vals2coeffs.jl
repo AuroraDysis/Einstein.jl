@@ -1,26 +1,26 @@
 """
-    vals2coeffs(vals::AbstractVector{TF}) where {TF<:AbstractFloat}
-    vals2coeffs([TF=Float64], n::Integer)(vals::AbstractVector{TF}) where {TF<:AbstractFloat}
+    gauss_chebyshev_lobatto_vals2coeffs(vals::AbstractVector{TF}) where {TF<:AbstractFloat}
+    gauss_chebyshev_lobatto_vals2coeffs([TF=Float64], n::Integer)(vals::AbstractVector{TF}) where {TF<:AbstractFloat}
 
 Convert values at Chebyshev points of the 2nd kind into Chebyshev coefficients.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-op = vals2coeffs(Float64, n)
+op = gauss_chebyshev_lobatto_vals2coeffs(Float64, n)
 values = op(coeffs)
 ```
 
 # References
 - [chebfun/@chebtech2/vals2coeffs.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/vals2coeffs.m)
 """
-struct Vals2CoeffsCache{TF<:AbstractFloat}
+struct GaussChebyshevLobattoVals2CoeffsCache{TF<:AbstractFloat}
     tmp::Vector{Complex{TF}}
     coeffs::Vector{Complex{TF}}
     real_coeffs::Vector{TF}
     ifft_plan::Union{Plan{Complex{TF}},Nothing}
 
-    function Vals2CoeffsCache{TF}(n::Integer) where {TF<:AbstractFloat}
+    function GaussChebyshevLobattoVals2CoeffsCache{TF}(n::Integer) where {TF<:AbstractFloat}
         tmp = zeros(Complex{TF}, 2n - 2)
         coeffs = zeros(Complex{TF}, n)
         real_coeffs = zeros(TF, n)
@@ -29,7 +29,7 @@ struct Vals2CoeffsCache{TF<:AbstractFloat}
     end
 end
 
-function (op::Vals2CoeffsCache{TF})(
+function (op::GaussChebyshevLobattoVals2CoeffsCache{TF})(
     vals::AbstractVector{TFC}
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
     type_is_float = TFC <: AbstractFloat
@@ -104,21 +104,21 @@ function (op::Vals2CoeffsCache{TF})(
     end
 end
 
-function vals2coeffs(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
-    return Vals2CoeffsCache{TF}(n)
+function gauss_chebyshev_lobatto_vals2coeffs(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+    return GaussChebyshevLobattoVals2CoeffsCache{TF}(n)
 end
 
-function vals2coeffs(vals::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
+function gauss_chebyshev_lobatto_vals2coeffs(vals::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     n = length(vals)
     if n <= 1
         return deepcopy(vals)
     end
-    op = Vals2CoeffsCache{real(TFC)}(n)
+    op = GaussChebyshevLobattoVals2CoeffsCache{real(TFC)}(n)
     return op(vals)
 end
 
 """
-    vals2coeffs_matrix([TF=Float64], n::Integer) where {TF<:AbstractFloat}
+    gauss_chebyshev_lobatto_vals2coeffs_matrix([TF=Float64], n::Integer) where {TF<:AbstractFloat}
 
 Construct the analysis matrix A that transforms function values at Chebyshev points of the 2nd kind to Chebyshev coefficients.
 
@@ -126,17 +126,17 @@ Construct the analysis matrix A that transforms function values at Chebyshev poi
 - `TF`: Element type (defaults to Float64)
 - `n`: Number of points/coefficients
 """
-function vals2coeffs_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function gauss_chebyshev_lobatto_vals2coeffs_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     A = Array{TF,2}(undef, n, n)
-    op = Vals2CoeffsCache{TF}(n)
+    op = GaussChebyshevLobattoVals2CoeffsCache{TF}(n)
     @inbounds for i in 1:n
         A[:, i] = op(OneElement(one(TF), i, n))
     end
     return A
 end
 
-function vals2coeffs_matrix(n::Integer)
-    return vals2coeffs_matrix(Float64, n)
+function gauss_chebyshev_lobatto_vals2coeffs_matrix(n::Integer)
+    return gauss_chebyshev_lobatto_vals2coeffs_matrix(Float64, n)
 end
 
-export vals2coeffs, vals2coeffs_matrix
+export gauss_chebyshev_lobatto_vals2coeffs, gauss_chebyshev_lobatto_vals2coeffs_matrix
