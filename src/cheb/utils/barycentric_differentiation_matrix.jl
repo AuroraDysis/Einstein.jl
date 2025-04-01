@@ -27,10 +27,10 @@ function barycentric_differentiation_matrix(
 
     # Check for length agreement:
     if length(w) != n
-        error("Length of x must match the length of w.")
+        throw(ArgumentError("Length of w must match the length of x."))
     end
 
-    # If k=0, return identity:
+    # If k = 0, return identity:
     if k == 0
         return Matrix{TF}(I, n, n)
     end
