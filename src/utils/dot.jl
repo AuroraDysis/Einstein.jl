@@ -49,35 +49,6 @@ end
 """
     dot_kahan(v1::StridedVector{T}, v2::StridedVector{T}) where {T<:Number}
 
-Compute the dot product using Kahan summation algorithm to reduce numerical errors.
-
-# Note
-- Slower than `dot_xsum` for large vectors, but faster for small vectors.
-- Similar performance to `dot_kahan_neumaier`
-- Both input vectors must have the same length, which is not checked for performance reasons.
-"""
-function dot_kahan(v1::StridedVector{T}, v2::StridedVector{T}) where {T<:Number}
-    s = zero(T)
-    c = zero(T)
-    y = zero(T)
-    t = zero(T)
-    j = 1
-    n = length(v1)
-
-    @inbounds for j in 1:n
-        vj = v1[j] * v2[j]
-        y = vj - c
-        t = s
-        s += y
-        c = (s - t) - y
-    end
-
-    return s
-end
-
-"""
-    dot_kahan_neumaier(v1::StridedVector{T}, v2::StridedVector{T}) where {T<:Number}
-
 Neumaier's variant of Kahan summation algorithm to reduce numerical errors.
 
 # Note
@@ -89,7 +60,7 @@ numerical stability. Processes two elements per iteration when possible.
 # References
 - [JuliaMath/KahanSummation.jl](https://github.com/JuliaMath/KahanSummation.jl)
 """
-function dot_kahan_neumaier(v1::StridedVector{T}, v2::StridedVector{T}) where {T<:Number}
+function dot_kahan(v1::StridedVector{T}, v2::StridedVector{T}) where {T<:Number}
     @inbounds begin
         n = length(v1)
         c = zero(T)
@@ -108,4 +79,4 @@ function dot_kahan_neumaier(v1::StridedVector{T}, v2::StridedVector{T}) where {T
     end
 end
 
-export dot_xsum, dot_kahan, dot_kahan_neumaier
+export dot_xsum, dot_kahan
