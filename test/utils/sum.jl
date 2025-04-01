@@ -37,8 +37,9 @@
                 @test naive_sum(arr_large_small) ≠ exact_large_small
             end
 
-            # 3. Ill-conditioned sum: Terms are large, sum is small
-            # Example: sum = 1 + 1e16 - 1e16
+            # 3. Ill-conditioned sum: Terms are large, s is small
+            # Example: s = 1 + 1e16 - 1e16
+            # Note: julia `sum` function is not able to handle this case well.
             @testset "Ill-conditioned sum" begin
                 ill_val = 1.0e16
                 arr_ill = [1.0, ill_val, -ill_val]
