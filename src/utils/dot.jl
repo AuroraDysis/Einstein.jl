@@ -39,7 +39,7 @@ Uses the `xsum` package for improved numerical accuracy.
 - [Radford Neal / xsum · GitLab](https://gitlab.com/radfordneal/xsum)
 """
 function dot_xsum(x::StridedVector{Float64}, y::StridedVector{Float64})
-    acc = XAccumulator(0.0)
+    acc = XAccumulator(zero(Float64))
     @inbounds for i in eachindex(x)
         accumulate!(acc, x[i] * y[i])
     end
