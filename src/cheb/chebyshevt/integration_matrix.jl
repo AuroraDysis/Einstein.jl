@@ -65,3 +65,5 @@ end
 function chebyshevt_integration_matrix(n::Integer, lower_bound::Float64, upper_bound::Float64)
     return chebyshevt_integration_matrix(Float64, n, lower_bound, upper_bound)
 end
+
+export chebyshevt_integration_matrix

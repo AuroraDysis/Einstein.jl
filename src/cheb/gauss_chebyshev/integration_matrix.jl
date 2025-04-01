@@ -10,7 +10,7 @@ polynomial at those points, with the convention that the first value is zero.
 - [chebfun/@chebcolloc1/chebcolloc1.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc1/chebcolloc1.m)
 """
 function integration_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
-    A = analysis_matrix(TF, n)
+    A = vals2coeffs_matrix(TF, n)
     S = coeffs2vals_matrix(TF, n)
     B = chebyshevt_integration_matrix(TF, n)
     Q = S * B * A
