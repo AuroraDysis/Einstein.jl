@@ -32,11 +32,3 @@ end
 function chebgrid1_integration_matrix(n::Integer, lower_bound::Float64, upper_bound::Float64)
     return chebgrid1_integration_matrix(Float64, n, lower_bound, upper_bound)
 end
-
-function _cheb_integration_matrix(
-    ::ChebyshevT, ::Type{TR}, n::Integer, lower_bound::TR, upper_bound::TR
-) where {TR<:AbstractFloat}
-    return chebgrid1_integration_matrix(TR, n, lower_bound, upper_bound)
-end
-
-export chebgrid1_integration_matrix

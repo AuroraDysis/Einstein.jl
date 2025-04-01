@@ -152,5 +152,3 @@ end
 function chebgrid1_analysis_matrix(n::Integer)
     return chebgrid1_analysis_matrix(Float64, n)
 end
-
-export ChebyshevFirstKindAnalysis, chebgrid1_vals2coeffs, chebgrid1_analysis_matrix

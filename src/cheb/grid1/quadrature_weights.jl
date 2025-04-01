@@ -76,5 +76,3 @@ end
 function chebgrid1_quadrature_weights(n::Integer, lower_bound::Float64, upper_bound::Float64)
     return chebgrid1_quadrature_weights(Float64, n, lower_bound, upper_bound)
 end
-
-export chebgrid1_quadrature_weights

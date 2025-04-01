@@ -40,5 +40,3 @@ function chebgrid1_differentiation_matrix(
 )
     return chebgrid1_differentiation_matrix(Float64, n, lower_bound, upper_bound, k)
 end
-
-export chebgrid1_differentiation_matrix

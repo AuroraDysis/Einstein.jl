@@ -164,5 +164,3 @@ end
 function chebgrid1_coeffs2vals_matrix(n::Integer)
     return chebgrid1_coeffs2vals_matrix(Float64, n)
 end
-
-export ChebyshevFirstKindSynthesis, chebgrid1_coeffs2vals, chebgrid1_coeffs2vals_matrix
