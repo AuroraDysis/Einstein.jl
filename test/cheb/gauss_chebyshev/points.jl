@@ -1,7 +1,5 @@
-using TestItems
-
-@testitem "points" begin
-    using ApproxFun, Einstein.ChebyshevSuite, Test
+@testitem "GaussChebyshev - points" begin
+    using ApproxFun
 
     for TF in [Float64, BigFloat]
         tol = 10 * eps(TF)
@@ -11,7 +9,7 @@ using TestItems
             @testset "$TF, $intervals" begin
                 for n in 0:10
                     @test isapprox(
-                        points(TF, n, lower_bound, upper_bound),
+                        GaussChebyshev.points(TF, n, lower_bound, upper_bound),
                         reverse(points(Chebyshev(lower_bound .. upper_bound), n)),
                         atol=tol,
                     )
