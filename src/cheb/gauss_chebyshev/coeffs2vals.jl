@@ -30,14 +30,12 @@ struct GaussChebyshevCoeffs2ValsCache{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}
         @inbounds begin
             half = one(TF) / 2
             m_im_pi_over_2n = -im * convert(TF, π) / (2n)
-            for k in 0:(n - 1)
+            for k in 0:(2n - 1)
                 weights[k + 1] = exp(k * m_im_pi_over_2n) * half
             end
             weights[1] *= 2
             weights[n + 1] = 0
-            for k in (n + 1):(2n - 1)
-                weights[k + 1] = -exp(k * m_im_pi_over_2n) * half
-            end
+            weights[(n + 2):(2n)] .*= -1
         end
         tmp = Vector{Complex{TF}}(undef, 2n)
         complex_values = Vector{Complex{TF}}(undef, n)
