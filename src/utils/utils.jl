@@ -2,6 +2,7 @@ module Utils
 
 using ArgCheck: @argcheck
 using FastBroadcast: @..
+using SpecialFunctions: logabsbinomial
 
 using Xsum
 using FFTW

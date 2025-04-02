@@ -54,8 +54,14 @@ function barycentric_weights(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
         @argcheck n > 0 "n must be a positive integer"
     end
 
-    norm_factor = binomial(n, n ÷ 2)
-    weights = TF[(-1)^j * binomial(n, j)//norm_factor for j in 0:n]
+    weights = Array{TF}(undef, n + 1)
+    half_n = n ÷ 2
+    norm_factor, _ = logabsbinomial(n, half_n)
+    for j in 0:n
+        s = isodd(j) ? -1 : 1
+        log_nj, _ = logabsbinomial(n, j)
+        weights[j + 1] = s * exp(log_nj - norm_factor)
+    end
 
     return weights
 end
