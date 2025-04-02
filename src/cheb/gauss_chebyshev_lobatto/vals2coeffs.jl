@@ -15,93 +15,76 @@ values = op(coeffs)
 - [chebfun/@chebtech2/vals2coeffs.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/vals2coeffs.m)
 """
 struct GaussChebyshevLobattoVals2CoeffsCache{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}}
+    n::Integer
     tmp::Vector{Complex{TF}}
-    coeffs::Vector{Complex{TF}}
+    complex_coeffs::Vector{Complex{TF}}
     real_coeffs::Vector{TF}
     ifft_plan::TPlan
 
     function GaussChebyshevLobattoVals2CoeffsCache{TF}(n::Integer) where {TF<:AbstractFloat}
+        @argcheck n > 1 "n must be greater than 1"
+
         tmp = zeros(Complex{TF}, 2n - 2)
-        coeffs = zeros(Complex{TF}, n)
+        complex_coeffs = zeros(Complex{TF}, n)
         real_coeffs = zeros(TF, n)
         ifft_plan = plan_ifft_measure!(tmp)
-        return new{TF,typeof(ifft_plan)}(tmp, coeffs, real_coeffs, ifft_plan)
+        return new{TF,typeof(ifft_plan)}(n, tmp, complex_coeffs, real_coeffs, ifft_plan)
     end
 end
 
-function (op::GaussChebyshevLobattoVals2CoeffsCache{TF})(
-    vals::AbstractVector{TFC}
-) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
-    type_is_float = TFC <: AbstractFloat
+function _compute_gauss_chebyshev_lobatto_vals2coeffs!(
+    op::GaussChebyshevLobattoVals2CoeffsCache{TF}, vals::AbstractVector{TFC}
+) where {TF<:AbstractFloat,TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
+    (; n, tmp, complex_coeffs, ifft_plan) = op
 
-    n = length(vals)
+    @argcheck length(vals) == n "vals must have length n"
 
-    # Trivial case
-    if n <= 1
-        if type_is_float
-            op.real_coeffs .= vals
-            return op.real_coeffs
-        else
-            op.coeffs .= vals
-            return op.coeffs
-        end
-    end
-
-    # Determine if vals are even or odd symmetric
-    is_even = true
-    is_odd = true
-    @inbounds for i in 1:(n ÷ 2)
-        diff = abs(vals[i] - vals[n - i + 1])
-        sum = abs(vals[i] + vals[n - i + 1])
-        if !(diff ≈ 0)
-            is_even = false
-        end
-        if !(sum ≈ 0)
-            is_odd = false
-        end
-        # Early exit if neither symmetry is possible
-        if !is_even && !is_odd
-            break
-        end
-    end
+    # Determine if vals are even or odd symmetric with tolerance
+    tol = sqrt(eps(TF))
+    is_even = all(i -> abs(vals[i] - vals[n - i + 1]) < tol, 1:(n ÷ 2))
+    is_odd = all(i -> abs(vals[i] + vals[n - i + 1]) < tol, 1:(n ÷ 2))
 
     # Mirror the values
     @inbounds for i in 1:(n - 1)
-        op.tmp[i] = vals[n - i + 1]  # descending part
-        op.tmp[n - 1 + i] = vals[i]  # ascending part
+        tmp[i] = vals[n - i + 1]  # descending part
+        tmp[n - 1 + i] = vals[i]  # ascending part
     end
 
     # Perform inverse FFT on the mirrored data
-    op.ifft_plan * op.tmp
+    ifft_plan * tmp
 
     # Scale the interior coefficients
     @inbounds begin
-        op.coeffs[1] = op.tmp[1]
-        for i in 2:(n - 1)
-            op.coeffs[i] = 2 * op.tmp[i]
-        end
-        op.coeffs[n] = op.tmp[n]
+        complex_coeffs[1] = tmp[1]
+        @. complex_coeffs[2:(n - 1)] = 2 * @view(tmp[2:(n - 1)])
+        complex_coeffs[n] = tmp[n]
     end
 
     # Enforce exact symmetries
     if is_even
-        @inbounds for i in 2:2:n
-            op.coeffs[i] = 0
-        end
+        complex_coeffs[2:2:end] .= 0
     elseif is_odd
-        @inbounds for i in 1:2:n
-            op.coeffs[i] = 0
-        end
+        complex_coeffs[1:2:end] .= 0
     end
 
-    if type_is_float
-        @inbounds for k in 1:n
-            op.real_coeffs[k] = real(op.coeffs[k])
-        end
-        return op.real_coeffs
-    else
-        return op.coeffs
-    end
+    return nothing
+end
+
+function (op::GaussChebyshevLobattoVals2CoeffsCache{TF})(
+    vals::AbstractVector{TF}
+) where {TF<:AbstractFloat}
+    (; complex_coeffs, real_coeffs) = op
+    _compute_gauss_chebyshev_lobatto_vals2coeffs!(op, vals)
+    @. real_coeffs = real(complex_coeffs)
+    return real_coeffs
+end
+
+function (op::GaussChebyshevLobattoVals2CoeffsCache{TF})(
+    vals::AbstractVector{Complex{TF}}
+) where {TF<:AbstractFloat}
+    (; complex_coeffs) = op
+    _compute_gauss_chebyshev_lobatto_vals2coeffs!(op, vals)
+    return complex_coeffs
 end
 
 function gauss_chebyshev_lobatto_vals2coeffs(
@@ -114,9 +97,6 @@ function gauss_chebyshev_lobatto_vals2coeffs(
     vals::AbstractVector{TFC}
 ) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     n = length(vals)
-    if n <= 1
-        return deepcopy(vals)
-    end
     op = GaussChebyshevLobattoVals2CoeffsCache{real(TFC)}(n)
     return op(vals)
 end
@@ -133,6 +113,8 @@ Construct the analysis matrix A that transforms function values at Chebyshev poi
 function gauss_chebyshev_lobatto_vals2coeffs_matrix(
     ::Type{TF}, n::Integer
 ) where {TF<:AbstractFloat}
+    @argcheck n > 1 "n must be greater than 1"
+
     A = Array{TF,2}(undef, n, n)
     op = GaussChebyshevLobattoVals2CoeffsCache{TF}(n)
     @inbounds for i in 1:n
