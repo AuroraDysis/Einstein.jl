@@ -1,6 +1,3 @@
-using TestItems
-using Einstein.ChebyshevSuite, Test
-
 @testitem "cheb_gauss_integration_matrix" begin
     n = 10
     tol = typetol(Float64)

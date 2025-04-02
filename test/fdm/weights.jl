@@ -1,5 +1,3 @@
-using TestItems
-
 @testitem "fdm_weights_fornberg" begin
     using Einstein.FiniteDifferenceSuite, Test
 

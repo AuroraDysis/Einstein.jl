@@ -1,5 +1,3 @@
-using TestItems
-
 @testitem "cheb_gauss_quadrature_weights" begin
     using LinearAlgebra
 

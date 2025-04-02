@@ -1,5 +1,3 @@
-using TestItems
-
 @testitem "cheb_gauss_differentiation_matrix" begin
     # n = 5
     expected5 = [

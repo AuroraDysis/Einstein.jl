@@ -1,5 +1,3 @@
-using TestItems
-
 @testitem "cheb_gauss_angles" begin
     angles_0 = Float64[]
     angles_1 = [1.570796326794897]

@@ -1,5 +1,3 @@
-using TestItems
-
 @testitem "cheb_lobatto_differentiation_matrix" begin
     tol = 100 * eps()
     # Test case for n=5

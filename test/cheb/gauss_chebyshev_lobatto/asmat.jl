@@ -1,5 +1,3 @@
-using TestItems
-
 @testitem "cheb_lobatto_vals2coeffs_matrix, cheb_lobatto_coeffs2vals_matrix" begin
     using Einstein.ChebyshevSuite, Test
 

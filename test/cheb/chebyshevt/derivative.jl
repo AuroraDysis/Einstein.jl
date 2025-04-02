@@ -1,5 +1,3 @@
-using TestItems
-
 @testitem "chebyshevt_derivative!" begin
     @testset "Basic functionality" begin
         # Test case 1: Simple polynomial

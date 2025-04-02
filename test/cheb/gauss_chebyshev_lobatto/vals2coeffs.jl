@@ -1,5 +1,3 @@
-using TestItems
-
 @testitem "cheb_lobatto_vals2coeffs" begin
     # Set tolerance
     tol = typetol(Float64)

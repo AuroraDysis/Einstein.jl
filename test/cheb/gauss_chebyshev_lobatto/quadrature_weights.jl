@@ -1,5 +1,3 @@
-using TestItems
-
 @testitem "cheb_lobatto_quadrature_weights" begin
     using LinearAlgebra
 

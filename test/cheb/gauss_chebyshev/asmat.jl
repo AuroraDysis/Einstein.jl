@@ -1,5 +1,3 @@
-using TestItems
-
 @testitem "cheb_gauss_vals2coeffs_matrix, cheb_gauss_coeffs2vals_matrix" begin
     using ApproxFun
 

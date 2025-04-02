@@ -1,5 +1,3 @@
-using TestItems
-
 @testitem "chebyshevt_evaluate" begin
     using LinearAlgebra
 

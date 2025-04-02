@@ -1,6 +1,3 @@
-using TestItems
-using Einstein.ChebyshevSuite, Test
-
 @testitem "cheb_lobatto_integration_matrix" begin
     n = 10
     points = cheb_lobatto_points(Float64, n, 0.0, 1.0)

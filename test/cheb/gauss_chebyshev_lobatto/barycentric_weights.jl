@@ -1,5 +1,3 @@
-using TestItems
-
 @testitem "cheb_lobatto_barycentric_weights" begin
     weights_0 = Float64[]
     weights_1 = [1.0]
