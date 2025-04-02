@@ -20,16 +20,16 @@ function cheb_lobatto_barycentric_weights(::Type{TF}, n::Integer) where {TF<:Abs
         return ones(TF, 1)
     end
 
-    w = ones(TF, n)
+    weights = ones(TF, n)
 
     @inbounds begin
         half = one(TF) / 2
-        w[(end - 1):-2:1] .= -1
-        w[1] *= half
-        w[end] = half
+        weights[(end - 1):-2:1] .= -1
+        weights[1] *= half
+        weights[end] = half
     end
 
-    return w
+    return weights
 end
 
 function cheb_lobatto_barycentric_weights(n::Integer)
