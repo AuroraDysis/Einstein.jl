@@ -13,9 +13,6 @@ using ToeplitzMatrices: Toeplitz, Hankel
 
 using ..Utils
 
-include("utils/fft.jl")
-include("utils/barycentric_differentiation_matrix.jl")
-
 # utils for coefficients of the corresponding first-kind Chebyshev series expansion.
 include("chebyshevt/evaluate.jl")
 include("chebyshevt/derivative.jl")

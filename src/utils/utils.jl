@@ -11,6 +11,10 @@ include("errors.jl")
 include("sum.jl")
 include("dot.jl")
 include("sws.jl")
-include("interpolation.jl")
+include("fft.jl")
+
+include("barycentric_weights.jl")
+include("barycentric_interpolation.jl")
+include("barycentric_differentiation_matrix.jl")
 
 end
