@@ -11,13 +11,13 @@ Compute the indefinite integral of a function given its Chebyshev coefficients.
 # References
 - [chebfun/@chebtech/cumsum.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech/cumsum.m)
 """
-struct ChebyshevTIntegration{TF<:AbstractFloat,TI<:Integer}
+struct ChebyshevTIntegrationPlan{TF<:AbstractFloat,TI<:Integer}
     n::TI              # Number of coefficients
     tmp::Vector{TF}    # Temporary storage for padded coefficients
     result::Vector{TF} # Result storage
     v::Vector{TI}      # Pre-computed alternating signs
 
-    function ChebyshevTIntegration{TF}(n::TI) where {TF<:AbstractFloat,TI<:Integer}
+    function ChebyshevTIntegrationPlan{TF}(n::TI) where {TF<:AbstractFloat,TI<:Integer}
         # Pre-allocate workspace
         tmp = Vector{TF}(undef, n + 2)
         result = Vector{TF}(undef, n + 1)
@@ -32,7 +32,7 @@ struct ChebyshevTIntegration{TF<:AbstractFloat,TI<:Integer}
     end
 end
 
-function (op::ChebyshevTIntegration{TF,TI})(
+function (op::ChebyshevTIntegrationPlan{TF,TI})(
     coeffs::AbstractVector{TF}
 ) where {TF<:AbstractFloat,TI<:Integer}
     @argcheck length(coeffs) == op.n "length(coeffs) must be equal to n"
@@ -71,13 +71,13 @@ function (op::ChebyshevTIntegration{TF,TI})(
     return result
 end
 
-function chebyshevt_integrate(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
-    return ChebyshevTIntegration{TF}(n)
+function chebyshevt_integrate_plan(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+    return ChebyshevTIntegrationPlan{TF}(n)
 end
 
 function chebyshevt_integrate(coeffs::AbstractVector{TF}) where {TF<:AbstractFloat}
     n = length(coeffs)
-    op = ChebyshevTIntegration{TF}(n)
+    op = ChebyshevTIntegrationPlan{TF}(n)
     return op(coeffs)
 end
 
