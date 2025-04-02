@@ -17,23 +17,20 @@ function cheb_gauss_quadrature_weights(::Type{TF}, n::Integer) where {TF<:Abstra
         return TF[2]
     end
 
-    # Preallocate the array m for the moments
-    evens = 2:2:(n - 1)
-    nm = length(evens) + 1
+    # Moments - Exact integrals of T_k (even)
+    nm = div(n - 1, 2) + 1
     m = Vector{TF}(undef, nm)
     @inbounds begin
-        m[1] = 2 / one(TF)  # Corresponds to k=0
-        for (i, k) in enumerate(evens)
-            # m[i+1] = 1 - k^2
-            m[i + 1] = 2 / (one(TF) - k^2)
+        m[1] = 2
+        for i in 2:nm
+            m[i] = 2 / (one(TF) - (2 * (i - 1))^2)
         end
     end
 
-    # Preallocate the coefficient array for FFT
+    # Mirror the vector for the use of ifft
     c = Vector{Complex{TF}}(undef, n)
-    c[1:nm] .= m
 
-    # Fill remaining coefficients based on parity of n
+    c[1:nm] .= m
     if isodd(n)
         start_idx = div(n + 1, 2)
         @inbounds for i in (nm + 1):n
@@ -47,17 +44,16 @@ function cheb_gauss_quadrature_weights(::Type{TF}, n::Integer) where {TF<:Abstra
         end
     end
 
-    # Multiply by rotation factors exp(1im*(0:n-1)*π/n)
+    # Apply weight (rotation) vector
     im_pi_over_n = im * convert(TF, π) / n
     @inbounds for k in 0:(n - 1)
         c[k + 1] *= exp(k * im_pi_over_n)
     end
 
-    # Compute inverse FFT in-place and take the real part for the weights
     ifft!(c)
-    w = real.(c)
+    weights = real.(c)
 
-    return w
+    return weights
 end
 
 function cheb_gauss_quadrature_weights(n::Integer)
@@ -73,7 +69,9 @@ function cheb_gauss_quadrature_weights(
     return weights
 end
 
-function cheb_gauss_quadrature_weights(n::Integer, lower_bound::Float64, upper_bound::Float64)
+function cheb_gauss_quadrature_weights(
+    n::Integer, lower_bound::Float64, upper_bound::Float64
+)
     return cheb_gauss_quadrature_weights(Float64, n, lower_bound, upper_bound)
 end
 
