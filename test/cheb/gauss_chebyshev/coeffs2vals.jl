@@ -1,4 +1,4 @@
-@testitem "gauss_chebyshev_coeffs2vals" begin
+@testitem "cheb_gauss_coeffs2vals" begin
     using LinearAlgebra
 
     # Set tolerance
@@ -6,7 +6,7 @@
 
     function coeffs2vals_via_matrix(c::AbstractVector{T}) where {T<:Number}
         n = length(c)
-        A = gauss_chebyshev_coeffs2vals_matrix(T, n)
+        A = cheb_gauss_coeffs2vals_matrix(T, n)
         return A * c
     end
 
@@ -24,7 +24,7 @@
         ]
 
         # Test real branch
-        v1 = gauss_chebyshev_coeffs2vals(c)
+        v1 = cheb_gauss_coeffs2vals(c)
         @test isapprox(v1, vTrue, atol=tol)
         @test all(iszero, imag.(v1))
 
@@ -45,7 +45,7 @@
         ]
 
         # Test real branch
-        v1 = gauss_chebyshev_coeffs2vals(c)
+        v1 = cheb_gauss_coeffs2vals(c)
         @test isapprox(v1, vTrue, atol=tol)
         @test all(iszero, imag.(v1))
 
@@ -55,8 +55,8 @@
 
     @testset "Symmetry preservation" begin
         c = kron(ones(10), Matrix{Float64}(I, 2, 2))
-        v1 = gauss_chebyshev_coeffs2vals(c[:, 1])
-        v2 = gauss_chebyshev_coeffs2vals(c[:, 2])
+        v1 = cheb_gauss_coeffs2vals(c[:, 1])
+        v2 = cheb_gauss_coeffs2vals(c[:, 2])
         @test isapprox(v1, reverse(v1), atol=tol)
         @test isapprox(v2, -reverse(v2), atol=tol)
 
@@ -69,18 +69,18 @@
     @testset "Operator style" begin
         n = 100
         coeffs = rand(n)
-        plan = gauss_chebyshev_coeffs2vals_plan(Float64, n)
+        plan = cheb_gauss_coeffs2vals_plan(Float64, n)
 
         # Test operator call
         vals1 = plan(coeffs)
-        vals2 = gauss_chebyshev_coeffs2vals(coeffs)
+        vals2 = cheb_gauss_coeffs2vals(coeffs)
         @test isapprox(vals1, vals2, atol=tol)
 
         # Test multiple calls
         for _ in 1:10
             coeffs = rand(n)
             vals1 = plan(coeffs)
-            vals2 = gauss_chebyshev_coeffs2vals(coeffs)
+            vals2 = cheb_gauss_coeffs2vals(coeffs)
             @test isapprox(vals1, vals2, atol=tol)
         end
     end

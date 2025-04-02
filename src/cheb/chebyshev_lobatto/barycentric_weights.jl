@@ -1,5 +1,5 @@
 """
-    gauss_chebyshev_lobatto_barycentric_weights([TF=Float64], n::Integer) where {TF<:AbstractFloat}
+    cheb_lobatto_barycentric_weights([TF=Float64], n::Integer) where {TF<:AbstractFloat}
 
 Compute the barycentric weights for Chebyshev points of the 2nd kind.
 
@@ -13,7 +13,7 @@ Compute the barycentric weights for Chebyshev points of the 2nd kind.
 
 See also: [`BarycentricInterpolation`](@ref)
 """
-function gauss_chebyshev_lobatto_barycentric_weights(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function cheb_lobatto_barycentric_weights(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     if n == 0
         return TF[]
     elseif n == 1
@@ -32,8 +32,8 @@ function gauss_chebyshev_lobatto_barycentric_weights(::Type{TF}, n::Integer) whe
     return w
 end
 
-function gauss_chebyshev_lobatto_barycentric_weights(n::Integer)
-    return gauss_chebyshev_lobatto_barycentric_weights(Float64, n)
+function cheb_lobatto_barycentric_weights(n::Integer)
+    return cheb_lobatto_barycentric_weights(Float64, n)
 end
 
-export gauss_chebyshev_lobatto_barycentric_weights
+export cheb_lobatto_barycentric_weights

@@ -1,5 +1,5 @@
 @doc raw"""
-    gauss_chebyshev_angles(TF, n) where {TF<:AbstractFloat}
+    cheb_gauss_angles(TF, n) where {TF<:AbstractFloat}
 
 Compute angles for Chebyshev points of the 1st kind:
 ```math
@@ -10,7 +10,7 @@ Compute angles for Chebyshev points of the 1st kind:
 - `TF`: Type parameter for the angles (e.g., Float64)
 - `n`: Number of points
 """
-function gauss_chebyshev_angles(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function cheb_gauss_angles(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     @argcheck n >= 0 "n must be nonnegative"
 
     if n == 0
@@ -28,8 +28,8 @@ function gauss_chebyshev_angles(::Type{TF}, n::Integer) where {TF<:AbstractFloat
     return θ
 end
 
-function gauss_chebyshev_angles(n::Integer)
-    return gauss_chebyshev_angles(Float64, n)
+function cheb_gauss_angles(n::Integer)
+    return cheb_gauss_angles(Float64, n)
 end
 
-export gauss_chebyshev_angles
+export cheb_gauss_angles

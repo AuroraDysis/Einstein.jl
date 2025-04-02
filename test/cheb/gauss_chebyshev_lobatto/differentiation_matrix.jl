@@ -1,9 +1,9 @@
 using TestItems
 
-@testitem "gauss_chebyshev_lobatto_differentiation_matrix" begin
+@testitem "cheb_lobatto_differentiation_matrix" begin
     tol = 100 * eps()
     # Test case for n=5
-    D5 = gauss_chebyshev_lobatto_differentiation_matrix(Float64, 5)
+    D5 = cheb_lobatto_differentiation_matrix(Float64, 5)
     D5_expected = [
         -5.5 6.82842712474619 -2.0 1.17157287525381 -0.5
         -1.70710678118655 0.707106781186548 1.41421356237310 -0.707106781186548 0.292893218813453
@@ -14,7 +14,7 @@ using TestItems
     @test isapprox(D5, D5_expected, rtol=tol)
 
     # Test case for n=6
-    D6 = gauss_chebyshev_lobatto_differentiation_matrix(Float64, 6)
+    D6 = cheb_lobatto_differentiation_matrix(Float64, 6)
     D6_expected = [
         -8.5 10.4721359549996 -2.89442719099992 1.52786404500042 -1.10557280900008 0.5
         -2.61803398874990 1.17082039324994 2.0 -0.894427190999916 0.618033988749895 -0.276393202250021

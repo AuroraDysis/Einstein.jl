@@ -23,10 +23,10 @@ include("chebyshevt/integrate.jl")
 include("chebyshevt/integration_matrix.jl")
 
 # Gauss-Chebyshev grid
-include("gauss_chebyshev/grid.jl")
+include("chebyshev_gauss/grid.jl")
 
 # Gauss-Chebyshev-Lobatto grid
-include("gauss_chebyshev_lobatto/grid.jl")
+include("chebyshev_lobatto/grid.jl")
 
 # Rectangular spectral collocation
 include("rect/differentiation_matrix.jl")

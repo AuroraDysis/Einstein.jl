@@ -1,5 +1,5 @@
 @doc raw"""
-    gauss_chebyshev_lobatto_angles(TF, n) where {TF<:AbstractFloat}
+    cheb_lobatto_angles(TF, n) where {TF<:AbstractFloat}
 
 Compute angles for Chebyshev points of the 2nd kind:
 ```math
@@ -10,7 +10,7 @@ Compute angles for Chebyshev points of the 2nd kind:
 - `TF`: Type parameter for the angles (e.g., Float64)
 - `n`: Number of points
 """
-function gauss_chebyshev_lobatto_angles(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function cheb_lobatto_angles(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     @argcheck n >= 0 "n must be nonnegative"
 
     if n == 0
@@ -29,8 +29,8 @@ function gauss_chebyshev_lobatto_angles(::Type{TF}, n::Integer) where {TF<:Abstr
     return θ
 end
 
-function gauss_chebyshev_lobatto_angles(n::Integer)
-    return gauss_chebyshev_lobatto_angles(Float64, n)
+function cheb_lobatto_angles(n::Integer)
+    return cheb_lobatto_angles(Float64, n)
 end
 
-export gauss_chebyshev_lobatto_angles
+export cheb_lobatto_angles

@@ -1,6 +1,6 @@
 using TestItems
 
-@testitem "gauss_chebyshev_lobatto_angles" begin
+@testitem "cheb_lobatto_angles" begin
     angles_0 = Float64[]
     angles_1 = [1.570796326794897]
     angles_2 = [3.141592653589793, 0.0]
@@ -8,8 +8,8 @@ using TestItems
         3.141592653589793, 2.356194490192345, 1.570796326794897, 0.785398163397448, 0.0
     ]
 
-    @test gauss_chebyshev_lobatto_angles(Float64, 0) ≈ angles_0
-    @test gauss_chebyshev_lobatto_angles(Float64, 1) ≈ angles_1
-    @test gauss_chebyshev_lobatto_angles(Float64, 2) ≈ angles_2
-    @test gauss_chebyshev_lobatto_angles(Float64, 5) ≈ angles_5
+    @test cheb_lobatto_angles(Float64, 0) ≈ angles_0
+    @test cheb_lobatto_angles(Float64, 1) ≈ angles_1
+    @test cheb_lobatto_angles(Float64, 2) ≈ angles_2
+    @test cheb_lobatto_angles(Float64, 5) ≈ angles_5
 end

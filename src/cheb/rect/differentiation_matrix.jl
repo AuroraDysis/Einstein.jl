@@ -16,11 +16,11 @@ function cheb_rect_differentiation_matrix_kind1(
     ::Type{TF}, m::Integer, n::Integer
 ) where {TF<:AbstractFloat}
     # mapping-from grid (angles):
-    T = gauss_chebyshev_angles(TF, n)'        # Row vector of length n
+    T = cheb_gauss_angles(TF, n)'        # Row vector of length n
     # difference between dimensions:
     c = n - m
     # mapping-to grid (angles):
-    TAU = gauss_chebyshev_angles(TF, m)       # Column vector of length m
+    TAU = cheb_gauss_angles(TF, m)       # Column vector of length m
 
     # Denominator term
     denom = @. 2 * sin((T + TAU) / 2) * sin((TAU - T) / 2)
@@ -93,10 +93,10 @@ function cheb_rect_differentiation_matrix_kind2(
 ) where {TF<:AbstractFloat}
     nm1 = n - 1                     # For convenience
     cm1 = nm1 - m                   # Difference between dimensions
-    t = gauss_chebyshev_lobatto_points(TF, n)            # Second-kind grid
-    tau = gauss_chebyshev_points(TF, m)          # First-kind grid
-    T = gauss_chebyshev_lobatto_angles(TF, n)         # Second-kind grid (angles)
-    TAU = gauss_chebyshev_angles(TF, m)       # First-kind grid (angles)
+    t = cheb_lobatto_points(TF, n)            # Second-kind grid
+    tau = cheb_gauss_points(TF, m)          # First-kind grid
+    T = cheb_lobatto_angles(TF, n)         # Second-kind grid (angles)
+    TAU = cheb_gauss_angles(TF, m)       # First-kind grid (angles)
 
     # Denominator term (explicit expression)
     denom = [2 * sin((t + tau) / 2) * sin((tau - t) / 2) for tau in TAU, t in T]
@@ -195,14 +195,14 @@ function cheb_rect_differentiation_matrix(
 
     if kind == 1
         # First-kind grid
-        T = gauss_chebyshev_angles(TF, n)
+        T = cheb_gauss_angles(TF, n)
         D = cheb_rect_differentiation_matrix_kind1(TF, m, n)
         a = vcat(zeros(TF, n), one(TF))
         sgn_coeff = (-1)^(n - 1) / TF(n)
         @. sgn = sgn_coeff * sgn * sin(T)
     else
         # Second-kind grid
-        T = gauss_chebyshev_lobatto_angles(TF, n)
+        T = cheb_lobatto_angles(TF, n)
         D = cheb_rect_differentiation_matrix_kind2(TF, m, n)
         a = vcat(zeros(TF, n - 2), -one(TF), zero(TF), one(TF))
         sgn .*= (-1)^(n - 1) / TF(2 * (n - 1))
@@ -210,8 +210,8 @@ function cheb_rect_differentiation_matrix(
     end
 
     # Setup grids
-    tau = gauss_chebyshev_points(TF, m)
-    TAU = gauss_chebyshev_angles(TF, m)
+    tau = cheb_gauss_points(TF, m)
+    TAU = cheb_gauss_angles(TF, m)
     a = chebyshevt_derivative(a)
 
     # Compute denominator matrix

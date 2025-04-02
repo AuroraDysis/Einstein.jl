@@ -1,13 +1,13 @@
 """
-    gauss_chebyshev_lobatto_coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
-    gauss_chebyshev_lobatto_coeffs2vals_plan([TF=Float64], n::Integer)(coeffs::AbstractVector{TFC})
+    cheb_lobatto_coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
+    cheb_lobatto_coeffs2vals_plan([TF=Float64], n::Integer)(coeffs::AbstractVector{TFC})
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 2nd kind.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-op = gauss_chebyshev_lobatto_coeffs2vals(Float64, n)
+op = cheb_lobatto_coeffs2vals(Float64, n)
 values = op(coeffs)
 ```
 
@@ -30,7 +30,7 @@ struct GaussChebyshevLobattoCoeffs2ValsPlan{TF<:AbstractFloat,TPlan<:Plan{Comple
     end
 end
 
-function _compute_gauss_chebyshev_lobatto_coeffs2vals!(
+function _compute_cheb_lobatto_coeffs2vals!(
     op::GaussChebyshevLobattoCoeffs2ValsPlan{TF}, coeffs::AbstractVector{TFC}
 ) where {TF<:AbstractFloat,TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     (; n, tmp, complex_output, fft_plan) = op
@@ -75,7 +75,7 @@ function (op::GaussChebyshevLobattoCoeffs2ValsPlan{TF})(
     coeffs::AbstractVector{TF}
 ) where {TF<:AbstractFloat}
     (; complex_output, real_output) = op
-    _compute_gauss_chebyshev_lobatto_coeffs2vals!(op, coeffs)
+    _compute_cheb_lobatto_coeffs2vals!(op, coeffs)
     @. real_output = real(complex_output)
     return real_output
 end
@@ -83,11 +83,11 @@ end
 function (op::GaussChebyshevLobattoCoeffs2ValsPlan{TF})(
     coeffs::AbstractVector{Complex{TF}}
 ) where {TF<:AbstractFloat}
-    _compute_gauss_chebyshev_lobatto_coeffs2vals!(op, coeffs)
+    _compute_cheb_lobatto_coeffs2vals!(op, coeffs)
     return op.complex_output
 end
 
-function gauss_chebyshev_lobatto_coeffs2vals_plan(
+function cheb_lobatto_coeffs2vals_plan(
     ::Type{TF}, n::Integer
 ) where {TF<:AbstractFloat}
     @argcheck n > 0 "n must be greater than 0"
@@ -99,16 +99,16 @@ function gauss_chebyshev_lobatto_coeffs2vals_plan(
     return GaussChebyshevLobattoCoeffs2ValsPlan{TF}(n)
 end
 
-function gauss_chebyshev_lobatto_coeffs2vals(
+function cheb_lobatto_coeffs2vals(
     coeffs::AbstractVector{TFC}
 ) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     n = length(coeffs)
-    plan = gauss_chebyshev_lobatto_coeffs2vals_plan(real(TFC), n)
+    plan = cheb_lobatto_coeffs2vals_plan(real(TFC), n)
     return plan(coeffs)
 end
 
 """
-    gauss_chebyshev_lobatto_coeffs2vals_matrix([TF=Float64], n::Integer) where {TF<:AbstractFloat}
+    cheb_lobatto_coeffs2vals_matrix([TF=Float64], n::Integer) where {TF<:AbstractFloat}
 
 Construct the synthesis matrix S that transforms Chebyshev coefficients to function values at Chebyshev points of the 2nd kind.
 
@@ -116,7 +116,7 @@ Construct the synthesis matrix S that transforms Chebyshev coefficients to funct
 - `TF`: Element type (defaults to Float64)
 - `n`: Number of points/coefficients
 """
-function gauss_chebyshev_lobatto_coeffs2vals_matrix(
+function cheb_lobatto_coeffs2vals_matrix(
     ::Type{TF}, n::Integer
 ) where {TF<:AbstractFloat}
     @argcheck n > 0 "n must be greater than 0"
@@ -126,16 +126,16 @@ function gauss_chebyshev_lobatto_coeffs2vals_matrix(
     end
 
     S = Array{TF,2}(undef, n, n)
-    plan = gauss_chebyshev_lobatto_coeffs2vals_plan(TF, n)
+    plan = cheb_lobatto_coeffs2vals_plan(TF, n)
     @inbounds for i in 1:n
         S[:, i] = plan(OneElement(one(TF), i, n))
     end
     return S
 end
 
-function gauss_chebyshev_lobatto_coeffs2vals_matrix(n::Integer)
-    return gauss_chebyshev_lobatto_coeffs2vals_matrix(Float64, n)
+function cheb_lobatto_coeffs2vals_matrix(n::Integer)
+    return cheb_lobatto_coeffs2vals_matrix(Float64, n)
 end
 
-export gauss_chebyshev_lobatto_coeffs2vals_plan,
-    gauss_chebyshev_lobatto_coeffs2vals, gauss_chebyshev_lobatto_coeffs2vals_matrix
+export cheb_lobatto_coeffs2vals_plan,
+    cheb_lobatto_coeffs2vals, cheb_lobatto_coeffs2vals_matrix

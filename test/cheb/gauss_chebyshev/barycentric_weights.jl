@@ -1,6 +1,6 @@
 using TestItems
 
-@testitem "gauss_chebyshev_barycentric_weights" begin
+@testitem "cheb_gauss_barycentric_weights" begin
     weights_0 = Float64[]
     weights_1 = [1.0]
     weights_5 = [
@@ -15,8 +15,8 @@ using TestItems
         0.258819045102521,
     ]
 
-    @test gauss_chebyshev_barycentric_weights(0) ≈ weights_0
-    @test gauss_chebyshev_barycentric_weights(1) ≈ weights_1
-    @test gauss_chebyshev_barycentric_weights(5) ≈ weights_5
-    @test gauss_chebyshev_barycentric_weights(6) ≈ weights_6
+    @test cheb_gauss_barycentric_weights(0) ≈ weights_0
+    @test cheb_gauss_barycentric_weights(1) ≈ weights_1
+    @test cheb_gauss_barycentric_weights(5) ≈ weights_5
+    @test cheb_gauss_barycentric_weights(6) ≈ weights_6
 end

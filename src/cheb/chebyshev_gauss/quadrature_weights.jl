@@ -1,5 +1,5 @@
 """
-    gauss_chebyshev_quadrature_weights([TF=Float64], n::Integer) where {TF<:AbstractFloat}
+    cheb_gauss_quadrature_weights([TF=Float64], n::Integer) where {TF<:AbstractFloat}
 
 Compute quadrature weights for Chebyshev points of the 1st kind.
 
@@ -10,7 +10,7 @@ Compute quadrature weights for Chebyshev points of the 1st kind.
 # References
 - [chebfun/@chebtech1/quadwts.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/quadwts.m)
 """
-function gauss_chebyshev_quadrature_weights(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function cheb_gauss_quadrature_weights(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     # Handle the special cases:
     if n == 0
         return TF[]
@@ -61,21 +61,21 @@ function gauss_chebyshev_quadrature_weights(::Type{TF}, n::Integer) where {TF<:A
     return w
 end
 
-function gauss_chebyshev_quadrature_weights(n::Integer)
-    return gauss_chebyshev_quadrature_weights(Float64, n)
+function cheb_gauss_quadrature_weights(n::Integer)
+    return cheb_gauss_quadrature_weights(Float64, n)
 end
 
-function gauss_chebyshev_quadrature_weights(
+function cheb_gauss_quadrature_weights(
     ::Type{TF}, n::Integer, lower_bound::TF, upper_bound::TF
 ) where {TF<:AbstractFloat}
-    weights = gauss_chebyshev_quadrature_weights(TF, n)
+    weights = cheb_gauss_quadrature_weights(TF, n)
     jacobian = (upper_bound - lower_bound) / 2
     weights .*= jacobian
     return weights
 end
 
-function gauss_chebyshev_quadrature_weights(n::Integer, lower_bound::Float64, upper_bound::Float64)
-    return gauss_chebyshev_quadrature_weights(Float64, n, lower_bound, upper_bound)
+function cheb_gauss_quadrature_weights(n::Integer, lower_bound::Float64, upper_bound::Float64)
+    return cheb_gauss_quadrature_weights(Float64, n, lower_bound, upper_bound)
 end
 
-export gauss_chebyshev_quadrature_weights
+export cheb_gauss_quadrature_weights
