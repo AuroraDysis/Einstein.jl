@@ -28,16 +28,6 @@ include("chebyshev_gauss/grid.jl")
 # Gauss-Chebyshev-Lobatto grid
 include("chebyshev_lobatto/grid.jl")
 
-# Rectangular spectral collocation
-include("rect/differentiation_matrix.jl")
-include("rect/integration_matrix.jl")
-
-# Ultraspherical spectral method
-include("ultra/diffmat.jl")
-include("ultra/convertmat.jl")
-include("ultra/sphankel.jl")
-include("ultra/multmat.jl")
-
 include("dissipation.jl")
 
 end

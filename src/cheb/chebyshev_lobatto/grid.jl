@@ -55,4 +55,4 @@ export angles,
 
 end
 
-export GaussChebyshevLobattoGrid
+export ChebyshevLobattoGrid
