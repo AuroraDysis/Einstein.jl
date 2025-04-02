@@ -36,11 +36,8 @@ function gauss_chebyshev_points(::Type{TF}, n::Integer) where {TF<:AbstractFloat
 
     # Use symmetric indexing for better numerical properties
     pi_over_2n = convert(TF, π) / (2 * n)
-    @inbounds begin
-        for i in 1:n
-            k = -n + 2i - 1
-            x_grid[i] = sin(k * pi_over_2n)
-        end
+    @inbounds for i in 1:n
+        x_grid[i] = sin((-n + 2i - 1) * pi_over_2n)
     end
 
     return x_grid
