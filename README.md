@@ -26,8 +26,8 @@ When solving GR PDEs in spherical symmetry or even axisymmetry, the requirements
 - [x] Finite difference method
   - [x] local barycentric Lagrange interpolation
 - [x] Hermite finite difference method
-- [x] Rectangular collocation method (Most of algorithms are translated from Chebfun)
-- [x] Ultraspherical spectral method (Most of algorithms are translated from Chebfun)
+- [x] ~~Rectangular collocation method (Most of algorithms are translated from Chebfun)~~ (Removed, see `v1` branch)
+- [x] ~~Ultraspherical spectral method (Most of algorithms are translated from Chebfun)~~ (Removed, see `v1` branch)
   - For boundary value problems, I recommend using [ApproxFun.jl](https://github.com/JuliaApproximation/ApproxFun.jl).
 - [ ] Ultraspherical rectangular collocation ([tomtrogdon/URCMethod.jl: A Jupyter notebook with an implementation of the URC method](https://github.com/tomtrogdon/URCMethod.jl))
 
