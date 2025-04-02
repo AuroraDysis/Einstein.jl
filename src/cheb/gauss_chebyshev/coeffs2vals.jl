@@ -18,8 +18,8 @@ struct GaussChebyshevCoeffs2ValsCache{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}
     n::Integer
     weights::Vector{Complex{TF}}
     tmp::Vector{Complex{TF}}
-    complex_values::Vector{Complex{TF}}
-    real_values::Vector{TF}
+    complex_output::Vector{Complex{TF}}
+    real_output::Vector{TF}
     fft_plan::TPlan
 
     function GaussChebyshevCoeffs2ValsCache{TF}(n::Integer) where {TF<:AbstractFloat}
@@ -38,11 +38,11 @@ struct GaussChebyshevCoeffs2ValsCache{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}
             weights[(n + 2):(2n)] .*= -1
         end
         tmp = Vector{Complex{TF}}(undef, 2n)
-        complex_values = Vector{Complex{TF}}(undef, n)
-        real_values = Vector{TF}(undef, n)
+        complex_output = Vector{Complex{TF}}(undef, n)
+        real_output = Vector{TF}(undef, n)
         fft_plan = plan_fft_measure!(tmp)
         return new{TF,typeof(fft_plan)}(
-            n, weights, tmp, complex_values, real_values, fft_plan
+            n, weights, tmp, complex_output, real_output, fft_plan
         )
     end
 end
@@ -50,7 +50,7 @@ end
 function _compute_gauss_chebyshev_coeffs2vals!(
     op::GaussChebyshevCoeffs2ValsCache{TF}, coeffs::AbstractVector{TFC}
 ) where {TF<:AbstractFloat,TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
-    (; n, weights, tmp, complex_values, fft_plan) = op
+    (; n, weights, tmp, complex_output, fft_plan) = op
 
     @argcheck length(coeffs) == n "coeffs must have length n"
 
@@ -70,15 +70,15 @@ function _compute_gauss_chebyshev_coeffs2vals!(
     fft_plan * tmp
 
     # Truncate and flip the order
-    complex_values .= @view(tmp[n:-1:1])
+    complex_output .= @view(tmp[n:-1:1])
 
     # Enforce symmetry
     if isEven
         half = one(TF) / 2
-        @. complex_values = half * (complex_values + @view(complex_values[end:-1:1]))
+        @. complex_output = half * (complex_output + @view(complex_output[end:-1:1]))
     elseif isOdd
         half = one(TF) / 2
-        @. complex_values = half * (complex_values - @view(complex_values[end:-1:1]))
+        @. complex_output = half * (complex_output - @view(complex_output[end:-1:1]))
     end
 
     return nothing
@@ -87,17 +87,17 @@ end
 function (op::GaussChebyshevCoeffs2ValsCache{TF})(
     coeffs::AbstractVector{TF}
 ) where {TF<:AbstractFloat}
-    (; complex_values, real_values) = op
+    (; complex_output, real_output) = op
     _compute_gauss_chebyshev_coeffs2vals!(op, coeffs)
-    @. real_values = real(complex_values)
-    return real_values
+    @. real_output = real(complex_output)
+    return real_output
 end
 
 function (op::GaussChebyshevCoeffs2ValsCache{TF})(
     coeffs::AbstractVector{Complex{TF}}
 ) where {TF<:AbstractFloat}
     _compute_gauss_chebyshev_coeffs2vals!(op, coeffs)
-    return op.complex_values
+    return op.complex_output
 end
 
 function gauss_chebyshev_coeffs2vals(::Type{TF}, n::Integer) where {TF<:AbstractFloat}

@@ -8,7 +8,7 @@ Convert values at Chebyshev points of the 2nd kind into Chebyshev coefficients.
 For best performance, especially in loops or repeated calls:
 ```julia
 op = gauss_chebyshev_lobatto_vals2coeffs(Float64, n)
-values = op(coeffs)
+coeffs = op(values)
 ```
 
 # References
@@ -17,25 +17,25 @@ values = op(coeffs)
 struct GaussChebyshevLobattoVals2CoeffsCache{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}}
     n::Integer
     tmp::Vector{Complex{TF}}
-    complex_coeffs::Vector{Complex{TF}}
-    real_coeffs::Vector{TF}
+    complex_output::Vector{Complex{TF}}
+    real_output::Vector{TF}
     ifft_plan::TPlan
 
     function GaussChebyshevLobattoVals2CoeffsCache{TF}(n::Integer) where {TF<:AbstractFloat}
         @argcheck n > 1 "n must be greater than 1"
 
         tmp = zeros(Complex{TF}, 2n - 2)
-        complex_coeffs = zeros(Complex{TF}, n)
-        real_coeffs = zeros(TF, n)
+        complex_output = zeros(Complex{TF}, n)
+        real_output = zeros(TF, n)
         ifft_plan = plan_ifft_measure!(tmp)
-        return new{TF,typeof(ifft_plan)}(n, tmp, complex_coeffs, real_coeffs, ifft_plan)
+        return new{TF,typeof(ifft_plan)}(n, tmp, complex_output, real_output, ifft_plan)
     end
 end
 
 function _compute_gauss_chebyshev_lobatto_vals2coeffs!(
     op::GaussChebyshevLobattoVals2CoeffsCache{TF}, vals::AbstractVector{TFC}
 ) where {TF<:AbstractFloat,TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
-    (; n, tmp, complex_coeffs, ifft_plan) = op
+    (; n, tmp, complex_output, ifft_plan) = op
 
     @argcheck length(vals) == n "vals must have length n"
 
@@ -53,16 +53,16 @@ function _compute_gauss_chebyshev_lobatto_vals2coeffs!(
 
     # Scale the interior coefficients
     @inbounds begin
-        complex_coeffs[1] = tmp[1]
-        @. complex_coeffs[2:(n - 1)] = 2 * @view(tmp[2:(n - 1)])
-        complex_coeffs[n] = tmp[n]
+        complex_output[1] = tmp[1]
+        @. complex_output[2:(n - 1)] = 2 * @view(tmp[2:(n - 1)])
+        complex_output[n] = tmp[n]
     end
 
     # Enforce exact symmetries
     if is_even
-        complex_coeffs[2:2:end] .= 0
+        complex_output[2:2:end] .= 0
     elseif is_odd
-        complex_coeffs[1:2:end] .= 0
+        complex_output[1:2:end] .= 0
     end
 
     return nothing
@@ -71,18 +71,18 @@ end
 function (op::GaussChebyshevLobattoVals2CoeffsCache{TF})(
     vals::AbstractVector{TF}
 ) where {TF<:AbstractFloat}
-    (; complex_coeffs, real_coeffs) = op
+    (; complex_output, real_output) = op
     _compute_gauss_chebyshev_lobatto_vals2coeffs!(op, vals)
-    @. real_coeffs = real(complex_coeffs)
-    return real_coeffs
+    @. real_output = real(complex_output)
+    return real_output
 end
 
 function (op::GaussChebyshevLobattoVals2CoeffsCache{TF})(
     vals::AbstractVector{Complex{TF}}
 ) where {TF<:AbstractFloat}
-    (; complex_coeffs) = op
+    (; complex_output) = op
     _compute_gauss_chebyshev_lobatto_vals2coeffs!(op, vals)
-    return complex_coeffs
+    return complex_output
 end
 
 function gauss_chebyshev_lobatto_vals2coeffs(

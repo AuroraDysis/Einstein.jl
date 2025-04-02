@@ -8,7 +8,7 @@ Convert values at Chebyshev points of the 1st kind into Chebyshev coefficients.
 For best performance, especially in loops or repeated calls:
 ```julia
 op = gauss_chebyshev_vals2coeffs(Float64, n)
-values = op(complex_coeffs)
+coeffs = op(values)
 ```
 
 # References
@@ -18,8 +18,8 @@ struct GaussChebyshevVals2CoeffsCache{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}
     n::Integer
     weights::Vector{Complex{TF}}
     tmp::Vector{Complex{TF}}
-    complex_coeffs::Vector{Complex{TF}}
-    real_coeffs::Vector{TF}
+    complex_output::Vector{Complex{TF}}
+    real_output::Vector{TF}
     ifft_plan::TPlan
 
     function GaussChebyshevVals2CoeffsCache{TF}(n::Integer) where {TF<:AbstractFloat}
@@ -36,14 +36,14 @@ struct GaussChebyshevVals2CoeffsCache{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}
 
         # Prepare temporary array for FFT
         tmp = Vector{Complex{TF}}(undef, 2n)
-        complex_coeffs = Vector{Complex{TF}}(undef, n)
-        real_coeffs = Vector{TF}(undef, n)
+        complex_output = Vector{Complex{TF}}(undef, n)
+        real_output = Vector{TF}(undef, n)
 
         # Create an inverse FFT plan with MEASURE flag for better performance
         ifft_plan = plan_ifft_measure!(tmp)
 
         return new{TF,typeof(ifft_plan)}(
-            n, weights, tmp, complex_coeffs, real_coeffs, ifft_plan
+            n, weights, tmp, complex_output, real_output, ifft_plan
         )
     end
 end
@@ -51,7 +51,7 @@ end
 function _compute_gauss_chebyshev_vals2coeffs!(
     op::GaussChebyshevVals2CoeffsCache{TF}, vals::AbstractVector{TFC}
 ) where {TF<:AbstractFloat,TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
-    (; n, weights, tmp, complex_coeffs, ifft_plan) = op
+    (; n, weights, tmp, complex_output, ifft_plan) = op
 
     @argcheck length(vals) == n "vals must have length n"
 
@@ -66,13 +66,13 @@ function _compute_gauss_chebyshev_vals2coeffs!(
 
     ifft_plan * tmp
 
-    @. complex_coeffs = @view(tmp[1:n]) * weights
+    @. complex_output = @view(tmp[1:n]) * weights
 
     # adjust coefficients for symmetry
     if isEven
-        complex_coeffs[2:2:end] .= 0
+        complex_output[2:2:end] .= 0
     elseif isOdd
-        complex_coeffs[1:2:end] .= 0
+        complex_output[1:2:end] .= 0
     end
 
     return nothing
@@ -81,18 +81,18 @@ end
 function (op::GaussChebyshevVals2CoeffsCache{TF})(
     values::AbstractVector{TF}
 ) where {TF<:AbstractFloat}
-    (; complex_coeffs, real_coeffs) = op
+    (; complex_output, real_output) = op
     _compute_gauss_chebyshev_vals2coeffs!(op, values)
-    @. real_coeffs = real(complex_coeffs)
-    return real_coeffs
+    @. real_output = real(complex_output)
+    return real_output
 end
 
 function (op::GaussChebyshevVals2CoeffsCache{TF})(
     values::AbstractVector{Complex{TF}}
 ) where {TF<:AbstractFloat}
-    (; complex_coeffs) = op
+    (; complex_output) = op
     _compute_gauss_chebyshev_vals2coeffs!(op, values)
-    return complex_coeffs
+    return complex_output
 end
 
 function gauss_chebyshev_vals2coeffs(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
