@@ -36,7 +36,6 @@ function cheb_lobatto_points(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
 
     nm1 = n - 1
     pi_over_2nm1 = convert(TF, π) / (2 * nm1)
-
     @inbounds for i in 0:nm1
         x_grid[i + 1] = sin((-nm1 + 2i) * pi_over_2nm1)
     end

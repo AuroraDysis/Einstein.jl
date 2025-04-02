@@ -4,7 +4,7 @@
 Compute the barycentric weights for Chebyshev points of the 1st kind.
 
 # Arguments
-- `TF`: Type parameter for the weights (e.g., Float64)
+- `TF`: Type parameter for the weights (defaults to Float64)
 - `n`: Number of points
 
 # References
@@ -18,30 +18,23 @@ function cheb_gauss_barycentric_weights(::Type{TF}, n::Integer) where {TF<:Abstr
     if n == 0
         return TF[]
     elseif n == 1
-        return TF[one(TF)]
+        return ones(TF, 1)
     end
 
     weights = Vector{TF}(undef, n)
 
     half = one(TF) / 2
     pi_over_n = convert(TF, π) / n
-    @inbounds for j in 0:(n - 1)
-        weights[j + 1] = sin((n - j - half) * pi_over_n)
+    @inbounds for i in (n - 1):-1:0
+        weights[n - i] = sin((i + half) * pi_over_n)
     end
 
     # The following flipping trick forces symmetry. Also due to the nature of 
     # the sine function, those computed with a big argument are replaced by ones
     # with a small argument, improving the relative accuracy.
-    half_n = floor(typeof(n), n / 2)
-    # Copy values from end to beginning for symmetry
-    @inbounds for i in 1:half_n
-        weights[i] = weights[n - i + 1]
-    end
-
-    # Flip signs for odd indices
-    @inbounds for i in (n - 1):-2:1
-        weights[i] = -weights[i]
-    end
+    half_n = n ÷ 2
+    weights[1:half_n] .= @view(weights[n:-1:(n - half_n + 1)])
+    weights[(n - 1):-2:1] .*= -1
 
     return weights
 end

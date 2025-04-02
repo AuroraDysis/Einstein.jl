@@ -11,7 +11,6 @@ Compute quadrature weights for Chebyshev points of the 1st kind.
 - [chebfun/@chebtech1/quadwts.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/quadwts.m)
 """
 function cheb_gauss_quadrature_weights(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
-    # Handle the special cases:
     if n == 0
         return TF[]
     elseif n == 1

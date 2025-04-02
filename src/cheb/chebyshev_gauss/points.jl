@@ -29,7 +29,7 @@ function cheb_gauss_points(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     if n == 0
         return TF[]
     elseif n == 1
-        return [zero(TF)]
+        return zeros(TF, 1)
     end
 
     x_grid = Vector{TF}(undef, n)
