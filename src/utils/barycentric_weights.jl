@@ -40,6 +40,7 @@ w = barycentric_weights(x)
 
 # References
 - [Berrut2004](@citet*)
+- [chebfun/baryWeights.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/baryWeights.m)
 """
 function barycentric_weights(x::AbstractVector{TF}) where {TF<:AbstractFloat}
     @boundscheck begin
