@@ -1,12 +1,42 @@
 @doc raw"""
     barycentric_weights(x::AbstractVector{TF}) where {TF<:AbstractFloat}
     barycentric_weights(x::AbstractRange{TF}) where {TF<:AbstractFloat}
-    barycentric_weights(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+    barycentric_weights(::Type{TF}, order::Integer) where {TF<:AbstractFloat}
 
-Computes barycentric weights for the nodes `x`.
-Alternatively, for $n + 1$ equidistant nodes, the weights can be computed by passing `n`.
+Compute normalized barycentric weights for interpolation nodes. These weights are used in barycentric Lagrange interpolation.
 
-The weights are scaled such that their infinity norm equals 1.
+# Arguments
+- `x::AbstractVector{TF}`: Vector of distinct interpolation nodes, for equidistant nodes, use range is recommended `x = x_min:dx:x_max`
+- `order::Integer`: order of the interpolation (order = length(x) - 1)
+
+# Returns
+- `Vector{TF}`: Barycentric weights scaled such that their infinity norm equals 1
+
+# Details
+The barycentric weights wⱼ for nodes xⱼ are computed as:
+    wⱼ = 1/∏(xⱼ - xₖ) for k ≠ j
+
+For equidistant nodes, a more efficient formula is used based on binomial coefficients.
+
+# Examples
+```julia
+# For arbitrary nodes
+x = [0.0, 1.0, 2.0]
+w = barycentric_weights(x)
+
+# For equidistant nodes
+w = barycentric_weights(Float64, 2)  # 3 nodes: 0, 1, 2
+
+# or
+x = 0.0:0.1:1.0
+w = barycentric_weights(x)
+```
+
+# Notes
+- The weights are scaled to have unit infinity norm for numerical stability
+- Returns NaN weights if input points are not distinct
+- log-sum-exp trick is used to prevent underflow/overflow
+- For equidistant nodes, a more efficient algorithm based on binomial coefficients is used
 
 # References
 - [Berrut2004](@citet*)
@@ -45,21 +75,21 @@ function barycentric_weights(x::AbstractVector{TF}) where {TF<:AbstractFloat}
 end
 
 function barycentric_weights(x::AbstractRange{TF}) where {TF<:AbstractFloat}
-    n = length(x) - 1
-    return barycentric_weights(TF, n)
+    order = length(x) - 1
+    return barycentric_weights(TF, order)
 end
 
-function barycentric_weights(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function barycentric_weights(::Type{TF}, order::Integer) where {TF<:AbstractFloat}
     @boundscheck begin
-        @argcheck n > 0 "n must be a positive integer"
+        @argcheck order > 0 "order must be a positive integer"
     end
 
-    weights = Array{TF}(undef, n + 1)
-    half_n = n ÷ 2
-    norm_factor, _ = logabsbinomial(n, half_n)
-    for j in 0:n
+    weights = Array{TF}(undef, order + 1)
+    half_order = order ÷ 2
+    norm_factor, _ = logabsbinomial(order, half_order)
+    for j in 0:order
         s = isodd(j) ? -1 : 1
-        log_nj, _ = logabsbinomial(n, j)
+        log_nj, _ = logabsbinomial(order, j)
         weights[j + 1] = s * exp(log_nj - norm_factor)
     end
 
