@@ -71,24 +71,16 @@ function _compute_gauss_chebyshev_coeffs2vals!(
     tmp .*= weights
     fft_plan * tmp
 
-    # Extract values from the second half of the FFT result
+    # Truncate and flip the order
     complex_values .= @view(tmp[n:-1:1])
 
-    # Enforce symmetry if needed
-    if isEven || isOdd
+    # Enforce symmetry
+    if isEven
         half = one(TF) / 2
-        @inbounds for i in 1:div(n, 2)
-            j = n - i + 1
-            if isEven
-                s = half * (complex_values[i] + complex_values[j])
-                complex_values[i] = s
-                complex_values[j] = s
-            else
-                d = half * (complex_values[i] - complex_values[j])
-                complex_values[i] = d
-                complex_values[j] = -d
-            end
-        end
+        @. complex_values = half * (complex_values + @view(complex_values[end:-1:1]))
+    elseif isOdd
+        half = one(TF) / 2
+        @. complex_values = half * (complex_values - @view(complex_values[end:-1:1]))
     end
 
     return nothing
