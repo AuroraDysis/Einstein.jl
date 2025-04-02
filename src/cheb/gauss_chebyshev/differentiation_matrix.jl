@@ -15,10 +15,10 @@ to values of the `k`-th derivative of the interpolating polynomial at those poin
 function gauss_chebyshev_differentiation_matrix(
     ::Type{TR}, n::Integer, k::Integer=1
 ) where {TR<:AbstractFloat}
-    x = gauss_chebyshev_points(TR, n)               # First kind points.
-    w = gauss_chebyshev_barycentric_weights(TR, n)           # Barycentric weights.
-    t = gauss_chebyshev_angles(TR, n)            # acos(x).
-    D = barycentric_differentiation_matrix(x, w, k, t)       # Construct matrix.
+    x = gauss_chebyshev_points(TR, n)
+    w = gauss_chebyshev_barycentric_weights(TR, n)
+    t = gauss_chebyshev_angles(TR, n)
+    D = barycentric_differentiation_matrix(x, w, k, t)
     return D
 end
 
