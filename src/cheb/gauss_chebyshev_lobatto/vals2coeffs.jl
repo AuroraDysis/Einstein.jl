@@ -52,11 +52,9 @@ function _compute_gauss_chebyshev_lobatto_vals2coeffs!(
     ifft_plan * tmp
 
     # Scale the interior coefficients
-    @inbounds begin
-        complex_output[1] = tmp[1]
-        @. complex_output[2:(n - 1)] = 2 * @view(tmp[2:(n - 1)])
-        complex_output[n] = tmp[n]
-    end
+    complex_output[1] = tmp[1]
+    @.. complex_output[2:(n - 1)] = 2 * @view(tmp[2:(n - 1)])
+    complex_output[n] = tmp[n]
 
     # Enforce exact symmetries
     if is_even

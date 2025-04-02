@@ -43,7 +43,7 @@ function _compute_gauss_chebyshev_coeffs2vals_weights!(
 ) where {TF<:AbstractFloat}
     half = one(TF) / 2
     m_im_pi_over_2n = -im * convert(TF, π) / (2n)
-    @. weights[1:(2n)] = exp((0:(2n - 1)) * m_im_pi_over_2n) * half
+    @.. weights[1:(2n)] = exp((0:(2n - 1)) * m_im_pi_over_2n) * half
     weights[1] *= 2
     weights[n + 1] = 0
     return weights[(n + 2):(2n)] .*= -1
@@ -75,10 +75,10 @@ function _compute_gauss_chebyshev_coeffs2vals!(
     # Enforce symmetry
     if isEven
         half = one(TF) / 2
-        @. complex_output = half * (complex_output + @view(complex_output[end:-1:1]))
+        @.. complex_output = half * (complex_output + @view(complex_output[end:-1:1]))
     elseif isOdd
         half = one(TF) / 2
-        @. complex_output = half * (complex_output - @view(complex_output[end:-1:1]))
+        @.. complex_output = half * (complex_output - @view(complex_output[end:-1:1]))
     end
 
     return nothing

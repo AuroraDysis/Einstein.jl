@@ -64,10 +64,10 @@ function _compute_gauss_chebyshev_lobatto_coeffs2vals!(
     # In-place symmetry enforcement
     if isEven
         half = one(TF) / 2
-        @. complex_output = half * (complex_output + @view(complex_output[n:-1:1]))
+        @.. complex_output = half * (complex_output + @view(complex_output[n:-1:1]))
     elseif isOdd
         half = one(TF) / 2
-        @. complex_output = half * (complex_output - @view(complex_output[n:-1:1]))
+        @.. complex_output = half * (complex_output - @view(complex_output[n:-1:1]))
     end
 
     return nothing

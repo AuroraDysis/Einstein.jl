@@ -26,26 +26,29 @@ struct GaussChebyshevVals2CoeffsCache{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}
         @argcheck n > 1 "n must be greater than 1"
 
         weights = Vector{Complex{TF}}(undef, n)
-        @inbounds begin
-            im_pi_over_2n = im * convert(TF, π) / (2n)
-            for k in 0:(n - 1)
-                weights[k + 1] = 2 * exp(k * im_pi_over_2n)
-            end
-            weights[1] /= 2  # Special case for k = 0
-        end
-
-        # Prepare temporary array for FFT
         tmp = Vector{Complex{TF}}(undef, 2n)
         complex_output = Vector{Complex{TF}}(undef, n)
         real_output = Vector{TF}(undef, n)
-
-        # Create an inverse FFT plan with MEASURE flag for better performance
         ifft_plan = plan_ifft_measure!(tmp)
+
+        _compute_gauss_chebyshev_vals2coeffs_weights!(weights, n)
 
         return new{TF,typeof(ifft_plan)}(
             n, weights, tmp, complex_output, real_output, ifft_plan
         )
     end
+end
+
+function _compute_gauss_chebyshev_vals2coeffs_weights!(
+    weights::AbstractVector{Complex{TF}}, n::Integer
+) where {TF<:AbstractFloat}
+    @inbounds begin
+        im_pi_over_2n = im * convert(TF, π) / (2n)
+        @.. weights = 2 * exp((0:(n - 1)) * im_pi_over_2n)
+        weights[1] /= 2  # Special case for k = 0
+    end
+
+    return nothing
 end
 
 function _compute_gauss_chebyshev_vals2coeffs!(
@@ -66,7 +69,7 @@ function _compute_gauss_chebyshev_vals2coeffs!(
 
     ifft_plan * tmp
 
-    @. complex_output = @view(tmp[1:n]) * weights
+    @.. complex_output = @view(tmp[1:n]) * weights
 
     # adjust coefficients for symmetry
     if isEven
