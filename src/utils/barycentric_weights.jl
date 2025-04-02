@@ -1,7 +1,7 @@
 @doc raw"""
     barycentric_weights(x::AbstractVector{TF}) where {TF<:AbstractFloat}
     barycentric_weights(x::AbstractRange{TF}) where {TF<:AbstractFloat}
-    barycentric_weights(::Type{TF}, order::Integer) where {TF<:AbstractFloat}
+    barycentric_weights([TF=Float64], order::Integer) where {TF<:AbstractFloat}
 
 Compute normalized barycentric weights for interpolation nodes. These weights are used in barycentric Lagrange interpolation.
 
@@ -25,7 +25,7 @@ x = [0.0, 1.0, 2.0]
 w = barycentric_weights(x)
 
 # For equidistant nodes
-w = barycentric_weights(Float64, 2)  # 3 nodes: 0, 1, 2
+w = barycentric_weights(2)  # 3 nodes: 0, 1, 2
 
 # or
 x = 0.0:0.1:1.0
@@ -94,6 +94,10 @@ function barycentric_weights(::Type{TF}, order::Integer) where {TF<:AbstractFloa
     end
 
     return weights
+end
+
+function barycentric_weights(order::Integer)
+    return barycentric_weights(Float64, order)
 end
 
 export barycentric_weights
