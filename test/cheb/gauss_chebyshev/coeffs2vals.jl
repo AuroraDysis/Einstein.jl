@@ -1,5 +1,3 @@
-using TestItems
-
 @testitem "gauss_chebyshev_coeffs2vals" begin
     using LinearAlgebra
 

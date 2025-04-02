@@ -1,4 +1,4 @@
-@testitem "GaussChebyshevGrid - vals2coeffs" begin
+@testitem "gauss_chebyshev_vals2coeffs" begin
     using LinearAlgebra
 
     tol = typetol(Float64)
