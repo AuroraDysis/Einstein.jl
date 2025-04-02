@@ -1,6 +1,6 @@
 """
     gauss_chebyshev_coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
-    gauss_chebyshev_coeffs2vals([TF=Float64], n::Integer)(coeffs::AbstractVector{TFC})
+    gauss_chebyshev_coeffs2vals_plan([TF=Float64], n::Integer)(coeffs::AbstractVector{TFC})
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 1st kind.
 
@@ -14,7 +14,7 @@ values = op(coeffs)
 # References
 - [chebfun/@chebtech1/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/coeffs2vals.m)
 """
-struct GaussChebyshevCoeffs2ValsCache{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}}
+struct GaussChebyshevCoeffs2ValsPlan{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}}
     n::Integer
     weights::Vector{Complex{TF}}
     tmp::Vector{Complex{TF}}
@@ -22,7 +22,7 @@ struct GaussChebyshevCoeffs2ValsCache{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}
     real_output::Vector{TF}
     fft_plan::TPlan
 
-    function GaussChebyshevCoeffs2ValsCache{TF}(n::Integer) where {TF<:AbstractFloat}
+    function GaussChebyshevCoeffs2ValsPlan{TF}(n::Integer) where {TF<:AbstractFloat}
         weights = Vector{Complex{TF}}(undef, 2n)
         tmp = Vector{Complex{TF}}(undef, 2n)
         complex_output = Vector{Complex{TF}}(undef, n)
@@ -48,7 +48,7 @@ function _compute_gauss_chebyshev_coeffs2vals_weights!(
 end
 
 function _compute_gauss_chebyshev_coeffs2vals!(
-    op::GaussChebyshevCoeffs2ValsCache{TF}, coeffs::AbstractVector{TFC}
+    op::GaussChebyshevCoeffs2ValsPlan{TF}, coeffs::AbstractVector{TFC}
 ) where {TF<:AbstractFloat,TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     (; n, weights, tmp, complex_output, fft_plan) = op
 
@@ -82,38 +82,38 @@ function _compute_gauss_chebyshev_coeffs2vals!(
     return nothing
 end
 
-function (op::GaussChebyshevCoeffs2ValsCache{TF})(
+function (op::GaussChebyshevCoeffs2ValsPlan{TF})(
     coeffs::AbstractVector{TF}
 ) where {TF<:AbstractFloat}
     (; complex_output, real_output) = op
     _compute_gauss_chebyshev_coeffs2vals!(op, coeffs)
-    @. real_output = real(complex_output)
+    @.. real_output = real(complex_output)
     return real_output
 end
 
-function (op::GaussChebyshevCoeffs2ValsCache{TF})(
+function (op::GaussChebyshevCoeffs2ValsPlan{TF})(
     coeffs::AbstractVector{Complex{TF}}
 ) where {TF<:AbstractFloat}
     _compute_gauss_chebyshev_coeffs2vals!(op, coeffs)
     return op.complex_output
 end
 
-function gauss_chebyshev_coeffs2vals(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+function gauss_chebyshev_coeffs2vals_plan(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     @argcheck n > 0 "n must be greater than 0"
 
     if n == 1
         return identity
     end
 
-    return GaussChebyshevCoeffs2ValsCache{TF}(n)
+    return GaussChebyshevCoeffs2ValsPlan{TF}(n)
 end
 
 function gauss_chebyshev_coeffs2vals(
     coeffs::AbstractVector{TFC}
 ) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     n = length(coeffs)
-    op = gauss_chebyshev_coeffs2vals(real(TFC), n)
-    return op(coeffs)
+    plan = gauss_chebyshev_coeffs2vals_plan(real(TFC), n)
+    return plan(coeffs)
 end
 
 """
@@ -135,9 +135,9 @@ function gauss_chebyshev_coeffs2vals_matrix(
     end
 
     S = Array{TF,2}(undef, n, n)
-    op = GaussChebyshevCoeffs2ValsCache{TF}(n)
+    plan = gauss_chebyshev_coeffs2vals_plan(TF, n)
     @inbounds for i in 1:n
-        S[:, i] = op(OneElement(one(TF), i, n))
+        S[:, i] = plan(OneElement(one(TF), i, n))
     end
     return S
 end
