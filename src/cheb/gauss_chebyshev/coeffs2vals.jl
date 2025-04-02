@@ -65,18 +65,14 @@ function _compute_gauss_chebyshev_coeffs2vals!(
     @inbounds begin
         tmp[1:n] .= coeffs
         tmp[n + 1] = 1
-        for i in (n + 2):(2n)
-            tmp[i] = coeffs[2n - i + 2]
-        end
+        tmp[(n + 2):(2n)] .= @view(coeffs[n:-1:2])
     end
 
     tmp .*= weights
     fft_plan * tmp
 
     # Extract values from the second half of the FFT result
-    @inbounds for i in 1:n
-        complex_values[i] = tmp[n - i + 1]
-    end
+    complex_values .= @view(tmp[n:-1:1])
 
     # Enforce symmetry if needed
     if isEven || isOdd
