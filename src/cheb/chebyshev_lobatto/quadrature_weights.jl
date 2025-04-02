@@ -33,7 +33,7 @@ function cheb_lobatto_quadrature_weights(::Type{TF}, n::Integer) where {TF<:Abst
     ifft!(c)
 
     weights = Array{TF}(undef, n)
-    weights[1:(n - 1)] .= real.(c)
+    @.. weights[1:(n - 1)] = real(c)
     bc_weight = weights[1] / 2
     weights[1] = bc_weight
     weights[n] = bc_weight
