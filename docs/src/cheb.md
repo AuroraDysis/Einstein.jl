@@ -11,6 +11,6 @@ Modules = [Einstein.ChebyshevSuite]
 ## Chebyshev grids of first or second kind
 
 ```@docs
-Einstein.ChebyshevSuite.GaussChebyshevGrid
-Einstein.ChebyshevSuite.GaussChebyshevLobattoGrid
+Einstein.ChebyshevSuite.ChebyshevGaussGrid
+Einstein.ChebyshevSuite.ChebyshevLobattoGrid
 ```

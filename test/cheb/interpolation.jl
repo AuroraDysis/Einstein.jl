@@ -1,5 +1,5 @@
 @testitem "ChebyshevSuite - BarycentricInterpolation" begin
-    for grid in [GaussChebyshevGrid, GaussChebyshevLobattoGrid]
+    for grid in [ChebyshevGaussGrid, ChebyshevLobattoGrid]
         @testset "grid = $grid, real" begin
             tol = typetol(Float64)
             n = 40

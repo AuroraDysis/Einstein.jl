@@ -54,4 +54,4 @@ export angles,
 
 end
 
-export GaussChebyshevGrid
+export ChebyshevGaussGrid

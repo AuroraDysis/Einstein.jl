@@ -40,6 +40,8 @@ using TestItems
 end
 
 @testitem "cheb_rect_integration_matrix - analytical" begin
+    tol = typetol(Float64)
+
     @testset "Standard domain [-1,1]" begin
         n = 32
         x = cheb_lobatto_points(Float64, n)
