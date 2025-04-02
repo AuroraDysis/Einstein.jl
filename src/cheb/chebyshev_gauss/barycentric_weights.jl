@@ -21,12 +21,12 @@ function cheb_gauss_barycentric_weights(::Type{TF}, n::Integer) where {TF<:Abstr
         return TF[one(TF)]
     end
 
+    weights = Vector{TF}(undef, n)
+
     half = one(TF) / 2
     pi_over_n = convert(TF, π) / n
-    weights = Vector{TF}(undef, n)
     @inbounds for j in 0:(n - 1)
-        θ = (n - j - half) * pi_over_n
-        weights[j + 1] = sin(θ)
+        weights[j + 1] = sin((n - j - half) * pi_over_n)
     end
 
     # The following flipping trick forces symmetry. Also due to the nature of 
