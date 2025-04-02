@@ -17,37 +17,28 @@ function cheb_lobatto_quadrature_weights(::Type{TF}, n::Integer) where {TF<:Abst
         return TF[2]
     end
 
-    nm1 = n - 1
+    c = Array{Complex{TF}}(undef, n - 1)
 
-    # Fill exact integrals of T_k (even k)
-    c = Array{Complex{TF}}(undef, nm1)
-    @inbounds begin
-        c[1] = TF(2)  # k = 0 case
-        for k in 2:2:nm1
-            c[k ÷ 2 + 1] = 2 / (one(TF) - k^2)
-        end
-
-        # Mirror for DCT via FFT (in-place)
-        half_idx = floor(Int, n / 2)
-        for i in 2:half_idx
-            c[n - i + 1] = c[i]
-        end
-
-        # Compute weights via inverse FFT (in-place)
-        ifft!(c)
+    # Moments - Exact integrals of T_k (even)
+    nm = div(n - 1, 2) + 1
+    c[1] = 2
+    @inbounds for i in 2:nm
+        c[i] = 2 / (one(TF) - (2 * (i - 1))^2)
     end
 
-    # Adjust boundary weights (in-place)
-    w = Vector{TF}(undef, n)
-    @inbounds begin
-        w[1] = real(c[1]) / 2
-        for i in 2:nm1
-            w[i] = real(c[i])
-        end
-        w[n] = real(c[1]) / 2
-    end
+    # Mirror for DCT via FFT
+    half_idx = div(n, 2)
+    c[(nm + 1):(n - 1)] .= @view(c[half_idx:-1:2])
 
-    return w
+    ifft!(c)
+
+    weights = Array{TF}(undef, n)
+    weights[1:(n - 1)] .= real.(c)
+    bc_weight = weights[1] / 2
+    weights[1] = bc_weight
+    weights[n] = bc_weight
+
+    return weights
 end
 
 function cheb_lobatto_quadrature_weights(n::Integer)
@@ -63,7 +54,9 @@ function cheb_lobatto_quadrature_weights(
     return weights
 end
 
-function cheb_lobatto_quadrature_weights(n::Integer, lower_bound::Float64, upper_bound::Float64)
+function cheb_lobatto_quadrature_weights(
+    n::Integer, lower_bound::Float64, upper_bound::Float64
+)
     return cheb_lobatto_quadrature_weights(Float64, n, lower_bound, upper_bound)
 end
 

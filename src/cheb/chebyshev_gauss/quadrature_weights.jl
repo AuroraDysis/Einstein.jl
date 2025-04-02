@@ -17,27 +17,23 @@ function cheb_gauss_quadrature_weights(::Type{TF}, n::Integer) where {TF<:Abstra
         return TF[2]
     end
 
+    c = Vector{Complex{TF}}(undef, n)
+
     # Moments - Exact integrals of T_k (even)
     nm = div(n - 1, 2) + 1
-    m = Vector{TF}(undef, nm)
-    @inbounds begin
-        m[1] = 2
-        for i in 2:nm
-            m[i] = 2 / (one(TF) - (2 * (i - 1))^2)
-        end
+    c[1] = 2
+    @inbounds for i in 2:nm
+        c[i] = 2 / (one(TF) - (2 * (i - 1))^2)
     end
 
     # Mirror the vector for the use of ifft
-    c = Vector{Complex{TF}}(undef, n)
-
-    c[1:nm] .= m
     if isodd(n)
         start_idx = div(n + 1, 2)
-        @.. c[(nm + 1):n] = -@view(m[start_idx:-1:2])
+        @.. c[(nm + 1):n] = -@view(c[start_idx:-1:2])
     else
         c[nm + 1] = 0
         start_idx = div(n, 2)
-        @.. c[(nm + 2):n] = -@view(m[start_idx:-1:2])
+        @.. c[(nm + 2):n] = -@view(c[start_idx:-1:2])
     end
 
     # Apply weight (rotation) vector
