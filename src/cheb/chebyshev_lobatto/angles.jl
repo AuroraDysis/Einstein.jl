@@ -20,6 +20,7 @@ function cheb_lobatto_angles(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     end
 
     θ = Vector{TF}(undef, n)
+
     nm1 = n - 1
     pi_over_nm1 = convert(TF, π) / nm1
     @inbounds for k in 0:nm1

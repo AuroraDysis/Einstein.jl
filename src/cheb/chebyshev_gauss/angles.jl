@@ -20,6 +20,7 @@ function cheb_gauss_angles(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     end
 
     θ = Vector{TF}(undef, n)
+
     pi_over_2n = convert(TF, pi) / (2 * n)
     @inbounds for k in 0:(n - 1)
         θ[n - k] = (2 * k + 1) * pi_over_2n
