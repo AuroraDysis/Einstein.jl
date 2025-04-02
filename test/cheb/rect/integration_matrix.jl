@@ -1,9 +1,8 @@
 using TestItems
 
 @testitem "cheb_rect_integration_matrix" begin
-    using Einstein.ChebyshevSuite, Test
-
     n = 4
+    tol = typetol(Float64)
     intmat = cheb_rect_integration_matrix(n)
     intmat_ana = [
         -1.73472347597681e-17 -2.08166817117217e-17 2.08166817117217e-17 3.46944695195361e-18
@@ -11,7 +10,7 @@ using TestItems
         0.0937500000000000 0.937500000000000 0.562500000000000 -0.0937500000000000
         0.111111111111111 0.888888888888889 0.888888888888889 0.111111111111111
     ]
-    @test intmat ≈ intmat_ana rtol = 1e-12
+    @test isapprox(intmat, intmat_ana; atol=tol)
 
     n = 5
     intmat = cheb_rect_integration_matrix(n)
@@ -23,19 +22,19 @@ using TestItems
         0.0666666666666667 0.533333333333333 0.800000000000000 0.533333333333333 0.0666666666666667
     ]
 
-    @test intmat ≈ intmat_ana rtol = 1e-12
+    @test isapprox(intmat, intmat_ana; atol=tol)
 
     @testset "Compare direct vs coefficient-based integration" begin
         for n in [4, 8, 16, 32]
             # Test on standard domain [-1,1]
             I1 = cheb_rect_integration_matrix(n)
             I2 = gauss_chebyshev_lobatto_integration_matrix(Float64, n)
-            @test I1 ≈ I2 rtol = 1e-12
+            @test isapprox(I1, I2; atol=tol)
 
             # Test on mapped domain [0,π]
             I1 = cheb_rect_integration_matrix(n, 0.0, Float64(π))
             I2 = gauss_chebyshev_lobatto_integration_matrix(Float64, n, 0.0, Float64(π))
-            @test I1 ≈ I2 rtol = 1e-12
+            @test isapprox(I1, I2; atol=tol)
         end
     end
 end
@@ -50,13 +49,13 @@ end
         f = @. x^3  # f(x) = x³
         F_numeric = intmat * f   # Should give (x⁴ - 1) / 4
         F_exact = @. (x^4 - 1) / 4
-        @test F_numeric ≈ F_exact rtol = 1e-12
+        @test isapprox(F_numeric, F_exact; atol=tol)
 
         # Test 2: Trigonometric integration
         f = @. sin(π * x)
         F_numeric = intmat * f   # Should give -(cos(πx)+1)/π
         F_exact = @. -(cos(π * x) + 1) / π
-        @test F_numeric ≈ F_exact rtol = 1e-12
+        @test isapprox(F_numeric, F_exact; atol=tol)
     end
 
     @testset "Mapped domain [0,π]" begin
@@ -68,12 +67,12 @@ end
         f = sin.(x)
         F_numeric = intmat * f   # Should give -cos(x) + 1
         F_exact = @. -cos(x) + 1
-        @test F_numeric ≈ F_exact rtol = 1e-12
+        @test isapprox(F_numeric, F_exact; atol=tol)
 
         # Test: Integration of x*cos(x)
         f = @. x * cos(x)
         F_numeric = intmat * f   # Should give x*sin(x) - sin(x)
         F_exact = @. x * sin(x) + cos(x) - 1
-        @test F_numeric ≈ F_exact rtol = 1e-12
+        @test isapprox(F_numeric, F_exact; atol=tol)
     end
 end

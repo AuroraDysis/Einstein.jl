@@ -1,10 +1,8 @@
 using TestItems
 
 @testitem "cheb_rect_differentiation_matrix_kind1" begin
-    using Einstein.ChebyshevSuite, Test
-
-    # TODO: check the correctness of the results, why 100 * eps(Float64)?
-    tol = 100 * eps(Float64)
+    # TODO: check the correctness of the results, why the tolerance is so large?
+    tol = typetol(Float64)
 
     D45 = cheb_rect_differentiation_matrix_kind1(Float64, 4, 5)
     D45_res = [
