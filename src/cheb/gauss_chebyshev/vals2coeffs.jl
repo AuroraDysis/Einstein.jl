@@ -23,8 +23,6 @@ struct GaussChebyshevVals2CoeffsCache{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}
     ifft_plan::TPlan
 
     function GaussChebyshevVals2CoeffsCache{TF}(n::Integer) where {TF<:AbstractFloat}
-        @argcheck n > 1 "n must be greater than 1"
-
         weights = Vector{Complex{TF}}(undef, n)
         tmp = Vector{Complex{TF}}(undef, 2n)
         complex_output = Vector{Complex{TF}}(undef, n)
@@ -99,6 +97,12 @@ function (op::GaussChebyshevVals2CoeffsCache{TF})(
 end
 
 function gauss_chebyshev_vals2coeffs(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+    @argcheck n > 0 "n must be greater than 0"
+
+    if n == 1
+        return identity
+    end
+
     return GaussChebyshevVals2CoeffsCache{TF}(n)
 end
 
@@ -106,7 +110,7 @@ function gauss_chebyshev_vals2coeffs(
     values::AbstractVector{TFC}
 ) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     n = length(values)
-    op = GaussChebyshevVals2CoeffsCache{real(TFC)}(n)
+    op = gauss_chebyshev_vals2coeffs(real(TFC), n)
     return op(values)
 end
 
@@ -122,7 +126,11 @@ Construct the analysis matrix A that transforms function values at Chebyshev poi
 function gauss_chebyshev_vals2coeffs_matrix(
     ::Type{TF}, n::Integer
 ) where {TF<:AbstractFloat}
-    @argcheck n > 1 "n must be greater than 1"
+    @argcheck n > 0 "n must be greater than 0"
+
+    if n == 1
+        return ones(TF, 1, 1)
+    end
 
     A = Array{TF,2}(undef, n, n)
     op = GaussChebyshevVals2CoeffsCache{TF}(n)

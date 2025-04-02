@@ -22,8 +22,6 @@ struct GaussChebyshevLobattoVals2CoeffsCache{TF<:AbstractFloat,TPlan<:Plan{Compl
     ifft_plan::TPlan
 
     function GaussChebyshevLobattoVals2CoeffsCache{TF}(n::Integer) where {TF<:AbstractFloat}
-        @argcheck n > 1 "n must be greater than 1"
-
         tmp = zeros(Complex{TF}, 2n - 2)
         complex_output = zeros(Complex{TF}, n)
         real_output = zeros(TF, n)
@@ -86,6 +84,12 @@ end
 function gauss_chebyshev_lobatto_vals2coeffs(
     ::Type{TF}, n::Integer
 ) where {TF<:AbstractFloat}
+    @argcheck n > 0 "n must be greater than 0"
+
+    if n == 1
+        return identity
+    end
+
     return GaussChebyshevLobattoVals2CoeffsCache{TF}(n)
 end
 
@@ -93,7 +97,7 @@ function gauss_chebyshev_lobatto_vals2coeffs(
     vals::AbstractVector{TFC}
 ) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     n = length(vals)
-    op = GaussChebyshevLobattoVals2CoeffsCache{real(TFC)}(n)
+    op = gauss_chebyshev_lobatto_vals2coeffs(real(TFC), n)
     return op(vals)
 end
 
@@ -109,7 +113,11 @@ Construct the analysis matrix A that transforms function values at Chebyshev poi
 function gauss_chebyshev_lobatto_vals2coeffs_matrix(
     ::Type{TF}, n::Integer
 ) where {TF<:AbstractFloat}
-    @argcheck n > 1 "n must be greater than 1"
+    @argcheck n > 0 "n must be greater than 0"
+
+    if n == 1
+        return ones(TF, 1, 1)
+    end
 
     A = Array{TF,2}(undef, n, n)
     op = GaussChebyshevLobattoVals2CoeffsCache{TF}(n)

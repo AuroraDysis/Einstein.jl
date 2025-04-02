@@ -23,8 +23,6 @@ struct GaussChebyshevCoeffs2ValsCache{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}
     fft_plan::TPlan
 
     function GaussChebyshevCoeffs2ValsCache{TF}(n::Integer) where {TF<:AbstractFloat}
-        @argcheck n > 1 "n must be greater than 1"
-
         weights = Vector{Complex{TF}}(undef, 2n)
         tmp = Vector{Complex{TF}}(undef, 2n)
         complex_output = Vector{Complex{TF}}(undef, n)
@@ -101,6 +99,12 @@ function (op::GaussChebyshevCoeffs2ValsCache{TF})(
 end
 
 function gauss_chebyshev_coeffs2vals(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
+    @argcheck n > 0 "n must be greater than 0"
+
+    if n == 1
+        return identity
+    end
+
     return GaussChebyshevCoeffs2ValsCache{TF}(n)
 end
 
@@ -108,7 +112,7 @@ function gauss_chebyshev_coeffs2vals(
     coeffs::AbstractVector{TFC}
 ) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     n = length(coeffs)
-    op = GaussChebyshevCoeffs2ValsCache{real(TFC)}(n)
+    op = gauss_chebyshev_coeffs2vals(real(TFC), n)
     return op(coeffs)
 end
 
@@ -124,6 +128,12 @@ Construct the synthesis matrix S that transforms Chebyshev coefficients to funct
 function gauss_chebyshev_coeffs2vals_matrix(
     ::Type{TF}, n::Integer
 ) where {TF<:AbstractFloat}
+    @argcheck n > 0 "n must be greater than 0"
+
+    if n == 1
+        return ones(TF, 1, 1)
+    end
+
     S = Array{TF,2}(undef, n, n)
     op = GaussChebyshevCoeffs2ValsCache{TF}(n)
     @inbounds for i in 1:n
