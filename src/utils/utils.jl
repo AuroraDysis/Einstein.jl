@@ -3,6 +3,7 @@ module Utils
 using ArgCheck: @argcheck
 
 using Xsum
+using FFTW
 using LinearAlgebra
 
 include("type.jl")
