@@ -45,10 +45,8 @@ function _compute_gauss_chebyshev_lobatto_vals2coeffs!(
     is_odd = all(i -> abs(vals[i] + vals[n - i + 1]) < tol, 1:(n ÷ 2))
 
     # Mirror the values
-    @inbounds for i in 1:(n - 1)
-        tmp[i] = vals[n - i + 1]  # descending part
-        tmp[n - 1 + i] = vals[i]  # ascending part
-    end
+    tmp[1:(n - 1)] .= @view(vals[n:-1:2])
+    tmp[n:(2n - 2)] .= @view(vals[1:(n - 1)])
 
     # Perform inverse FFT on the mirrored data
     ifft_plan * tmp
