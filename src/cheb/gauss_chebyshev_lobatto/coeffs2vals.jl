@@ -137,4 +137,5 @@ function gauss_chebyshev_lobatto_coeffs2vals_matrix(n::Integer)
     return gauss_chebyshev_lobatto_coeffs2vals_matrix(Float64, n)
 end
 
-export gauss_chebyshev_lobatto_coeffs2vals, gauss_chebyshev_lobatto_coeffs2vals_matrix
+export gauss_chebyshev_lobatto_coeffs2vals_plan,
+    gauss_chebyshev_lobatto_coeffs2vals, gauss_chebyshev_lobatto_coeffs2vals_matrix

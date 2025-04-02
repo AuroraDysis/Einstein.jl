@@ -144,4 +144,5 @@ function gauss_chebyshev_vals2coeffs_matrix(n::Integer)
     return gauss_chebyshev_vals2coeffs_matrix(Float64, n)
 end
 
-export gauss_chebyshev_vals2coeffs, gauss_chebyshev_vals2coeffs_matrix
+export gauss_chebyshev_vals2coeffs_plan,
+    gauss_chebyshev_vals2coeffs, gauss_chebyshev_vals2coeffs_matrix
