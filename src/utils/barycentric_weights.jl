@@ -50,9 +50,7 @@ function barycentric_weights(x::AbstractVector{TF}) where {TF<:AbstractFloat}
 
     x_min, x_max = extrema(x)
     if x_min ≈ x_max
-        @warn "Input points are not distinct. Returning NaN weights."
-        fill!(weights, NaN)
-        return weights
+        throw(ArgumentError("Input points are not distinct. Returning NaN weights."))
     end
 
     # Capacity of the interval - helps prevent underflow/overflow
