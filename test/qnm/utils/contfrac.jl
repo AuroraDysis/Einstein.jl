@@ -1,12 +1,10 @@
 @testitem "Continued Fraction" begin
-    using Einstein.QNMSuite, Test
-
     for type in [Float64, BigFloat]
         max_error = 10 * eps(type)
         tol = eps(type)
         min_iter = 50
         max_iter = 1000
-    
+
         @testset "$type, sqrt(2)" begin
             a(j) = one(type)
             b(j) = j == 0 ? one(type) : type(2)
@@ -14,7 +12,7 @@
             @test f ≈ sqrt(type(2))
             @test error <= max_error
         end
-    
+
         @testset "$type, Golden Ratio" begin
             a(j) = one(type)
             b(j) = one(type)
