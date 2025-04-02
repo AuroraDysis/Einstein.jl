@@ -45,24 +45,24 @@ function barycentric_differentiation_matrix(
 
         # use trigonometric identities as described in Baltensperger2003
         tr = @view t[end:-1:1]
-        for j in 1:n, i in 1:(n - j + 1)
+        @inbounds for j in 1:n, i in 1:(n - j + 1)
             Dx[i, j] = 2 * sin((tr[i] + tr[j]) / 2) * sin((tr[i] - tr[j]) / 2)
         end
     else
         # standard pairwise differences: Dx[i, j] = x[i] - x[j]
-        for j in 1:n, i in 1:(n - j + 1)
+        @inbounds for j in 1:n, i in 1:(n - j + 1)
             Dx[i, j] = x[i] - x[j]
         end
     end
 
     # flipping trick, D_{N-k, N-j}=-D_{k j}
-    for j in 1:n, i in (n - j + 2):n
+    @inbounds for j in 1:n, i in (n - j + 2):n
         Dx[i, j] = -Dx[n - i + 1, n - j + 1]
     end
 
     # build Dw = w[j] / w[i], with zero on diagonal:
     Dw = zeros(TF, n, n)
-    for i in 1:n, j in 1:n
+    @inbounds for i in 1:n, j in 1:n
         Dw[i, j] = w[j] / w[i]
     end
     Dw[diag_idx] .= zero(TF)
@@ -83,7 +83,7 @@ function barycentric_differentiation_matrix(
     end
 
     # k = 2
-    for i in 1:n
+    @inbounds for i in 1:n
         Dii = D[i, i]
         for j in 1:n
             D[i, j] = 2 * D[i, j] * (Dii - Dxi[i, j])
@@ -98,7 +98,7 @@ function barycentric_differentiation_matrix(
 
     # For k >= 3
     for n in 3:k
-        for i in 1:n
+        @inbounds for i in 1:n
             Dii = D[i, i]
             for j in 1:n
                 D[i, j] = n * Dxi[i, j] * (Dw[i, j] * Dii - D[i, j])
@@ -115,7 +115,7 @@ end
 function negative_sum_trick!(D::Matrix{TF}) where {TF<:AbstractFloat}
     n = size(D, 1)
 
-    for i in 1:n
+    @inbounds for i in 1:n
         Dii = zero(TF)
         for j in 1:(i - 1)
             Dii += D[i, j]
