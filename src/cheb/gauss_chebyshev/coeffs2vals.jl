@@ -25,26 +25,28 @@ struct GaussChebyshevCoeffs2ValsCache{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}
     function GaussChebyshevCoeffs2ValsCache{TF}(n::Integer) where {TF<:AbstractFloat}
         @argcheck n > 1 "n must be greater than 1"
 
-        # Precompute weights
         weights = Vector{Complex{TF}}(undef, 2n)
-        @inbounds begin
-            half = one(TF) / 2
-            m_im_pi_over_2n = -im * convert(TF, π) / (2n)
-            for k in 0:(2n - 1)
-                weights[k + 1] = exp(k * m_im_pi_over_2n) * half
-            end
-            weights[1] *= 2
-            weights[n + 1] = 0
-            weights[(n + 2):(2n)] .*= -1
-        end
         tmp = Vector{Complex{TF}}(undef, 2n)
         complex_output = Vector{Complex{TF}}(undef, n)
         real_output = Vector{TF}(undef, n)
         fft_plan = plan_fft_measure!(tmp)
+
+        _compute_gauss_chebyshev_coeffs2vals_weights!(weights, n)
         return new{TF,typeof(fft_plan)}(
             n, weights, tmp, complex_output, real_output, fft_plan
         )
     end
+end
+
+function _compute_gauss_chebyshev_coeffs2vals_weights!(
+    weights::AbstractVector{Complex{TF}}, n::Integer
+) where {TF<:AbstractFloat}
+    half = one(TF) / 2
+    m_im_pi_over_2n = -im * convert(TF, π) / (2n)
+    @. weights[1:(2n)] = exp((0:(2n - 1)) * m_im_pi_over_2n) * half
+    weights[1] *= 2
+    weights[n + 1] = 0
+    return weights[(n + 2):(2n)] .*= -1
 end
 
 function _compute_gauss_chebyshev_coeffs2vals!(
