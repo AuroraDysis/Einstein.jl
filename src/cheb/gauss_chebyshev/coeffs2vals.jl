@@ -62,11 +62,9 @@ function _compute_gauss_chebyshev_coeffs2vals!(
     isOdd = all(x -> abs(x) < tol, @view(coeffs[1:2:end]))
 
     # Copy coefficients and mirror
-    @inbounds begin
-        tmp[1:n] .= coeffs
-        tmp[n + 1] = 1
-        tmp[(n + 2):(2n)] .= @view(coeffs[n:-1:2])
-    end
+    tmp[1:n] .= coeffs
+    tmp[n + 1] = 1
+    tmp[(n + 2):(2n)] .= @view(coeffs[n:-1:2])
 
     tmp .*= weights
     fft_plan * tmp
