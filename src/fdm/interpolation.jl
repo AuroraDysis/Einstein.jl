@@ -46,7 +46,10 @@ end
 
 function (itp::LocalBarycentricInterpolation{TF})(x::TF) where {TF<:AbstractFloat}
     (; points, values, weights, degree, dx_inv, lower_bound, upper_bound) = itp
-    @argcheck lower_bound <= x <= upper_bound "x is out of range"
+
+    @boundscheck begin
+        @argcheck lower_bound <= x <= upper_bound "x is out of range"
+    end
 
     n = length(points)
 
