@@ -33,15 +33,11 @@ function cheb_gauss_quadrature_weights(::Type{TF}, n::Integer) where {TF<:Abstra
     c[1:nm] .= m
     if isodd(n)
         start_idx = div(n + 1, 2)
-        @inbounds for i in (nm + 1):n
-            c[i] = -m[start_idx - i + nm + 1]
-        end
+        @.. c[(nm + 1):n] = -@view(m[start_idx:-1:2])
     else
-        start_idx = div(n, 2)
         c[nm + 1] = 0
-        @inbounds for i in (nm + 2):n
-            c[i] = -m[start_idx - i + nm + 2]
-        end
+        start_idx = div(n, 2)
+        @.. c[(nm + 2):n] = -@view(m[start_idx:-1:2])
     end
 
     # Apply weight (rotation) vector
