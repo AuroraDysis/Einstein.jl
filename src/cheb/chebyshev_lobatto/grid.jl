@@ -11,7 +11,7 @@ include("differentiation_matrix.jl")
 include("integration_matrix.jl")
 
 """
-The `GaussChebyshevLobattoGrid` module provides a comprehensive set of tools for working with Chebyshev points of the 2nd kind
+The `ChebyshevLobattoGrid` module provides a comprehensive set of tools for working with Chebyshev points of the 2nd kind
 and coefficients of the corresponding 1st-kind Chebyshev series expansion.
 
 The module is designed to work with the standard interval [-1,1] by default, but also supports
