@@ -12,13 +12,15 @@ Constructing a 1st-order rectangular differentiation matrix mapping from a 1st-k
 # References
 - [chebfun/diffmat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/diffmat.m)
 """
-function cheb_rect_differentiation_matrix_kind1(::Type{TF}, m::Integer, n::Integer) where {TF<:AbstractFloat}
+function cheb_rect_differentiation_matrix_kind1(
+    ::Type{TF}, m::Integer, n::Integer
+) where {TF<:AbstractFloat}
     # mapping-from grid (angles):
-    T = GaussChebyshevGrid.angles(TF, n)'        # Row vector of length n
+    T = gauss_chebyshev_angles(TF, n)'        # Row vector of length n
     # difference between dimensions:
     c = n - m
     # mapping-to grid (angles):
-    TAU = GaussChebyshevGrid.angles(TF, m)       # Column vector of length m
+    TAU = gauss_chebyshev_angles(TF, m)       # Column vector of length m
 
     # Denominator term
     denom = @. 2 * sin((T + TAU) / 2) * sin((TAU - T) / 2)
@@ -66,7 +68,9 @@ function cheb_rect_differentiation_matrix_kind1(
     return D
 end
 
-function cheb_rect_differentiation_matrix_kind1(m::Integer, n::Integer, lower_bound::Float64, upper_bound::Float64)
+function cheb_rect_differentiation_matrix_kind1(
+    m::Integer, n::Integer, lower_bound::Float64, upper_bound::Float64
+)
     return cheb_rect_differentiation_matrix_kind1(Float64, m, n, lower_bound, upper_bound)
 end
 
@@ -84,13 +88,15 @@ Construct a 1st-order rectangular differentiation matrix mapping from a 2nd-kind
 # References
 - [chebfun/diffmat.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/diffmat.m)
 """
-function cheb_rect_differentiation_matrix_kind2(::Type{TF}, m::Integer, n::Integer) where {TF<:AbstractFloat}
+function cheb_rect_differentiation_matrix_kind2(
+    ::Type{TF}, m::Integer, n::Integer
+) where {TF<:AbstractFloat}
     nm1 = n - 1                     # For convenience
     cm1 = nm1 - m                   # Difference between dimensions
-    t = GaussChebyshevLobattoGrid.points(TF, n)            # Second-kind grid
-    tau = GaussChebyshevGrid.points(TF, m)          # First-kind grid
-    T = GaussChebyshevLobattoGrid.angles(TF, n)         # Second-kind grid (angles)
-    TAU = GaussChebyshevGrid.angles(TF, m)       # First-kind grid (angles)
+    t = gauss_chebyshev_lobatto_points(TF, n)            # Second-kind grid
+    tau = gauss_chebyshev_points(TF, m)          # First-kind grid
+    T = gauss_chebyshev_lobatto_angles(TF, n)         # Second-kind grid (angles)
+    TAU = gauss_chebyshev_angles(TF, m)       # First-kind grid (angles)
 
     # Denominator term (explicit expression)
     denom = [2 * sin((t + tau) / 2) * sin((tau - t) / 2) for tau in TAU, t in T]
@@ -159,7 +165,9 @@ function cheb_rect_differentiation_matrix_kind2(
     return D
 end
 
-function cheb_rect_differentiation_matrix_kind2(m::Integer, n::Integer, lower_bound::Float64, upper_bound::Float64)
+function cheb_rect_differentiation_matrix_kind2(
+    m::Integer, n::Integer, lower_bound::Float64, upper_bound::Float64
+)
     return cheb_rect_differentiation_matrix_kind2(Float64, m, n, lower_bound, upper_bound)
 end
 
@@ -187,14 +195,14 @@ function cheb_rect_differentiation_matrix(
 
     if kind == 1
         # First-kind grid
-        T = GaussChebyshevGrid.angles(TF, n)
+        T = gauss_chebyshev_angles(TF, n)
         D = cheb_rect_differentiation_matrix_kind1(TF, m, n)
         a = vcat(zeros(TF, n), one(TF))
         sgn_coeff = (-1)^(n - 1) / TF(n)
         @. sgn = sgn_coeff * sgn * sin(T)
     else
         # Second-kind grid
-        T = GaussChebyshevLobattoGrid.angles(TF, n)
+        T = gauss_chebyshev_lobatto_angles(TF, n)
         D = cheb_rect_differentiation_matrix_kind2(TF, m, n)
         a = vcat(zeros(TF, n - 2), -one(TF), zero(TF), one(TF))
         sgn .*= (-1)^(n - 1) / TF(2 * (n - 1))
@@ -202,8 +210,8 @@ function cheb_rect_differentiation_matrix(
     end
 
     # Setup grids
-    tau = GaussChebyshevGrid.points(TF, m)
-    TAU = GaussChebyshevGrid.angles(TF, m)
+    tau = gauss_chebyshev_points(TF, m)
+    TAU = gauss_chebyshev_angles(TF, m)
     a = chebyshevt_derivative(a)
 
     # Compute denominator matrix
@@ -231,7 +239,13 @@ function cheb_rect_differentiation_matrix(m::Integer, n::Integer, p::Integer, ki
 end
 
 function cheb_rect_differentiation_matrix(
-    ::Type{TF}, m::Integer, n::Integer, p::Integer, kind::Integer, lower_bound::TF, upper_bound::TF
+    ::Type{TF},
+    m::Integer,
+    n::Integer,
+    p::Integer,
+    kind::Integer,
+    lower_bound::TF,
+    upper_bound::TF,
 )::Matrix{TF} where {TF<:AbstractFloat}
     D = cheb_rect_differentiation_matrix(TF, m, n, p, kind)
     scale = (2 / (upper_bound - lower_bound))^p
@@ -240,9 +254,17 @@ function cheb_rect_differentiation_matrix(
 end
 
 function cheb_rect_differentiation_matrix(
-    m::Integer, n::Integer, p::Integer, kind::Integer, lower_bound::Float64, upper_bound::Float64
+    m::Integer,
+    n::Integer,
+    p::Integer,
+    kind::Integer,
+    lower_bound::Float64,
+    upper_bound::Float64,
 )
-    return cheb_rect_differentiation_matrix(Float64, m, n, p, kind, lower_bound, upper_bound)
+    return cheb_rect_differentiation_matrix(
+        Float64, m, n, p, kind, lower_bound, upper_bound
+    )
 end
 
-export cheb_rect_differentiation_matrix_kind1, cheb_rect_differentiation_matrix_kind2, cheb_rect_differentiation_matrix
+export cheb_rect_differentiation_matrix_kind1,
+    cheb_rect_differentiation_matrix_kind2, cheb_rect_differentiation_matrix

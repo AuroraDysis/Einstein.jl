@@ -19,19 +19,19 @@ function cheb_rect_integration_matrix(
 ) where {TR<:AbstractFloat}
     # Build Lagrange basis
     K = Array{TR}(undef, n + 1, n)
-    vals2coeffs_op = GaussChebyshevLobattoGrid.vals2coeffs(TR, n)
+    vals2coeffs_plan = gauss_chebyshev_lobatto_vals2coeffs_plan(TR, n)
     @inbounds for i in 1:n
-        K[1:(end - 1), i] = vals2coeffs_op(OneElement(one(TR), i, n))
+        K[1:(end - 1), i] = vals2coeffs_plan(OneElement(one(TR), i, n))
     end
 
     # Integrate
-    cumsum_op = chebyshevt_integrate(TR, n)
+    cumsum_plan = chebyshevt_integrate_plan(TR, n)
     @inbounds for i in 1:n
-        K[:, i] = cumsum_op(@view(K[1:(end - 1), i]))
+        K[:, i] = cumsum_plan(@view(K[1:(end - 1), i]))
     end
 
     # Evaluate at grid
-    xm = GaussChebyshevLobattoGrid.points(TR, m)
+    xm = gauss_chebyshev_lobatto_points(TR, m)
     intmat = Array{TR}(undef, m, n)
     @inbounds for j in 1:n, i in 1:n
         intmat[i, j] = chebyshevt_evaluate(@view(K[:, j]), xm[i])
@@ -59,7 +59,9 @@ function cheb_rect_integration_matrix(
     return cheb_rect_integration_matrix(Float64, m, n, lower_bound, upper_bound)
 end
 
-function cheb_rect_integration_matrix(n::Integer, lower_bound::Float64, upper_bound::Float64)
+function cheb_rect_integration_matrix(
+    n::Integer, lower_bound::Float64, upper_bound::Float64
+)
     return cheb_rect_integration_matrix(Float64, n, n, lower_bound, upper_bound)
 end
 

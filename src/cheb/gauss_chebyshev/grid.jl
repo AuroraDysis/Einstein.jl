@@ -29,6 +29,9 @@ const points = gauss_chebyshev_points
 const coeffs2vals = gauss_chebyshev_coeffs2vals
 const vals2coeffs = gauss_chebyshev_vals2coeffs
 
+const coeffs2vals_plan = gauss_chebyshev_coeffs2vals_plan
+const vals2coeffs_plan = gauss_chebyshev_vals2coeffs_plan
+
 const coeffs2vals_matrix = gauss_chebyshev_coeffs2vals_matrix
 const vals2coeffs_matrix = gauss_chebyshev_vals2coeffs_matrix
 

@@ -29,12 +29,12 @@ using TestItems
         for n in [4, 8, 16, 32]
             # Test on standard domain [-1,1]
             I1 = cheb_rect_integration_matrix(n)
-            I2 = GaussChebyshevLobattoGrid.integration_matrix(Float64, n)
+            I2 = gauss_chebyshev_lobatto_integration_matrix(Float64, n)
             @test I1 ≈ I2 rtol = 1e-12
 
             # Test on mapped domain [0,π]
             I1 = cheb_rect_integration_matrix(n, 0.0, Float64(π))
-            I2 = GaussChebyshevLobattoGrid.integration_matrix(Float64, n, 0.0, Float64(π))
+            I2 = gauss_chebyshev_lobatto_integration_matrix(Float64, n, 0.0, Float64(π))
             @test I1 ≈ I2 rtol = 1e-12
         end
     end
@@ -43,7 +43,7 @@ end
 @testitem "cheb_rect_integration_matrix - analytical" begin
     @testset "Standard domain [-1,1]" begin
         n = 32
-        x = GaussChebyshevLobattoGrid.points(n)
+        x = gauss_chebyshev_lobatto_points(Float64, n)
         intmat = cheb_rect_integration_matrix(n)
 
         # Test 1: Polynomial integration
