@@ -125,4 +125,4 @@ function cheb_lobatto_vals2coeffs_matrix(n::Integer)
 end
 
 export cheb_lobatto_vals2coeffs_create_context,
-    cheb_lobatto_vals2coeffs, cheb_lobatto_vals2coeffs_matrix
+    cheb_lobatto_vals2coeffs, cheb_lobatto_vals2coeffs!, cheb_lobatto_vals2coeffs_matrix
