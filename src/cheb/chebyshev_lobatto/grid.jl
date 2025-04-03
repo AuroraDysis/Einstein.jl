@@ -30,8 +30,8 @@ const points = cheb_lobatto_points
 const coeffs2vals = cheb_lobatto_coeffs2vals
 const vals2coeffs = cheb_lobatto_vals2coeffs
 
-const coeffs2vals_plan = cheb_lobatto_coeffs2vals_plan
-const vals2coeffs_plan = cheb_lobatto_vals2coeffs_plan
+const coeffs2vals_create_context = cheb_lobatto_coeffs2vals_create_context
+const vals2coeffs_create_context = cheb_lobatto_vals2coeffs_create_context
 
 const coeffs2vals_matrix = cheb_lobatto_coeffs2vals_matrix
 const vals2coeffs_matrix = cheb_lobatto_vals2coeffs_matrix

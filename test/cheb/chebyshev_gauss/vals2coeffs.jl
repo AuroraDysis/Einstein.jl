@@ -43,7 +43,7 @@
     @testset "Operator style" begin
         n = 100
         vals = rand(n)
-        plan = cheb_gauss_vals2coeffs_plan(Float64, n)
+        plan = cheb_gauss_vals2coeffs_create_context(Float64, n)
 
         # Test operator call
         coeffs1 = plan(vals)
