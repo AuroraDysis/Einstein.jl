@@ -19,13 +19,13 @@ w_k = e^{-\alpha\left(k / n\right)^{2 p}}, \quad k = 0, \ldots, n-1
 function cheb_series_filter_weights_exp(
     ::Type{T}, n::Integer, α::Integer, p::Integer
 ) where {T<:AbstractFloat}
-    wts = zeros(T, n)
+    weights = zeros(T, n)
     p2 = 2 * p
     ninv = one(T) / n
     @inbounds for k in 0:(n - 1)
-        wts[k + 1] = exp(-α * (k * ninv)^p2)
+        weights[k + 1] = exp(-α * (k * ninv)^p2)
     end
-    return wts
+    return weights
 end
 
 function cheb_series_filter_weights_exp(n::Integer, α::Integer, p::Integer)
