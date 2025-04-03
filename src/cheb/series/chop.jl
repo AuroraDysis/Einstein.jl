@@ -62,10 +62,8 @@ function _cheb_series_chop_impl!(
     ctx::ChebyshevSeriesChopContext{TF,TI}, coeffs::AbstractVector{TF}, tol::TF
 ) where {TF<:AbstractFloat,TI<:Integer}
     n = length(coeffs)
-    (; n_max, abs_coeffs, envelope, log_env_vals, objective_vals) = ctx
+    (; abs_coeffs, envelope, log_env_vals, objective_vals) = ctx
 
-    # --- Input Validation (Context capacity check) ---
-    @argcheck n <= n_max "Input length n=$n exceeds context capacity n_max=$n_max"
     # Other checks (coeffs empty, tol range) are done in the calling functions.
 
     # --- Use views into pre-allocated vectors for the current size n ---
@@ -272,6 +270,7 @@ function cheb_series_chop!(
     @boundscheck begin
         @argcheck !isempty(coeffs) "coeffs must not be empty"
         @argcheck 0 < tol < 1 "tol must be between 0 and 1 (exclusive)"
+        @argcheck length(coeffs) <= ctx.n_max "coeffs must be <= ctx.n_max"
     end
 
     n = length(coeffs)
@@ -381,7 +380,6 @@ function cheb_series_chop(
     return _cheb_series_chop_impl!(ctx, coeffs, tol)
 end
 
-# Export the public API functions
 export cheb_series_chop, cheb_series_chop!, cheb_series_chop_context
 
 #= Example Usage (Illustrative - run in a Julia environment)
