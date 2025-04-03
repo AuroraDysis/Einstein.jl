@@ -33,6 +33,7 @@ Ax = λEx
 
 # References
 - [mehrmann2004nonlinear](@citet*)
+- [NonlinearEigenproblems.jl/src/method_companion.jl at master · nep-pack/NonlinearEigenproblems.jl](https://github.com/nep-pack/NonlinearEigenproblems.jl/blob/master/src/method_companion.jl)
 """
 function qnm_pep_companion(
     pep::AbstractVector{<:AbstractMatrix{TFC}}
