@@ -24,9 +24,9 @@ struct ChebyshevGaussVals2CoeffsContext{
     real_output::Vector{TF}
     ifft_plan::TPlan
 
-    function ChebyshevGaussVals2CoeffsContext{TI,TF}(
+    function ChebyshevGaussVals2CoeffsContext{TF,TI}(
         n::TI
-    ) where {TI<:Integer,TF<:AbstractFloat}
+    ) where {TF<:AbstractFloat,TI<:Integer}
         weights = Vector{Complex{TF}}(undef, n)
         tmp = Vector{Complex{TF}}(undef, 2n)
         complex_output = Vector{Complex{TF}}(undef, n)
@@ -35,7 +35,7 @@ struct ChebyshevGaussVals2CoeffsContext{
 
         _cheb_gauss_vals2coeffs_weights!(weights, n)
 
-        return new{TI,TF,typeof(ifft_plan)}(
+        return new{TF,TI,typeof(ifft_plan)}(
             n, weights, tmp, complex_output, real_output, ifft_plan
         )
     end
@@ -54,8 +54,8 @@ function _cheb_gauss_vals2coeffs_weights!(
 end
 
 function _cheb_gauss_vals2coeffs_impl!(
-    ctx::ChebyshevGaussVals2CoeffsContext{TF}, vals::AbstractVector{TFC}
-) where {TF<:AbstractFloat,TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
+    ctx::ChebyshevGaussVals2CoeffsContext{TF,TI}, vals::AbstractVector{TFC}
+) where {TF<:AbstractFloat,TI<:Integer,TFC<:Union{TF,Complex{TF}}}
     (; n, weights, tmp, complex_output, ifft_plan) = ctx
 
     @argcheck length(vals) == n "vals must have length n"

@@ -1,30 +1,32 @@
-@with_kw struct QNMKerrChebParams{TR<:AbstractFloat}
+@with_kw struct QNMKerrChebParams{TR<:AbstractFloat,TI<:Integer}
     a::TR
-    s::Integer
-    l::Integer
-    m::Integer
-    n::Integer
-    cheb_n::Integer
+    s::TI
+    l::TI
+    m::TI
+    n::TI
+    cheb_n::TI
     ω_guess::Complex{TR}
     A_guess::Union{Complex{TR},Nothing} = nothing
-    l_max::Integer = l + 20
+    l_max::TI = l + 20
     ρ_min::TR = zero(TR)
     ρ_max::TR = one(TR)
     lo_bc::BCType.T = BCType.Natural
     hi_bc::BCType.T = BCType.Natural
 end
 
-struct QNMKerrChebCache{TR<:AbstractFloat}
-    params::QNMKerrChebParams{TR}
-    A0::AbstractMatrix{Complex{TR}}
-    A1::AbstractMatrix{Complex{TR}}
-    A2::AbstractMatrix{TR}
-    An::AbstractMatrix{Complex{TR}}
-    LA::AbstractMatrix{Complex{TR}}
-    LB::AbstractMatrix{Complex{TR}}
-    M::AbstractMatrix{Complex{TR}}
+struct QNMKerrChebCache{TR<:AbstractFloat,TI<:Integer}
+    params::QNMKerrChebParams{TR,TI}
+    A0::Matrix{Complex{TR}}
+    A1::Matrix{Complex{TR}}
+    A2::Matrix{TR}
+    An::Matrix{Complex{TR}}
+    LA::Matrix{Complex{TR}}
+    LB::Matrix{Complex{TR}}
+    M::Matrix{Complex{TR}}
 
-    function QNMKerrChebCache{TR}(params::QNMKerrChebParams{TR}) where {TR<:AbstractFloat}
+    function QNMKerrChebCache{TR,TI}(
+        params::QNMKerrChebParams{TR,TI}
+    ) where {TR<:AbstractFloat,TI<:Integer}
         @unpack_QNMKerrChebParams params
 
         # use M = 1 unit
@@ -53,10 +55,10 @@ struct QNMKerrChebCache{TR<:AbstractFloat}
         c20 = -16 * M^2 * (1 + 2 * M * ρ) + a^2 * (1 + 4 * M * ρ)^2
         A2 = (c20 * conversion):chebSpace
 
-        A0m = @view(A0c[1:cheb_n, 1:cheb_n]) |> Matrix
-        A1m = @view(A1c[1:cheb_n, 1:cheb_n]) |> Matrix
-        A2m = @view(A2[1:cheb_n, 1:cheb_n]) |> Matrix
-        Anm = @view(conversion[1:cheb_n, 1:cheb_n]) |> Matrix
+        A0m = Matrix(@view(A0c[1:cheb_n, 1:cheb_n]))
+        A1m = Matrix(@view(A1c[1:cheb_n, 1:cheb_n]))
+        A2m = Matrix(@view(A2[1:cheb_n, 1:cheb_n]))
+        Anm = Matrix(@view(conversion[1:cheb_n, 1:cheb_n]))
 
         if lo_bc == BCType.Dirichlet
             A0m[end, :] .= TR(1)
@@ -76,7 +78,7 @@ struct QNMKerrChebCache{TR<:AbstractFloat}
         LA = zeros(Complex{TR}, cheb_n, cheb_n)
         LB = zeros(Complex{TR}, cheb_n, cheb_n)
 
-        return new{TR}(params, A0m, A1m, A2m, Anm, LA, LB, M)
+        return new{TR,TI}(params, A0m, A1m, A2m, Anm, LA, LB, M)
     end
 end
 
@@ -95,8 +97,8 @@ Perform one iteration step in the QNM eigenvalue search.
 - Difference between the seperation constant between the radial and angular equations
 """
 function qnm_kerr_cheb_δ!(
-    ωvec::SVector{2,TR}, cache::QNMKerrChebCache{TR}
-)::SVector{2,TR} where {TR<:AbstractFloat}
+    ωvec::SVector{2,TR}, cache::QNMKerrChebCache{TR,TI}
+)::SVector{2,TR} where {TR<:AbstractFloat,TI<:Integer}
     @unpack params, A0, A1, A2, An, LA, LB, M = cache
     @unpack_QNMKerrChebParams params
 
@@ -134,15 +136,15 @@ Find the Kerr QNM using the Ultraspherical spectral method for the radial equati
 - `kwargs`: Additional keyword arguments to pass to the nonlinear solver
 """
 function qnm_kerr_cheb(
-    params::QNMKerrChebParams{TR},
+    params::QNMKerrChebParams{TR,TI},
     alg::Union{AbstractNonlinearAlgorithm,Nothing}=RobustMultiNewton(;
         autodiff=AutoFiniteDiff()
     );
     kwargs...,
-) where {TR<:AbstractFloat}
+) where {TR<:AbstractFloat,TI<:Integer}
     @unpack_QNMKerrChebParams params
 
-    cache = QNMKerrChebCache{TR}(params)
+    cache = QNMKerrChebCache{TR,TI}(params)
     ω0 = SA[real(ω_guess), imag(ω_guess)]
     prob = NonlinearProblem(qnm_kerr_cheb_δ!, ω0, cache)
     sol = solve(prob, alg; kwargs...)

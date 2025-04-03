@@ -253,26 +253,26 @@ The spin-weighted spheroidal harmonics are normalized such that
 - `l::Integer`: angular number
 - `l_max::Integer`: maximum angular number
 """
-struct SWSFun{TR<:AbstractFloat}
-    s::Integer
+struct SWSFun{TR<:AbstractFloat,TI<:Integer}
+    s::TI
     c::Complex{TR}
-    m::Integer
-    l_min::Integer
-    l_max::Integer
+    m::TI
+    l_min::TI
+    l_max::TI
     coeffs::Vector{Complex{TR}}
-    Y_idx::Vector{Int}
+    Y_idx::Vector{TI}
     sqrt_2pi::TR
     Y_storage
 
-    function SWSFun{TR}(
-        s::Integer, c::Complex{TR}, m::Integer, l::Integer, l_max::Integer
-    ) where {TR<:AbstractFloat}
+    function SWSFun{TR,TI}(
+        s::TI, c::Complex{TR}, m::TI, l::TI, l_max::TI
+    ) where {TR<:AbstractFloat,TI<:Integer}
         l_min = sws_l_min(s, m)
         Y_storage = sYlm_prep(l_max, s, TR, l_min)
         vals, vecs = sws_eigen(TR, s, c, m, l_max)
         vals_idx = sws_eigvalidx(s, l, m)
         i = 1
-        Y_idx = zeros(Int, l_max - l_min + 1)
+        Y_idx = zeros(TI, l_max - l_min + 1)
         # TODO: make this more efficient
         for lprime in l_min:l_max
             for mprime in (-lprime):lprime
@@ -286,11 +286,11 @@ struct SWSFun{TR<:AbstractFloat}
         scale = abs(coeffs[l - l_min + 1]) / coeffs[l - l_min + 1]
         coeffs .*= scale
         sqrt_2pi = sqrt(2 * convert(TR, π))
-        return new{TR}(s, c, m, l_min, l_max, coeffs, Y_idx, sqrt_2pi, Y_storage)
+        return new{TR,TI}(s, c, m, l_min, l_max, coeffs, Y_idx, sqrt_2pi, Y_storage)
     end
 end
 
-function (f::SWSFun{TR})(θ::TR) where {TR<:AbstractFloat}
+function (f::SWSFun{TR,TI})(θ::TR) where {TR<:AbstractFloat,TI<:Integer}
     Y = sYlm_values!(f.Y_storage, θ, zero(TR), f.s)
     return f.sqrt_2pi * dot(f.coeffs, @view(Y[f.Y_idx]))
 end

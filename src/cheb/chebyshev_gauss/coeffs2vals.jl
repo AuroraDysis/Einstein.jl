@@ -52,8 +52,8 @@ function _cheb_gauss_coeffs2vals_weights!(
 end
 
 function _cheb_gauss_coeffs2vals_impl!(
-    ctx::ChebyshevGaussCoeffs2ValsContext{TF}, coeffs::AbstractVector{TFC}
-) where {TF<:AbstractFloat,TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
+    ctx::ChebyshevGaussCoeffs2ValsContext{TF,TI}, coeffs::AbstractVector{TFC}
+) where {TF<:AbstractFloat,TI<:Integer,TFC<:Union{TF,Complex{TF}}}
     (; n, weights, tmp, complex_output, fft_plan) = ctx
 
     @argcheck length(coeffs) == n "coeffs must have length n"
@@ -87,8 +87,8 @@ function _cheb_gauss_coeffs2vals_impl!(
 end
 
 function cheb_gauss_coeffs2vals!(
-    ctx::ChebyshevGaussCoeffs2ValsContext{TF}, coeffs::AbstractVector{TF}
-) where {TF<:AbstractFloat}
+    ctx::ChebyshevGaussCoeffs2ValsContext{TF,TI}, coeffs::AbstractVector{TF}
+) where {TF<:AbstractFloat,TI<:Integer}
     (; complex_output, real_output) = ctx
     _cheb_gauss_coeffs2vals_impl!(ctx, coeffs)
     @.. real_output = real(complex_output)
@@ -96,8 +96,8 @@ function cheb_gauss_coeffs2vals!(
 end
 
 function cheb_gauss_coeffs2vals!(
-    ctx::ChebyshevGaussCoeffs2ValsContext{TF}, coeffs::AbstractVector{Complex{TF}}
-) where {TF<:AbstractFloat}
+    ctx::ChebyshevGaussCoeffs2ValsContext{TF,TI}, coeffs::AbstractVector{Complex{TF}}
+) where {TF<:AbstractFloat,TI<:Integer}
     _cheb_gauss_coeffs2vals_impl!(ctx, coeffs)
     return ctx.complex_output
 end
@@ -106,7 +106,7 @@ function cheb_gauss_coeffs2vals_create_context(
     ::Type{TF}, n::TI
 ) where {TF<:AbstractFloat,TI<:Integer}
     @argcheck n > 1 "n must be greater than 1"
-    return ChebyshevGaussCoeffs2ValsContext{TI,TF}(n)
+    return ChebyshevGaussCoeffs2ValsContext{TF,TI}(n)
 end
 
 function cheb_gauss_coeffs2vals(

@@ -1,29 +1,31 @@
-@with_kw struct QNMKerrCFParams{TR<:AbstractFloat}
+@with_kw struct QNMKerrCFParams{TR<:AbstractFloat,TI<:Integer}
     a::TR
-    s::Integer
-    l::Integer
-    m::Integer
-    n::Integer = 0
+    s::TI
+    l::TI
+    m::TI
+    n::TI = 0
     ω_guess::Complex{TR}
     A_guess::Union{Complex{TR},Nothing} = nothing
-    poles::Vector{Complex{TR}} = []
-    l_max::Integer = l + 20
-    cf_N_min::Integer = 300
-    cf_N_max::Integer = 100000
+    poles::Vector{Complex{TR}} = Complex{TR}[]
+    l_max::TI = l + 20
+    cf_N_min::TI = 300
+    cf_N_max::TI = 100000
     cf_tol::TR = typetol(TR)
 end
 
-struct QNMKerrCFCache{TR<:AbstractFloat}
-    params::QNMKerrCFParams{TR}
+struct QNMKerrCFCache{TR<:AbstractFloat,TI<:Integer}
+    params::QNMKerrCFParams{TR,TI}
     M::Matrix{Complex{TR}}
 
-    function QNMKerrCFCache{TR}(params::QNMKerrCFParams{TR}) where {TR<:AbstractFloat}
+    function QNMKerrCFCache{TR,TI}(
+        params::QNMKerrCFParams{TR,TI}
+    ) where {TR<:AbstractFloat,TI<:Integer}
         @unpack_QNMKerrCFParams params
 
         l_min = sws_l_min(s, m)
         l_size = l_max - l_min + 1
         M = zeros(Complex{TR}, l_size, l_size)
-        return new{TR}(params, M)
+        return new{TR,TI}(params, M)
     end
 end
 

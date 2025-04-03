@@ -1,9 +1,9 @@
-@with_kw struct QNMKerrDIParams{TR<:AbstractFloat}
+@with_kw struct QNMKerrDIParams{TR<:AbstractFloat,TI<:Integer}
     a::TR
-    s::Integer
-    l::Integer
-    m::Integer
-    n::Integer
+    s::TI
+    l::TI
+    m::TI
+    n::TI
     ω_guess::Complex{TR}
     A_guess::Union{Complex{TR},Nothing} = nothing
     ρ_min::TR = TR(1//100)
@@ -11,19 +11,19 @@
     odealg::AbstractODEAlgorithm = Vern9()
     lo_bc::BCType.T = BCType.Natural
     hi_bc::BCType.T = BCType.Natural
-    series_order::Integer = 200
+    series_order::TI = 200
     abstol = typetol(TR)
     reltol = typetol(TR)
-    l_max::Integer = l + 20
+    l_max::TI = l + 20
 end
 
-struct QNMKerrDICache{TR<:AbstractFloat}
-    params::QNMKerrDIParams{TR}
+struct QNMKerrDICache{TR<:AbstractFloat,TI<:Integer}
+    params::QNMKerrDIParams{TR,TI}
     ω::Base.RefValue{Complex{TR}}
     Λ::Base.RefValue{Complex{TR}}
-    M::AbstractMatrix{Complex{TR}}
+    M::Matrix{Complex{TR}}
 
-    function QNMKerrDICache{TR}(params::QNMKerrDIParams{TR}) where {TR<:AbstractFloat}
+    function QNMKerrDICache{TR,TI}(params::QNMKerrDIParams{TR,TI}) where {TR<:AbstractFloat,TI<:Integer}
         @unpack_QNMKerrDIParams params
 
         ω = Ref{ComplexF64}()
@@ -33,7 +33,7 @@ struct QNMKerrDICache{TR<:AbstractFloat}
         l_size = l_max - l_min + 1
         M = zeros(Complex{TR}, l_size, l_size)
 
-        return new{TR}(params, ω, Λ, M)
+        return new{TR,TI}(params, ω, Λ, M)
     end
 end
 

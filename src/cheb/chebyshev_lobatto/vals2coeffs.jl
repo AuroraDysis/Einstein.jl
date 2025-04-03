@@ -23,18 +23,20 @@ struct ChebyshevLobattoVals2CoeffsContext{
     real_output::Vector{TF}
     ifft_plan::TPlan
 
-    function ChebyshevLobattoVals2CoeffsContext{TI,TF}(n::TI) where {TI<:Integer,TF<:AbstractFloat}
+    function ChebyshevLobattoVals2CoeffsContext{TI,TF}(
+        n::TI
+    ) where {TI<:Integer,TF<:AbstractFloat}
         tmp = zeros(Complex{TF}, 2n - 2)
         complex_output = zeros(Complex{TF}, n)
         real_output = zeros(TF, n)
         ifft_plan = plan_ifft_measure!(tmp)
-        return new{TI,TF,typeof(ifft_plan)}(n, tmp, complex_output, real_output, ifft_plan)
+        return new{TF,TI,typeof(ifft_plan)}(n, tmp, complex_output, real_output, ifft_plan)
     end
 end
 
 function _cheb_lobatto_vals2coeffs_impl!(
-    ctx::ChebyshevLobattoVals2CoeffsContext{TF}, vals::AbstractVector{TFC}
-) where {TF<:AbstractFloat,TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
+    ctx::ChebyshevLobattoVals2CoeffsContext{TF,TI}, vals::AbstractVector{TFC}
+) where {TF<:AbstractFloat,TI<:Integer,TFC<:Union{TF,Complex{TF}}}
     (; n, tmp, complex_output, ifft_plan) = ctx
 
     @argcheck length(vals) == n "vals must have length n"
@@ -67,8 +69,8 @@ function _cheb_lobatto_vals2coeffs_impl!(
 end
 
 function cheb_lobatto_vals2coeffs!(
-    ctx::ChebyshevLobattoVals2CoeffsContext{TF}, vals::AbstractVector{TF}
-) where {TF<:AbstractFloat}
+    ctx::ChebyshevLobattoVals2CoeffsContext{TF,TI}, vals::AbstractVector{TF}
+) where {TF<:AbstractFloat,TI<:Integer}
     (; complex_output, real_output) = ctx
     _cheb_lobatto_vals2coeffs_impl!(ctx, vals)
     @. real_output = real(complex_output)
@@ -76,8 +78,8 @@ function cheb_lobatto_vals2coeffs!(
 end
 
 function cheb_lobatto_vals2coeffs!(
-    ctx::ChebyshevLobattoVals2CoeffsContext{TF}, vals::AbstractVector{Complex{TF}}
-) where {TF<:AbstractFloat}
+    ctx::ChebyshevLobattoVals2CoeffsContext{TF,TI}, vals::AbstractVector{Complex{TF}}
+) where {TF<:AbstractFloat,TI<:Integer}
     (; complex_output) = ctx
     _cheb_lobatto_vals2coeffs_impl!(ctx, vals)
     return complex_output
@@ -87,7 +89,7 @@ function cheb_lobatto_vals2coeffs_create_context(
     ::Type{TF}, n::TI
 ) where {TF<:AbstractFloat,TI<:Integer}
     @argcheck n > 1 "n must be greater than 1"
-    return ChebyshevLobattoVals2CoeffsContext{TI,TF}(n)
+    return ChebyshevLobattoVals2CoeffsContext{TF,TI}(n)
 end
 
 function cheb_lobatto_vals2coeffs(

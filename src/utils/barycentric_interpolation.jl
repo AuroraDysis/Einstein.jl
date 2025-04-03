@@ -53,18 +53,27 @@ Evaluate the interpolant at point `x` for function values.
 - [chebfun/@chebtech2/bary.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/bary.m)
 - [Berrut2004](@citet*)
 """
-struct BarycentricInterpolation{TF<:AbstractFloat}
-    points::AbstractVector{TF}   # Grid points
-    weights::AbstractVector{TF}  # Barycentric weights
+struct BarycentricInterpolation{
+    TF<:AbstractFloat,VT1<:AbstractVector{TF},VT2<:AbstractVector{TF}
+}
+    points::VT1   # Grid points
+    weights::VT2  # Barycentric weights
 
-    function BarycentricInterpolation(points::AbstractVector{TF}, weights::AbstractVector{TF}) where {TF<:AbstractFloat}
+    function BarycentricInterpolation(
+        points::AbstractVector{TF}, weights::AbstractVector{TF}
+    ) where {TF<:AbstractFloat}
         return new{TF}(points, weights)
     end
 end
 
-function (itp::BarycentricInterpolation{TF})(
+function (itp::BarycentricInterpolation{TF,VT1,VT2})(
     values::AbstractVector{TFC}, x::TF
-) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
+) where {
+    TF<:AbstractFloat,
+    TFC<:Union{TF,Complex{TF}},
+    VT1<:AbstractVector{TF},
+    VT2<:AbstractVector{TF},
+}
     (; points, weights) = itp
 
     @boundscheck begin
