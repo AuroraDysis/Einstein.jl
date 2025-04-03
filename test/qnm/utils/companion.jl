@@ -1,5 +1,5 @@
 @testitem "qnm_pep_companion" begin
-    using LinearAlgebra
+    using LinearAlgebra, SparseArrays
 
     @testset "Simple quadratic PEP (degree 2) with 2x2 matrices" begin
         A0 = [1 2; 3 4]

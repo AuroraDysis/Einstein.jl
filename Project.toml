@@ -10,7 +10,6 @@ BandedMatrices = "aae01518-5342-5314-be14-df237901396f"
 FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
 FastBroadcast = "7034ab61-46d4-4ed7-9d0f-46aef9175898"
 FillArrays = "1a297f60-69ca-5386-bcde-b61e274b549b"
-JET = "c3a54625-cd67-489e-a8e7-0a5a0ff4e31b"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 NonlinearSolve = "8913a72c-1f9b-4ce2-8d82-65094dcecaec"
 PrecompileTools = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
@@ -49,10 +48,12 @@ julia = "1.10"
 
 [extras]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+JET = "c3a54625-cd67-489e-a8e7-0a5a0ff4e31b"
 Integrals = "de52edbc-65ea-441a-8357-d3a637375a31"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 TestItemRunner = "f8b46487-2199-4994-9208-9a1283c18c0a"
 TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 
+
 [targets]
-test = ["Test", "TestItems", "TestItemRunner", "Aqua", "Integrals"]
+test = ["Test", "TestItems", "TestItemRunner", "Aqua", "JET", "Integrals"]
