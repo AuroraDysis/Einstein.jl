@@ -31,7 +31,7 @@ function cheb_series_evaluate(
 
     # If n is odd, perform the extra step
     if isodd(n)
-        tmp = deepcopy(bk1)
+        tmp = bk1
         @inbounds bk1 = coeffs[2] + x * bk1 - bk2
         bk2 = tmp
     end
