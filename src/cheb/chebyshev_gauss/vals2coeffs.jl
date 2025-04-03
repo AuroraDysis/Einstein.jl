@@ -84,8 +84,8 @@ function _cheb_gauss_vals2coeffs_impl!(
 end
 
 function cheb_gauss_vals2coeffs!(
-    ctx::ChebyshevGaussVals2CoeffsContext{TF}, values::AbstractVector{TF}
-) where {TF<:AbstractFloat}
+    ctx::ChebyshevGaussVals2CoeffsContext{TF,TI}, values::AbstractVector{TF}
+) where {TF<:AbstractFloat,TI<:Integer}
     (; complex_output, real_output) = ctx
     _cheb_gauss_vals2coeffs_impl!(ctx, values)
     @. real_output = real(complex_output)
@@ -93,8 +93,8 @@ function cheb_gauss_vals2coeffs!(
 end
 
 function cheb_gauss_vals2coeffs!(
-    ctx::ChebyshevGaussVals2CoeffsContext{TF}, values::AbstractVector{Complex{TF}}
-) where {TF<:AbstractFloat}
+    ctx::ChebyshevGaussVals2CoeffsContext{TF,TI}, values::AbstractVector{Complex{TF}}
+) where {TF<:AbstractFloat,TI<:Integer}
     (; complex_output) = ctx
     _cheb_gauss_vals2coeffs_impl!(ctx, values)
     return complex_output
@@ -104,7 +104,7 @@ function cheb_gauss_vals2coeffs_create_context(
     ::Type{TF}, n::TI
 ) where {TF<:AbstractFloat,TI<:Integer}
     @argcheck n > 1 "n must be greater than 1"
-    return ChebyshevGaussVals2CoeffsContext{TI,TF}(n)
+    return ChebyshevGaussVals2CoeffsContext{TF,TI}(n)
 end
 
 function cheb_gauss_vals2coeffs(
