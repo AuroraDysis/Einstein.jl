@@ -7,8 +7,8 @@
         A2 = [9 10; 11 12]
         pep = [A0, A1, A2]
 
-        A_exact = [9 10 0 0; 11 12 0 0; 0 0 1 0; 0 0 0 1]
-        E_exact = [-5 -6 -1 -2; -7 -8 -3 -4; 1 0 0 0; 0 1 0 0]
+        A_exact = [-5 -6 -1 -2; -7 -8 -3 -4; 1 0 0 0; 0 1 0 0]
+        E_exact = [9 10 0 0; 11 12 0 0; 0 0 1 0; 0 0 0 1]
 
         A, E = qnm_pep_companion(pep)
 
@@ -40,8 +40,8 @@
         A2 = [9+9im 10+10im; 11+11im 12+12im]
         pep_complex = [A0, A1, A2]
 
-        A_complex_exact = [9 + 9im 10 + 10im 0 + 0im 0 + 0im; 11 + 11im 12 + 12im 0 + 0im 0 + 0im; 0 + 0im 0 + 0im 1 + 0im 0 + 0im; 0 + 0im 0 + 0im 0 + 0im 1 + 0im]
-        E_complex_exact = [-5 - 5im -6 - 6im -1 - 1im -2 - 2im; -7 - 7im -8 - 8im -3 - 3im -4 - 4im; 1 + 0im 0 + 0im 0 + 0im 0 + 0im; 0 + 0im 1 + 0im 0 + 0im 0 + 0im]
+        A_complex_exact = [-5 - 5im -6 - 6im -1 - 1im -2 - 2im; -7 - 7im -8 - 8im -3 - 3im -4 - 4im; 1 + 0im 0 + 0im 0 + 0im 0 + 0im; 0 + 0im 1 + 0im 0 + 0im 0 + 0im]
+        E_complex_exact = [9 + 9im 10 + 10im 0 + 0im 0 + 0im; 11 + 11im 12 + 12im 0 + 0im 0 + 0im; 0 + 0im 0 + 0im 1 + 0im 0 + 0im; 0 + 0im 0 + 0im 0 + 0im 1 + 0im]
 
         A_complex, E_complex = qnm_pep_companion(pep_complex)
 

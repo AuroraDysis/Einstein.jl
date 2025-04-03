@@ -36,6 +36,12 @@ Ax = λEx
 - [NonlinearEigenproblems.jl/src/method_companion.jl at master · nep-pack/NonlinearEigenproblems.jl](https://github.com/nep-pack/NonlinearEigenproblems.jl/blob/master/src/method_companion.jl)
 """
 function qnm_pep_companion(pep::AbstractVector{<:AbstractMatrix{TN}}) where {TN<:Number}
+    @boundscheck begin
+        @argcheck !isempty(pep) "pep must not be empty"
+        @argcheck all(m -> size(m, 1) == size(pep[1], 1), pep) "all matrices must have the same size"
+        @argcheck all(m -> size(m, 1) == size(m, 2), pep) "all matrices must be square"
+    end
+
     # Size of coefficient matrices
     n = size(pep[1], 1)
 
