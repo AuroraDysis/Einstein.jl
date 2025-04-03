@@ -60,9 +60,8 @@ function cheb_filter_matrix(
         return F
     end
 
-    # analog to negative sum trick
-    F[diagind(F)] .= 0
-    F[diagind(F)] .+= one(T) .- sum(F; dims=2)
+    # negative sum trick
+    apply_negative_sum_trick!(F; constant_term=one(T))
 
     return F
 end

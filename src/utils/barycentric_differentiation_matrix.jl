@@ -117,7 +117,7 @@ function apply_negative_sum_trick!(
 ) where {TF<:AbstractFloat}
     n = size(D, 1)
     for i in 1:n
-        row_sum = constant_term + sum(@view(D[i, :]))
+        row_sum = sum(@view(D[i, :])) - constant_term
         D[i, i] -= row_sum
     end
 end
