@@ -35,9 +35,7 @@ Ax = λEx
 - [mehrmann2004nonlinear](@citet*)
 - [NonlinearEigenproblems.jl/src/method_companion.jl at master · nep-pack/NonlinearEigenproblems.jl](https://github.com/nep-pack/NonlinearEigenproblems.jl/blob/master/src/method_companion.jl)
 """
-function qnm_pep_companion(
-    pep::AbstractVector{<:AbstractMatrix{TFC}}
-) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
+function qnm_pep_companion(pep::AbstractVector{<:AbstractMatrix{TN}}) where {TN<:Number}
     # Size of coefficient matrices
     n = size(pep[1], 1)
 
@@ -48,7 +46,7 @@ function qnm_pep_companion(
 
     # -- Construct A -- #
 
-    A = zeros(TFC, n * d, n * d)
+    A = zeros(TN, n * d, n * d)
 
     # First row block of A
     for i in 1:d
@@ -60,7 +58,7 @@ function qnm_pep_companion(
 
     # -- Construct E -- #
 
-    E = zeros(TFC, d * n, d * n)
+    E = zeros(TN, d * n, d * n)
 
     # Fill block (1,1)
     E[1:n, 1:n] = pep[d + 1]
