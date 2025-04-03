@@ -12,10 +12,10 @@ with the constant of integration chosen such that $f(-1) = 0$.
 - [chebfun/@chebtech/cumsum.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech/cumsum.m)
 """
 struct ChebyshevSeriesIntegrationPlan{TF<:AbstractFloat,TI<:Integer}
-    n::TI              # Number of coefficients
-    tmp::Vector{TF}    # Temporary storage for padded coefficients
-    result::Vector{TF} # Result storage
-    weights::Vector{TI}      # Pre-computed alternating signs
+    n::TI               # Number of coefficients
+    tmp::Vector{TF}     # Temporary storage for padded coefficients
+    result::Vector{TF}  # Result storage
+    weights::Vector{TI} # Pre-computed alternating signs
 
     function ChebyshevSeriesIntegrationPlan{TF}(n::TI) where {TF<:AbstractFloat,TI<:Integer}
         # Pre-allocate workspace
@@ -35,17 +35,11 @@ function (op::ChebyshevSeriesIntegrationPlan{TF,TI})(
 ) where {TF<:AbstractFloat,TI<:Integer}
     @argcheck length(coeffs) == op.n "length(coeffs) must be equal to n"
 
-    n = length(coeffs)
-    tmp = op.tmp
-    result = op.result
-    weights = op.weights
+    (; n, tmp, result, weights) = op
 
-    # Copy and pad input coefficients
-    @inbounds begin
-        tmp[1:n] .= coeffs
-        tmp[n + 1] = 0
-        tmp[n + 2] = 0
-    end
+    # Pad with zeros
+    tmp[1:n] .= coeffs
+    tmp[(n + 1):(n + 2)] .= 0
 
     # Compute interior coefficients
     @inbounds begin
