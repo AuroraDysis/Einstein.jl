@@ -7,8 +7,8 @@ Convert Chebyshev coefficients to values at Chebyshev points of the 1st kind.
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-ctx = cheb_gauss_coeffs2vals(Float64, n)
-values = ctx(coeffs)
+ctx = cheb_gauss_coeffs2vals_create_context(Float64, n)
+values = cheb_gauss_coeffs2vals!(ctx, coeffs)
 ```
 
 # References
@@ -115,7 +115,7 @@ function cheb_gauss_coeffs2vals(
     end
 
     ctx = cheb_gauss_coeffs2vals_create_context(real(TFC), n)
-    return ctx(coeffs)
+    return cheb_gauss_coeffs2vals!(ctx, coeffs)
 end
 
 """
@@ -137,7 +137,7 @@ function cheb_gauss_coeffs2vals_matrix(::Type{TF}, n::Integer) where {TF<:Abstra
     S = Array{TF,2}(undef, n, n)
     ctx = cheb_gauss_coeffs2vals_create_context(TF, n)
     @inbounds for i in 1:n
-        S[:, i] = ctx(OneElement(one(TF), i, n))
+        S[:, i] .= cheb_gauss_coeffs2vals!(ctx, OneElement(one(TF), i, n))
     end
     return S
 end

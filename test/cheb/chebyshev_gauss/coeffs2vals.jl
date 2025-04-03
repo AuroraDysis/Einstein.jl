@@ -69,17 +69,17 @@
     @testset "Operator style" begin
         n = 100
         coeffs = rand(n)
-        plan = cheb_gauss_coeffs2vals_create_context(Float64, n)
+        ctx = cheb_gauss_coeffs2vals_create_context(Float64, n)
 
         # Test operator call
-        vals1 = plan(coeffs)
+        vals1 = cheb_gauss_coeffs2vals!(ctx, coeffs)
         vals2 = cheb_gauss_coeffs2vals(coeffs)
         @test isapprox(vals1, vals2, atol=tol)
 
         # Test multiple calls
         for _ in 1:10
             coeffs = rand(n)
-            vals1 = plan(coeffs)
+            vals1 = cheb_gauss_coeffs2vals!(ctx, coeffs)
             vals2 = cheb_gauss_coeffs2vals(coeffs)
             @test isapprox(vals1, vals2, atol=tol)
         end

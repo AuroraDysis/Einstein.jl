@@ -7,8 +7,8 @@ Convert values at Chebyshev points of the 1st kind into Chebyshev coefficients.
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-op = cheb_gauss_vals2coeffs(Float64, n)
-coeffs = op(values)
+ctx = cheb_gauss_vals2coeffs_create_context(Float64, n)
+coeffs = cheb_gauss_vals2coeffs!(ctx, values)
 ```
 
 # References
@@ -50,9 +50,9 @@ function _cheb_gauss_vals2coeffs_weights!(
 end
 
 function _cheb_gauss_vals2coeffs_impl!(
-    op::ChebyshevGaussVals2CoeffsContext{TF}, vals::AbstractVector{TFC}
+    ctx::ChebyshevGaussVals2CoeffsContext{TF}, vals::AbstractVector{TFC}
 ) where {TF<:AbstractFloat,TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
-    (; n, weights, tmp, complex_output, ifft_plan) = op
+    (; n, weights, tmp, complex_output, ifft_plan) = ctx
 
     @argcheck length(vals) == n "vals must have length n"
 
@@ -79,30 +79,27 @@ function _cheb_gauss_vals2coeffs_impl!(
     return nothing
 end
 
-function (op::ChebyshevGaussVals2CoeffsContext{TF})(
-    values::AbstractVector{TF}
+function cheb_gauss_vals2coeffs!(
+    ctx::ChebyshevGaussVals2CoeffsContext{TF}, values::AbstractVector{TF}
 ) where {TF<:AbstractFloat}
-    (; complex_output, real_output) = op
-    _cheb_gauss_vals2coeffs!(op, values)
+    (; complex_output, real_output) = ctx
+    _cheb_gauss_vals2coeffs_impl!(ctx, values)
     @. real_output = real(complex_output)
     return real_output
 end
 
-function (op::ChebyshevGaussVals2CoeffsContext{TF})(
-    values::AbstractVector{Complex{TF}}
+function cheb_gauss_vals2coeffs!(
+    ctx::ChebyshevGaussVals2CoeffsContext{TF}, values::AbstractVector{Complex{TF}}
 ) where {TF<:AbstractFloat}
-    (; complex_output) = op
-    _cheb_gauss_vals2coeffs!(op, values)
+    (; complex_output) = ctx
+    _cheb_gauss_vals2coeffs_impl!(ctx, values)
     return complex_output
 end
 
-function cheb_gauss_vals2coeffs_create_context(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
-    @argcheck n > 0 "n must be greater than 0"
-
-    if n == 1
-        return identity
-    end
-
+function cheb_gauss_vals2coeffs_create_context(
+    ::Type{TF}, n::Integer
+) where {TF<:AbstractFloat}
+    @argcheck n > 1 "n must be greater than 1"
     return ChebyshevGaussVals2CoeffsContext{TF}(n)
 end
 
@@ -110,8 +107,8 @@ function cheb_gauss_vals2coeffs(
     values::AbstractVector{TFC}
 ) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     n = length(values)
-    plan = cheb_gauss_vals2coeffs_create_context(real(TFC), n)
-    return plan(values)
+    ctx = cheb_gauss_vals2coeffs_create_context(real(TFC), n)
+    return cheb_gauss_vals2coeffs!(ctx, values)
 end
 
 """
@@ -123,9 +120,7 @@ Construct the analysis matrix A that transforms function values at Chebyshev poi
 - `TF`: Element type (defaults to Float64)
 - `n`: Number of points/coefficients
 """
-function cheb_gauss_vals2coeffs_matrix(
-    ::Type{TF}, n::Integer
-) where {TF<:AbstractFloat}
+function cheb_gauss_vals2coeffs_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     @argcheck n > 0 "n must be greater than 0"
 
     if n == 1
@@ -133,9 +128,9 @@ function cheb_gauss_vals2coeffs_matrix(
     end
 
     A = Array{TF,2}(undef, n, n)
-    plan = cheb_gauss_vals2coeffs_create_context(TF, n)
+    ctx = cheb_gauss_vals2coeffs_create_context(TF, n)
     @inbounds for i in 1:n
-        A[:, i] = plan(OneElement(one(TF), i, n))
+        A[:, i] .= cheb_gauss_vals2coeffs!(ctx, OneElement(one(TF), i, n))
     end
     return A
 end
@@ -145,4 +140,4 @@ function cheb_gauss_vals2coeffs_matrix(n::Integer)
 end
 
 export cheb_gauss_vals2coeffs_create_context,
-    cheb_gauss_vals2coeffs, cheb_gauss_vals2coeffs_matrix
+    cheb_gauss_vals2coeffs, cheb_gauss_vals2coeffs!, cheb_gauss_vals2coeffs_matrix
