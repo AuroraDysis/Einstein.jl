@@ -1,4 +1,4 @@
-@testitem "qnm_kerr_cf" begin
+@testitem "qnm_kerr" begin
     a = 0.7
     s = 2
     l = 2
@@ -10,11 +10,7 @@
 
     ω_pert = ω + rand(Complex{Float64}) / 1000
 
-    params = QNMKerrCFParams{Float64,Int}(;
-        a=a, s=s, l=l, m=m, n=n, ω_guess=ω_pert, l_max=l_max
-    )
-
-    ωsol = qnm_kerr_cf(params)
+    ωsol = qnm_kerr(a, s, l, m, ω_pert; n=n, l_max=l_max)
 
     tol = typetol(Float64)
     @test abs(ωsol - ω) < tol

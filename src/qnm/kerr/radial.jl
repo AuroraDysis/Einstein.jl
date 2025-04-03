@@ -24,32 +24,14 @@ SOFTWARE.
 """
 
 @doc raw"""
-    qnm_kerr_radial(
-        ::Type{TR},
-        a::TR,
-        s::Integer,
-        m::Integer,
-        A::Complex{TR},
-        ω::Complex{TR};
-        n_inv::Integer=0,
-        cf_tol::TR=typetol(TR),
-        cf_N_min::Integer=300,
-        cf_N_max::Integer=100000,
-    ) where {TR<:AbstractFloat}
+    qnm_kerr_radial(ctx::QNMKerrContext{TR,TI}, A::Complex{TR}, ω::Complex{TR}) where {TR<:AbstractFloat,TI<:Integer}
 
 Calculate the radial function using the Leaver scheme [Cook:2014cta](@cite).
 
 ## Arguments
-- `TR`: Type of the floating-point number.
-- a::TR: Black hole spin.
-- s::Integer: spin weight of the field.
-- m::Integer: Azimuthal number.
-- A::Complex{TR}: Angular separation constant.
-- ω::Complex{TR}: QNM frequency.
-- n_inv::Integer: Number of inversions.
-- cf_tol::TR: Tolerance for convergence.
-- cf_N_min::Integer: Minimum number of iterations.
-- cf_N_max::Integer: Maximum number of iterations.
+- `ctx`: QNMKerrContext object.
+- `A::Complex{TR}`: Angular separation constant.
+- `ω::Complex{TR}`: QNM frequency.
 
 ## Returns
 
@@ -100,7 +82,11 @@ with $\operatorname{Cf}(0 ; \mathrm{N}) \equiv \operatorname{Cf}(\mathrm{N})$ an
 - [Cook:2014cta](@citet*)
 - [qnm/qnm/radial.py at master · duetosymmetry/qnm](https://github.com/duetosymmetry/qnm/blob/master/qnm/radial.py)
 """
-function qnm_kerr_radial(ctx::QNMKerrContext{TR,TI}) where {TR<:AbstractFloat,TI<:Integer}
+function qnm_kerr_radial(
+    ctx::QNMKerrContext{TR,TI}, A::Complex{TR}, ω::Complex{TR}
+) where {TR<:AbstractFloat,TI<:Integer}
+    (; a, s, m, n, cf_n_inv, cf_N_min, cf_N_max, cf_tol) = ctx
+
     root = sqrt(1 - a * a)
     r₊ = 1 + root
     r₋ = 1 - root
@@ -127,7 +113,7 @@ function qnm_kerr_radial(ctx::QNMKerrContext{TR,TI}) where {TR<:AbstractFloat,TI
     D3 = α * (4 * p - δ) - σ
     D4 = α * (α - γ + 1)
 
-    n = 0:n_inv
+    n = 0:cf_n_inv
     αn = zeros(Complex{TR}, length(n))
     βn = zeros(Complex{TR}, length(n))
     γn = zeros(Complex{TR}, length(n))
@@ -137,12 +123,12 @@ function qnm_kerr_radial(ctx::QNMKerrContext{TR,TI}) where {TR<:AbstractFloat,TI
     @.. γn = n * n + (D2 - 3) * n + D4 - D2 + 2
 
     conv1 = zero(Complex{TR})
-    @inbounds for i in 1:n_inv
+    @inbounds for i in 1:cf_n_inv
         conv1 = αn[i] / (βn[i] - γn[i] * conv1)
     end
 
     function rad_a(i)
-        n = i + n_inv - 1
+        n = i + cf_n_inv - 1
         return -(n * n + (D0 + 1) * n + D0) / (n * n + (D2 - 3) * n + D4 - D2 + 2)
     end
 
@@ -150,70 +136,17 @@ function qnm_kerr_radial(ctx::QNMKerrContext{TR,TI}) where {TR<:AbstractFloat,TI
         if i == 0
             return 0
         end
-        n = i + n_inv
+        n = i + cf_n_inv
         return (-2 * n * n + (D1 + 2) * n + D3) / (n * n + (D2 - 3) * n + D4 - D2 + 2)
     end
 
-    conv2, error, iter = continued_fraction_lentz(TR, rad_a, rad_b, cf_tol, cf_N_min, cf_N_max)
+    conv2, error, iter = continued_fraction_lentz(
+        TR, rad_a, rad_b, cf_tol, cf_N_min, cf_N_max
+    )
 
-    inv_cf = βn[n_inv + 1] - γn[n_inv + 1] * conv1 + γn[n_inv + 1] * conv2
+    inv_cf = βn[cf_n_inv + 1] - γn[cf_n_inv + 1] * conv1 + γn[cf_n_inv + 1] * conv2
 
     return inv_cf, error, iter
 end
 
-function qnm_kerr_cf_δ!(
-    ωvec::SVector{2,TR}, cache::QNMKerrCFCache{TR,TI}
-)::SVector{2,TR} where {TR<:AbstractFloat,TI<:Integer}
-    @unpack_QNMKerrCFParams cache.params
-
-    ω = ωvec[1] + im * ωvec[2]
-
-    M = cache.M
-    c = a * ω
-    sws_eigM!(M, s, c, m, l_max)
-    A_vals = eigvals!(M; sortby=abs)
-    if isnothing(A_guess)
-        A_idx = sws_eigvalidx(s, l, m)
-        A = A_vals[A_idx]
-    else
-        A = argmin(vi -> abs(vi - A_guess), A_vals)
-    end
-
-    inv_cf, cf_error, cf_iter = qnm_kerr_radial(TR, a, s, m, A, ω)
-
-    pole_factors = prod(ω .- poles)
-    supp_err = inv_cf / pole_factors
-
-    return SA[real(supp_err), imag(supp_err)]
-end
-
-"""
-    qnm_kerr_cf(params::QNMKerrCFParams{TR}; alg=RobustMultiNewton(autodiff=AutoFiniteDiff()), kwargs...)
-
-Find the Kerr QNM using the Leaver's method for the radial equation and the Cook-Zalutskiy approach for the angular sector.
-
-# Arguments
-- `params`: QNMKerrCFParams object containing the Kerr parameters and initial guess
-- `alg`: Nonlinear algorithm to use for the eigenvalue search (default: RobustMultiNewton with AutoFiniteDiff)
-- `kwargs`: Additional keyword arguments to pass to the nonlinear solver
-"""
-function qnm_kerr_cf(
-    params::QNMKerrCFParams{TR,TI},
-    alg::Union{AbstractNonlinearAlgorithm,Nothing}=RobustMultiNewton(;
-        autodiff=AutoFiniteDiff()
-    );
-    kwargs...,
-) where {TR<:AbstractFloat,TI<:Integer}
-    @unpack_QNMKerrCFParams params
-
-    cache = QNMKerrCFCache{TR,TI}(params)
-    ω0 = SA[real(ω_guess), imag(ω_guess)]
-    prob = NonlinearProblem(qnm_kerr_cf_δ!, ω0, cache)
-    sol = solve(prob, alg; kwargs...)
-    ω = Complex{TR}(sol.u[1], sol.u[2])
-
-    return ω
-end
-
-export qnm_kerr_radial,
-    QNMKerrCFParams, QNMKerrCFCache, qnm_kerr_cf_δ!, qnm_kerr_cf, @unpack_QNMKerrCFParams
+export qnm_kerr_radial
