@@ -1,7 +1,6 @@
 module QNMSuite
 
 using ..Utils
-using ..ChebyshevSuite
 
 using ArgCheck: @argcheck
 using SciMLBase: AbstractNonlinearAlgorithm, AbstractODEAlgorithm
