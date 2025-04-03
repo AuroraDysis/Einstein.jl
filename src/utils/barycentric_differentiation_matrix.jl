@@ -72,7 +72,7 @@ function barycentric_differentiation_matrix(
     Dxi = one(TF) ./ Dx
     D = Dw .* Dxi
 
-    negative_sum_trick!(D)
+    apply_negative_sum_trick!(D)
 
     # enforce a symmetry fix for even n on the diagonal entries:
     half_n = div(n, 2)
@@ -90,7 +90,7 @@ function barycentric_differentiation_matrix(
         end
     end
 
-    negative_sum_trick!(D)
+    apply_negative_sum_trick!(D)
 
     if k == 2
         return D
@@ -105,26 +105,21 @@ function barycentric_differentiation_matrix(
             end
         end
 
-        negative_sum_trick!(D)
+        apply_negative_sum_trick!(D)
     end
 
     return D
 end
 
 # D_{k k}=-\sum_{\substack{j=0 \\ j \neq k}}^N D_{k j}
-function negative_sum_trick!(D::Matrix{TF}) where {TF<:AbstractFloat}
+function apply_negative_sum_trick!(
+    D::Matrix{TF}; constant_term::TF=zero(TF)
+) where {TF<:AbstractFloat}
     n = size(D, 1)
-
-    @inbounds for i in 1:n
-        Dii = zero(TF)
-        for j in 1:(i - 1)
-            Dii += D[i, j]
-        end
-        for j in (i + 1):n
-            Dii += D[i, j]
-        end
-        D[i, i] = -Dii
+    for i in 1:n
+        row_sum = constant_term + sum(@view(D[i, :]))
+        D[i, i] -= row_sum
     end
 end
 
-export barycentric_differentiation_matrix
+export barycentric_differentiation_matrix, apply_negative_sum_trick!
