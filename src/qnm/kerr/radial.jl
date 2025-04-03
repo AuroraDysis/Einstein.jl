@@ -55,7 +55,7 @@ SOFTWARE.
 """
 
 @doc raw"""
-    qnm_kerr_radial_cf(
+    qnm_kerr_radial(
         ::Type{TR},
         a::TR,
         s::Integer,
@@ -131,7 +131,7 @@ with $\operatorname{Cf}(0 ; \mathrm{N}) \equiv \operatorname{Cf}(\mathrm{N})$ an
 - [Cook:2014cta](@citet*)
 - [qnm/qnm/radial.py at master · duetosymmetry/qnm](https://github.com/duetosymmetry/qnm/blob/master/qnm/radial.py)
 """
-function qnm_kerr_radial_cf(
+function qnm_kerr_radial(
     ::Type{TR},
     a::TR,
     s::Integer,
@@ -196,7 +196,7 @@ function qnm_kerr_radial_cf(
         return (-2 * n * n + (D1 + 2) * n + D3) / (n * n + (D2 - 3) * n + D4 - D2 + 2)
     end
 
-    conv2, error, iter = contfrac_lentz(TR, rad_a, rad_b, cf_tol, cf_N_min, cf_N_max)
+    conv2, error, iter = continued_fraction_lentz(TR, rad_a, rad_b, cf_tol, cf_N_min, cf_N_max)
 
     inv_cf = βn[n_inv + 1] - γn[n_inv + 1] * conv1 + γn[n_inv + 1] * conv2
 
@@ -221,7 +221,7 @@ function qnm_kerr_cf_δ!(
         A = argmin(vi -> abs(vi - A_guess), A_vals)
     end
 
-    inv_cf, cf_error, cf_iter = qnm_kerr_radial_cf(TR, a, s, m, A, ω)
+    inv_cf, cf_error, cf_iter = qnm_kerr_radial(TR, a, s, m, A, ω)
 
     pole_factors = prod(ω .- poles)
     supp_err = inv_cf / pole_factors
@@ -257,5 +257,5 @@ function qnm_kerr_cf(
     return ω
 end
 
-export qnm_kerr_radial_cf,
+export qnm_kerr_radial,
     QNMKerrCFParams, QNMKerrCFCache, qnm_kerr_cf_δ!, qnm_kerr_cf, @unpack_QNMKerrCFParams

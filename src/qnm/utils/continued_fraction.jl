@@ -24,7 +24,7 @@ SOFTWARE.
 """
 
 @doc raw"""
-    contfrac_lentz([T=Float64], a::Function, b::Function, tol::T, min_iter::Integer, max_iter::Integer) where {T<:AbstractFloat}
+    continued_fraction_lentz([T=Float64], a::Function, b::Function, tol::T, min_iter::Integer, max_iter::Integer) where {T<:AbstractFloat}
 
 Compute the continued fraction
 ```math
@@ -55,7 +55,7 @@ using modified Lentz's method. Translated from [duetosymmetry/qnm](https://githu
 ```julia
 a(i) = 1
 b(i) = i == 0 ? 1 : 2
-contfrac_lentz(Float64, a, b, 10*eps(Float64), 50, 1000)
+continued_fraction_lentz(Float64, a, b, 10*eps(Float64), 50, 1000)
 ```
 
 ## Compute Golden Ratio
@@ -67,14 +67,14 @@ contfrac_lentz(Float64, a, b, 10*eps(Float64), 50, 1000)
 ```julia
 a(i) = 1
 b(i) = 1
-contfrac_lentz(Float64, a, b, 10*eps(Float64), 50, 1000)
+continued_fraction_lentz(Float64, a, b, 10*eps(Float64), 50, 1000)
 ```
 
 # References
 - [qnm/qnm/contfrac.py at master · duetosymmetry/qnm](https://github.com/duetosymmetry/qnm/blob/master/qnm/contfrac.py)
 - [press2007numerical, Stein:2019mop, lentz1976generating, thompson1986coulomb, DLMF_3103_online](@cite)
 """
-function contfrac_lentz(
+function continued_fraction_lentz(
     ::Type{T}, a::Function, b::Function, tol::T, min_iter::Integer, max_iter::Integer
 ) where {T<:AbstractFloat}
     tiny = eps(T)^2
@@ -124,7 +124,7 @@ function contfrac_lentz(
     if !converged
         throw(
             ConvergenceError(
-                "contfrac_lentz: Continued fraction did not converge after $max_iter iterations",
+                "continued_fraction_lentz: Continued fraction did not converge after $max_iter iterations",
             ),
         )
     end
@@ -132,10 +132,10 @@ function contfrac_lentz(
     return fᵢ, errorᵢ, i
 end
 
-function contfrac_lentz(
+function continued_fraction_lentz(
     a::Function, b::Function, tol::Float64, min_iter::Integer, max_iter::Integer
 )
-    return contfrac_lentz(Float64, a, b, tol, min_iter, max_iter)
+    return continued_fraction_lentz(Float64, a, b, tol, min_iter, max_iter)
 end
 
-export contfrac_lentz
+export continued_fraction_lentz
