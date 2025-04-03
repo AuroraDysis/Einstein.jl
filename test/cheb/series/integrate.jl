@@ -9,7 +9,7 @@
     # Test case 2: Constant function f'(x) = 1
     f_coeffs = [1.0]
     If_coeffs = cheb_series_integrate(f_coeffs)
-    @test If_coeffs ≈ [0.5, 0.5]
+    @test If_coeffs ≈ [1.0, 1.0]
 
     # Test case 3: Linear function f'(x) = x
     f_coeffs = [0.0, 1.0]

@@ -46,7 +46,18 @@ function cheb_series_integrate!(
 
     n = length(df)
 
-    @inbounds begin
+    if n == 1
+        f[1] = df[1]
+        f[2] = df[1]
+        return f
+    elseif n == 2
+        f[1] = df[1] - df[2] / 4
+        f[2] = df[1]
+        f[3] = df[2] / 4
+        return f
+    end
+
+    begin
         f[2] = df[1] - df[3] / 2
         for r in 2:(n - 2)
             f[r + 1] = (df[r] - df[r + 2]) / (2 * r)
