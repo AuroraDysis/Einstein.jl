@@ -4,7 +4,7 @@
             tol = typetol(Float64)
             n = 40
 
-            points = grid.points(Float64, n, -1.0, 1.0)
+            points = grid.points(Float64, n, 0.0, 1.0)
             weights = grid.barycentric_weights(n)
             itp = BarycentricInterpolation(points, weights)
             v = sin.(points)
@@ -22,7 +22,7 @@
         @testset "complex" begin
             tol = 100 * eps()
             n = 30
-            points = grid.points(Float64, n, -1.0, 1.0)
+            points = grid.points(Float64, n, 0.0, 1.0)
             weights = grid.barycentric_weights(n)
             itp = BarycentricInterpolation(points, weights)
             v = sin.(points) + im * cos.(points)
