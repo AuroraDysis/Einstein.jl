@@ -12,7 +12,7 @@ polynomial at those points, with the convention that the first value is zero.
 function cheb_lobatto_integration_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     A = cheb_lobatto_vals2coeffs_matrix(TF, n)
     S = cheb_lobatto_coeffs2vals_matrix(TF, n)
-    B = chebyshevt_integration_matrix(TF, n)
+    B = cheb_series_integration_matrix(TF, n)
     Q = S * B * A
     @inbounds Q[1, :] .= 0
     return Q

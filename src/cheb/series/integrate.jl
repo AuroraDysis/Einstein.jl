@@ -1,7 +1,7 @@
 
 """
-    chebyshevt_integrate(coeffs::AbstractVector{TF}) where {TF<:AbstractFloat}
-    chebyshevt_integrate(::Type{TF}, n::Integer)(coeffs::AbstractVector{TF}) where {TF<:AbstractFloat}
+    cheb_series_integrate(coeffs::AbstractVector{TF}) where {TF<:AbstractFloat}
+    cheb_series_integrate(::Type{TF}, n::Integer)(coeffs::AbstractVector{TF}) where {TF<:AbstractFloat}
 
 Compute the indefinite integral of a function given its Chebyshev coefficients.
 
@@ -11,13 +11,13 @@ Compute the indefinite integral of a function given its Chebyshev coefficients.
 # References
 - [chebfun/@chebtech/cumsum.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech/cumsum.m)
 """
-struct ChebyshevTIntegrationPlan{TF<:AbstractFloat,TI<:Integer}
+struct ChebyshevSeriesIntegrationPlan{TF<:AbstractFloat,TI<:Integer}
     n::TI              # Number of coefficients
     tmp::Vector{TF}    # Temporary storage for padded coefficients
     result::Vector{TF} # Result storage
     v::Vector{TI}      # Pre-computed alternating signs
 
-    function ChebyshevTIntegrationPlan{TF}(n::TI) where {TF<:AbstractFloat,TI<:Integer}
+    function ChebyshevSeriesIntegrationPlan{TF}(n::TI) where {TF<:AbstractFloat,TI<:Integer}
         # Pre-allocate workspace
         tmp = Vector{TF}(undef, n + 2)
         result = Vector{TF}(undef, n + 1)
@@ -32,7 +32,7 @@ struct ChebyshevTIntegrationPlan{TF<:AbstractFloat,TI<:Integer}
     end
 end
 
-function (op::ChebyshevTIntegrationPlan{TF,TI})(
+function (op::ChebyshevSeriesIntegrationPlan{TF,TI})(
     coeffs::AbstractVector{TF}
 ) where {TF<:AbstractFloat,TI<:Integer}
     @argcheck length(coeffs) == op.n "length(coeffs) must be equal to n"
@@ -72,13 +72,13 @@ function (op::ChebyshevTIntegrationPlan{TF,TI})(
 end
 
 function chebyshevt_integrate_plan(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
-    return ChebyshevTIntegrationPlan{TF}(n)
+    return ChebyshevSeriesIntegrationPlan{TF}(n)
 end
 
-function chebyshevt_integrate(coeffs::AbstractVector{TF}) where {TF<:AbstractFloat}
+function cheb_series_integrate(coeffs::AbstractVector{TF}) where {TF<:AbstractFloat}
     n = length(coeffs)
-    op = ChebyshevTIntegrationPlan{TF}(n)
+    op = ChebyshevSeriesIntegrationPlan{TF}(n)
     return op(coeffs)
 end
 
-export chebyshevt_integrate
+export cheb_series_integrate

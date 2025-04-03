@@ -13,11 +13,12 @@ using ToeplitzMatrices: Toeplitz, Hankel
 
 using ..Utils
 
-# utils for coefficients of the corresponding first-kind Chebyshev series expansion.
-include("chebyshevt/evaluate.jl")
-include("chebyshevt/derivative.jl")
-include("chebyshevt/integrate.jl")
-include("chebyshevt/integration_matrix.jl")
+# Chebyshev series
+include("series/evaluate.jl")
+include("series/derivative.jl")
+include("series/integrate.jl")
+include("series/integration_matrix.jl")
+include("series/chop.jl")
 
 # Gauss-Chebyshev grid
 include("chebyshev_gauss/grid.jl")

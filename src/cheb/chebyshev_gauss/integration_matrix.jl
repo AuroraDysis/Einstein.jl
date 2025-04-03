@@ -12,7 +12,7 @@ polynomial at those points, with the convention that the first value is zero.
 function cheb_gauss_integration_matrix(::Type{TF}, n::Integer) where {TF<:AbstractFloat}
     A = cheb_gauss_vals2coeffs_matrix(TF, n)
     S = cheb_gauss_coeffs2vals_matrix(TF, n)
-    B = chebyshevt_integration_matrix(TF, n)
+    B = cheb_series_integration_matrix(TF, n)
     Q = S * B * A
     return Q
 end
