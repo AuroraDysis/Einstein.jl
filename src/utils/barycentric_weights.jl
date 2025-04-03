@@ -4,7 +4,10 @@
     barycentric_weights([TF=Float64], order::Integer) where {TF<:AbstractFloat}
 
 Compute normalized barycentric weights for interpolation nodes. These weights are used in barycentric Lagrange interpolation.
-For Chebyshev-Gauss nodes or Chebyshev-Lobatto nodes, see [`cheb_gauss_barycentric_weights`](@ref) and [`cheb_lobatto_barycentric_weights`](@ref).
+For Chebyshev-Gauss nodes or Chebyshev-Lobatto nodes,
+[cheb_gauss_barycentric_weights](@ref Einstein.ChebyshevSuite.cheb_gauss_barycentric_weights)
+and [cheb_lobatto_barycentric_weights](@ref Einstein.ChebyshevSuite.cheb_lobatto_barycentric_weights)
+are more efficient implementations.
 
 # Arguments
 - `x::AbstractVector{TF}`: Vector of distinct interpolation nodes, for equidistant nodes, use range is recommended `x = x_min:dx:x_max`
