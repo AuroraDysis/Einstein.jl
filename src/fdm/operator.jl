@@ -3,8 +3,9 @@ import Base: *
 abstract type AbstractHermiteFiniteDifferenceOperator{TR<:Real} end
 abstract type AbstractFiniteDifferenceOperator{TR<:Real} end
 
-struct HermiteFiniteDifferenceOperator{TR<:Real,Width,HalfWidth,BoundaryWidth} <:
-       AbstractHermiteFiniteDifferenceOperator{TR}
+struct HermiteFiniteDifferenceOperator{
+    TR<:Real,TI<:Integer,Width,HalfWidth,BoundaryWidth
+} <: AbstractHermiteFiniteDifferenceOperator{TR}
     D_weights::SVector{Width,TR}
     E_weights::SVector{Width,TR}
     D_left_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
@@ -13,27 +14,29 @@ struct HermiteFiniteDifferenceOperator{TR<:Real,Width,HalfWidth,BoundaryWidth} <
     E_right_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
     D_factor::Base.RefValue{TR}
     E_factor::Base.RefValue{TR}
-    derivative_order::Integer
-    accuracy_order::Integer
+    derivative_order::TI
+    accuracy_order::TI
 end
 
-struct FiniteDifferenceDerivativeOperator{TR<:Real,Width,HalfWidth,BoundaryWidth} <:
-       AbstractFiniteDifferenceOperator{TR}
+struct FiniteDifferenceDerivativeOperator{
+    TR<:Real,TI<:Integer,Width,HalfWidth,BoundaryWidth
+} <: AbstractFiniteDifferenceOperator{TR}
     weights::SVector{Width,TR}
     left_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
     right_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
     factor::Base.RefValue{TR}
-    derivative_order::Integer
-    accuracy_order::Integer
+    derivative_order::TI
+    accuracy_order::TI
 end
 
-struct FiniteDifferenceDissipationOperator{TR<:Real,Width,HalfWidth,BoundaryWidth} <:
-       AbstractFiniteDifferenceOperator{TR}
+struct FiniteDifferenceDissipationOperator{
+    TR<:Real,TI<:Integer,Width,HalfWidth,BoundaryWidth
+} <: AbstractFiniteDifferenceOperator{TR}
     weights::SVector{Width,TR}
     left_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
     right_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
     factor::Base.RefValue{TR}
-    dissipation_order::Integer
+    dissipation_order::TI
 end
 
 abstract type ConvolveMode end
@@ -234,15 +237,15 @@ Create a finite difference derivative operator with specified derivative and acc
 - `dx::TR`: The grid spacing
 """
 function fdm_derivative_operator(
-    ::Type{TR}, derivative_order::Integer, accuracy_order::Integer, dx::TR
-) where {TR<:Real}
+    ::Type{TR}, derivative_order::TI, accuracy_order::TI, dx::TR
+) where {TR<:Real,TI<:Integer}
     weights = fdm_central_weights(TR, derivative_order, accuracy_order)
     left_weights, right_weights = fdm_boundary_weights(TR, derivative_order, accuracy_order)
     width = length(weights)
     half_width = div(width - 1, 2)
     boundary_width = size(left_weights, 2)
     factor = inv(dx^derivative_order)
-    return FiniteDifferenceDerivativeOperator{TR,width,half_width,boundary_width}(
+    return FiniteDifferenceDerivativeOperator{TR,TI,width,half_width,boundary_width}(
         SVector{width,TR}(weights),
         SMatrix{half_width,boundary_width,TR}(left_weights),
         SMatrix{half_width,boundary_width,TR}(right_weights),
@@ -253,14 +256,14 @@ function fdm_derivative_operator(
 end
 
 function fdm_derivative_operator(
-    derivative_order::Integer, accuracy_order::Integer, dx::Float64
-)
+    derivative_order::TI, accuracy_order::TI, dx::Float64
+) where {TI<:Integer}
     return fdm_derivative_operator(Float64, derivative_order, accuracy_order, dx)
 end
 
 function fdm_hermite_derivative_operator(
-    ::Type{TR}, derivative_order::Integer, accuracy_order::Integer, dx::TR
-) where {TR<:Real}
+    ::Type{TR}, derivative_order::TI, accuracy_order::TI, dx::TR
+) where {TR<:Real,TI<:Integer}
     D_weights, E_weights = fdm_hermite_weights(TR, derivative_order, accuracy_order)
     D_left_weights, E_left_weights, D_right_weights, E_right_weights = fdm_hermite_boundary_weights(
         TR, derivative_order, accuracy_order
@@ -271,7 +274,7 @@ function fdm_hermite_derivative_operator(
     boundary_width = size(D_left_weights, 2)
     D_factor = inv(dx^derivative_order)
     E_factor = inv(dx^(derivative_order - 1))
-    return HermiteFiniteDifferenceOperator{TR,width,half_width,boundary_width}(
+    return HermiteFiniteDifferenceOperator{TR,TI,width,half_width,boundary_width}(
         D_weights,
         E_weights,
         D_left_weights,
@@ -286,13 +289,13 @@ function fdm_hermite_derivative_operator(
 end
 
 function fdm_hermite_derivative_operator(
-    derivative_order::Integer, accuracy_order::Integer, dx::Float64
-)
+    derivative_order::TI, accuracy_order::TI, dx::Float64
+) where {TI<:Integer}
     return fdm_hermite_derivative_operator(Float64, derivative_order, accuracy_order, dx)
 end
 
 """
-    fdm_dissipation_operator([TR=Float64], dissipation_order::Integer, σ::TR, dx::TR) -> FiniteDifferenceDerivativeOperator{TR}
+    fdm_dissipation_operator([TR=Float64], dissipation_order::TI, σ::TR, dx::TR) -> FiniteDifferenceDerivativeOperator{TR}
 
 Create a finite difference dissipation operator with specified dissipation order.
 
@@ -303,15 +306,15 @@ Create a finite difference dissipation operator with specified dissipation order
 - `dx::TR`: The grid spacing
 """
 function fdm_dissipation_operator(
-    ::Type{TR}, dissipation_order::Integer, σ::TR, dx::TR
-) where {TR<:Real}
+    ::Type{TR}, dissipation_order::TI, σ::TR, dx::TR
+) where {TR<:Real,TI<:Integer}
     weights = fdm_dissipation_weights(TR, dissipation_order)
     left_weights, right_weights = fdm_dissipation_boundary_weights(TR, dissipation_order)
     width = length(weights)
     half_width = div(width - 1, 2)
     boundary_width = size(left_weights, 2)
     factor = σ / dx
-    return FiniteDifferenceDissipationOperator{TR,width,half_width,boundary_width}(
+    return FiniteDifferenceDissipationOperator{TR,TI,width,half_width,boundary_width}(
         SVector{width,TR}(weights),
         SMatrix{half_width,boundary_width,TR}(left_weights),
         SMatrix{half_width,boundary_width,TR}(right_weights),

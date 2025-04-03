@@ -23,24 +23,26 @@ nearest to the evaluation point.
 # References
 - [Berrut2004](@citet*)
 """
-struct LocalBarycentricInterpolation{TF<:AbstractFloat}
+struct LocalBarycentricInterpolation{TF<:AbstractFloat,TI<:Integer}
     points::StepRangeLen{TF}
     values::AbstractVector{TF}
     weights::Vector{TF}
-    degree::Integer
+    degree::TI
     dx_inv::TF
     lower_bound::TF
     upper_bound::TF
 
     function LocalBarycentricInterpolation(
-        points::StepRangeLen{TF}, values::AbstractVector{TF}; degree::Integer=4
-    ) where {TF<:AbstractFloat}
+        points::StepRangeLen{TF}, values::AbstractVector{TF}; degree::TI=4
+    ) where {TF<:AbstractFloat,TI<:Integer}
         @argcheck length(points) >= degree + 1 "points is too small for degree"
         @argcheck length(points) == length(values) "points and values must have the same length"
 
         weights = barycentric_weights(TF, degree)
         dx_inv = inv(step(points))
-        return new{TF}(points, values, weights, degree, dx_inv, points[begin], points[end])
+        return new{TI,TF}(
+            points, values, weights, degree, dx_inv, points[begin], points[end]
+        )
     end
 end
 
