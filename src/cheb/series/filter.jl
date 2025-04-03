@@ -41,8 +41,8 @@ which seems make the simulation more stable according to my tests.
 
 # Arguments
 - `weights`: Vector of filter weights
-- `S`: First operator matrix
-- `A`: Second operator matrix
+- `S`: Chebyshev synthesis matrix: maps Chebyshev series to function values at Chebyshev grid points
+- `A`: Chebyshev analysis matrix: maps function values at Chebyshev grid points to Chebyshev series
 - `negative_sum_trick`: Boolean flag for negative sum trick (default: true)
 
 The function applies the weights through diagonal scaling and implements
