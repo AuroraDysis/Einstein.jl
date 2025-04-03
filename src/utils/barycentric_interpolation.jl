@@ -60,9 +60,9 @@ struct BarycentricInterpolation{
     weights::VT2  # Barycentric weights
 
     function BarycentricInterpolation(
-        points::AbstractVector{TF}, weights::AbstractVector{TF}
-    ) where {TF<:AbstractFloat}
-        return new{TF}(points, weights)
+        points::VT1, weights::VT2
+    ) where {TF<:AbstractFloat,VT1<:AbstractVector{TF},VT2<:AbstractVector{TF}}
+        return new{TF,VT1,VT2}(points, weights)
     end
 end
 
