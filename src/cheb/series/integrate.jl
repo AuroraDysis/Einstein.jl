@@ -39,7 +39,7 @@ function cheb_series_integrate!(
 ) where {TF<:AbstractFloat}
     @boundscheck begin
         @argcheck length(f) == length(df) + 1 "length(f) must be equal to length(df) + 1"
-        @argcheck length(df) > 1 "length(df) must be greater than 1"
+        @argcheck length(df) >= 1 "length(df) must be greater than 1"
         @argcheck firstindex(f) == 1 "firstindex(f) must be 1"
         @argcheck firstindex(df) == 1 "firstindex(df) must be 1"
     end
