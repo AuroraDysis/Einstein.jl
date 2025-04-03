@@ -42,7 +42,7 @@
     @testset "Operator style" begin
         n = 100
         coeffs = rand(n)
-        ctx = cheb_lobatto_coeffs2vals_create_context(Float64, n)
+        ctx = cheb_lobatto_coeffs2vals_context(Float64, n)
 
         # Test operator call
         vals1 = cheb_lobatto_coeffs2vals!(ctx, coeffs)

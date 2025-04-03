@@ -4,11 +4,9 @@
 A context object for the `cheb_series_chop!` function to reuse temporary storage
 and minimize dynamic memory allocations.
 
-Create instances using `cheb_series_chop_create_context`.
+Create instances using `cheb_series_chop_context`.
 """
-struct ChebyshevSeriesChopContext{
-    TF<:AbstractFloat,TI<:Integer
-}
+struct ChebyshevSeriesChopContext{TF<:AbstractFloat,TI<:Integer}
     n_max::TI # Maximum coefficient vector length supported by this context
     abs_coeffs::Vector{TF}
     envelope::Vector{TF}
@@ -18,9 +16,11 @@ struct ChebyshevSeriesChopContext{
     """
         ChebyshevSeriesChopContext{TF, TI}(n_max::TI) where {TF<:AbstractFloat, TI<:Integer}
 
-    Internal constructor for the context. Use `cheb_series_chop_create_context`.
+    Internal constructor for the context. Use `cheb_series_chop_context`.
     """
-    function ChebyshevSeriesChopContext{TF,TI}(n_max::TI) where {TF<:AbstractFloat,TI<:Integer}
+    function ChebyshevSeriesChopContext{TF,TI}(
+        n_max::TI
+    ) where {TF<:AbstractFloat,TI<:Integer}
         # The algorithm itself requires n >= 17, but the context can be smaller
         # if only used for smaller inputs (though chopping won't occur then).
         # We enforce n_max >= 1 for valid vector indexing.
@@ -29,12 +29,12 @@ struct ChebyshevSeriesChopContext{
         envelope = Vector{TF}(undef, n_max)
         log_env_vals = Vector{TF}(undef, n_max)
         objective_vals = Vector{TF}(undef, n_max)
-        new{TF,TI}(n_max, abs_coeffs, envelope, log_env_vals, objective_vals)
+        return new{TF,TI}(n_max, abs_coeffs, envelope, log_env_vals, objective_vals)
     end
 end
 
 """
-    cheb_series_chop_create_context(::Type{TF}, n_max::TI) where {TF<:AbstractFloat, TI<:Integer}
+    cheb_series_chop_context(::Type{TF}, n_max::TI) where {TF<:AbstractFloat, TI<:Integer}
 
 Create a context for `cheb_series_chop!` that can handle coefficient vectors
 up to length `n_max`.
@@ -46,7 +46,9 @@ up to length `n_max`.
 # Returns
 - `ChebyshevSeriesChopContext`: The reusable context object.
 """
-function cheb_series_chop_create_context(::Type{TF}, n_max::TI) where {TF<:AbstractFloat,TI<:Integer}
+function cheb_series_chop_context(
+    ::Type{TF}, n_max::TI
+) where {TF<:AbstractFloat,TI<:Integer}
     return ChebyshevSeriesChopContext{TF,TI}(n_max)
 end
 
@@ -57,9 +59,7 @@ Internal core logic for `cheb_series_chop!`, operating using the pre-allocated `
 Returns the cutoff index. This function performs the actual computation.
 """
 function _cheb_series_chop_impl!(
-    ctx::ChebyshevSeriesChopContext{TF,TI},
-    coeffs::AbstractVector{TF},
-    tol::TF,
+    ctx::ChebyshevSeriesChopContext{TF,TI}, coeffs::AbstractVector{TF}, tol::TF
 ) where {TF<:AbstractFloat,TI<:Integer}
     n = length(coeffs)
     (; n_max, abs_coeffs, envelope, log_env_vals, objective_vals) = ctx
@@ -178,12 +178,11 @@ function _cheb_series_chop_impl!(
         # This helps limit the search range for the minimum.
         j3 = findlast(x -> x >= target_val, view(envelope_view, 1:plateau_point)) # Search only up to plateau_point
         if isnothing(j3)
-             # If no value meets the target, search starts from the beginning.
-             # However, the logic below uses plateau_j2 as the primary upper bound.
-             # We refine the search end based on j3 relative to plateau_j2.
+            # If no value meets the target, search starts from the beginning.
+            # However, the logic below uses plateau_j2 as the primary upper bound.
+            # We refine the search end based on j3 relative to plateau_j2.
             j3 = 0 # Set to 0 if not found
         end
-
 
         # Determine the end index for the minimization search range.
         # Start with the lookahead index from the plateau scan.
@@ -191,19 +190,19 @@ function _cheb_series_chop_impl!(
         adjust_objective_end::Bool = false
         # If j3 is found and is earlier than plateau_j2, we can potentially shorten the search range.
         if j3 > 0 && j3 < plateau_j2
-             # Search up to j3 + 1 to include the transition point.
+            # Search up to j3 + 1 to include the transition point.
             search_end = j3 + 1
             # Flag that the last value of the objective function might need adjustment
             # because we truncated the search based on target_val.
             adjust_objective_end = true
         end
-         # Ensure search_end is within valid bounds [1, n]
+        # Ensure search_end is within valid bounds [1, n]
         search_end = max(1, search_end) # Must be at least 1
         search_end = min(search_end, n)   # Cannot exceed total length
 
         # If the search range is empty (e.g., if plateau_j2 was < 1 somehow), chop at 1.
         if search_end <= 0 # Should technically be search_end < 1, but <= 0 is safer
-             cutoff = 1
+            cutoff = 1
         else
             # --- Minimize the objective function using pre-allocated views ---
             # Create views for the active search range [1:search_end]
@@ -213,7 +212,9 @@ function _cheb_series_chop_impl!(
 
             # Calculate log10 of the envelope in-place into log_env_active_view.
             # Handle cases where envelope value is 0.
-            @. log_env_active_view = ifelse(current_env_active_view <= 0.0, -TF(Inf), log10(current_env_active_view))
+            @. log_env_active_view = ifelse(
+                current_env_active_view <= 0.0, -TF(Inf), log10(current_env_active_view)
+            )
 
             # Calculate the bias term for the objective function.
             # LinRange allocation is relatively minor compared to the main loop, kept for clarity.
@@ -258,7 +259,6 @@ function _cheb_series_chop_impl!(
     return cutoff
 end
 
-
 """
     cheb_series_chop!(ctx::ChebyshevSeriesChopContext{TF}, coeffs::AbstractVector{TF}, tol::TF=eps(TF)) where {TF<:AbstractFloat}
 
@@ -273,9 +273,7 @@ Determine the chopping index using a pre-allocated context.
 - `cutoff::Int`: The calculated cutoff index. If `cutoff == length(coeffs)`, no suitable chopping point was found.
 """
 function cheb_series_chop!(
-    ctx::ChebyshevSeriesChopContext{TF,TI},
-    coeffs::AbstractVector{TF},
-    tol::TF=eps(TF)
+    ctx::ChebyshevSeriesChopContext{TF,TI}, coeffs::AbstractVector{TF}, tol::TF=eps(TF)
 ) where {TF<:AbstractFloat,TI<:Integer}
     # Perform checks that depend only on tol and coeffs properties here
     @argcheck !isempty(coeffs) "coeffs must not be empty"
@@ -292,7 +290,7 @@ Determine a suitable cutoff index for a coefficient vector using the "standard" 
 
 This version creates a temporary context internally and is suitable for single use or when performance is not critical.
 For repeated use with vectors of similar maximum size, create and reuse a
-`ChebyshevSeriesChopContext` via `cheb_series_chop_create_context` and call `cheb_series_chop!` for better performance (reduced allocations).
+`ChebyshevSeriesChopContext` via `cheb_series_chop_context` and call `cheb_series_chop!` for better performance (reduced allocations).
 
 # Arguments
 - `coeffs::AbstractVector{TF}`: A non-empty vector of coefficients.
@@ -330,7 +328,7 @@ println("Example 5 (coeffs + 1e-10 noise, tol=1e-10): ", cutoff5) # Expected: ~1
 # --- Using a pre-allocated context (more performant for repeated calls) ---
 println("\\n--- Pre-allocated Context Examples ---")
 max_len = 60 # Max size the context should handle
-ctx = cheb_series_chop_create_context(Float64, max_len)
+ctx = cheb_series_chop_context(Float64, max_len)
 
 coeffs_a = 10.0 .^ -(0:49)
 coeffs_b = 10.0 .^ -(0:39) .+ 1e-14 .* cos.((1.0:40.0).^2)
@@ -347,7 +345,7 @@ println("Context Example 2 (coeffs_b, tol=1e-12): ", cutoff_ctx2) # Expected: ~1
 For best performance, especially in loops or repeated calls:
 ```julia
 # 1. Create context once
-ctx = cheb_series_chop_create_context(Float64, n_max) # Choose appropriate TF and n_max
+ctx = cheb_series_chop_context(Float64, n_max) # Choose appropriate TF and n_max
 
 # 2. Reuse context in loops
 for coeffs_vec in list_of_coefficient_vectors
@@ -370,7 +368,7 @@ function cheb_series_chop(
     n = length(coeffs)
     # Create a temporary context for this single call.
     # This allocates memory for the context and its internal arrays.
-    ctx = cheb_series_chop_create_context(TF, n)
+    ctx = cheb_series_chop_context(TF, n)
 
     # Call the internal implementation function using the temporary context.
     # Note: We call the _impl! directly here for efficiency, avoiding
@@ -380,8 +378,7 @@ function cheb_series_chop(
 end
 
 # Export the public API functions
-export cheb_series_chop, cheb_series_chop!, cheb_series_chop_create_context
-
+export cheb_series_chop, cheb_series_chop!, cheb_series_chop_context
 
 #= Example Usage (Illustrative - run in a Julia environment)
 using ArgCheck # Make sure ArgCheck is loaded
@@ -401,7 +398,7 @@ println("Example 5: ", cheb_series_chop(coeffs .+ 1e-10 .* random_noise, 1e-10))
 # --- Pre-allocated Context ---
 println("\n--- Pre-allocated Context Examples ---")
 max_len = 60
-ctx = cheb_series_chop_create_context(Float64, max_len)
+ctx = cheb_series_chop_context(Float64, max_len)
 
 coeffs_a = 10.0 .^ -(0:49)
 coeffs_b = 10.0 .^ -(0:39) .+ 1e-14 .* cos.((1.0:40.0).^2)

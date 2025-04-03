@@ -40,13 +40,15 @@ struct LocalBarycentricInterpolation{TF<:AbstractFloat,TI<:Integer}
 
         weights = barycentric_weights(TF, degree)
         dx_inv = inv(step(points))
-        return new{TI,TF}(
+        return new{TF,TI}(
             points, values, weights, degree, dx_inv, points[begin], points[end]
         )
     end
 end
 
-function (itp::LocalBarycentricInterpolation{TF})(x::TF) where {TF<:AbstractFloat}
+function (itp::LocalBarycentricInterpolation{TF,TI})(
+    x::TF
+) where {TF<:AbstractFloat,TI<:Integer}
     (; points, values, weights, degree, dx_inv, lower_bound, upper_bound) = itp
 
     @boundscheck begin

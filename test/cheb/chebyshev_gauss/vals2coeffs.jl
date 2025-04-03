@@ -43,7 +43,7 @@
     @testset "Operator style" begin
         n = 100
         vals = rand(n)
-        ctx = cheb_gauss_vals2coeffs_create_context(Float64, n)
+        ctx = cheb_gauss_vals2coeffs_context(Float64, n)
 
         # Test operator call
         coeffs1 = cheb_gauss_vals2coeffs!(ctx, vals)

@@ -1,13 +1,13 @@
 """
     cheb_lobatto_coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
-    cheb_lobatto_coeffs2vals_create_context([TF=Float64], n::Integer)(coeffs::AbstractVector{TFC})
+    cheb_lobatto_coeffs2vals_context([TF=Float64], n::Integer)(coeffs::AbstractVector{TFC})
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 2nd kind.
 
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-ctx = cheb_lobatto_coeffs2vals_create_context(Float64, n)
+ctx = cheb_lobatto_coeffs2vals_context(Float64, n)
 values = cheb_lobatto_coeffs2vals!(ctx, coeffs)
 ```
 
@@ -15,28 +15,18 @@ values = cheb_lobatto_coeffs2vals!(ctx, coeffs)
 - [chebfun/@chebtech2/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/coeffs2vals.m)
 """
 struct ChebyshevLobattoCoeffs2ValsContext{
-    TF<:AbstractFloat,TI<:Integer,TPlan<:Plan{Complex{TF}}
+    TF<:AbstractFloat,TI<:Integer,TP<:Plan{Complex{TF}}
 }
     n::TI
     tmp::Vector{Complex{TF}}
     complex_output::Vector{Complex{TF}}
     real_output::Vector{TF}
-    fft_plan::TPlan
-
-    function ChebyshevLobattoCoeffs2ValsContext{TF,TI}(
-        n::TI
-    ) where {TF<:AbstractFloat,TI<:Integer}
-        tmp = zeros(Complex{TF}, 2n - 2)
-        complex_output = zeros(Complex{TF}, n)
-        real_output = zeros(TF, n)
-        fft_plan = plan_fft_measure!(tmp)
-        return new{TF,TI,typeof(fft_plan)}(n, tmp, complex_output, real_output, fft_plan)
-    end
+    fft_plan::TP
 end
 
 function _cheb_lobatto_coeffs2vals_impl!(
-    ctx::ChebyshevLobattoCoeffs2ValsContext{TF,TI}, coeffs::AbstractVector{TFC}
-) where {TF<:AbstractFloat,TI<:Integer,TFC<:Union{TF,Complex{TF}}}
+    ctx::ChebyshevLobattoCoeffs2ValsContext{TF,TI,TP}, coeffs::AbstractVector{TFC}
+) where {TF<:AbstractFloat,TI<:Integer,TFC<:Union{TF,Complex{TF}},TP<:Plan{Complex{TF}}}
     (; n, tmp, complex_output, fft_plan) = ctx
 
     @argcheck length(coeffs) == n "coeffs must have length n"
@@ -76,8 +66,8 @@ function _cheb_lobatto_coeffs2vals_impl!(
 end
 
 function cheb_lobatto_coeffs2vals!(
-    ctx::ChebyshevLobattoCoeffs2ValsContext{TF,TI}, coeffs::AbstractVector{TF}
-) where {TF<:AbstractFloat,TI<:Integer}
+    ctx::ChebyshevLobattoCoeffs2ValsContext{TF,TI,TP}, coeffs::AbstractVector{TF}
+) where {TF<:AbstractFloat,TI<:Integer,TP<:Plan{Complex{TF}}}
     (; complex_output, real_output) = ctx
     _cheb_lobatto_coeffs2vals_impl!(ctx, coeffs)
     @. real_output = real(complex_output)
@@ -85,24 +75,31 @@ function cheb_lobatto_coeffs2vals!(
 end
 
 function cheb_lobatto_coeffs2vals!(
-    ctx::ChebyshevLobattoCoeffs2ValsContext{TF,TI}, coeffs::AbstractVector{Complex{TF}}
-) where {TF<:AbstractFloat,TI<:Integer}
+    ctx::ChebyshevLobattoCoeffs2ValsContext{TF,TI,TP}, coeffs::AbstractVector{Complex{TF}}
+) where {TF<:AbstractFloat,TI<:Integer,TP<:Plan{Complex{TF}}}
     _cheb_lobatto_coeffs2vals_impl!(ctx, coeffs)
     return ctx.complex_output
 end
 
-function cheb_lobatto_coeffs2vals_create_context(
+function cheb_lobatto_coeffs2vals_context(
     ::Type{TF}, n::TI
 ) where {TF<:AbstractFloat,TI<:Integer}
     @argcheck n > 1 "n must be greater than 1"
-    return ChebyshevLobattoCoeffs2ValsContext{TF,TI}(n)
+
+    tmp = zeros(Complex{TF}, 2n - 2)
+    complex_output = zeros(Complex{TF}, n)
+    real_output = zeros(TF, n)
+    fft_plan = plan_fft_measure!(tmp)
+    return ChebyshevLobattoCoeffs2ValsContext{TF,TI,typeof(fft_plan)}(
+        n, tmp, complex_output, real_output, fft_plan
+    )
 end
 
 function cheb_lobatto_coeffs2vals(
     coeffs::AbstractVector{TFC}
 ) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     n = length(coeffs)
-    ctx = cheb_lobatto_coeffs2vals_create_context(real(TFC), n)
+    ctx = cheb_lobatto_coeffs2vals_context(real(TFC), n)
     return cheb_lobatto_coeffs2vals!(ctx, coeffs)
 end
 
@@ -123,7 +120,7 @@ function cheb_lobatto_coeffs2vals_matrix(::Type{TF}, n::Integer) where {TF<:Abst
     end
 
     S = Array{TF,2}(undef, n, n)
-    ctx = cheb_lobatto_coeffs2vals_create_context(TF, n)
+    ctx = cheb_lobatto_coeffs2vals_context(TF, n)
     @inbounds for i in 1:n
         S[:, i] .= cheb_lobatto_coeffs2vals!(ctx, OneElement(one(TF), i, n))
     end
@@ -134,5 +131,5 @@ function cheb_lobatto_coeffs2vals_matrix(n::Integer)
     return cheb_lobatto_coeffs2vals_matrix(Float64, n)
 end
 
-export cheb_lobatto_coeffs2vals_create_context,
+export cheb_lobatto_coeffs2vals_context,
     cheb_lobatto_coeffs2vals, cheb_lobatto_coeffs2vals!, cheb_lobatto_coeffs2vals_matrix
