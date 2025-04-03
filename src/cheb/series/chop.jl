@@ -79,12 +79,6 @@ function _cheb_series_chop_impl!(
     # Initialize cutoff to n (default "not happy" state, meaning no chop point found)
     cutoff = n
 
-    # Algorithm requires a minimum length to work reliably.
-    # If the input is too short, we cannot reliably find a chop point.
-    if n < 17
-        return cutoff # Return n, indicating no chopping point found
-    end
-
     # --- Step 1: Compute envelope (using views and in-place operations) ---
     # Calculate absolute values of coefficients and store in b_view
     @. b_view = abs(coeffs)
@@ -275,11 +269,19 @@ Determine the chopping index using a pre-allocated context.
 function cheb_series_chop!(
     ctx::ChebyshevSeriesChopContext{TF,TI}, coeffs::AbstractVector{TF}, tol::TF=eps(TF)
 ) where {TF<:AbstractFloat,TI<:Integer}
-    # Perform checks that depend only on tol and coeffs properties here
-    @argcheck !isempty(coeffs) "coeffs must not be empty"
-    @argcheck 0 < tol < 1 "tol must be between 0 and 1 (exclusive)"
+    @boundscheck begin
+        @argcheck !isempty(coeffs) "coeffs must not be empty"
+        @argcheck 0 < tol < 1 "tol must be between 0 and 1 (exclusive)"
+    end
 
-    # Call the internal implementation function that uses the context
+    n = length(coeffs)
+
+    # Algorithm requires a minimum length to work reliably.
+    # If the input is too short, we cannot reliably find a chop point.
+    if n < 17
+        return n
+    end
+
     return _cheb_series_chop_impl!(ctx, coeffs, tol)
 end
 
@@ -361,19 +363,21 @@ end
 function cheb_series_chop(
     coeffs::AbstractVector{TF}, tol::TF=eps(TF)
 ) where {TF<:AbstractFloat}
-    # --- Input Validation ---
-    @argcheck !isempty(coeffs) "coeffs must not be empty"
-    @argcheck 0 < tol < 1 "tol must be between 0 and 1 (exclusive)"
+    @boundscheck begin
+        @argcheck !isempty(coeffs) "coeffs must not be empty"
+        @argcheck 0 < tol < 1 "tol must be between 0 and 1 (exclusive)"
+    end
 
     n = length(coeffs)
-    # Create a temporary context for this single call.
-    # This allocates memory for the context and its internal arrays.
+
+    # Algorithm requires a minimum length to work reliably.
+    # If the input is too short, we cannot reliably find a chop point.
+    if n < 17
+        return n
+    end
+
     ctx = cheb_series_chop_context(TF, n)
 
-    # Call the internal implementation function using the temporary context.
-    # Note: We call the _impl! directly here for efficiency, avoiding
-    # the extra checks in the public cheb_series_chop! function,
-    # as we've already performed them.
     return _cheb_series_chop_impl!(ctx, coeffs, tol)
 end
 
