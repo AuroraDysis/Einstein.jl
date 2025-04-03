@@ -14,14 +14,14 @@ coeffs = op(values)
 # References
 - [chebfun/@chebtech2/vals2coeffs.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/vals2coeffs.m)
 """
-struct GaussChebyshevLobattoVals2CoeffsPlan{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}}
+struct ChebyshevLobattoVals2CoeffsPlan{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}}
     n::Integer
     tmp::Vector{Complex{TF}}
     complex_output::Vector{Complex{TF}}
     real_output::Vector{TF}
     ifft_plan::TPlan
 
-    function GaussChebyshevLobattoVals2CoeffsPlan{TF}(n::Integer) where {TF<:AbstractFloat}
+    function ChebyshevLobattoVals2CoeffsPlan{TF}(n::Integer) where {TF<:AbstractFloat}
         tmp = zeros(Complex{TF}, 2n - 2)
         complex_output = zeros(Complex{TF}, n)
         real_output = zeros(TF, n)
@@ -31,7 +31,7 @@ struct GaussChebyshevLobattoVals2CoeffsPlan{TF<:AbstractFloat,TPlan<:Plan{Comple
 end
 
 function _compute_cheb_lobatto_vals2coeffs!(
-    op::GaussChebyshevLobattoVals2CoeffsPlan{TF}, vals::AbstractVector{TFC}
+    op::ChebyshevLobattoVals2CoeffsPlan{TF}, vals::AbstractVector{TFC}
 ) where {TF<:AbstractFloat,TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     (; n, tmp, complex_output, ifft_plan) = op
 
@@ -64,7 +64,7 @@ function _compute_cheb_lobatto_vals2coeffs!(
     return nothing
 end
 
-function (op::GaussChebyshevLobattoVals2CoeffsPlan{TF})(
+function (op::ChebyshevLobattoVals2CoeffsPlan{TF})(
     vals::AbstractVector{TF}
 ) where {TF<:AbstractFloat}
     (; complex_output, real_output) = op
@@ -73,7 +73,7 @@ function (op::GaussChebyshevLobattoVals2CoeffsPlan{TF})(
     return real_output
 end
 
-function (op::GaussChebyshevLobattoVals2CoeffsPlan{TF})(
+function (op::ChebyshevLobattoVals2CoeffsPlan{TF})(
     vals::AbstractVector{Complex{TF}}
 ) where {TF<:AbstractFloat}
     (; complex_output) = op
@@ -90,7 +90,7 @@ function cheb_lobatto_vals2coeffs_plan(
         return identity
     end
 
-    return GaussChebyshevLobattoVals2CoeffsPlan{TF}(n)
+    return ChebyshevLobattoVals2CoeffsPlan{TF}(n)
 end
 
 function cheb_lobatto_vals2coeffs(

@@ -14,7 +14,7 @@ values = op(coeffs)
 # References
 - [chebfun/@chebtech1/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/coeffs2vals.m)
 """
-struct GaussChebyshevCoeffs2ValsPlan{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}}
+struct ChebyshevGaussCoeffs2ValsPlan{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}}
     n::Integer
     weights::Vector{Complex{TF}}
     tmp::Vector{Complex{TF}}
@@ -22,7 +22,7 @@ struct GaussChebyshevCoeffs2ValsPlan{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}}
     real_output::Vector{TF}
     fft_plan::TPlan
 
-    function GaussChebyshevCoeffs2ValsPlan{TF}(n::Integer) where {TF<:AbstractFloat}
+    function ChebyshevGaussCoeffs2ValsPlan{TF}(n::Integer) where {TF<:AbstractFloat}
         weights = Vector{Complex{TF}}(undef, 2n)
         tmp = Vector{Complex{TF}}(undef, 2n)
         complex_output = Vector{Complex{TF}}(undef, n)
@@ -48,7 +48,7 @@ function _compute_cheb_gauss_coeffs2vals_weights!(
 end
 
 function _compute_cheb_gauss_coeffs2vals!(
-    op::GaussChebyshevCoeffs2ValsPlan{TF}, coeffs::AbstractVector{TFC}
+    op::ChebyshevGaussCoeffs2ValsPlan{TF}, coeffs::AbstractVector{TFC}
 ) where {TF<:AbstractFloat,TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     (; n, weights, tmp, complex_output, fft_plan) = op
 
@@ -82,7 +82,7 @@ function _compute_cheb_gauss_coeffs2vals!(
     return nothing
 end
 
-function (op::GaussChebyshevCoeffs2ValsPlan{TF})(
+function (op::ChebyshevGaussCoeffs2ValsPlan{TF})(
     coeffs::AbstractVector{TF}
 ) where {TF<:AbstractFloat}
     (; complex_output, real_output) = op
@@ -91,7 +91,7 @@ function (op::GaussChebyshevCoeffs2ValsPlan{TF})(
     return real_output
 end
 
-function (op::GaussChebyshevCoeffs2ValsPlan{TF})(
+function (op::ChebyshevGaussCoeffs2ValsPlan{TF})(
     coeffs::AbstractVector{Complex{TF}}
 ) where {TF<:AbstractFloat}
     _compute_cheb_gauss_coeffs2vals!(op, coeffs)
@@ -105,7 +105,7 @@ function cheb_gauss_coeffs2vals_plan(::Type{TF}, n::Integer) where {TF<:Abstract
         return identity
     end
 
-    return GaussChebyshevCoeffs2ValsPlan{TF}(n)
+    return ChebyshevGaussCoeffs2ValsPlan{TF}(n)
 end
 
 function cheb_gauss_coeffs2vals(
