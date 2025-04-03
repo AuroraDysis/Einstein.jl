@@ -23,7 +23,7 @@ b_0 = \sum_{r=1}^{n} (-1)^{r+1} b_r
 - The other coefficients are given by:
 ```math
 b_1 = c_0 - c_2/2
-b_r = (c_{r-1} - c_{r+1})/(2r) \text{ for } r > 0
+b_r = (c_{r-1} - c_{r+1})/(2r) \text{ for } r > 1
 ```
 with $c_{n+1} = c_{n+2} = 0$.
 
