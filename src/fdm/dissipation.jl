@@ -18,10 +18,10 @@ Calculate the weights for Kreiss-Oliger dissipation of given order [Babiuc:2007v
 function fdm_dissipation_weights(::Type{TR}, dissipation_order::Integer) where {TR<:Real}
     @argcheck iseven(dissipation_order) "Only even orders are supported."
     r = div(dissipation_order, 2)
-    wts = fdm_central_weights(TR, dissipation_order, 2)
+    weights = fdm_central_weights(TR, dissipation_order, 2)
     factor = (-1)^(r + 1) / 2^(2 * r)
-    @.. wts = factor * wts
-    return wts
+    @.. weights *= factor
+    return weights
 end
 
 function fdm_dissipation_weights(dissipation_order::TI) where {TI<:Integer}
@@ -38,12 +38,11 @@ function fdm_dissipation_boundary_weights(
 ) where {TR<:Real}
     @argcheck iseven(dissipation_order) "Only even orders are supported."
     r = div(dissipation_order, 2)
-    wts_left, wts_right = fdm_boundary_weights(TR, dissipation_order, 2)
+    weights_left, weights_right = fdm_boundary_weights(TR, dissipation_order, 2)
     factor = (-1)^(r + 1) / 2^(2 * r)
-    @.. wts_left = factor * wts_left
-    @.. wts_right = factor * wts_right
-
-    return wts_left, wts_right
+    @.. weights_left *= factor
+    @.. weights_right *= factor
+    return weights_left, weights_right
 end
 
 function fdm_dissipation_boundary_weights(dissipation_order::TI) where {TI<:Integer}
