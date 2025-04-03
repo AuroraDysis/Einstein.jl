@@ -40,8 +40,18 @@
         A2 = [9+9im 10+10im; 11+11im 12+12im]
         pep_complex = [A0, A1, A2]
 
-        A_complex_exact = [-5 - 5im -6 - 6im -1 - 1im -2 - 2im; -7 - 7im -8 - 8im -3 - 3im -4 - 4im; 1 + 0im 0 + 0im 0 + 0im 0 + 0im; 0 + 0im 1 + 0im 0 + 0im 0 + 0im]
-        E_complex_exact = [9 + 9im 10 + 10im 0 + 0im 0 + 0im; 11 + 11im 12 + 12im 0 + 0im 0 + 0im; 0 + 0im 0 + 0im 1 + 0im 0 + 0im; 0 + 0im 0 + 0im 0 + 0im 1 + 0im]
+        A_complex_exact = [
+            -5-5im -6-6im -1-1im -2-2im
+            -7-7im -8-8im -3-3im -4-4im
+            1+0im 0+0im 0+0im 0+0im
+            0+0im 1+0im 0+0im 0+0im
+        ]
+        E_complex_exact = [
+            9+9im 10+10im 0+0im 0+0im
+            11+11im 12+12im 0+0im 0+0im
+            0+0im 0+0im 1+0im 0+0im
+            0+0im 0+0im 0+0im 1+0im
+        ]
 
         A_complex, E_complex = qnm_pep_companion(pep_complex)
 
@@ -50,5 +60,17 @@
 
         @test isapprox(A_complex, A_complex_exact)
         @test isapprox(E_complex, E_complex_exact)
+    end
+
+    @testset "Sparse matrices" begin
+        S0 = sprand(ComplexF64, 10, 10, 0.1)
+        S1 = sprand(ComplexF64, 10, 10, 0.1)
+        S2 = sprand(ComplexF64, 10, 10, 0.1)
+        pep_sparse = [S0, S1, S2]
+
+        A_sparse, E_sparse = qnm_pep_companion(pep_sparse)
+
+        @test issparse(A_sparse)
+        @test issparse(E_sparse)
     end
 end

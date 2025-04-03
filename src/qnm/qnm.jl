@@ -7,6 +7,7 @@ using SciMLBase: AbstractNonlinearAlgorithm, AbstractODEAlgorithm
 
 using FillArrays
 using StaticArrays
+using SparseArrays
 using LinearAlgebra
 using FastBroadcast
 using NonlinearSolve

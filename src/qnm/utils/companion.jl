@@ -42,6 +42,8 @@ function qnm_pep_companion(pep::AbstractVector{<:AbstractMatrix{TN}}) where {TN<
         @argcheck all(m -> size(m, 1) == size(m, 2), pep) "all matrices must be square"
     end
 
+    is_sparse = issparse(pep[1])
+
     # Size of coefficient matrices
     n = size(pep[1], 1)
 
@@ -50,21 +52,25 @@ function qnm_pep_companion(pep::AbstractVector{<:AbstractMatrix{TN}}) where {TN<
 
     Iblock = kron(Eye{Int}(d - 1), Eye{Int}(n))
 
-    # -- Construct A -- #
+    if is_sparse
+        A = spzeros(TN, n * d, n * d)
+        E = spzeros(TN, d * n, d * n)
+    else
+        A = zeros(TN, n * d, n * d)
+        E = zeros(TN, d * n, d * n)
+    end
 
-    A = zeros(TN, n * d, n * d)
+    # -- Construct A -- #
 
     # First row block of A
     for i in 1:d
-        A[1:n, ((i - 1) * n + 1):(i * n)] = -pep[d - i + 1]
+        @.. A[1:n, ((i - 1) * n + 1):(i * n)] = -pep[d - i + 1]
     end
 
     # Lower part of A
     A[(n + 1):(d * n), 1:((d - 1) * n)] = Iblock
 
     # -- Construct E -- #
-
-    E = zeros(TN, d * n, d * n)
 
     # Fill block (1,1)
     E[1:n, 1:n] = pep[d + 1]

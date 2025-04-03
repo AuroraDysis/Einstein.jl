@@ -15,6 +15,7 @@ NonlinearSolve = "8913a72c-1f9b-4ce2-8d82-65094dcecaec"
 PrecompileTools = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 SciMLBase = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
+SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 SphericalFunctions = "af6d55de-b1f7-4743-b797-0829a72cf84e"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
@@ -29,7 +30,6 @@ FFTW = "1.8.0"
 FastBroadcast = "0.3.5"
 FillArrays = "1.13.0"
 Integrals = "4.5.0"
-LinearAlgebra = "1.11.0"
 NonlinearSolve = "4.3.0"
 PrecompileTools = "1.2.1"
 Reexport = "1.2.2"
@@ -45,10 +45,10 @@ julia = "1.10"
 
 [extras]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+Integrals = "de52edbc-65ea-441a-8357-d3a637375a31"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 TestItemRunner = "f8b46487-2199-4994-9208-9a1283c18c0a"
 TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
-Integrals = "de52edbc-65ea-441a-8357-d3a637375a31"
 
 [targets]
 test = ["Test", "TestItems", "TestItemRunner", "Aqua", "Integrals"]
