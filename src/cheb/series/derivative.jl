@@ -9,8 +9,8 @@ Compute derivatives of Chebyshev coefficients.
 - `coeffs_der`: Pre-allocated output vector for derivative coefficients (length at least n - 1)
 """
 function cheb_series_derivative!(
-    coeffs::AbstractVector{TF}, coeffs_der::AbstractVector{TF}
-) where {TF<:AbstractFloat}
+    coeffs::AbstractVector{TFC}, coeffs_der::AbstractVector{TFC}
+) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     n = length(coeffs)
     n_der = length(coeffs_der)
 
@@ -48,9 +48,9 @@ function cheb_series_derivative!(
     return nothing
 end
 
-function cheb_series_derivative(coeffs::AbstractVector{TF}) where {TF<:AbstractFloat}
+function cheb_series_derivative(coeffs::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     n = length(coeffs)
-    coeffs_der = Vector{TF}(undef, n - 1)
+    coeffs_der = Vector{TFC}(undef, n - 1)
     cheb_series_derivative!(coeffs, coeffs_der)
     return coeffs_der
 end

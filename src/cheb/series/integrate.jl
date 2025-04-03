@@ -1,6 +1,6 @@
 @doc raw"""
-    cheb_series_integrate(df::AbstractVector{TF}) where {TF<:AbstractFloat}
-    cheb_series_integrate!(f::AbstractVector{TF}, df::AbstractVector{TF}) where {TF<:AbstractFloat}
+    cheb_series_integrate(df::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
+    cheb_series_integrate!(f::AbstractVector{TFC}, df::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
 
 Compute the indefinite integral of a function $f'(x)$ given its Chebyshev series,
 with the constant of integration chosen such that $f(-1) = 0$.
@@ -35,8 +35,8 @@ with $c_{n+1} = c_{n+2} = 0$.
 - [chebfun/@chebtech/cumsum.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech/cumsum.m)
 """
 function cheb_series_integrate!(
-    f::AbstractVector{TF}, df::AbstractVector{TF}
-) where {TF<:AbstractFloat}
+    f::AbstractVector{TFC}, df::AbstractVector{TFC}
+) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     @boundscheck begin
         @argcheck length(f) == length(df) + 1 "length(f) must be equal to length(df) + 1"
         @argcheck length(df) >= 1 "length(df) must be greater than 1"
@@ -75,8 +75,10 @@ function cheb_series_integrate!(
     return f
 end
 
-function cheb_series_integrate(df::AbstractVector{TF}) where {TF<:AbstractFloat}
-    f = Array{TF}(undef, length(df) + 1)
+function cheb_series_integrate(
+    df::AbstractVector{TFC}
+) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
+    f = Array{TFC}(undef, length(df) + 1)
     cheb_series_integrate!(f, df)
     return f
 end

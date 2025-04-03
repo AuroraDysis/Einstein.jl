@@ -42,6 +42,19 @@ function cheb_series_evaluate(
     return y
 end
 
+function cheb_series_evaluate!(
+    fx::AbstractVector{TFC}, coeffs::AbstractVector{TFC}, x::AbstractVector{TF}
+) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
+    @argcheck length(fx) == length(x) "fx and x must have the same length"
+    @argcheck length(coeffs) > 0 "coeffs must have at least one element"
+
+    for i in eachindex(x)
+        fx[i] = cheb_series_evaluate(coeffs, x[i])
+    end
+
+    return nothing
+end
+
 # TODO: Implement the vectorized version of cheb_series_evaluate
 function cheb_series_evaluate(
     coeffs::AbstractVector{TFC}, x::AbstractArray{TF}
@@ -49,4 +62,4 @@ function cheb_series_evaluate(
     return map(xi -> cheb_series_evaluate(coeffs, xi), x)
 end
 
-export cheb_series_evaluate
+export cheb_series_evaluate, cheb_series_evaluate!
