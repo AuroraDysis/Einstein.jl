@@ -14,19 +14,21 @@ values = cheb_lobatto_coeffs2vals!(ctx, coeffs)
 # References
 - [chebfun/@chebtech2/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/coeffs2vals.m)
 """
-struct ChebyshevLobattoCoeffs2ValsContext{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}}
-    n::Integer
+struct ChebyshevLobattoCoeffs2ValsContext{
+    TF<:AbstractFloat,TI<:Integer,TPlan<:Plan{Complex{TF}}
+}
+    n::TI
     tmp::Vector{Complex{TF}}
     complex_output::Vector{Complex{TF}}
     real_output::Vector{TF}
     fft_plan::TPlan
 
-    function ChebyshevLobattoCoeffs2ValsContext{TF}(n::Integer) where {TF<:AbstractFloat}
+    function ChebyshevLobattoCoeffs2ValsContext{TI,TF}(n::TI) where {TI<:Integer,TF<:AbstractFloat}
         tmp = zeros(Complex{TF}, 2n - 2)
         complex_output = zeros(Complex{TF}, n)
         real_output = zeros(TF, n)
         fft_plan = plan_fft_measure!(tmp)
-        return new{TF,typeof(fft_plan)}(n, tmp, complex_output, real_output, fft_plan)
+        return new{TI,TF,typeof(fft_plan)}(n, tmp, complex_output, real_output, fft_plan)
     end
 end
 
@@ -88,10 +90,10 @@ function cheb_lobatto_coeffs2vals!(
 end
 
 function cheb_lobatto_coeffs2vals_create_context(
-    ::Type{TF}, n::Integer
-) where {TF<:AbstractFloat}
+    ::Type{TF}, n::TI
+) where {TF<:AbstractFloat,TI<:Integer}
     @argcheck n > 1 "n must be greater than 1"
-    return ChebyshevLobattoCoeffs2ValsContext{TF}(n)
+    return ChebyshevLobattoCoeffs2ValsContext{TI,TF}(n)
 end
 
 function cheb_lobatto_coeffs2vals(

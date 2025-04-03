@@ -14,15 +14,19 @@ coeffs = cheb_gauss_vals2coeffs!(ctx, values)
 # References
 - [chebfun/@chebtech1/vals2coeffs.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech1/vals2coeffs.m)
 """
-struct ChebyshevGaussVals2CoeffsContext{TF<:AbstractFloat,TPlan<:Plan{Complex{TF}}}
-    n::Integer
+struct ChebyshevGaussVals2CoeffsContext{
+    TF<:AbstractFloat,TI<:Integer,TPlan<:Plan{Complex{TF}}
+}
+    n::TI
     weights::Vector{Complex{TF}}
     tmp::Vector{Complex{TF}}
     complex_output::Vector{Complex{TF}}
     real_output::Vector{TF}
     ifft_plan::TPlan
 
-    function ChebyshevGaussVals2CoeffsContext{TF}(n::Integer) where {TF<:AbstractFloat}
+    function ChebyshevGaussVals2CoeffsContext{TI,TF}(
+        n::TI
+    ) where {TI<:Integer,TF<:AbstractFloat}
         weights = Vector{Complex{TF}}(undef, n)
         tmp = Vector{Complex{TF}}(undef, 2n)
         complex_output = Vector{Complex{TF}}(undef, n)
@@ -31,7 +35,7 @@ struct ChebyshevGaussVals2CoeffsContext{TF<:AbstractFloat,TPlan<:Plan{Complex{TF
 
         _cheb_gauss_vals2coeffs_weights!(weights, n)
 
-        return new{TF,typeof(ifft_plan)}(
+        return new{TI,TF,typeof(ifft_plan)}(
             n, weights, tmp, complex_output, real_output, ifft_plan
         )
     end
@@ -97,10 +101,10 @@ function cheb_gauss_vals2coeffs!(
 end
 
 function cheb_gauss_vals2coeffs_create_context(
-    ::Type{TF}, n::Integer
-) where {TF<:AbstractFloat}
+    ::Type{TF}, n::TI
+) where {TF<:AbstractFloat,TI<:Integer}
     @argcheck n > 1 "n must be greater than 1"
-    return ChebyshevGaussVals2CoeffsContext{TF}(n)
+    return ChebyshevGaussVals2CoeffsContext{TI,TF}(n)
 end
 
 function cheb_gauss_vals2coeffs(
