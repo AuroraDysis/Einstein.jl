@@ -1,5 +1,5 @@
 @testitem "qnm_schw_cheb" begin
-    using LinearAlgebra, Einstein, Test
+    using LinearAlgebra
 
     s = ℓ = 2
     n = 80

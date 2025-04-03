@@ -1,6 +1,4 @@
 @testitem "qnm_kerr_cf" begin
-    using Einstein, Test
-
     a = 0.7
     s = 2
     l = 2
@@ -12,7 +10,7 @@
 
     ω_pert = ω + rand(Complex{Float64}) / 1000
 
-    params = QNMKerrCFParams{Float64}(;
+    params = QNMKerrCFParams{Float64,Int}(;
         a=a, s=s, l=l, m=m, n=n, ω_guess=ω_pert, l_max=l_max
     )
 
@@ -23,8 +21,6 @@
 end
 
 @testitem "qnm_kerr_cheb" begin
-    using Einstein, Test
-
     a = 0.7
     s = 2
     l = 2
@@ -36,7 +32,7 @@ end
 
     ω_pert = ω + rand(Complex{Float64}) / 1000
 
-    params = QNMKerrChebParams{Float64}(;
+    params = QNMKerrChebParams{Float64,Int}(;
         a=a, s=s, l=l, m=m, n=n, ω_guess=ω_pert, l_max=l_max, cheb_n=80
     )
 
@@ -47,8 +43,6 @@ end
 end
 
 @testitem "qnm_kerr_di" begin
-    using Einstein, Test
-
     a = 0.7
     s = 2
     l = 2
@@ -60,7 +54,7 @@ end
 
     ω_pert = ω + rand(Complex{Float64}) / 1000
 
-    params = QNMKerrDIParams{Float64}(;
+    params = QNMKerrDIParams{Float64,Int}(;
         a=a, s=s, l=l, m=m, n=n, ω_guess=ω_pert, l_max=l_max
     )
 

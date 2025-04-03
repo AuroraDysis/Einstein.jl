@@ -1,6 +1,4 @@
 @testitem "sws_eigvals" begin
-    using Einstein, Test
-
     # QNM
     a = 0.7
     s = 2
@@ -14,7 +12,7 @@
 end
 
 @testitem "SWSFun" begin
-    using Integrals, Einstein, Test
+    using Integrals
 
     a = 0.7
     s = 2
@@ -23,7 +21,7 @@ end
     ω = 0.532600243551018 - 0.08079287315500905im
 
     tol = 10 * eps(Float64)
-    f = SWSFun{Float64}(s, a * ω, m, l, 25)
+    f = SWSFun{Float64,Int}(s, a * ω, m, l, 25)
     fi(x, p) = f(x) * conj(f(x)) * sin(x)
     domain = (0, π)
     prob = IntegralProblem(fi, domain)

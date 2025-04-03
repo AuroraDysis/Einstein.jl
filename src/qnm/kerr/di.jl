@@ -23,7 +23,9 @@ struct QNMKerrDICache{TR<:AbstractFloat,TI<:Integer}
     Λ::Base.RefValue{Complex{TR}}
     M::Matrix{Complex{TR}}
 
-    function QNMKerrDICache{TR,TI}(params::QNMKerrDIParams{TR,TI}) where {TR<:AbstractFloat,TI<:Integer}
+    function QNMKerrDICache{TR,TI}(
+        params::QNMKerrDIParams{TR,TI}
+    ) where {TR<:AbstractFloat,TI<:Integer}
         @unpack_QNMKerrDIParams params
 
         ω = Ref{ComplexF64}()
@@ -67,7 +69,13 @@ Calculate the series expansion of the radial equation at the horizon.
 - [Ripley:2022ypi](@citet*)
 """
 function qnm_kerr_radial_di_horizon_series(
-    s::Integer, ρ::TR, a::TR, m::Integer, ω::Complex{TR}, Λ::Complex{TR}, series_order::Integer
+    s::Integer,
+    ρ::TR,
+    a::TR,
+    m::Integer,
+    ω::Complex{TR},
+    Λ::Complex{TR},
+    series_order::Integer,
 ) where {TR<:AbstractFloat}
     # h[0] = 1, h[-1] (ρ - ρh) = 0, h[-2] (ρ - ρh)^2 = 0
     series_R_im1 = one(Complex{TR})
@@ -165,7 +173,13 @@ Calculate the series expansion of the radial equation at the horizon.
 - [Ripley:2022ypi](@citet*)
 """
 function qnm_kerr_radial_di_inf_series(
-    s::Integer, ρ::TR, a::TR, m::Integer, ω::Complex{TR}, Λ::Complex{TR}, series_order::Integer
+    s::Integer,
+    ρ::TR,
+    a::TR,
+    m::Integer,
+    ω::Complex{TR},
+    Λ::Complex{TR},
+    series_order::Integer,
 ) where {TR<:AbstractFloat}
     # h[0] = 1, h[-1] ρ = 0, h[-2] ρ^2 = 0
     series_R_im1 = one(Complex{TR})
@@ -210,23 +224,23 @@ end
 @doc raw"""
     qnm_kerr_radial_di_rhs(
         u::SVector{2,Complex{TR}},
-        cache::QNMKerrDICache{TR},
+        cache::QNMKerrDICache{TR,TI},
         ρ::TR,
-    ) where {TR<:AbstractFloat}
+    ) where {TR<:AbstractFloat,TI<:Integer}
 
 Calculate the right-hand side of the radial equation in hyperboloidal coordinates.
 
 # Arguments
 - `u::SVector{2,Complex{TR}}`: radial function and its derivative.
-- `cache::QNMKerrDICache{TR}`: cache object.
+- `cache::QNMKerrDICache{TR,TI}`: cache object.
 - `ρ::TR`: compactified radial coordinate.
 
 # References
 - [Ripley:2022ypi](@citet*)
 """
 function qnm_kerr_radial_di_rhs(
-    u::SVector{2,Complex{TR}}, cache::QNMKerrDICache{TR}, ρ::TR
-) where {TR<:AbstractFloat}
+    u::SVector{2,Complex{TR}}, cache::QNMKerrDICache{TR,TI}, ρ::TR
+) where {TR<:AbstractFloat,TI<:Integer}
     @unpack_QNMKerrDIParams cache.params
 
     ω = cache.ω[]
@@ -256,8 +270,8 @@ end
 @doc raw"""
     qnm_kerr_radial_di_δ!(
         x::SVector{2,TR},
-        cache::QNMKerrDICache{TR},
-    ) where {TR<:AbstractFloat}
+        cache::QNMKerrDICache{TR,TI},
+    ) where {TR<:AbstractFloat,TI<:Integer}
 
 Integrate the radial equation from infinity (ρ_min) to the horizon (ρ_max) and calculate the difference compared to
 - series expansion at the horizon (Natural boundary condition)
@@ -265,7 +279,7 @@ Integrate the radial equation from infinity (ρ_min) to the horizon (ρ_max) and
 
 # Arguments
 - `x::SVector{2,TR}`: real and imaginary parts of the QNM frequency.
-- `cache::QNMKerrDICache{TR}`: cache object.
+- `cache::QNMKerrDICache{TR,TI}`: cache object.
 
 # Returns
 - `δ::SVector{2,TR}`: real and imaginary parts of the difference.
@@ -274,8 +288,8 @@ Integrate the radial equation from infinity (ρ_min) to the horizon (ρ_max) and
 - [Ripley:2022ypi](@citet*)
 """
 function qnm_kerr_radial_di_δ!(
-    cache::QNMKerrDICache{TR}
-)::Complex{TR} where {TR<:AbstractFloat}
+    cache::QNMKerrDICache{TR,TI}
+)::Complex{TR} where {TR<:AbstractFloat,TI<:Integer}
     @unpack_QNMKerrDIParams cache.params
 
     ω = cache.ω[]
@@ -317,8 +331,8 @@ function qnm_kerr_radial_di_δ!(
 end
 
 function qnm_kerr_di_δ!(
-    ωvec::SVector{2,TR}, cache::QNMKerrDICache{TR}
-)::SVector{2,TR} where {TR<:AbstractFloat}
+    ωvec::SVector{2,TR}, cache::QNMKerrDICache{TR,TI}
+)::SVector{2,TR} where {TR<:AbstractFloat,TI<:Integer}
     @unpack_QNMKerrDIParams cache.params
 
     ω = Complex{TR}(ωvec[1], ωvec[2])
@@ -355,15 +369,15 @@ Find the Kerr QNM using the direct integration method for the radial equation an
 - `kwargs`: Additional keyword arguments to pass to the nonlinear solver
 """
 function qnm_kerr_di(
-    params::QNMKerrDIParams{TR},
+    params::QNMKerrDIParams{TR,TI},
     alg::Union{AbstractNonlinearAlgorithm,Nothing}=RobustMultiNewton(;
         autodiff=AutoFiniteDiff()
     );
     kwargs...,
-) where {TR<:AbstractFloat}
+) where {TR<:AbstractFloat,TI<:Integer}
     @unpack_QNMKerrDIParams params
 
-    cache = QNMKerrDICache{TR}(params)
+    cache = QNMKerrDICache{TR,TI}(params)
     ω0 = SA[real(ω_guess), imag(ω_guess)]
     prob = NonlinearProblem(qnm_kerr_di_δ!, ω0, cache)
     sol = solve(prob, alg; kwargs...)

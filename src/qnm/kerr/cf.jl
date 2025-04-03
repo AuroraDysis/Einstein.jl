@@ -204,8 +204,8 @@ function qnm_kerr_radial_cf(
 end
 
 function qnm_kerr_cf_δ!(
-    ωvec::SVector{2,TR}, cache::QNMKerrCFCache{TR}
-)::SVector{2,TR} where {TR<:AbstractFloat}
+    ωvec::SVector{2,TR}, cache::QNMKerrCFCache{TR,TI}
+)::SVector{2,TR} where {TR<:AbstractFloat,TI<:Integer}
     @unpack_QNMKerrCFParams cache.params
 
     ω = ωvec[1] + im * ωvec[2]
@@ -240,15 +240,15 @@ Find the Kerr QNM using the Leaver's method for the radial equation and the Cook
 - `kwargs`: Additional keyword arguments to pass to the nonlinear solver
 """
 function qnm_kerr_cf(
-    params::QNMKerrCFParams{TR},
+    params::QNMKerrCFParams{TR,TI},
     alg::Union{AbstractNonlinearAlgorithm,Nothing}=RobustMultiNewton(;
         autodiff=AutoFiniteDiff()
     );
     kwargs...,
-) where {TR<:AbstractFloat}
+) where {TR<:AbstractFloat,TI<:Integer}
     @unpack_QNMKerrCFParams params
 
-    cache = QNMKerrCFCache{TR}(params)
+    cache = QNMKerrCFCache{TR,TI}(params)
     ω0 = SA[real(ω_guess), imag(ω_guess)]
     prob = NonlinearProblem(qnm_kerr_cf_δ!, ω0, cache)
     sol = solve(prob, alg; kwargs...)
