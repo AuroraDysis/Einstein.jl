@@ -15,19 +15,18 @@ values = cheb_lobatto_coeffs2vals!(ctx, coeffs)
 - [chebfun/@chebtech2/coeffs2vals.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech2/coeffs2vals.m)
 """
 struct ChebyshevLobattoCoeffs2ValsContext{
-    TF<:AbstractFloat,TI<:Integer,TP<:Plan{Complex{TF}}
+    TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}},TI<:Integer,TP<:Plan{Complex{TF}}
 }
     n::TI
     tmp::Vector{Complex{TF}}
-    complex_output::Vector{Complex{TF}}
-    real_output::Vector{TF}
+    output::Vector{TFC}
     fft_plan::TP
 end
 
 function _cheb_lobatto_coeffs2vals_impl!(
-    ctx::ChebyshevLobattoCoeffs2ValsContext{TF,TI,TP}, coeffs::AbstractVector{TFC}
-) where {TF<:AbstractFloat,TI<:Integer,TFC<:Union{TF,Complex{TF}},TP<:Plan{Complex{TF}}}
-    (; n, tmp, complex_output, fft_plan) = ctx
+    ctx::ChebyshevLobattoCoeffs2ValsContext{TF,TFC,TI,TP}, coeffs::AbstractVector{TFC}
+) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}},TI<:Integer,TP<:Plan{Complex{TF}}}
+    (; n, tmp, output, fft_plan) = ctx
 
     @argcheck length(coeffs) == n "coeffs must have length n"
 
@@ -50,48 +49,43 @@ function _cheb_lobatto_coeffs2vals_impl!(
         fft_plan * @view(tmp[1:(2n - 2)])
 
         # Flip and truncate:
-        complex_output .= @view(tmp[n:-1:1])
+        if TFC <: Real
+            @.. output = real(tmp[n:-1:1])
+        else
+            @.. output = tmp[n:-1:1]
+        end
     end
 
     # In-place symmetry enforcement
     if isEven
         half = one(TF) / 2
-        @.. complex_output = half * (complex_output + @view(complex_output[n:-1:1]))
+        @.. output = half * (output + @view(output[n:-1:1]))
     elseif isOdd
         half = one(TF) / 2
-        @.. complex_output = half * (complex_output - @view(complex_output[n:-1:1]))
+        @.. output = half * (output - @view(output[n:-1:1]))
     end
 
     return nothing
 end
 
 function cheb_lobatto_coeffs2vals!(
-    ctx::ChebyshevLobattoCoeffs2ValsContext{TF,TI,TP}, coeffs::AbstractVector{TF}
-) where {TF<:AbstractFloat,TI<:Integer,TP<:Plan{Complex{TF}}}
-    (; complex_output, real_output) = ctx
+    ctx::ChebyshevLobattoCoeffs2ValsContext{TF,TFC,TI,TP}, coeffs::AbstractVector{TFC}
+) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}},TI<:Integer,TP<:Plan{Complex{TF}}}
     _cheb_lobatto_coeffs2vals_impl!(ctx, coeffs)
-    @. real_output = real(complex_output)
-    return real_output
-end
-
-function cheb_lobatto_coeffs2vals!(
-    ctx::ChebyshevLobattoCoeffs2ValsContext{TF,TI,TP}, coeffs::AbstractVector{Complex{TF}}
-) where {TF<:AbstractFloat,TI<:Integer,TP<:Plan{Complex{TF}}}
-    _cheb_lobatto_coeffs2vals_impl!(ctx, coeffs)
-    return ctx.complex_output
+    return ctx.output
 end
 
 function cheb_lobatto_coeffs2vals_context(
-    ::Type{TF}, n::TI
-) where {TF<:AbstractFloat,TI<:Integer}
+    ::Type{TFC}, n::TI
+) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}},TI<:Integer}
     @argcheck n > 1 "n must be greater than 1"
 
+    TF = real(TFC)
     tmp = zeros(Complex{TF}, 2n - 2)
-    complex_output = zeros(Complex{TF}, n)
-    real_output = zeros(TF, n)
+    output = zeros(TFC, n)
     fft_plan = plan_fft_measure!(tmp)
-    return ChebyshevLobattoCoeffs2ValsContext{TF,TI,typeof(fft_plan)}(
-        n, tmp, complex_output, real_output, fft_plan
+    return ChebyshevLobattoCoeffs2ValsContext{TF,TFC,TI,typeof(fft_plan)}(
+        n, tmp, output, fft_plan
     )
 end
 
@@ -99,7 +93,7 @@ function cheb_lobatto_coeffs2vals(
     coeffs::AbstractVector{TFC}
 ) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     n = length(coeffs)
-    ctx = cheb_lobatto_coeffs2vals_context(real(TFC), n)
+    ctx = cheb_lobatto_coeffs2vals_context(TFC, n)
     return cheb_lobatto_coeffs2vals!(ctx, coeffs)
 end
 
