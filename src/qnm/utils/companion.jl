@@ -44,12 +44,11 @@ function qnm_pep_companion(
     # Degree of pep
     d = length(pep) - 1
 
-    E = zeros(TFC, d * n, d * n)
-    A = zeros(TFC, n * d, n * d)
-
     Iblock = kron(Eye{Int}(d - 1), Eye{Int}(n))
 
-    #####Construct A #####
+    # -- Construct A -- #
+
+    A = zeros(TFC, n * d, n * d)
 
     # First row block of A
     for i in 1:d
@@ -58,6 +57,10 @@ function qnm_pep_companion(
 
     # Lower part of A
     A[(n + 1):(d * n), 1:((d - 1) * n)] = Iblock
+
+    # -- Construct E -- #
+
+    E = zeros(TFC, d * n, d * n)
 
     # Fill block (1,1)
     E[1:n, 1:n] = pep[d + 1]
