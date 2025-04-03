@@ -1,34 +1,3 @@
-@with_kw struct QNMKerrCFParams{TR<:AbstractFloat,TI<:Integer}
-    a::TR
-    s::TI
-    l::TI
-    m::TI
-    n::TI = 0
-    ω_guess::Complex{TR}
-    A_guess::Union{Complex{TR},Nothing} = nothing
-    poles::Vector{Complex{TR}} = Complex{TR}[]
-    l_max::TI = l + 20
-    cf_N_min::TI = 300
-    cf_N_max::TI = 100000
-    cf_tol::TR = typetol(TR)
-end
-
-struct QNMKerrCFCache{TR<:AbstractFloat,TI<:Integer}
-    params::QNMKerrCFParams{TR,TI}
-    M::Matrix{Complex{TR}}
-
-    function QNMKerrCFCache{TR,TI}(
-        params::QNMKerrCFParams{TR,TI}
-    ) where {TR<:AbstractFloat,TI<:Integer}
-        @unpack_QNMKerrCFParams params
-
-        l_min = sws_l_min(s, m)
-        l_size = l_max - l_min + 1
-        M = zeros(Complex{TR}, l_size, l_size)
-        return new{TR,TI}(params, M)
-    end
-end
-
 """
 MIT License
 
@@ -131,18 +100,7 @@ with $\operatorname{Cf}(0 ; \mathrm{N}) \equiv \operatorname{Cf}(\mathrm{N})$ an
 - [Cook:2014cta](@citet*)
 - [qnm/qnm/radial.py at master · duetosymmetry/qnm](https://github.com/duetosymmetry/qnm/blob/master/qnm/radial.py)
 """
-function qnm_kerr_radial(
-    ::Type{TR},
-    a::TR,
-    s::Integer,
-    m::Integer,
-    A::Complex{TR},
-    ω::Complex{TR};
-    n_inv::Integer=0,
-    cf_tol::TR=typetol(TR),
-    cf_N_min::Integer=300,
-    cf_N_max::Integer=100000,
-) where {TR<:AbstractFloat}
+function qnm_kerr_radial(ctx::QNMKerrContext{TR,TI}) where {TR<:AbstractFloat,TI<:Integer}
     root = sqrt(1 - a * a)
     r₊ = 1 + root
     r₋ = 1 - root
