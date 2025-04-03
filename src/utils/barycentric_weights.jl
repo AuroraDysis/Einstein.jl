@@ -17,8 +17,10 @@ are more efficient implementations.
 - `Vector{TF}`: Barycentric weights scaled such that their infinity norm equals 1
 
 # Details
-The barycentric weights wⱼ for nodes xⱼ are computed as:
-    wⱼ = 1/∏(xⱼ - xₖ) for k ≠ j
+The barycentric weights $w_j$ for nodes $x_j$ are computed as:
+```math
+w_j = \frac{1}{\prod_{k \neq j} (x_j - x_k)}
+```
 
 For equidistant nodes, a more efficient formula is used based on binomial coefficients.
 
