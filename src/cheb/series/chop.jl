@@ -26,6 +26,7 @@ println("Example 5: ", cheb_series_chop(coeffs .+ 1e-10 .* random, 1e-10)) # Sho
 # References
 - [aurentz2015choppingchebyshevseries](@citet*)
 - [chebfun/standardChop.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/standardChop.m)
+- [ClassicalOrthogonalPolynomials.jl/src/standardchop.jl at main · JuliaApproximation/ClassicalOrthogonalPolynomials.jl](https://github.com/JuliaApproximation/ClassicalOrthogonalPolynomials.jl/blob/main/src/standardchop.jl)
 """
 function cheb_series_chop(
     coeffs::AbstractVector{TF}, tol::TF=eps(TF)
