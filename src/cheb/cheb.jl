@@ -19,13 +19,12 @@ include("series/derivative.jl")
 include("series/integrate.jl")
 include("series/integration_matrix.jl")
 include("series/chop.jl")
+include("series/filter.jl")
 
 # Gauss-Chebyshev grid
 include("chebyshev_gauss/grid.jl")
 
 # Gauss-Chebyshev-Lobatto grid
 include("chebyshev_lobatto/grid.jl")
-
-include("dissipation.jl")
 
 end
