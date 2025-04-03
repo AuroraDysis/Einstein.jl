@@ -48,7 +48,7 @@ function cheb_series_evaluate!(
     @argcheck length(fx) == length(x) "fx and x must have the same length"
     @argcheck length(coeffs) > 0 "coeffs must have at least one element"
 
-    for i in eachindex(x)
+    @inbounds for i in eachindex(x)
         fx[i] = cheb_series_evaluate(coeffs, x[i])
     end
 
