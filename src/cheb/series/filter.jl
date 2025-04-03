@@ -1,5 +1,5 @@
 @doc raw"""
-    cheb_series_filter_weights_exp([T=Float64], n::Integer, a::Integer, p::Integer) where {T<:AbstractFloat}
+    cheb_series_filter_weights_exp([TF=Float64], n::Integer, a::Integer, p::Integer) where {TF<:AbstractFloat}
 
 Compute exponential filter weights for Chebyshev series [Szilagyi:2009qz](@cite).
 ```math
@@ -7,7 +7,7 @@ w_k = e^{-\alpha\left(k / n\right)^{2 p}}, \quad k = 0, \ldots, n-1
 ```
 
 # Arguments
-- `T`: Type parameter for floating-point precision
+- `TF`: Type parameter for floating-point precision
 - `n`: Number of grid points
 - `α`: Filter strength parameter
 - `p`: Order of filter
@@ -17,11 +17,11 @@ w_k = e^{-\alpha\left(k / n\right)^{2 p}}, \quad k = 0, \ldots, n-1
 - $\alpha = 40$ and $p = 8$ for strong filter [justin_ripley_2023_8215577](@cite)
 """
 function cheb_series_filter_weights_exp(
-    ::Type{T}, n::Integer, α::Integer, p::Integer
-) where {T<:AbstractFloat}
-    weights = zeros(T, n)
+    ::Type{TF}, n::Integer, α::Integer, p::Integer
+) where {TF<:AbstractFloat}
+    weights = zeros(TF, n)
     p2 = 2 * p
-    ninv = one(T) / n
+    ninv = one(TF) / n
     @inbounds for k in 0:(n - 1)
         weights[k + 1] = exp(-α * (k * ninv)^p2)
     end
@@ -33,7 +33,7 @@ function cheb_series_filter_weights_exp(n::Integer, α::Integer, p::Integer)
 end
 
 """
-    cheb_filter_matrix(weights::AbstractVector{T}, S::AbstractMatrix{T}, A::AbstractMatrix{T}; negsum::Bool=true) where T<:AbstractFloat
+    cheb_filter_matrix(weights::AbstractVector{TF}, S::AbstractMatrix{TF}, A::AbstractMatrix{TF}; negsum::Bool=true) where TF<:AbstractFloat
 
 Construct a filter matrix using precomputed weights and operators
 for Chebyshev collocation methods, optionally applying the 'negative sum trick',
@@ -49,11 +49,11 @@ The function applies the weights through diagonal scaling and implements
 the negative sum trick for diagonal elements when `negative_sum_trick` is true.
 """
 function cheb_filter_matrix(
-    weights::AbstractVector{T},
-    S::AbstractMatrix{T},
-    A::AbstractMatrix{T};
+    weights::AbstractVector{TF},
+    S::AbstractMatrix{TF},
+    A::AbstractMatrix{TF};
     negative_sum_trick::Bool=true,
-) where {T<:AbstractFloat}
+) where {TF<:AbstractFloat}
     F = S * Diagonal(weights) * A
 
     if !negative_sum_trick
@@ -61,7 +61,7 @@ function cheb_filter_matrix(
     end
 
     # negative sum trick
-    apply_negative_sum_trick!(F; constant_term=one(T))
+    apply_negative_sum_trick!(F; constant_term=one(TF))
 
     return F
 end
