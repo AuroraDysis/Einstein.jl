@@ -13,7 +13,7 @@ using FastBroadcast
 using NonlinearSolve
 
 include("utils/continued_fraction.jl")
-include("utils/polyeig.jl")
+include("utils/companion.jl")
 
 include("schw/qnm.jl")
 include("kerr/qnm.jl")

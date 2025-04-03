@@ -22,7 +22,7 @@ SOFTWARE.
 """
 
 """
-    A, E = qnm_polyeig(TFC, pep::AbstractVector{<:AbstractMatrix}) where TFC <: Union{AbstractFloat, Complex{<:AbstractFloat}}
+    A, E = qnm_pep_companion(TFC, pep::AbstractVector{<:AbstractMatrix}) where TFC <: Union{AbstractFloat, Complex{<:AbstractFloat}}
 
 Linearizes a polynomial eigenvalue problem (PEP) and returns the companion form, as in the paper by Mehrmann and Voss.
 More precisely, for a k-th degree PEP with n-by-n coefficient matrices,
@@ -34,8 +34,8 @@ Ax = λEx
 # References
 - [mehrmann2004nonlinear](@citet*)
 """
-function qnm_polyeig(
-    ::Type{TFC}, pep::AbstractVector{<:AbstractMatrix{TFC}}
+function qnm_pep_companion(
+    pep::AbstractVector{<:AbstractMatrix{TFC}}
 ) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     # Size of coefficient matrices
     n = size(pep[1], 1)
@@ -67,4 +67,4 @@ function qnm_polyeig(
     return A, E
 end
 
-export qnm_polyeig
+export qnm_pep_companion
