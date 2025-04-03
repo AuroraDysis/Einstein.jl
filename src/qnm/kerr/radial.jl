@@ -114,9 +114,9 @@ function qnm_kerr_radial(
     D4 = α * (α - γ + 1)
 
     n = 0:cf_n_inv
-    αn = zeros(Complex{TR}, length(n))
-    βn = zeros(Complex{TR}, length(n))
-    γn = zeros(Complex{TR}, length(n))
+    αn = Array{Complex{TR}}(undef, length(n))
+    βn = Array{Complex{TR}}(undef, length(n))
+    γn = Array{Complex{TR}}(undef, length(n))
 
     @.. αn = n * n + (D0 + 1) * n + D0
     @.. βn = -2 * n * n + (D1 + 2) * n + D3
