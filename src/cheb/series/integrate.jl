@@ -1,12 +1,12 @@
-
-"""
+@doc raw"""
     cheb_series_integrate(coeffs::AbstractVector{TF}) where {TF<:AbstractFloat}
     cheb_series_integrate(::Type{TF}, n::Integer)(coeffs::AbstractVector{TF}) where {TF<:AbstractFloat}
 
-Compute the indefinite integral of a function given its Chebyshev coefficients.
+Compute the indefinite integral of a functio $f$ given its Chebyshev series,
+with the constant of integration chosen such that $f(-1) = 0$.
 
 # Arguments
-- `coeffs`: Vector of Chebyshev coefficients of the function to be integrated
+- `coeffs`: Vector of Chebyshev series
 
 # References
 - [chebfun/@chebtech/cumsum.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech/cumsum.m)
@@ -15,7 +15,7 @@ struct ChebyshevSeriesIntegrationPlan{TF<:AbstractFloat,TI<:Integer}
     n::TI              # Number of coefficients
     tmp::Vector{TF}    # Temporary storage for padded coefficients
     result::Vector{TF} # Result storage
-    v::Vector{TI}      # Pre-computed alternating signs
+    weights::Vector{TI}      # Pre-computed alternating signs
 
     function ChebyshevSeriesIntegrationPlan{TF}(n::TI) where {TF<:AbstractFloat,TI<:Integer}
         # Pre-allocate workspace
@@ -23,12 +23,10 @@ struct ChebyshevSeriesIntegrationPlan{TF<:AbstractFloat,TI<:Integer}
         result = Vector{TF}(undef, n + 1)
 
         # Pre-compute alternating signs [1, -1, 1, -1, ...]
-        v = ones(TI, n)
-        @inbounds for i in 2:2:n
-            v[i] = -one(TI)
-        end
+        weights = ones(TI, n)
+        weights[2:2:end] .= -one(TI)
 
-        return new{TF,TI}(n, tmp, result, v)
+        return new{TF,TI}(n, tmp, result, weights)
     end
 end
 
@@ -40,7 +38,7 @@ function (op::ChebyshevSeriesIntegrationPlan{TF,TI})(
     n = length(coeffs)
     tmp = op.tmp
     result = op.result
-    v = op.v
+    weights = op.weights
 
     # Copy and pad input coefficients
     @inbounds begin
@@ -64,7 +62,7 @@ function (op::ChebyshevSeriesIntegrationPlan{TF,TI})(
     @inbounds begin
         result[1] = 0
         for i in 1:n
-            result[1] += v[i] * result[i + 1]
+            result[1] += weights[i] * result[i + 1]
         end
     end
 
