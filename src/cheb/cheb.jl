@@ -7,9 +7,7 @@ using FastBroadcast: @..
 using FFTW
 using LinearAlgebra
 using FillArrays
-using SparseArrays
 using BandedMatrices
-using ToeplitzMatrices: Toeplitz, Hankel
 
 using ..Utils
 
