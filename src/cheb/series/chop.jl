@@ -89,14 +89,19 @@ function _cheb_series_chop_impl!(
         return plateau_point
     end
 
-    j3 = sum(envelope .≥ tol^(7 / 6))
+    tol_7_6 = tol^(7//6)
+
+    j3 = sum(envelope .≥ tol_7_6)
     if j3 < j2
         j2 = j3 + 1
-        envelope[j2] = tol^(7 / 6)
+        envelope[j2] = tol_7_6
     end
-    cc = log10.(envelope[1:j2])
-    cc .+= range(0; stop=(-1 / 3) * log10(tol), length=j2)
-    d = argmin(cc)
+
+    envelope_j2 = @view(envelope[1:j2])
+    range_j2 = range(0; stop=(-1 / 3) * log10(tol), length=j2)
+
+    @.. envelope_j2 = log10(envelope_j2) + range_j2
+    d = argmin(envelope_j2)
     return max(d - 1, 1)
 end
 
