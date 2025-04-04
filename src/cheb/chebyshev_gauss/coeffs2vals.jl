@@ -1,6 +1,6 @@
 """
     cheb_gauss_coeffs2vals(coeffs::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
-    cheb_gauss_coeffs2vals_plan([TF=Float64], n::Integer)(coeffs::AbstractVector{TFC})
+    cheb_gauss_coeffs2vals_plan([TFC=Float64], n::Integer)(coeffs::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
 
 Convert Chebyshev coefficients to values at Chebyshev points of the 1st kind.
 
@@ -90,6 +90,10 @@ function cheb_gauss_coeffs2vals_plan(
     return ChebyshevGaussCoeffs2ValsPlan{TF,TFC,TI,typeof(fft_plan)}(
         n, weights, tmp, output, fft_plan
     )
+end
+
+function cheb_gauss_coeffs2vals_plan(n::TI) where {TI<:Integer}
+    return cheb_gauss_coeffs2vals_plan(Float64, n)
 end
 
 function cheb_gauss_coeffs2vals(

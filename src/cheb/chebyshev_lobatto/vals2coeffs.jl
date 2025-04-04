@@ -1,6 +1,6 @@
 """
-    cheb_lobatto_vals2coeffs(vals::AbstractVector{TF}) where {TF<:AbstractFloat}
-    cheb_lobatto_vals2coeffs_plan([TF=Float64], n::Integer)(vals::AbstractVector{TF}) where {TF<:AbstractFloat}
+    cheb_lobatto_vals2coeffs(vals::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
+    cheb_lobatto_vals2coeffs_plan([TFC=Float64], n::Integer)(vals::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
 
 Convert values at Chebyshev points of the 2nd kind into Chebyshev coefficients.
 
@@ -75,6 +75,10 @@ function cheb_lobatto_vals2coeffs_plan(
     return ChebyshevLobattoVals2CoeffsPlan{TF,TFC,TI,typeof(ifft_plan)}(
         n, tmp, output, ifft_plan
     )
+end
+
+function cheb_lobatto_vals2coeffs_plan(n::TI) where {TI<:Integer}
+    return cheb_lobatto_vals2coeffs_plan(Float64, n)
 end
 
 function cheb_lobatto_vals2coeffs(

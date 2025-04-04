@@ -23,6 +23,10 @@ PrecompileTools.@compile_workload begin
         angles = grid.angles(n)
         coeffs = grid.coeffs2vals(points)
         vals = grid.vals2coeffs(coeffs)
+        plan_coeffs2vals = grid.coeffs2vals_plan(n)
+        plan_vals2coeffs = grid.vals2coeffs_plan(n)
+        coeffs_from_plan = plan_coeffs2vals * coeffs
+        vals_from_plan = plan_vals2coeffs * vals
         coeffs_matrix = grid.coeffs2vals_matrix(n)
         vals_matrix = grid.vals2coeffs_matrix(n)
         weights = grid.barycentric_weights(n)
