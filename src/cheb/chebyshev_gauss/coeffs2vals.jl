@@ -36,7 +36,7 @@ function _cheb_gauss_coeffs2vals_weights!(
 end
 
 function *(
-    plan::ChebyshevGaussCoeffs2ValsPlan{TF,TFC,TI,TP}, x::AbstractVector{TFC}
+    plan::ChebyshevGaussCoeffs2ValsPlan{TF,TFC,TI,TP}, coeffs::AbstractVector{TFC}
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}},TI<:Integer,TP<:Plan{Complex{TF}}}
     (; n, weights, tmp, output, fft_plan) = plan
 

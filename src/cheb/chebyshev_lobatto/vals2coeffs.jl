@@ -7,8 +7,8 @@ Convert values at Chebyshev points of the 2nd kind into Chebyshev coefficients.
 # Performance Guide
 For best performance, especially in loops or repeated calls:
 ```julia
-ctx = cheb_lobatto_vals2coeffs_plan(Float64, n)
-coeffs = cheb_lobatto_vals2coeffs!(ctx, values)
+plan = cheb_lobatto_vals2coeffs_plan(Float64, n)
+coeffs = plan * values
 ```
 
 # References
@@ -85,8 +85,8 @@ function cheb_lobatto_vals2coeffs(
     vals::AbstractVector{TFC}
 ) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     n = length(vals)
-    ctx = cheb_lobatto_vals2coeffs_plan(TFC, n)
-    return cheb_lobatto_vals2coeffs!(ctx, vals)
+    plan = cheb_lobatto_vals2coeffs_plan(TFC, n)
+    return plan * vals
 end
 
 """
@@ -106,10 +106,11 @@ function cheb_lobatto_vals2coeffs_matrix(::Type{TF}, n::Integer) where {TF<:Abst
     end
 
     A = Array{TF,2}(undef, n, n)
-    ctx = cheb_lobatto_vals2coeffs_plan(TF, n)
+    plan = cheb_lobatto_vals2coeffs_plan(TF, n)
     @inbounds for i in 1:n
-        A[:, i] .= cheb_lobatto_vals2coeffs!(ctx, OneElement(one(TF), i, n))
+        A[:, i] .= plan * OneElement(one(TF), i, n)
     end
+
     return A
 end
 
