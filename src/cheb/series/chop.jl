@@ -52,13 +52,24 @@ function cheb_series_chop_context(
     return ChebyshevSeriesChopContext{TF,TI}(n_max)
 end
 
+function _cheb_series_chop_tol_impl!(
+    coeffs::AbstractVector{TFC}, tol::TF
+) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
+    @inbounds for k in length(coeffs):-1:1
+        if abs(coeffs[k]) > tol
+            return k
+        end
+    end
+    return 0
+end
+
 """
-    _cheb_series_chop_impl!(ctx::ChebyshevSeriesChopContext{TF}, coeffs::AbstractVector{TF}, tol::TF) where {TF<:AbstractFloat}
+    _cheb_series_chop_standard_impl!(ctx::ChebyshevSeriesChopContext{TF}, coeffs::AbstractVector{TF}, tol::TF) where {TF<:AbstractFloat}
 
 Internal core logic for `cheb_series_chop!`, operating using the pre-allocated `ctx`.
 Returns the cutoff index. This function performs the actual computation.
 """
-function _cheb_series_chop_impl!(
+function _cheb_series_chop_standard_impl!(
     ctx::ChebyshevSeriesChopContext{TF,TI}, coeffs::AbstractVector{TF}, tol::TF
 ) where {TF<:AbstractFloat,TI<:Integer}
     n = length(coeffs)
@@ -278,10 +289,10 @@ function cheb_series_chop!(
     # Algorithm requires a minimum length to work reliably.
     # If the input is too short, we cannot reliably find a chop point.
     if n < 17
-        return n
+        return _cheb_series_chop_tol_impl!(coeffs, tol)
     end
 
-    return _cheb_series_chop_impl!(ctx, coeffs, tol)
+    return _cheb_series_chop_standard_impl!(ctx, coeffs, tol)
 end
 
 """
@@ -372,12 +383,12 @@ function cheb_series_chop(
     # Algorithm requires a minimum length to work reliably.
     # If the input is too short, we cannot reliably find a chop point.
     if n < 17
-        return n
+        return _cheb_series_chop_tol_impl!(coeffs, tol)
     end
 
     ctx = cheb_series_chop_context(TF, n)
 
-    return _cheb_series_chop_impl!(ctx, coeffs, tol)
+    return _cheb_series_chop_standard_impl!(ctx, coeffs, tol)
 end
 
 export cheb_series_chop, cheb_series_chop!, cheb_series_chop_context
