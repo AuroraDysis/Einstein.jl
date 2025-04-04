@@ -45,10 +45,8 @@ function *(
         end
         tmp[n] = coeffs[n]
 
-        # FFT into complex_output
-        fft_plan * @view(tmp[1:(2n - 2)])
+        fft_plan * tmp
 
-        # Flip and truncate:
         if TFC <: Real
             @.. output = real(tmp[n:-1:1])
         else
@@ -59,10 +57,10 @@ function *(
     # In-place symmetry enforcement
     if isEven
         half = one(TF) / 2
-        @.. output = half * (output + @view(output[n:-1:1]))
+        @.. output = half * (output + output[n:-1:1])
     elseif isOdd
         half = one(TF) / 2
-        @.. output = half * (output - @view(output[n:-1:1]))
+        @.. output = half * (output - output[n:-1:1])
     end
 
     return output
