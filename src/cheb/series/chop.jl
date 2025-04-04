@@ -6,11 +6,11 @@ function _cheb_series_chop_tol_impl!(
             return k
         end
     end
-    return 0
+    return 1
 end
 
 function _cheb_series_chop_impl!(
-    coeffs::AbstractVector{TFC}, tol::TF, envelope::AbstractVector{TFC}
+    coeffs::AbstractVector{TFC}, tol::TF, envelope::AbstractVector{TF}
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
     n = length(coeffs)
 
@@ -117,7 +117,7 @@ Determine a suitable cutoff index for a coefficient vector using the "standard" 
 function cheb_series_chop(
     coeffs::AbstractVector{TFC},
     tol::TF=eps(TF);
-    envelope::AbstractVector{TFC}=Vector{TFC}(undef, length(coeffs)),
+    envelope::AbstractVector{TF}=Vector{TF}(undef, length(coeffs)),
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}}}
     @boundscheck begin
         @argcheck !isempty(coeffs) "coeffs must not be empty"
