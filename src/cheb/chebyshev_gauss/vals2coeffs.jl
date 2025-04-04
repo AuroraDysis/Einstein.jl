@@ -36,7 +36,7 @@ function _cheb_gauss_vals2coeffs_weights!(
     return nothing
 end
 
-function _cheb_gauss_vals2coeffs_impl!(
+function *(
     plan::ChebyshevGaussVals2CoeffsPlan{TF,TFC,TI,TP}, vals::AbstractVector{TFC}
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}},TI<:Integer,TP<:Plan{Complex{TF}}}
     (; n, weights, tmp, output, ifft_plan) = plan
@@ -67,14 +67,7 @@ function _cheb_gauss_vals2coeffs_impl!(
         output[1:2:end] .= 0
     end
 
-    return nothing
-end
-
-function *(
-    plan::ChebyshevGaussVals2CoeffsPlan{TF,TFC,TI,TP}, values::AbstractVector{TFC}
-) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}},TI<:Integer,TP<:Plan{Complex{TF}}}
-    _cheb_gauss_vals2coeffs_impl!(plan, values)
-    return plan.output
+    return output
 end
 
 function cheb_gauss_vals2coeffs_plan(

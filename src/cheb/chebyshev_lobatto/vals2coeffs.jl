@@ -23,7 +23,7 @@ struct ChebyshevLobattoVals2CoeffsPlan{
     ifft_plan::TP
 end
 
-function _cheb_lobatto_vals2coeffs_impl!(
+function *(
     ctx::ChebyshevLobattoVals2CoeffsPlan{TF,TFC,TI,TP}, vals::AbstractVector{TFC}
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}},TI<:Integer,TP<:Plan{Complex{TF}}}
     (; n, tmp, output, ifft_plan) = ctx
@@ -60,14 +60,7 @@ function _cheb_lobatto_vals2coeffs_impl!(
         output[1:2:end] .= 0
     end
 
-    return nothing
-end
-
-function cheb_lobatto_vals2coeffs!(
-    ctx::ChebyshevLobattoVals2CoeffsPlan{TF,TFC,TI,TP}, vals::AbstractVector{TFC}
-) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}},TI<:Integer,TP<:Plan{Complex{TF}}}
-    _cheb_lobatto_vals2coeffs_impl!(ctx, vals)
-    return ctx.output
+    return output
 end
 
 function cheb_lobatto_vals2coeffs_plan(
@@ -121,4 +114,4 @@ function cheb_lobatto_vals2coeffs_matrix(n::Integer)
 end
 
 export cheb_lobatto_vals2coeffs_plan,
-    cheb_lobatto_vals2coeffs, cheb_lobatto_vals2coeffs!, cheb_lobatto_vals2coeffs_matrix
+    cheb_lobatto_vals2coeffs, cheb_lobatto_vals2coeffs_matrix

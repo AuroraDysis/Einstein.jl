@@ -23,7 +23,7 @@ struct ChebyshevLobattoCoeffs2ValsPlan{
     fft_plan::TP
 end
 
-function _cheb_lobatto_coeffs2vals_impl!(
+function *(
     plan::ChebyshevLobattoCoeffs2ValsPlan{TF,TFC,TI,TP}, coeffs::AbstractVector{TFC}
 ) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}},TI<:Integer,TP<:Plan{Complex{TF}}}
     (; n, tmp, output, fft_plan) = plan
@@ -65,14 +65,7 @@ function _cheb_lobatto_coeffs2vals_impl!(
         @.. output = half * (output - @view(output[n:-1:1]))
     end
 
-    return nothing
-end
-
-function *(
-    plan::ChebyshevLobattoCoeffs2ValsPlan{TF,TFC,TI,TP}, coeffs::AbstractVector{TFC}
-) where {TF<:AbstractFloat,TFC<:Union{TF,Complex{TF}},TI<:Integer,TP<:Plan{Complex{TF}}}
-    _cheb_lobatto_coeffs2vals_impl!(plan, coeffs)
-    return plan.output
+    return output
 end
 
 function cheb_lobatto_coeffs2vals_plan(
