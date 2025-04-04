@@ -3,6 +3,7 @@ module ChebyshevSuite
 using AbstractFFTs: Plan
 using ArgCheck: @argcheck
 using FastBroadcast: @..
+import Base: *
 
 using FFTW
 using LinearAlgebra
