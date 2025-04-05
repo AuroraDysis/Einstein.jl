@@ -86,3 +86,5 @@ function qnm_schw_expansion_dolan_ottewill(
 
     return ω / sqrt(TF(27))
 end
+
+export qnm_schw_expansion_dolan_ottewill
