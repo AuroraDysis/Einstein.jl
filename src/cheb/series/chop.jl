@@ -98,7 +98,7 @@ function _cheb_series_chop_impl!(
     end
 
     envelope_j2 = @view(envelope[1:j2])
-    range_j2 = range(0; stop=(-1 / 3) * log10(tol), length=j2)
+    range_j2 = range(0; stop=-log10(tol) / 3, length=j2)
 
     @.. envelope_j2 = log10(envelope_j2) + range_j2
     d = argmin(envelope_j2)
