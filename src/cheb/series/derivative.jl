@@ -19,7 +19,6 @@ function cheb_series_derivative!(
     end
 
     n = length(coeffs)
-    n_der = length(coeffs_der)
 
     if n == 1
         coeffs_der .= 0
