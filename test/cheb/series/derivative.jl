@@ -31,6 +31,16 @@
         @test all(isapprox.(der[3:end], 0.0))
     end
 
+    @testset "Copy version" begin
+        c = [1.0, 2.0, 3.0]
+        der = cheb_series_derivative(c)
+        @test der ≈ [2.0, 12.0]
+
+        c = [1.0, 2.0, 3.0, 4.0, 5.0]
+        der = cheb_series_derivative(c)
+        @test der ≈ [14.0, 52.0, 24.0, 40.0]
+    end
+
     @testset "Edge cases" begin
         # Single coefficient
         c = [1.0]

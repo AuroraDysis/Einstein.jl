@@ -1,6 +1,7 @@
 """
     cheb_series_derivative!(coeffs::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
     cheb_series_derivative!(coeffs_der::AbstractVector{TFC}, coeffs::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
+    cheb_series_derivative(coeffs::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
 
 Compute derivatives of coefficients of Chebyshev series.
 
@@ -58,4 +59,13 @@ function cheb_series_derivative!(
     return nothing
 end
 
-export cheb_series_derivative!
+function cheb_series_derivative(
+    coeffs::AbstractVector{TFC}
+) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
+    n_der = length(coeffs) - 1
+    coeffs_der = Array{TFC}(undef, n_der)
+    cheb_series_derivative!(coeffs_der, coeffs)
+    return coeffs_der
+end
+
+export cheb_series_derivative!, cheb_series_derivative
