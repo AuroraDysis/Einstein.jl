@@ -1,23 +1,25 @@
 """
-    cheb_series_derivative(coeffs::AbstractVector{TF}) where {TF<:AbstractFloat}
-    cheb_series_derivative!(coeffs::AbstractVector{TF}, coeffs_der::AbstractVector{TF}) where {TF<:AbstractFloat}
+    cheb_series_derivative!(coeffs::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
+    cheb_series_derivative!(coeffs_der::AbstractVector{TFC}, coeffs::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
 
-Compute derivatives of Chebyshev coefficients.
+Compute derivatives of coefficients of Chebyshev series.
 
 # Arguments
 - `coeffs`: Input vector of Chebyshev coefficients with length n
-- `coeffs_der`: Pre-allocated output vector for derivative coefficients (length at least n - 1)
+
+# References
+- [chebfun/@chebtech/diff.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebtech/diff.m)
 """
 function cheb_series_derivative!(
-    coeffs::AbstractVector{TFC}, coeffs_der::AbstractVector{TFC}
+    coeffs_der::AbstractVector{TFC}, coeffs::AbstractVector{TFC}
 ) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
+    @boundscheck begin
+        @argcheck length(coeffs) >= 1 "coeffs must have at least one element"
+        @argcheck length(coeffs_der) >= length(coeffs) - 1 "coeffs_der must have at least length(coeffs) - 1 elements"
+    end
+
     n = length(coeffs)
     n_der = length(coeffs_der)
-
-    @boundscheck begin
-        @argcheck n >= 1 "coeffs must have at least one element"
-        @argcheck n_der >= n - 1 "coeffs_der must have at least n - 1 elements"
-    end
 
     if n == 1
         coeffs_der .= 0
@@ -50,11 +52,11 @@ function cheb_series_derivative!(
     return nothing
 end
 
-function cheb_series_derivative(coeffs::AbstractVector{TFC}) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
-    n = length(coeffs)
-    coeffs_der = Vector{TFC}(undef, n - 1)
-    cheb_series_derivative!(coeffs, coeffs_der)
-    return coeffs_der
+function cheb_series_derivative!(
+    coeffs::AbstractVector{TFC}
+) where {TFC<:Union{AbstractFloat,Complex{<:AbstractFloat}}}
+    cheb_series_derivative!(coeffs, coeffs)
+    return nothing
 end
 
-export cheb_series_derivative, cheb_series_derivative!
+export cheb_series_derivative!
