@@ -24,7 +24,7 @@ SOFTWARE.
 """
 
 @doc raw"""
-    qnm_schw_reggepoleexp(::Type{TR}, s::TI, l::TI, n::TI) where {TR<:AbstractFloat,TI<:Integer}
+    qnm_schw_expansion_dolan_ottewill(::Type{TF}, s::TI, l::TI, n::TI) where {TF<:AbstractFloat,TI<:Integer}
 
 Compute the high ``\ell`` asymptotic expansion of Schwarzschild QNM frequency, using the method of Dolan and Ottewill [Dolan:2009nk](@cite).
 
@@ -47,7 +47,7 @@ The lowest expansion coefficients for arbitrary spin ``\beta=1-s^2`` and arbitra
 
 # Arguments
 
-- `TR`: Type of the floating-point number.
+- `TF`: Type of the floating-point number.
 - `s`: Spin weight of the field of interest.
 - `l`: Multipole number of interest.
 - `n`: Overtone number of interest.
@@ -55,17 +55,17 @@ The lowest expansion coefficients for arbitrary spin ``\beta=1-s^2`` and arbitra
 # References
 - [Dolan:2009nk](@cite)
 """
-function qnm_schw_reggepoleexp(
-    ::Type{TR}, s::Integer, l::Integer, n::Integer
-) where {TR<:AbstractFloat}
-    L = l + one(TR) / 2
-    N = n + one(TR) / 2
-    β = one(TR) - s * s
+function qnm_schw_expansion_dolan_ottewill(
+    ::Type{TF}, s::Integer, l::Integer, n::Integer
+) where {TF<:AbstractFloat}
+    L = l + one(TF) / 2
+    N = n + one(TF) / 2
+    β = one(TF) - s * s
 
-    ϖ₋₁ = one(TR)
+    ϖ₋₁ = one(TF)
     ϖ₀ = -1im * N
-    ϖ₁ = β / 3 - 5 * N * N / 36 - TR(115) / 432
-    ϖ₂ = -1im * N * (β / 9 + 235 * N * N / 3888 - TR(1415) / 15552)
+    ϖ₁ = β / 3 - 5 * N * N / 36 - TF(115) / 432
+    ϖ₂ = -1im * N * (β / 9 + 235 * N * N / 3888 - TF(1415) / 15552)
     ϖ₃ =
         -β * β / 27 +
         (204 * N * N + 211) / 3888 * β +
@@ -79,10 +79,10 @@ function qnm_schw_reggepoleexp(
             (11273136 * N^4 - 52753800 * N * N + 66480535) / 2902376448
         )
     ϖᵢ = SA[ϖ₋₁, ϖ₀, ϖ₁, ϖ₂, ϖ₃, ϖ₄]
-    ω = zero(Complex{TR})
+    ω = zero(Complex{TF})
     @inbounds for n in -1:4
         ω += ϖᵢ[n + 2] * L^(-n)
     end
 
-    return ω / sqrt(TR(27))
+    return ω / sqrt(TF(27))
 end
