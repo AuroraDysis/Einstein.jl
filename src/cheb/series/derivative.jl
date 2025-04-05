@@ -14,8 +14,10 @@ function cheb_series_derivative!(
     n = length(coeffs)
     n_der = length(coeffs_der)
 
-    @argcheck n >= 1 "coeffs must have at least one element"
-    @argcheck n_der >= n - 1 "coeffs_der must have at least n - 1 elements"
+    @boundscheck begin
+        @argcheck n >= 1 "coeffs must have at least one element"
+        @argcheck n_der >= n - 1 "coeffs_der must have at least n - 1 elements"
+    end
 
     if n == 1
         coeffs_der .= 0
