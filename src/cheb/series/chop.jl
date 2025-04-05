@@ -19,6 +19,7 @@ function _cheb_series_chop_impl!(
 
     @.. envelope = abs(coeffs)
 
+    # Compute the accumulated maximum of the absolute values of the coefficients
     @inbounds for j in (n - 1):-1:1
         envelope[j] = max(envelope[j], envelope[j + 1])
     end
