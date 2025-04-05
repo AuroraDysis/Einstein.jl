@@ -24,7 +24,7 @@ SOFTWARE.
 """
 
 @doc raw"""
-    continued_fraction_lentz([T=Float64], a::Function, b::Function, tol::T, min_iter::Integer, max_iter::Integer) where {T<:AbstractFloat}
+    continued_fraction_lentz([TF=Float64], a::Function, b::Function, tol::TF, min_iter::Integer, max_iter::Integer) where {TF<:AbstractFloat}
 
 Compute the continued fraction
 ```math
@@ -75,9 +75,9 @@ continued_fraction_lentz(Float64, a, b, 10*eps(Float64), 50, 1000)
 - [press2007numerical, Stein:2019mop, lentz1976generating, thompson1986coulomb, DLMF_3103_online](@cite)
 """
 function continued_fraction_lentz(
-    ::Type{T}, a::Function, b::Function, tol::T, min_iter::Integer, max_iter::Integer
-) where {T<:AbstractFloat}
-    tiny = eps(T)^2
+    ::Type{TF}, a::Function, b::Function, tol::TF, min_iter::Integer, max_iter::Integer
+) where {TF<:AbstractFloat}
+    tiny = eps(TF)^2
 
     fᵢ₋₁ = b(0)
     if iszero(fᵢ₋₁)
@@ -87,7 +87,7 @@ function continued_fraction_lentz(
     Dᵢ₋₁ = zero(fᵢ₋₁)
 
     fᵢ = fᵢ₋₁ # use fᵢ to store the result
-    errorᵢ = typemax(T) # use errorᵢ to store the error
+    errorᵢ = typemax(TF) # use errorᵢ to store the error
 
     i = 1
     converged = false
