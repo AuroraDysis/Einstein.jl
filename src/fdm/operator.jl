@@ -56,19 +56,6 @@ function fdm_apply_operator!(
 end
 
 function fdm_apply_operator!(
-    df::StridedArray{TR},
-    op::AbstractFiniteDifferenceOperator{TR},
-    f::StridedArray{TR},
-    jacobian::StridedArray{TR},
-    mode::Mode=ConvolveAssign(),
-) where {TR<:Real,Mode<:ConvolveMode}
-    (; weights, left_weights, right_weights, factor) = op
-    fdm_convolve_interior!(df, f, weights, factor[], jacobian, mode)
-    fdm_convolve_boundary!(df, f, left_weights, right_weights, factor[], jacobian, mode)
-    return nothing
-end
-
-function fdm_apply_operator!(
     ddf::StridedArray{TR},
     op::AbstractHermiteFiniteDifferenceOperator{TR},
     f::StridedArray{TR},
@@ -90,35 +77,6 @@ function fdm_apply_operator!(
     fdm_convolve_boundary!(ddf, f, D_left_weights, D_right_weights, D_factor[], mode)
     fdm_convolve_boundary!(
         ddf, df, E_left_weights, E_right_weights, E_factor[], ConvolveAdd()
-    )
-    return nothing
-end
-
-function fdm_apply_operator!(
-    ddf::StridedArray{TR},
-    op::AbstractHermiteFiniteDifferenceOperator{TR},
-    f::StridedArray{TR},
-    df::StridedArray{TR},
-    jacobian::StridedArray{TR},
-    mode::Mode=ConvolveAssign(),
-) where {TR<:Real,Mode<:ConvolveMode}
-    (;
-        D_weights,
-        E_weights,
-        D_left_weights,
-        E_left_weights,
-        D_right_weights,
-        E_right_weights,
-        D_factor,
-        E_factor,
-    ) = op
-    fdm_convolve_interior!(ddf, f, D_weights, D_factor[], jacobian, mode)
-    fdm_convolve_interior!(ddf, df, E_weights, E_factor[], jacobian, ConvolveAdd())
-    fdm_convolve_boundary!(
-        ddf, f, D_left_weights, D_right_weights, D_factor[], jacobian, mode
-    )
-    fdm_convolve_boundary!(
-        ddf, df, E_left_weights, E_right_weights, E_factor[], jacobian, ConvolveAdd()
     )
     return nothing
 end
@@ -151,29 +109,6 @@ function fdm_convolve_boundary!(
     return nothing
 end
 
-function fdm_convolve_boundary!(
-    out::StridedArray{TR},
-    in::StridedArray{TR},
-    left_weights::SMatrix{HalfWidth,BoundaryWidth,TR},
-    right_weights::SMatrix{HalfWidth,BoundaryWidth,TR},
-    factor::TR,
-    jacobian::StridedArray{TR},
-    ::Mode=ConvolveAssign(),
-) where {TR<:Real,HalfWidth,BoundaryWidth,Mode<:ConvolveMode}
-    out_left, out_right = @views out[1:HalfWidth, :], out[(end - HalfWidth + 1):end, :]
-    in_left, in_right = @views in[1:BoundaryWidth, :], in[(end - BoundaryWidth + 1):end, :]
-    jac_left = @view jacobian[1:HalfWidth, :]
-    jac_right = @view jacobian[(end - HalfWidth + 1):end, :]
-    if Mode == ConvolveAssign
-        out_left .= factor .* jac_left .* (left_weights * in_left)
-        out_right .= factor .* jac_right .* (right_weights * in_right)
-    else # Add Mode
-        out_left .+= factor .* jac_left .* (left_weights * in_left)
-        out_right .+= factor .* jac_right .* (right_weights * in_right)
-    end
-    return nothing
-end
-
 @generated function fdm_convolve_interior!(
     out::StridedArray{TR},
     in::StridedArray{TR},
@@ -193,33 +128,6 @@ end
             @.. out[(begin + $half_width):(end - $half_width), :] = $ex * factor
         else # Add Mode
             @.. out[(begin + $half_width):(end - $half_width), :] += $ex * factor
-        end
-        return nothing
-    end
-end
-
-@generated function fdm_convolve_interior!(
-    out::StridedArray{TR},
-    in::StridedArray{TR},
-    weights::SVector{width,TR},
-    factor::TR,
-    jacobian::StridedArray{TR},
-    ::Mode=ConvolveAssign(),
-) where {width,TR<:Real,Mode<:ConvolveMode}
-    half_width = width ÷ 2
-    ex = :(weights[1] * in[begin:(end - $width + 1), :])
-
-    for i in 2:width
-        ex = :($ex + weights[$i] * in[(begin - 1 + $i):(end - $width + $i), :])
-    end
-
-    quote
-        if Mode == ConvolveAssign
-            @.. broadcast = true out[(begin + $half_width):(end - $half_width), :] =
-                factor * jacobian[(begin + $half_width):(end - $half_width)] * $ex
-        else # Add Mode
-            @.. broadcast = true out[(begin + $half_width):(end - $half_width), :] +=
-                factor * jacobian[(begin + $half_width):(end - $half_width)] * $ex
         end
         return nothing
     end
