@@ -1,5 +1,4 @@
 @testitem "fdm_dissipation_order" begin
-    using Einstein.FiniteDifferenceSuite, Test
     # Test even accuracy orders
     @test fdm_dissipation_order(2) == 4
     @test fdm_dissipation_order(4) == 6
@@ -10,8 +9,6 @@
 end
 
 @testitem "fdm_dissipation_weights" begin
-    using Einstein.FiniteDifferenceSuite, Test
-
     # Test 2nd order dissipation
     wts2 = fdm_dissipation_weights(2)
     wts2_expected = [1//4, -1//2, 1//4]

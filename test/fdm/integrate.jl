@@ -1,6 +1,4 @@
 @testitem "fdm_integrate_simpson" begin
-    using Einstein.FiniteDifferenceSuite, Test
-
     dx = 0.01
     x = fdm_uniform_grid(0.0, 1.0, dx)
     fx = @. sin(2π * x)
@@ -9,8 +7,6 @@
 end
 
 @testitem "fdm_integrate_trapezoidal" begin
-    using Einstein.FiniteDifferenceSuite, Test
-
     dx = 0.01
     x = fdm_uniform_grid(0.0, 1.0, dx)
     fx = @. sin(2π * x)

@@ -1,6 +1,4 @@
 @testitem "fdm_weights_fornberg" begin
-    using Einstein.FiniteDifferenceSuite, Test
-
     @testset "Standard First Derivatives" begin
         # Test forward difference (first derivative)
         weights_forward = fdm_weights_fornberg(1, 0.0, [0.0, 1.0])
@@ -53,8 +51,6 @@
 end
 
 @testitem "fdm_central_weights" begin
-    using Einstein.FiniteDifferenceSuite, Test
-
     # Test 1st derivative, 2nd order accuracy
     stencil = [-1//2, 0//1, 1//2]
     @test fdm_central_weights(1, 2) == stencil
@@ -97,8 +93,6 @@ end
 end
 
 @testitem "fdm_hermite_weights" begin
-    using Einstein.FiniteDifferenceSuite, Test
-
     # Test 2nd derivative, 4th order accuracy
     D2, E2 = fdm_hermite_weights(2, 4)
     @test D2 == [2//1, -4//1, 2//1]
@@ -111,8 +105,6 @@ end
 end
 
 @testitem "fdm_extrapolation_weights" begin
-    using Einstein.FiniteDifferenceSuite
-
     @testset "coefficients" begin
         @test fdm_extrapolation_weights(4, :left) == [4, -6, 4, -1]
         @test fdm_extrapolation_weights(4, :right) == [-1, 4, -6, 4]
@@ -130,8 +122,6 @@ end
 end
 
 @testitem "fdm_boundary_weights" begin
-    using Einstein.FiniteDifferenceSuite, Test
-
     Dl14, Dr14 = fdm_boundary_weights(1, 4)
     @test Dl14[1, :] == [-25//12, 4//1, -3//1, 4//3, -1//4]
     @test Dl14[2, :] == [-1//4, -5//6, 3//2, -1//2, 1//12]
@@ -146,8 +136,6 @@ end
 end
 
 @testitem "fdm_hermite_boundary_weights" begin
-    using Einstein.FiniteDifferenceSuite, Test
-
     Dl24, El24, Dr24, Er24 = fdm_hermite_boundary_weights(2, 8)
 
     # <|Stencil->-((485 f[x])/(24 dx^2))-(64 f[dx+x])/(3 dx^2)+(18 f[2 dx+x])/dx^2+(64 f[3 dx+x])/(3 dx^2)+(53 f[4 dx+x])/(24 dx^2)-(25 (f^\[Prime])[x])/(3 dx)-(32 (f^\[Prime])[dx+x])/dx-(36 (f^\[Prime])[2 dx+x])/dx-(32 (f^\[Prime])[3 dx+x])/(3 dx)-(f^\[Prime])[4 dx+x]/(2 dx),Coefficients->{-(485/(24 dx^2)),-(64/(3 dx^2)),18/dx^2,64/(3 dx^2),53/(24 dx^2),-(25/(3 dx)),-(32/dx),-(36/dx),-(32/(3 dx)),-(1/(2 dx))},Order->-((dx^8 (f^(10))[x])/3150)|>

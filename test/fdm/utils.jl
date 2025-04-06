@@ -1,6 +1,4 @@
 @testitem "fdm_central_width" begin
-    using Einstein.FiniteDifferenceSuite, Test
-
     # Basic derivative orders with 2nd order accuracy
     @test fdm_central_width(1, 2) == 3
     @test fdm_central_width(2, 2) == 3
@@ -18,8 +16,6 @@
 end
 
 @testitem "fdm_hermite_width" begin
-    using Einstein.FiniteDifferenceSuite, Test
-
     @test fdm_hermite_width(2, 4) == 3
     @test fdm_hermite_width(2, 8) == 5
 end
