@@ -12,8 +12,8 @@ struct HermiteFiniteDifferenceOperator{
     D_right_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
     E_left_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
     E_right_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
-    D_factor::Base.RefValue{TR}
-    E_factor::Base.RefValue{TR}
+    D_factor::TR
+    E_factor::TR
     derivative_order::TI
     accuracy_order::TI
 end
@@ -24,7 +24,7 @@ struct FiniteDifferenceDerivativeOperator{
     weights::SVector{Width,TR}
     left_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
     right_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
-    factor::Base.RefValue{TR}
+    factor::TR
     derivative_order::TI
     accuracy_order::TI
 end
@@ -35,7 +35,7 @@ struct FiniteDifferenceDissipationOperator{
     weights::SVector{Width,TR}
     left_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
     right_weights::SMatrix{HalfWidth,BoundaryWidth,TR}
-    factor::Base.RefValue{TR}
+    factor::TR
     dissipation_order::TI
 end
 
@@ -50,8 +50,8 @@ function fdm_apply_operator!(
     mode::Mode=ConvolveAssign(),
 ) where {TR<:Real,Mode<:ConvolveMode}
     (; weights, left_weights, right_weights, factor) = op
-    fdm_convolve_interior!(df, f, weights, factor[], mode)
-    fdm_convolve_boundary!(df, f, left_weights, right_weights, factor[], mode)
+    fdm_convolve_interior!(df, f, weights, factor, mode)
+    fdm_convolve_boundary!(df, f, left_weights, right_weights, factor, mode)
     return nothing
 end
 
@@ -157,7 +157,7 @@ function fdm_derivative_operator(
         SVector{width,TR}(weights),
         SMatrix{half_width,boundary_width,TR}(left_weights),
         SMatrix{half_width,boundary_width,TR}(right_weights),
-        Ref(factor),
+        factor,
         derivative_order,
         accuracy_order,
     )
@@ -189,8 +189,8 @@ function fdm_hermite_derivative_operator(
         D_right_weights,
         E_left_weights,
         E_right_weights,
-        Ref(D_factor),
-        Ref(E_factor),
+        D_factor,
+        E_factor,
         derivative_order,
         accuracy_order,
     )
@@ -226,7 +226,7 @@ function fdm_dissipation_operator(
         SVector{width,TR}(weights),
         SMatrix{half_width,boundary_width,TR}(left_weights),
         SMatrix{half_width,boundary_width,TR}(right_weights),
-        Ref(factor),
+        factor,
         dissipation_order,
     )
 end
