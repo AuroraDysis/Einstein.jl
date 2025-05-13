@@ -52,7 +52,11 @@ function (itp::LocalBarycentricInterpolation{TF,TI})(
     (; points, values, weights, degree, dx_inv, lower_bound, upper_bound) = itp
 
     @boundscheck begin
-        @argcheck lower_bound <= x <= upper_bound "x is out of range"
+        @argcheck isnan(x) || (lower_bound <= x <= upper_bound) "x is out of range"
+    end
+
+    if isnan(x)
+        return TF(NaN)
     end
 
     n = length(points)
