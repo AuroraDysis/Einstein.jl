@@ -27,18 +27,18 @@ function cheb_gauss_differentiation_matrix(n::Integer, k::Integer=1)
 end
 
 function cheb_gauss_differentiation_matrix(
-    ::Type{TR}, n::Integer, lower_bound::TR, upper_bound::TR, k::Integer=1
+    ::Type{TR}, n::Integer, domain_width::TR, k::Integer=1
 ) where {TR<:AbstractFloat}
     D = cheb_gauss_differentiation_matrix(TR, n, k)
-    jacobian = (2 / (upper_bound - lower_bound))^k
+    jacobian = (2 / domain_width)^k
     D .*= jacobian
     return D
 end
 
 function cheb_gauss_differentiation_matrix(
-    n::Integer, lower_bound::Float64, upper_bound::Float64, k::Integer=1
+    n::Integer, domain_width::Float64, k::Integer=1
 )
-    return cheb_gauss_differentiation_matrix(Float64, n, lower_bound, upper_bound, k)
+    return cheb_gauss_differentiation_matrix(Float64, n, domain_width, k)
 end
 
 export cheb_gauss_differentiation_matrix

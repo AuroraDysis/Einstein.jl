@@ -46,18 +46,18 @@ function cheb_lobatto_quadrature_weights(n::Integer)
 end
 
 function cheb_lobatto_quadrature_weights(
-    ::Type{TF}, n::Integer, lower_bound::TF, upper_bound::TF
+    ::Type{TF}, n::Integer, domain_width::TF
 ) where {TF<:AbstractFloat}
     weights = cheb_lobatto_quadrature_weights(TF, n)
-    jacobian = (upper_bound - lower_bound) / 2
+    jacobian = domain_width / 2
     weights .*= jacobian
     return weights
 end
 
 function cheb_lobatto_quadrature_weights(
-    n::Integer, lower_bound::Float64, upper_bound::Float64
+    n::Integer, domain_width::Float64
 )
-    return cheb_lobatto_quadrature_weights(Float64, n, lower_bound, upper_bound)
+    return cheb_lobatto_quadrature_weights(Float64, n, domain_width)
 end
 
 export cheb_lobatto_quadrature_weights

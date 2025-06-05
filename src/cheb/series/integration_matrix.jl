@@ -1,7 +1,6 @@
-
 """
     cheb_series_integration_matrix([TR=Float64], n::Integer) where {TR<:AbstractFloat}
-    cheb_series_integration_matrix([TR=Float64], n::Integer, lower_bound::TR, upper_bound::TR) where {TR<:AbstractFloat}
+    cheb_series_integration_matrix([TR=Float64], n::Integer, domain_width::TR) where {TR<:AbstractFloat}
 
 Generate the Chebyshev coefficient integration matrix
 that maps Chebyshev coefficients to the coefficients
@@ -10,8 +9,7 @@ of the integral of the interpolating polynomial.
 # Arguments
 - `TR`: Type parameter for the matrix elements (e.g., Float64)
 - `n`: Size of the matrix (n×n)
-- `lower_bound`: (Optional) Lower bound of the integration interval
-- `upper_bound`: (Optional) Upper bound of the integration interval
+- `domain_width`: (Optional) Width of the integration interval
 
 # References
 - [chebfun/@chebcolloc1/chebcolloc1.m at master · chebfun/chebfun](https://github.com/chebfun/chebfun/blob/master/%40chebcolloc1/chebcolloc1.m)
@@ -55,15 +53,15 @@ end
 
 # Second method documentation is inherited from the main docstring
 function cheb_series_integration_matrix(
-    ::Type{TR}, n::Integer, lower_bound::TR, upper_bound::TR
+    ::Type{TR}, n::Integer, domain_width::TR
 ) where {TR<:AbstractFloat}
     B = cheb_series_integration_matrix(TR, n)
-    B .*= (upper_bound - lower_bound) / 2
+    B .*= domain_width / 2
     return B
 end
 
-function cheb_series_integration_matrix(n::Integer, lower_bound::Float64, upper_bound::Float64)
-    return cheb_series_integration_matrix(Float64, n, lower_bound, upper_bound)
+function cheb_series_integration_matrix(n::Integer, domain_width::Float64)
+    return cheb_series_integration_matrix(Float64, n, domain_width)
 end
 
 export cheb_series_integration_matrix

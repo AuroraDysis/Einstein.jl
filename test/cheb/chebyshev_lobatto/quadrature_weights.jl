@@ -41,7 +41,7 @@
         @test isapprox(If1, 0.0; atol=tol)
 
         x2 = cheb_lobatto_points(n, 0.0, 1.0)
-        w2 = cheb_lobatto_quadrature_weights(n, 0.0, 1.0)
+        w2 = cheb_lobatto_quadrature_weights(n, 1.0)
 
         f2 = @. sin(2π * x2)
         If2 = dot(f2, w2)
