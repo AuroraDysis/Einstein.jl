@@ -1,5 +1,6 @@
 """
     cheb_gauss_quadrature_weights([TF=Float64], n::Integer) where {TF<:AbstractFloat}
+    cheb_gauss_quadrature_weights([TF=Float64], n::Integer, domain_width::TF) where {TF<:AbstractFloat}
 
 Compute quadrature weights for Chebyshev points of the 1st kind.
 

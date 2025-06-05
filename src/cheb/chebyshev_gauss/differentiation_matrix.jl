@@ -1,5 +1,6 @@
 """
     cheb_gauss_differentiation_matrix([TR=Float64], n::Integer, k::Integer=1) where {TR<:AbstractFloat}
+    cheb_gauss_differentiation_matrix([TR=Float64], n::Integer, domain_width::TR, k::Integer=1) where {TR<:AbstractFloat}
 
 Construct a Chebyshev differentiation that maps function values at `n` Chebyshev points of the 1st kind 
 to values of the `k`-th derivative of the interpolating polynomial at those points.
