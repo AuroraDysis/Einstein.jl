@@ -44,10 +44,7 @@ struct ConvolveAssign <: ConvolveMode end
 struct ConvolveAdd <: ConvolveMode end
 
 function fdm_apply_operator!(
-    df::StridedArray{TR},
-    op::AbstractFiniteDifferenceOperator{TR},
-    f::StridedArray{TR},
-    mode::Mode=ConvolveAssign(),
+    df, op::AbstractFiniteDifferenceOperator{TR}, f, mode::Mode=ConvolveAssign()
 ) where {TR<:Real,Mode<:ConvolveMode}
     (; weights, left_weights, right_weights, factor) = op
     fdm_convolve_interior!(df, f, weights, factor, mode)
@@ -56,11 +53,7 @@ function fdm_apply_operator!(
 end
 
 function fdm_apply_operator!(
-    ddf::StridedArray{TR},
-    op::AbstractHermiteFiniteDifferenceOperator{TR},
-    f::StridedArray{TR},
-    df::StridedArray{TR},
-    mode::Mode=ConvolveAssign(),
+    ddf, op::AbstractHermiteFiniteDifferenceOperator{TR}, f, df, mode::Mode=ConvolveAssign()
 ) where {TR<:Real,Mode<:ConvolveMode}
     (;
         D_weights,
@@ -90,8 +83,8 @@ function *(
 end
 
 function fdm_convolve_boundary!(
-    out::StridedArray{TR},
-    in::StridedArray{TR},
+    out,
+    in,
     left_weights::SMatrix{HalfWidth,BoundaryWidth,TR},
     right_weights::SMatrix{HalfWidth,BoundaryWidth,TR},
     factor::TR,
@@ -110,11 +103,7 @@ function fdm_convolve_boundary!(
 end
 
 @generated function fdm_convolve_interior!(
-    out::StridedArray{TR},
-    in::StridedArray{TR},
-    weights::SVector{width,TR},
-    factor::TR,
-    ::Mode=ConvolveAssign(),
+    out, in, weights::SVector{width,TR}, factor::TR, ::Mode=ConvolveAssign()
 ) where {width,TR<:Real,Mode<:ConvolveMode}
     half_width = width ÷ 2
     ex = :(weights[1] * in[begin:(end - $width + 1), :])
