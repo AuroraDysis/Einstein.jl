@@ -8,7 +8,7 @@ spaced points `points`. The interpolation is performed locally using `degree + 1
 nearest to the evaluation point.
 
 # Arguments
-- `points::StepRangeLen{TF}`: Equispaced points for interpolation
+- `points::AbstractRange{TF}`: Equispaced points for interpolation
 - `values::AbstractVector{TF}`: Function values at the points
 - `degree::Integer=4`: Degree of the local polynomial interpolant
 
@@ -23,9 +23,11 @@ nearest to the evaluation point.
 # References
 - [Berrut2004](@citet*)
 """
-struct LocalBarycentricInterpolation{TF<:AbstractFloat,TI<:Integer}
-    points::StepRangeLen{TF}
-    values::AbstractVector{TF}
+struct LocalBarycentricInterpolation{
+    TF<:AbstractFloat,TI<:Integer,TP<:AbstractRange{TF},TV<:AbstractVector{TF}
+}
+    points::TP
+    values::TV
     weights::Vector{TF}
     degree::TI
     dx_inv::TF
@@ -33,22 +35,22 @@ struct LocalBarycentricInterpolation{TF<:AbstractFloat,TI<:Integer}
     upper_bound::TF
 
     function LocalBarycentricInterpolation(
-        points::StepRangeLen{TF}, values::AbstractVector{TF}; degree::TI=4
-    ) where {TF<:AbstractFloat,TI<:Integer}
+        points::TP, values::TV; degree::TI=4
+    ) where {TF<:AbstractFloat,TI<:Integer,TP<:AbstractRange{TF},TV<:AbstractVector{TF}}
         @argcheck length(points) >= degree + 1 "points is too small for degree"
         @argcheck length(points) == length(values) "points and values must have the same length"
 
         weights = barycentric_weights(TF, degree)
         dx_inv = inv(step(points))
-        return new{TF,TI}(
+        return new{TF,TI,TP,TV}(
             points, values, weights, degree, dx_inv, points[begin], points[end]
         )
     end
 end
 
-function (itp::LocalBarycentricInterpolation{TF,TI})(
+function (itp::LocalBarycentricInterpolation{TF,TI,TP,TV})(
     x::TF
-) where {TF<:AbstractFloat,TI<:Integer}
+) where {TF<:AbstractFloat,TI<:Integer,TP<:AbstractRange{TF},TV<:AbstractVector{TF}}
     (; points, values, weights, degree, dx_inv, lower_bound, upper_bound) = itp
 
     @boundscheck begin
