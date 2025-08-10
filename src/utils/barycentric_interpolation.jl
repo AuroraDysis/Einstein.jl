@@ -81,7 +81,7 @@ function (itp::BarycentricInterpolation{TF,VT1,VT2})(
     end
 
     if isnan(x)
-        return NaN
+        return TFC(NaN)
     end
 
     return barycentric_interpolate(x, points, values, weights)
