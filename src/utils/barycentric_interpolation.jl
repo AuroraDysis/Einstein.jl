@@ -77,7 +77,11 @@ function (itp::BarycentricInterpolation{TF,VT1,VT2})(
     (; points, weights) = itp
 
     @boundscheck begin
-        @argcheck first(points) <= x <= last(points) "x is out of range"
+        @argcheck isnan(x) || first(points) <= x <= last(points) "x is out of range"
+    end
+
+    if isnan(x)
+        return NaN
     end
 
     return barycentric_interpolate(x, points, values, weights)
