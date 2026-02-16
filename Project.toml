@@ -1,7 +1,7 @@
 name = "Einstein"
 uuid = "090ec698-01a0-4de4-b9a9-b0520fa6fd58"
-authors = ["Zhen Zhong <auroradysis@gmail.com> and contributors"]
 version = "0.0.11"
+authors = ["Zhen Zhong <auroradysis@gmail.com> and contributors"]
 
 [deps]
 AbstractFFTs = "621f4979-c628-5d54-868e-fcf4e3e8185c"
@@ -22,7 +22,6 @@ StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 Xsum = "1fd64df0-a4d2-11e9-360d-2f03868f4cf5"
 
 [compat]
-julia = "1.10"
 AbstractFFTs = "1"
 Aqua = "0.8"
 ArgCheck = "2"
@@ -30,7 +29,7 @@ BandedMatrices = "1"
 FFTW = "1"
 FastBroadcast = "0.3"
 FillArrays = "1"
-Integrals = "4"
+Integrals = "4, 5"
 JET = "0.9"
 LinearAlgebra = "1"
 NonlinearSolve = "4"
@@ -45,15 +44,15 @@ Test = "1"
 TestItemRunner = "1"
 TestItems = "1"
 Xsum = "1"
+julia = "1.10"
 
 [extras]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
-JET = "c3a54625-cd67-489e-a8e7-0a5a0ff4e31b"
 Integrals = "de52edbc-65ea-441a-8357-d3a637375a31"
+JET = "c3a54625-cd67-489e-a8e7-0a5a0ff4e31b"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 TestItemRunner = "f8b46487-2199-4994-9208-9a1283c18c0a"
 TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
-
 
 [targets]
 test = ["Test", "TestItems", "TestItemRunner", "Aqua", "JET", "Integrals"]
