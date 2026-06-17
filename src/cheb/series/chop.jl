@@ -42,6 +42,7 @@ function _cheb_series_chop_impl!(
     # in Step 3.
 
     plateau_point = 0
+    j2 = n
 
     for j in 2:n
         j2 = round(Int, 1.25 * j + 5)

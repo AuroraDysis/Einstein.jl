@@ -113,14 +113,14 @@ function qnm_kerr_radial(
     D3 = α * (4 * p - δ) - σ
     D4 = α * (α - γ + 1)
 
-    n = 0:cf_n_inv
-    αn = Array{Complex{TR}}(undef, length(n))
-    βn = Array{Complex{TR}}(undef, length(n))
-    γn = Array{Complex{TR}}(undef, length(n))
+    n_range = 0:cf_n_inv
+    αn = Array{Complex{TR}}(undef, length(n_range))
+    βn = Array{Complex{TR}}(undef, length(n_range))
+    γn = Array{Complex{TR}}(undef, length(n_range))
 
-    @.. αn = n * n + (D0 + 1) * n + D0
-    @.. βn = -2 * n * n + (D1 + 2) * n + D3
-    @.. γn = n * n + (D2 - 3) * n + D4 - D2 + 2
+    @.. αn = n_range * n_range + (D0 + 1) * n_range + D0
+    @.. βn = -2 * n_range * n_range + (D1 + 2) * n_range + D3
+    @.. γn = n_range * n_range + (D2 - 3) * n_range + D4 - D2 + 2
 
     conv1 = zero(Complex{TR})
     @inbounds for i in 1:cf_n_inv
@@ -128,16 +128,16 @@ function qnm_kerr_radial(
     end
 
     function rad_a(i)
-        n = i + cf_n_inv - 1
-        return -(n * n + (D0 + 1) * n + D0) / (n * n + (D2 - 3) * n + D4 - D2 + 2)
+        idx = i + cf_n_inv - 1
+        return -(idx * idx + (D0 + 1) * idx + D0) / (idx * idx + (D2 - 3) * idx + D4 - D2 + 2)
     end
 
     function rad_b(i)
         if i == 0
             return 0
         end
-        n = i + cf_n_inv
-        return (-2 * n * n + (D1 + 2) * n + D3) / (n * n + (D2 - 3) * n + D4 - D2 + 2)
+        idx = i + cf_n_inv
+        return (-2 * idx * idx + (D1 + 2) * idx + D3) / (idx * idx + (D2 - 3) * idx + D4 - D2 + 2)
     end
 
     conv2, error, iter = continued_fraction_lentz(
