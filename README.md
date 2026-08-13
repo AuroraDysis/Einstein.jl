@@ -1,3 +1,5 @@
+
+
 # Einstein
 
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://AuroraDysis.github.io/Einstein.jl/stable/)
@@ -9,6 +11,15 @@
 
 > [!WARNING]  
 > I'm still actively developing it and migrating code from private repositories to this one, so it may currently lack some features.
+
+## Installation
+
+This package requires Julia `1.10` or later. Install it using the Julia package manager:
+
+```julia
+using Pkg
+Pkg.add("Einstein")
+```
 
 ## Motivation and Purpose
 
